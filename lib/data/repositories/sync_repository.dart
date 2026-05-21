@@ -7,6 +7,7 @@ import 'package:netpad/core/models/protocol_message.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/services/local_server.dart';
+import 'package:netpad/services/peer_host_resolver.dart';
 import 'package:netpad/services/protocol_codec.dart';
 import 'package:uuid/uuid.dart';
 
@@ -62,13 +63,18 @@ class SyncRepository extends ChangeNotifier {
   void Function()? onConflictMerged;
 
   Future<void> connectAndRequestPair(Peer peer) async {
-    final host = peer.primaryHost;
+    final refreshed = await _discovery.refreshPeerForConnect(peer.id) ?? peer;
+    final host = await PeerHostResolver.resolveConnectHost(refreshed);
     if (host == null) {
-      throw StateError('Peer ${peer.displayName} has no resolved address');
+      throw StateError(
+        'Peer ${peer.displayName} has no resolved address. '
+        'On Linux, ensure Avahi is running and both devices are on the same subnet.',
+      );
     }
     _discovery.markPeerConnecting(peer.id);
     final requestId = const Uuid().v4();
-    final uri = Uri.parse('ws://$host:${peer.port}/ws');
+    final hostInUri = PeerHostResolver.formatForWebSocket(host);
+    final uri = Uri.parse('ws://$hostInUri:${refreshed.port}/ws');
     final socket = await WebSocket.connect(uri.toString());
     final connectionId = 'out_${peer.id}';
     _pendingOutboundRequestId[connectionId] = requestId;

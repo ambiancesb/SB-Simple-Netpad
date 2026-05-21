@@ -67,6 +67,25 @@ class PeersPanel extends StatelessWidget {
   }
 
   Future<void> _connect(BuildContext context, Peer peer) async {
+    if (!peer.isConnectable && peer.resolveState != PeerResolveState.failed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Still resolving ${peer.displayName}…'),
+        ),
+      );
+      return;
+    }
+    if (peer.resolveState == PeerResolveState.failed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Could not resolve ${peer.displayName}. Check Avahi and same subnet.',
+          ),
+        ),
+      );
+      return;
+    }
+
     final pairing = context.read<PairingRepository>();
     try {
       await pairing.requestConnection(peer);
@@ -95,12 +114,33 @@ class _ConnectButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final connecting = peer.connectionState == PeerConnectionState.connecting ||
         peer.connectionState == PeerConnectionState.pendingOutgoing;
+    final resolving = peer.resolveState == PeerResolveState.resolving;
 
     return FilledButton.tonal(
-      onPressed: connecting ? null : onConnect,
-      child: Text(connecting ? '…' : 'Connect'),
+      onPressed: (connecting || resolving) ? null : onConnect,
+      child: Text(
+        connecting
+            ? '…'
+            : resolving
+                ? 'Resolving…'
+                : 'Connect',
+      ),
     );
   }
+}
+
+String _peerSubtitle(Peer peer) {
+  if (peer.resolveState == PeerResolveState.failed) {
+    return 'Resolve failed — check Avahi / same LAN';
+  }
+  if (peer.resolveState == PeerResolveState.resolving) {
+    return 'Resolving address…';
+  }
+  final host = peer.primaryHost;
+  if (host != null) {
+    return '$host:${peer.port}';
+  }
+  return 'No address yet';
 }
 
 class _PeerTile extends StatelessWidget {
@@ -121,9 +161,7 @@ class _PeerTile extends StatelessWidget {
       dense: true,
       leading: Icon(Icons.circle, size: 10, color: color),
       title: Text(peer.displayName),
-      subtitle: peer.primaryHost != null
-          ? Text('${peer.primaryHost}:${peer.port}')
-          : const Text('Resolving…'),
+      subtitle: Text(_peerSubtitle(peer)),
       trailing: trailing,
     );
   }

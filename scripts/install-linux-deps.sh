@@ -16,11 +16,14 @@ sudo apt-get install -y \
   avahi-utils \
   libnss-mdns
 
+sudo systemctl enable --now avahi-daemon 2>/dev/null || true
+
 echo ""
 echo "Verifying compilers..."
 command -v clang++
 command -v cmake
 command -v ninja
+systemctl is-active avahi-daemon 2>/dev/null && echo "avahi-daemon: running" || echo "avahi-daemon: not running (start with: sudo systemctl start avahi-daemon)"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"

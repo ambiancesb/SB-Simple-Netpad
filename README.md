@@ -27,11 +27,19 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
   flutter run -d linux
   ```
 
-- **Linux:** Avahi for discovery and advertising:
+- **Linux:** Avahi for discovery and advertising (required for finding peers):
 
   ```bash
   sudo apt install -y avahi-daemon avahi-utils libnss-mdns
+  sudo systemctl enable --now avahi-daemon
   ```
+
+  If peers show as **Resolving…** or never appear:
+
+  - Confirm both machines are on the same subnet (Wi‑Fi guest networks often block mDNS).
+  - Check Avahi: `avahi-browse -rt _sbnetpad._tcp`
+  - Allow UDP port **5353** (mDNS) and the app TCP port in the firewall.
+  - Restart the app after network changes; discovery re-resolves every 12 seconds.
 
 - **Desktop:** allow incoming connections on the app’s TCP port when the OS firewall prompts you
 
