@@ -14,6 +14,19 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 ## Requirements
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) (stable)
+- **Linux desktop build** (Flutter + CMake):
+
+  ```bash
+  sudo apt install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev build-essential
+  ```
+
+  If you see `Could not find the compiler specified in CXX: clang++`, either install `clang` (command above) or clear the variable and use GCC:
+
+  ```bash
+  unset CXX CC
+  flutter run -d linux
+  ```
+
 - **Linux:** Avahi for discovery and advertising:
 
   ```bash
@@ -25,7 +38,6 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 ## Build and run
 
 ```bash
-cd netpad
 flutter pub get
 flutter run -d linux    # or windows, macos, android, ios
 ```
@@ -49,7 +61,7 @@ Rejected requests never receive document data.
 
 ## Project layout
 
-Flutter app lives in [`netpad/`](netpad/). Main entry: [`netpad/lib/main.dart`](netpad/lib/main.dart).
+Main entry: [`lib/main.dart`](lib/main.dart).
 
 ## Security note
 

@@ -1,5 +1,15 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.13)
+
+# IDE/shell may set CXX=clang++ without clang installed; fall back to auto-detect.
+if(DEFINED ENV{CXX})
+  find_program(_NETPAD_CXX_COMPILER NAMES $ENV{CXX})
+  if(NOT _NETPAD_CXX_COMPILER)
+    unset(ENV{CXX})
+    unset(ENV{CC})
+  endif()
+endif()
+
 project(runner LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
