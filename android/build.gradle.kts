@@ -19,6 +19,15 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+// bonsoir_android 7.x uses kotlin { } without applying the Kotlin plugin (upstream bug).
+subprojects {
+    if (name == "bonsoir_android") {
+        beforeEvaluate {
+            pluginManager.apply("org.jetbrains.kotlin.android")
+        }
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
