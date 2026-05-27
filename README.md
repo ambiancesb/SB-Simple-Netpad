@@ -52,6 +52,15 @@ flutter run -d linux    # or windows, macos, android, ios
 
 Use two or more devices on the same LAN (physical devices recommended for Android).
 
+## Phase 1 features
+
+- **Auto-save** — Your note is saved under the app documents folder and restored on launch.
+- **Connect by IP** — In the peers drawer, use **Connect by IP** when mDNS discovery fails.
+- **This device** — Copy your `IP:port` from the peers drawer to share with others.
+- **Device rename** — Updates Bonsoir immediately (no restart).
+
+See [ROADMAP.md](ROADMAP.md) for planned phases.
+
 ## How pairing works
 
 1. Open the **Peers** drawer (devices icon).

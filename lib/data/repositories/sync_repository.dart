@@ -32,11 +32,12 @@ class _PeerLink {
 class SyncRepository extends ChangeNotifier {
   SyncRepository({
     required this.instanceId,
-    required this.displayName,
+    required String displayName,
     required LocalServer localServer,
     required DiscoveryRepository discovery,
     required DocumentRepository document,
-  })  : _server = localServer,
+  })  : _displayName = displayName,
+        _server = localServer,
         _discovery = discovery,
         _document = document {
     _server.onMessage = _onInboundMessage;
@@ -44,7 +45,8 @@ class SyncRepository extends ChangeNotifier {
   }
 
   final String instanceId;
-  final String displayName;
+  String _displayName;
+  String get displayName => _displayName;
   final LocalServer _server;
   final DiscoveryRepository _discovery;
   final DocumentRepository _document;
@@ -62,8 +64,14 @@ class SyncRepository extends ChangeNotifier {
   void Function(String peerId, bool accepted)? onPairRequestResolved;
   void Function()? onConflictMerged;
 
+  void updateDisplayName(String name) {
+    _displayName = name;
+  }
+
   Future<void> connectAndRequestPair(Peer peer) async {
-    final refreshed = await _discovery.refreshPeerForConnect(peer.id) ?? peer;
+    final refreshed = peer.isManual
+        ? peer
+        : await _discovery.refreshPeerForConnect(peer.id) ?? peer;
     final host = await PeerHostResolver.resolveConnectHost(refreshed);
     if (host == null) {
       throw StateError(
@@ -107,7 +115,7 @@ class SyncRepository extends ChangeNotifier {
         payload: {
           'requestId': requestId,
           'fromId': instanceId,
-          'fromName': displayName,
+          'fromName': _displayName,
         },
       ),
     );

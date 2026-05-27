@@ -34,12 +34,32 @@ class Peer {
   final String? bonsoirName;
   final PeerResolveState resolveState;
 
+  /// True for peers added via IP/hostname (not Bonjour).
+  bool get isManual => id.startsWith('manual:');
+
   bool get isConnectable =>
       resolveState == PeerResolveState.resolved &&
       (hostAddresses.isNotEmpty || (hostname != null && hostname!.isNotEmpty));
 
   String? get primaryHost =>
       hostAddresses.isNotEmpty ? hostAddresses.first : hostname;
+
+  /// Registers a peer entered manually (host + port).
+  static Peer manual({
+    required String host,
+    required int port,
+    String? displayName,
+  }) {
+    final trimmedHost = host.trim();
+    final id = 'manual:$trimmedHost:$port';
+    return Peer(
+      id: id,
+      displayName: displayName ?? trimmedHost,
+      port: port,
+      hostAddresses: [trimmedHost],
+      resolveState: PeerResolveState.resolved,
+    );
+  }
 
   Peer copyWith({
     String? displayName,

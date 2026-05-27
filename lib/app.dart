@@ -54,12 +54,13 @@ class _HomeShell extends StatefulWidget {
   State<_HomeShell> createState() => _HomeShellState();
 }
 
-class _HomeShellState extends State<_HomeShell> {
+class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     context.read<SyncRepository>().onConflictMerged = () {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -69,6 +70,20 @@ class _HomeShellState extends State<_HomeShell> {
         ),
       );
     };
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      context.read<DocumentRepository>().flushSave();
+    }
   }
 
   @override
@@ -118,7 +133,7 @@ class _HomeShellState extends State<_HomeShell> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      config.displayName,
+                      discovery.displayName,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 4),
@@ -166,13 +181,16 @@ class _HomeShellState extends State<_HomeShell> {
         ],
       ),
     );
-    if (result != null) {
+    if (result != null && context.mounted) {
+      final discovery = context.read<DiscoveryRepository>();
+      final sync = context.read<SyncRepository>();
       await config.setDisplayName(result);
+      final name = config.displayName;
+      await discovery.updateDisplayName(name);
+      sync.updateDisplayName(name);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Restart the app for discovery name to refresh'),
-          ),
+          SnackBar(content: Text('Device name updated to "$name"')),
         );
       }
     }

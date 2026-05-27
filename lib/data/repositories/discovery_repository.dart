@@ -9,13 +9,16 @@ import 'package:netpad/services/local_server.dart';
 class DiscoveryRepository extends ChangeNotifier {
   DiscoveryRepository({
     required this.instanceId,
-    required this.displayName,
+    required String displayName,
     required LocalServer localServer,
-  }) : _localServer = localServer;
+  })  : _displayName = displayName,
+        _localServer = localServer;
 
   final String instanceId;
-  final String displayName;
+  String _displayName;
   final LocalServer _localServer;
+
+  String get displayName => _displayName;
 
   BonsoirBroadcast? _broadcast;
   BonsoirDiscovery? _discovery;
@@ -54,13 +57,40 @@ class DiscoveryRepository extends ChangeNotifier {
       port: port,
       attributes: {
         'id': instanceId,
-        'name': displayName,
+        'name': _displayName,
         'port': port.toString(),
       },
     );
     _broadcast = BonsoirBroadcast(service: service);
     await _broadcast!.initialize();
     await _broadcast!.start();
+  }
+
+  /// Updates Bonsoir advertisement after the user changes device name.
+  Future<void> updateDisplayName(String name) async {
+    _displayName = name;
+    final port = _localServer.port;
+    if (port == null) return;
+    await _broadcast?.stop();
+    _broadcast = null;
+    await _startBroadcast(port);
+    notifyListeners();
+  }
+
+  /// Adds or updates a peer entered by IP/hostname (no mDNS).
+  Peer registerManualPeer({
+    required String host,
+    required int port,
+    String? displayName,
+  }) {
+    final peer = Peer.manual(
+      host: host,
+      port: port,
+      displayName: displayName,
+    );
+    _discovered[peer.id] = peer;
+    notifyListeners();
+    return peer;
   }
 
   Future<void> _startDiscovery() async {
