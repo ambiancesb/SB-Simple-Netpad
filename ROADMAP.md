@@ -16,7 +16,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 **Goal:** The app is useful alone and works when mDNS fails.
 
 - [x] **Manual IP connect** — Enter host + port in the peers drawer when Bonjour discovery does not find peers (guest Wi‑Fi, VPN, etc.).
-- [x] **Persist note to disk** — Auto-save note text and revision under app documents; restore on launch.
+- [x] **Persist note to disk** — Auto-save via `shared_preferences`; restore on launch (migrates legacy file if present).
 - [x] **Rebroadcast on rename** — Changing device name updates Bonsoir immediately (no app restart).
 - [x] **Copy this device’s address** — Show LAN IP + port in peers drawer for sharing with others.
 

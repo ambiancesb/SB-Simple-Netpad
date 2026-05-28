@@ -1,13 +1,53 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.13)
 
-# IDE/shell may set CXX=clang++ without clang installed; fall back to auto-detect.
+# Flutter sets CXX=clang++ for Linux. Resolve to a real binary or fall back to g++.
+set(_NETPAD_CXX "")
 if(DEFINED ENV{CXX})
-  find_program(_NETPAD_CXX_COMPILER NAMES $ENV{CXX})
-  if(NOT _NETPAD_CXX_COMPILER)
-    unset(ENV{CXX})
-    unset(ENV{CC})
+  if(EXISTS "$ENV{CXX}")
+    set(_NETPAD_CXX "$ENV{CXX}")
+  else()
+    find_program(_NETPAD_CXX_FROM_ENV NAMES $ENV{CXX})
+    if(_NETPAD_CXX_FROM_ENV AND EXISTS "${_NETPAD_CXX_FROM_ENV}")
+      set(_NETPAD_CXX "${_NETPAD_CXX_FROM_ENV}")
+    endif()
   endif()
+  unset(ENV{CXX})
+  unset(ENV{CC})
+endif()
+
+if(_NETPAD_CXX STREQUAL "")
+  find_program(_NETPAD_CLANGXX NAMES clang++)
+  if(_NETPAD_CLANGXX AND EXISTS "${_NETPAD_CLANGXX}")
+    set(_NETPAD_CXX "${_NETPAD_CLANGXX}")
+  endif()
+endif()
+
+if(_NETPAD_CXX STREQUAL "")
+  find_program(_NETPAD_GXX NAMES g++)
+  if(_NETPAD_GXX AND EXISTS "${_NETPAD_GXX}")
+    set(_NETPAD_CXX "${_NETPAD_GXX}")
+    find_program(_NETPAD_GCC NAMES gcc)
+    if(_NETPAD_GCC AND EXISTS "${_NETPAD_GCC}")
+      set(CMAKE_C_COMPILER "${_NETPAD_GCC}" CACHE FILEPATH "" FORCE)
+    endif()
+  endif()
+endif()
+
+if(NOT _NETPAD_CXX STREQUAL "")
+  set(CMAKE_CXX_COMPILER "${_NETPAD_CXX}" CACHE FILEPATH "" FORCE)
+  get_filename_component(_NETPAD_CXX_BIN_DIR "${_NETPAD_CXX}" DIRECTORY)
+  if(NOT DEFINED CMAKE_C_COMPILER)
+    if(EXISTS "${_NETPAD_CXX_BIN_DIR}/clang")
+      set(CMAKE_C_COMPILER "${_NETPAD_CXX_BIN_DIR}/clang" CACHE FILEPATH "" FORCE)
+    elseif(EXISTS "${_NETPAD_CXX_BIN_DIR}/gcc")
+      set(CMAKE_C_COMPILER "${_NETPAD_CXX_BIN_DIR}/gcc" CACHE FILEPATH "" FORCE)
+    endif()
+  endif()
+else()
+  message(FATAL_ERROR
+    "No C++ compiler found. Install clang or build-essential:\n"
+    "  sudo apt install -y clang build-essential")
 endif()
 
 project(runner LANGUAGES CXX)

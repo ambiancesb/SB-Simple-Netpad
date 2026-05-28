@@ -6,8 +6,7 @@
             "request": "launch",
             "type": "dart",
             "env": {
-                "CXX": "",
-                "CC": ""
+                "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${env:PATH}"
             }
         },
         {
@@ -16,8 +15,7 @@
             "type": "dart",
             "flutterMode": "profile",
             "env": {
-                "CXX": "",
-                "CC": ""
+                "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${env:PATH}"
             }
         },
         {
@@ -26,8 +24,7 @@
             "type": "dart",
             "flutterMode": "release",
             "env": {
-                "CXX": "",
-                "CC": ""
+                "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${env:PATH}"
             }
         }
     ]

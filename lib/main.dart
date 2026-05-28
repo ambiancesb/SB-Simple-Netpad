@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  final noteStorage = NoteStorageService(prefs);
   final config = InstanceConfig(prefs);
   final instanceId = config.instanceId;
   final displayName = config.displayName;
@@ -26,6 +27,7 @@ Future<void> main() async {
   late final SyncRepository sync;
   final document = DocumentRepository(
     instanceId: instanceId,
+    storage: noteStorage,
     onLocalEditReady: (revision, text, originId) {
       sync.broadcastDocUpdate(revision, text, originId);
     },
@@ -44,7 +46,7 @@ Future<void> main() async {
     discovery: discovery,
   );
 
-  final saved = await NoteStorageService().load();
+  final saved = await noteStorage.load();
   if (saved != null) {
     document.loadSaved(saved);
   }

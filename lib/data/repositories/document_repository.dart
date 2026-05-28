@@ -10,8 +10,8 @@ class DocumentRepository extends ChangeNotifier {
   DocumentRepository({
     required this.instanceId,
     required this.onLocalEditReady,
-    NoteStorageService? storage,
-  }) : _storage = storage ?? NoteStorageService();
+    required NoteStorageService storage,
+  }) : _storage = storage;
 
   final String instanceId;
   final void Function(int revision, String text, String originId) onLocalEditReady;
