@@ -4,8 +4,32 @@ import 'package:netpad/core/constants.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:provider/provider.dart';
 
-class EditorScreen extends StatelessWidget {
+class EditorScreen extends StatefulWidget {
   const EditorScreen({super.key});
+
+  @override
+  State<EditorScreen> createState() => _EditorScreenState();
+}
+
+class _EditorScreenState extends State<EditorScreen> {
+  late final FocusNode _editorFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _editorFocusNode = FocusNode(debugLabel: 'editorFocusNode');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _editorFocusNode.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _editorFocusNode.dispose();
+    super.dispose();
+  }
 
   static final _lineNumberStyle = LineNumberStyle(
     width: 48,
@@ -31,10 +55,12 @@ class EditorScreen extends StatelessWidget {
 
     return CodeField(
       controller: document.controller,
+      focusNode: _editorFocusNode,
       lineNumbers: true,
       lineNumberStyle: _lineNumberStyle,
       textStyle: _editorTextStyle,
       expands: true,
+      onTap: () => _editorFocusNode.requestFocus(),
       onChanged: (_) => document.onLocalEdit(),
     );
   }

@@ -60,6 +60,12 @@ Use two or more devices on the same LAN (physical devices recommended for Androi
 - **Connect by IP** — In the peers drawer, use **Connect by IP** when mDNS discovery fails.
 - **This device** — Copy your `IP:port` from the peers drawer to share with others.
 - **Device rename** — Updates Bonsoir immediately (no restart).
+- **Basic copy/paste** — Native text selection and clipboard actions are supported in the editor.
+
+### Editor shortcuts
+
+- **Desktop:** `Ctrl/Cmd + C`, `Ctrl/Cmd + V`, `Ctrl/Cmd + X`, `Ctrl/Cmd + A`
+- **Mobile:** long-press to use selection toolbar Copy/Paste/Cut/Select All
 
 See [ROADMAP.md](ROADMAP.md) for planned phases.
 
@@ -85,3 +91,11 @@ Main entry: [`lib/main.dart`](lib/main.dart).
 ## Security note
 
 v1 uses unencrypted `ws://` on the local network. Do not use on untrusted networks.
+
+## Changelog
+
+Project history is tracked in [`CHANGELOG.md`](CHANGELOG.md).
+
+## License
+
+All rights reserved for now. See [`LICENSE`](LICENSE).

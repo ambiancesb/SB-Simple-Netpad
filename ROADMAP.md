@@ -29,6 +29,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 - [ ] Enforce `sessionToken` on all post-pair WebSocket messages.
 - [ ] **Connection log** in peers drawer (connect, disconnect, resolve failures, last sync revision).
 - [ ] **Pairing code** — Short code derived from `instanceId` shown on both devices during Accept.
+- [ ] **Basic copy/paste support** — Native selection toolbar + keyboard shortcuts (`Ctrl/Cmd + C/V/X/A`) in the editor.
 
 ---
 

@@ -141,6 +141,11 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
                       'LAN notepad',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '© 2026 Spencer Beaumier',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   ],
                 ),
               ),
@@ -162,12 +167,23 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Device name'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Name shown to other devices',
-          ),
-          autofocus: true,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                hintText: 'Name shown to other devices',
+              ),
+              autofocus: true,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '© 2026 Spencer Beaumier',
+              style: Theme.of(ctx).textTheme.bodySmall,
+            ),
+          ],
         ),
         actions: [
           TextButton(
