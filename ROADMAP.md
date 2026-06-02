@@ -5,7 +5,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 | Phase | Status | Focus |
 |-------|--------|--------|
 | **1** | Done | Manual IP connect, persist note to disk, rebroadcast on device rename |
-| **2** | Planned | Session token enforcement, connection log, pairing verification code |
+| **2** | Done | Session token enforcement, connection log, pairing verification code |
 | **3** | Planned | Incremental sync or CRDT, network-change listener |
 | **4** | Planned | TLS / pinned peers, optional shared “room” ID |
 
@@ -26,10 +26,10 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 **Goal:** Safer pairing and easier LAN debugging.
 
-- [ ] Enforce `sessionToken` on all post-pair WebSocket messages.
-- [ ] **Connection log** in peers drawer (connect, disconnect, resolve failures, last sync revision).
-- [ ] **Pairing code** — Short code derived from `instanceId` shown on both devices during Accept.
-- [ ] **Basic copy/paste support** — Native selection toolbar + keyboard shortcuts (`Ctrl/Cmd + C/V/X/A`) in the editor.
+- [x] Enforce `sessionToken` on all post-pair WebSocket messages.
+- [x] **Connection log** in peers drawer (connect, disconnect, resolve failures, last sync revision).
+- [x] **Pairing code** — Short code derived from `instanceId` shown on both devices during Accept.
+- [x] **Basic copy/paste support** — Native selection toolbar + keyboard shortcuts (`Ctrl/Cmd + C/V/X/A`) in the editor.
 
 ---
 

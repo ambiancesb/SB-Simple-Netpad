@@ -46,7 +46,8 @@ class NoteStorageService {
       var revision = 0;
       final meta = File('${legacyFile.parent.path}/note_meta.json');
       if (await meta.exists()) {
-        final json = jsonDecode(await meta.readAsString()) as Map<String, dynamic>;
+        final json =
+            jsonDecode(await meta.readAsString()) as Map<String, dynamic>;
         revision = json['revision'] as int? ?? 0;
       }
       await save(text, revision);
@@ -63,15 +64,14 @@ class NoteStorageService {
     if (!Platform.isLinux && !Platform.isMacOS && !Platform.isWindows) {
       return null;
     }
-    final home = Platform.environment['HOME'] ??
-        Platform.environment['USERPROFILE'];
+    final home =
+        Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
     if (home == null) return null;
 
     // Matches path_provider_linux + application id com.sb.netpad
     final candidates = <String>[
       if (Platform.isLinux) '$home/.local/share/netpad',
-      if (Platform.isMacOS)
-        '$home/Library/Application Support/com.sb.netpad',
+      if (Platform.isMacOS) '$home/Library/Application Support/com.sb.netpad',
       if (Platform.isWindows)
         '${Platform.environment['APPDATA'] ?? '$home\\AppData\\Roaming'}\\netpad',
     ];

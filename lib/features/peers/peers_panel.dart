@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/core/models/peer.dart';
+import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/features/peers/manual_connect_dialog.dart';
@@ -12,6 +13,7 @@ class PeersPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final discovery = context.watch<DiscoveryRepository>();
+    final connectionLog = context.watch<ConnectionLogRepository>();
     final pairing = context.read<PairingRepository>();
 
     final nearby = discovery.discoveredPeers
@@ -58,6 +60,8 @@ class PeersPanel extends StatelessWidget {
             ),
           ),
         ),
+        const Divider(height: 24),
+        _ConnectionLogSection(connectionLog: connectionLog),
       ],
     );
   }
@@ -67,9 +71,9 @@ class PeersPanel extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       child: Text(
         title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -92,9 +96,7 @@ class PeersPanel extends StatelessWidget {
         !peer.isConnectable &&
         peer.resolveState != PeerResolveState.failed) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Still resolving ${peer.displayName}…'),
-        ),
+        SnackBar(content: Text('Still resolving ${peer.displayName}…')),
       );
       return;
     }
@@ -114,14 +116,16 @@ class PeersPanel extends StatelessWidget {
       await pairing.requestConnection(peer);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Pairing request sent to ${peer.displayName}')),
+          SnackBar(
+            content: Text('Pairing request sent to ${peer.displayName}'),
+          ),
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not connect: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not connect: $e')));
       }
     }
   }
@@ -135,7 +139,8 @@ class _ConnectButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final connecting = peer.connectionState == PeerConnectionState.connecting ||
+    final connecting =
+        peer.connectionState == PeerConnectionState.connecting ||
         peer.connectionState == PeerConnectionState.pendingOutgoing;
     final resolving =
         !peer.isManual && peer.resolveState == PeerResolveState.resolving;
@@ -146,8 +151,8 @@ class _ConnectButton extends StatelessWidget {
         connecting
             ? '…'
             : resolving
-                ? 'Resolving…'
-                : 'Connect',
+            ? 'Resolving…'
+            : 'Connect',
       ),
     );
   }
@@ -207,9 +212,60 @@ class _EmptyHint extends StatelessWidget {
       child: Text(
         text,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+          color: Theme.of(context).colorScheme.outline,
+        ),
       ),
+    );
+  }
+}
+
+class _ConnectionLogSection extends StatelessWidget {
+  const _ConnectionLogSection({required this.connectionLog});
+
+  final ConnectionLogRepository connectionLog;
+
+  @override
+  Widget build(BuildContext context) {
+    final entries = connectionLog.entries;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 8, 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Connection log',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              TextButton(
+                onPressed: entries.isEmpty ? null : connectionLog.clear,
+                child: const Text('Clear'),
+              ),
+            ],
+          ),
+        ),
+        if (entries.isEmpty) const _EmptyHint('No connection events yet'),
+        ...entries
+            .take(8)
+            .map(
+              (entry) => ListTile(
+                dense: true,
+                visualDensity: VisualDensity.compact,
+                title: Text(entry.message),
+                subtitle: Text(
+                  entry.revision == null
+                      ? entry.timeLabel
+                      : '${entry.timeLabel} • revision ${entry.revision}',
+                ),
+              ),
+            ),
+      ],
     );
   }
 }

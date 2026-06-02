@@ -19,8 +19,8 @@ class DocUpdate {
   }
 
   Map<String, dynamic> toPayload() => {
-        'revision': revision,
-        'text': text,
-        'originId': originId,
-      };
+    'revision': revision,
+    'text': text,
+    'originId': originId,
+  };
 }

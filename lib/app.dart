@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
@@ -13,6 +14,7 @@ class NetpadApp extends StatelessWidget {
   const NetpadApp({
     super.key,
     required this.config,
+    required this.connectionLog,
     required this.discovery,
     required this.document,
     required this.sync,
@@ -20,6 +22,7 @@ class NetpadApp extends StatelessWidget {
   });
 
   final InstanceConfig config;
+  final ConnectionLogRepository connectionLog;
   final DiscoveryRepository discovery;
   final DocumentRepository document;
   final SyncRepository sync;
@@ -30,6 +33,7 @@ class NetpadApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider.value(value: config),
+        ChangeNotifierProvider.value(value: connectionLog),
         ChangeNotifierProvider.value(value: discovery),
         ChangeNotifierProvider.value(value: document),
         ChangeNotifierProvider.value(value: sync),

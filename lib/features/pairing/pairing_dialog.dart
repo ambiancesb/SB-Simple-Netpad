@@ -14,8 +14,30 @@ class PairingRequestDialog extends StatelessWidget {
 
     return AlertDialog(
       title: const Text('Connection request'),
-      content: Text(
-        'Allow ${request.fromName} to connect and share this note?',
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Allow ${request.fromName} to connect and share this note?'),
+          const SizedBox(height: 16),
+          Text(
+            'Verification code',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(height: 4),
+          SelectableText(
+            request.verificationCode,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontFeatures: const [],
+              letterSpacing: 2,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Confirm this code matches on both devices before accepting.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
       ),
       actions: [
         TextButton(

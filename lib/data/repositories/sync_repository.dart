@@ -4,9 +4,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/models/protocol_message.dart';
+import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/services/local_server.dart';
+import 'package:netpad/services/pairing_verification_code.dart';
 import 'package:netpad/services/peer_host_resolver.dart';
 import 'package:netpad/services/protocol_codec.dart';
 import 'package:uuid/uuid.dart';
@@ -36,10 +38,12 @@ class SyncRepository extends ChangeNotifier {
     required LocalServer localServer,
     required DiscoveryRepository discovery,
     required DocumentRepository document,
-  })  : _displayName = displayName,
-        _server = localServer,
-        _discovery = discovery,
-        _document = document {
+    required ConnectionLogRepository connectionLog,
+  }) : _displayName = displayName,
+       _server = localServer,
+       _discovery = discovery,
+       _document = document,
+       _connectionLog = connectionLog {
     _server.onMessage = _onInboundMessage;
     _server.onConnectionClosed = _onInboundClosed;
   }
@@ -50,6 +54,7 @@ class SyncRepository extends ChangeNotifier {
   final LocalServer _server;
   final DiscoveryRepository _discovery;
   final DocumentRepository _document;
+  final ConnectionLogRepository _connectionLog;
 
   final Map<String, _PeerLink> _linksByPeerId = {};
   final Map<String, String> _connectionToPeerId = {};
@@ -60,12 +65,69 @@ class SyncRepository extends ChangeNotifier {
     String fromName,
     String requestId,
     String connectionId,
-  )? onIncomingPairRequest;
+  )?
+  onIncomingPairRequest;
   void Function(String peerId, bool accepted)? onPairRequestResolved;
   void Function()? onConflictMerged;
 
   void updateDisplayName(String name) {
     _displayName = name;
+  }
+
+  bool _requiresSessionToken(String type) {
+    return type == MessageTypes.docSnapshot ||
+        type == MessageTypes.docUpdate ||
+        type == MessageTypes.peerDisconnect;
+  }
+
+  ProtocolMessage _messageForConnection(
+    String connectionId,
+    ProtocolMessage message,
+  ) {
+    if (!_requiresSessionToken(message.type)) return message;
+
+    final peerId = _connectionToPeerId[connectionId];
+    final token = peerId == null ? null : _linksByPeerId[peerId]?.sessionToken;
+    if (token == null || token.isEmpty) return message;
+
+    return ProtocolMessage(
+      type: message.type,
+      payload: {...message.payload, 'sessionToken': token},
+    );
+  }
+
+  bool _hasValidSessionToken(String connectionId, ProtocolMessage message) {
+    final peerId = _connectionToPeerId[connectionId];
+    if (peerId == null) return false;
+
+    final link = _linksByPeerId[peerId];
+    if (link == null || !link.authenticated) return false;
+
+    final expectedToken = link.sessionToken;
+    final actualToken = message.payload['sessionToken'] as String?;
+    return expectedToken != null &&
+        expectedToken.isNotEmpty &&
+        actualToken == expectedToken;
+  }
+
+  Iterable<String> _authenticatedConnectionIds({
+    String? exceptConnectionId,
+    String? exceptPeerId,
+  }) sync* {
+    for (final link in _linksByPeerId.values) {
+      if (!link.authenticated) continue;
+      if (link.peerId == exceptPeerId) continue;
+
+      final inbound = link.inboundConnectionId;
+      if (inbound != null && inbound != exceptConnectionId) {
+        yield inbound;
+      }
+
+      final outbound = link.outboundConnectionId;
+      if (outbound != null && outbound != exceptConnectionId) {
+        yield outbound;
+      }
+    }
   }
 
   Future<void> connectAndRequestPair(Peer peer) async {
@@ -119,6 +181,16 @@ class SyncRepository extends ChangeNotifier {
         },
       ),
     );
+    final verificationCode = peer.isManual
+        ? null
+        : PairingVerificationCode.generate(instanceId, peer.id);
+    _connectionLog.add(
+      verificationCode == null
+          ? 'Pairing request sent to ${peer.displayName}'
+          : 'Pairing request sent to ${peer.displayName} (code $verificationCode)',
+      peerId: peer.id,
+      peerName: peer.displayName,
+    );
   }
 
   void respondToPairRequest({
@@ -163,6 +235,11 @@ class SyncRepository extends ChangeNotifier {
           connectionState: PeerConnectionState.connected,
         ),
       );
+      _connectionLog.add(
+        'Accepted pairing with $fromName',
+        peerId: fromId,
+        peerName: fromName,
+      );
       _sendDocSnapshot(connectionId);
     } else {
       _sendOnConnection(
@@ -172,6 +249,11 @@ class SyncRepository extends ChangeNotifier {
           payload: {'requestId': requestId, 'accepted': false},
         ),
       );
+      _connectionLog.add(
+        'Rejected pairing with $fromName',
+        peerId: fromId,
+        peerName: fromName,
+      );
       unawaited(_server.closeConnection(connectionId));
     }
   }
@@ -179,17 +261,13 @@ class SyncRepository extends ChangeNotifier {
   void broadcastDocUpdate(int revision, String text, String originId) {
     final message = ProtocolMessage(
       type: MessageTypes.docUpdate,
-      payload: {
-        'revision': revision,
-        'text': text,
-        'originId': originId,
-      },
+      payload: {'revision': revision, 'text': text, 'originId': originId},
     );
     _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
   }
 
   void disconnectPeer(String peerId) {
-    final link = _linksByPeerId.remove(peerId);
+    final link = _linksByPeerId[peerId];
     if (link == null) return;
 
     final message = ProtocolMessage(
@@ -213,7 +291,13 @@ class SyncRepository extends ChangeNotifier {
       _connectionToPeerId.remove(link.outboundConnectionId);
     }
 
+    _linksByPeerId.remove(peerId);
     _discovery.markPeerDisconnected(peerId);
+    _connectionLog.add(
+      'Disconnected from ${link.displayName}',
+      peerId: peerId,
+      peerName: link.displayName,
+    );
     notifyListeners();
   }
 
@@ -241,6 +325,14 @@ class SyncRepository extends ChangeNotifier {
         final accepted = message.payload['accepted'] as bool? ?? false;
         final peerId = _connectionToPeerId[connectionId];
         if (peerId != null) {
+          final peerName = _discovery.peerById(peerId)?.displayName ?? peerId;
+          _connectionLog.add(
+            accepted
+                ? 'Pairing accepted by $peerName'
+                : 'Pairing rejected by $peerName',
+            peerId: peerId,
+            peerName: peerName,
+          );
           onPairRequestResolved?.call(peerId, accepted);
           if (!accepted) {
             _cleanupConnection(connectionId);
@@ -271,12 +363,38 @@ class SyncRepository extends ChangeNotifier {
         if (peer != null) {
           _discovery.markPeerConnected(peer);
         }
+        _connectionLog.add(
+          'Pairing complete with ${link.displayName}',
+          peerId: peerId,
+          peerName: link.displayName,
+        );
         _sendDocSnapshot(connectionId);
       case MessageTypes.docSnapshot:
       case MessageTypes.docUpdate:
-        if (!_isAuthenticated(connectionId)) return;
+        if (!_hasValidSessionToken(connectionId, message)) {
+          final peerId = _connectionToPeerId[connectionId];
+          _connectionLog.add(
+            'Rejected ${message.type}: invalid session token',
+            peerId: peerId,
+            peerName: peerId == null
+                ? null
+                : _linksByPeerId[peerId]?.displayName,
+          );
+          return;
+        }
         _handleDocMessage(message, connectionId);
       case MessageTypes.peerDisconnect:
+        if (!_hasValidSessionToken(connectionId, message)) {
+          final peerId = _connectionToPeerId[connectionId];
+          _connectionLog.add(
+            'Rejected disconnect: invalid session token',
+            peerId: peerId,
+            peerName: peerId == null
+                ? null
+                : _linksByPeerId[peerId]?.displayName,
+          );
+          return;
+        }
         final remoteId = message.payload['peerId'] as String? ?? '';
         if (remoteId.isNotEmpty) {
           _handleDisconnectByPeerId(remoteId);
@@ -284,12 +402,6 @@ class SyncRepository extends ChangeNotifier {
       default:
         break;
     }
-  }
-
-  bool _isAuthenticated(String connectionId) {
-    final peerId = _connectionToPeerId[connectionId];
-    if (peerId == null) return false;
-    return _linksByPeerId[peerId]?.authenticated ?? false;
   }
 
   void _handleDocMessage(ProtocolMessage message, String fromConnectionId) {
@@ -304,6 +416,16 @@ class SyncRepository extends ChangeNotifier {
       originId: originId,
     );
     if (applied) {
+      final peerId = _connectionToPeerId[fromConnectionId];
+      final peerName = peerId == null
+          ? null
+          : _linksByPeerId[peerId]?.displayName;
+      _connectionLog.add(
+        'Applied ${message.type} revision $revision',
+        peerId: peerId,
+        peerName: peerName,
+        revision: revision,
+      );
       if (hadConflict && originId != instanceId) {
         onConflictMerged?.call();
       }
@@ -312,14 +434,12 @@ class SyncRepository extends ChangeNotifier {
   }
 
   void _relay(ProtocolMessage message, String fromConnectionId) {
-    _server.broadcastExcept(fromConnectionId, message);
     final fromPeerId = _connectionToPeerId[fromConnectionId];
-    for (final entry in _linksByPeerId.entries) {
-      if (entry.key == fromPeerId) continue;
-      final connId = entry.value.outboundConnectionId;
-      if (connId != null && connId != fromConnectionId) {
-        _sendOnConnection(connId, message);
-      }
+    for (final connId in _authenticatedConnectionIds(
+      exceptConnectionId: fromConnectionId,
+      exceptPeerId: fromPeerId,
+    )) {
+      _sendOnConnection(connId, message);
     }
   }
 
@@ -338,31 +458,26 @@ class SyncRepository extends ChangeNotifier {
     String? exceptConnectionId,
     String? exceptPeerId,
   }) {
-    if (exceptConnectionId != null) {
-      _server.broadcastExcept(exceptConnectionId, message);
-    } else {
-      _server.broadcastToAll(message);
-    }
-
-    for (final link in _linksByPeerId.values) {
-      if (!link.authenticated) continue;
-      if (link.peerId == exceptPeerId) continue;
-      final connId = link.outboundConnectionId;
-      if (connId != null && connId != exceptConnectionId) {
-        _sendOnConnection(connId, message);
-      }
+    for (final connId in _authenticatedConnectionIds(
+      exceptConnectionId: exceptConnectionId,
+      exceptPeerId: exceptPeerId,
+    )) {
+      _sendOnConnection(connId, message);
     }
   }
 
   void _sendOnConnection(String connectionId, ProtocolMessage message) {
+    final outboundMessage = _messageForConnection(connectionId, message);
     if (connectionId.startsWith('out_')) {
       final peerId = _connectionToPeerId[connectionId];
-      final socket = peerId != null ? _linksByPeerId[peerId]?.outboundSocket : null;
+      final socket = peerId != null
+          ? _linksByPeerId[peerId]?.outboundSocket
+          : null;
       if (socket != null && socket.readyState == WebSocket.open) {
-        socket.add(ProtocolCodec.encode(message));
+        socket.add(ProtocolCodec.encode(outboundMessage));
       }
     } else {
-      _server.send(connectionId, message);
+      _server.send(connectionId, outboundMessage);
     }
   }
 

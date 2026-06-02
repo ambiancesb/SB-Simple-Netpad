@@ -1,17 +1,10 @@
 class ProtocolMessage {
-  const ProtocolMessage({
-    required this.type,
-    required this.payload,
-  });
+  const ProtocolMessage({required this.type, required this.payload});
 
   final String type;
   final Map<String, dynamic> payload;
 
-  Map<String, dynamic> toJson() => {
-        'type': type,
-        'v': 1,
-        ...payload,
-      };
+  Map<String, dynamic> toJson() => {'type': type, 'v': 1, ...payload};
 
   factory ProtocolMessage.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String? ?? '';

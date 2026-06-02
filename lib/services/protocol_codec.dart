@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:netpad/core/models/protocol_message.dart';
 
 class ProtocolCodec {
-  static String encode(ProtocolMessage message) =>
-      jsonEncode(message.toJson());
+  static String encode(ProtocolMessage message) => jsonEncode(message.toJson());
 
   static ProtocolMessage? decode(String data) {
     try {

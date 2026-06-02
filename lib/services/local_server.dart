@@ -4,10 +4,8 @@ import 'dart:io';
 import 'package:netpad/services/protocol_codec.dart';
 import 'package:netpad/core/models/protocol_message.dart';
 
-typedef MessageHandler = void Function(
-  String connectionId,
-  ProtocolMessage message,
-);
+typedef MessageHandler =
+    void Function(String connectionId, ProtocolMessage message);
 
 typedef ConnectionClosedHandler = void Function(String connectionId);
 
@@ -44,10 +42,7 @@ class LocalServer {
     }
   }
 
-  void broadcastExcept(
-    String exceptConnectionId,
-    ProtocolMessage message,
-  ) {
+  void broadcastExcept(String exceptConnectionId, ProtocolMessage message) {
     final encoded = ProtocolCodec.encode(message);
     for (final entry in _sockets.entries) {
       if (entry.key == exceptConnectionId) continue;

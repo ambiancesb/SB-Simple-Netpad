@@ -14,7 +14,8 @@ class DocumentRepository extends ChangeNotifier {
   }) : _storage = storage;
 
   final String instanceId;
-  final void Function(int revision, String text, String originId) onLocalEditReady;
+  final void Function(int revision, String text, String originId)
+  onLocalEditReady;
   final NoteStorageService _storage;
 
   late final CodeController controller = CodeController(text: '');
@@ -89,10 +90,10 @@ class DocumentRepository extends ChangeNotifier {
   }
 
   Map<String, dynamic> snapshotPayload() => {
-        'revision': _revision,
-        'text': controller.text,
-        'originId': instanceId,
-      };
+    'revision': _revision,
+    'text': controller.text,
+    'originId': instanceId,
+  };
 
   @override
   void dispose() {

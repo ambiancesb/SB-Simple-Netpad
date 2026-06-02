@@ -67,13 +67,19 @@ Use two or more devices on the same LAN (physical devices recommended for Androi
 - **Desktop:** `Ctrl/Cmd + C`, `Ctrl/Cmd + V`, `Ctrl/Cmd + X`, `Ctrl/Cmd + A`
 - **Mobile:** long-press to use selection toolbar Copy/Paste/Cut/Select All
 
+## Phase 2 features
+
+- **Session tokens** — Post-pair sync and disconnect messages carry the session token issued during pairing.
+- **Connection log** — The peers drawer shows session-only connection and sync events, with a clear button.
+- **Pairing verification code** — Incoming pairing requests show a short code to compare between devices before accepting.
+
 See [ROADMAP.md](ROADMAP.md) for planned phases.
 
 ## How pairing works
 
 1. Open the **Peers** drawer (devices icon).
 2. Under **Nearby**, tap **Connect** on a discovered instance.
-3. On the other device, accept the **Connection request** dialog.
+3. On the other device, compare the verification code and accept the **Connection request** dialog.
 4. After acceptance, both sides exchange a document snapshot and stream debounced updates.
 
 Rejected requests never receive document data.

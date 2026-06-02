@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/app.dart';
+import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
@@ -18,6 +19,7 @@ Future<void> main() async {
   final displayName = config.displayName;
 
   final localServer = LocalServer();
+  final connectionLog = ConnectionLogRepository();
   final discovery = DiscoveryRepository(
     instanceId: instanceId,
     displayName: displayName,
@@ -39,11 +41,13 @@ Future<void> main() async {
     localServer: localServer,
     discovery: discovery,
     document: document,
+    connectionLog: connectionLog,
   );
 
   final pairing = PairingRepository(
     sync: sync,
     discovery: discovery,
+    connectionLog: connectionLog,
   );
 
   final saved = await noteStorage.load();
@@ -56,6 +60,7 @@ Future<void> main() async {
   runApp(
     NetpadApp(
       config: config,
+      connectionLog: connectionLog,
       discovery: discovery,
       document: document,
       sync: sync,

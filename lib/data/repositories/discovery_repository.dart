@@ -11,8 +11,8 @@ class DiscoveryRepository extends ChangeNotifier {
     required this.instanceId,
     required String displayName,
     required LocalServer localServer,
-  })  : _displayName = displayName,
-        _localServer = localServer;
+  }) : _displayName = displayName,
+       _localServer = localServer;
 
   final String instanceId;
   String _displayName;
@@ -33,11 +33,13 @@ class DiscoveryRepository extends ChangeNotifier {
   static const _maxResolveAttempts = 5;
   static const _refreshInterval = Duration(seconds: 12);
 
-  List<Peer> get discoveredPeers => _discovered.values.toList()
-    ..sort((a, b) => a.displayName.compareTo(b.displayName));
+  List<Peer> get discoveredPeers =>
+      _discovered.values.toList()
+        ..sort((a, b) => a.displayName.compareTo(b.displayName));
 
-  List<Peer> get connectedPeers => _connected.values.toList()
-    ..sort((a, b) => a.displayName.compareTo(b.displayName));
+  List<Peer> get connectedPeers =>
+      _connected.values.toList()
+        ..sort((a, b) => a.displayName.compareTo(b.displayName));
 
   int? get serverPort => _localServer.port;
 
@@ -45,7 +47,10 @@ class DiscoveryRepository extends ChangeNotifier {
     final port = await _localServer.start();
     await _startBroadcast(port);
     await _startDiscovery();
-    _refreshTimer = Timer.periodic(_refreshInterval, (_) => _refreshAllServices());
+    _refreshTimer = Timer.periodic(
+      _refreshInterval,
+      (_) => _refreshAllServices(),
+    );
     notifyListeners();
   }
 
@@ -83,27 +88,21 @@ class DiscoveryRepository extends ChangeNotifier {
     required int port,
     String? displayName,
   }) {
-    final peer = Peer.manual(
-      host: host,
-      port: port,
-      displayName: displayName,
-    );
+    final peer = Peer.manual(host: host, port: port, displayName: displayName);
     _discovered[peer.id] = peer;
     notifyListeners();
     return peer;
   }
 
   Future<void> _startDiscovery() async {
-    _discovery = BonsoirDiscovery(
-      type: kServiceType,
-      printLogs: kDebugMode,
-    );
+    _discovery = BonsoirDiscovery(type: kServiceType, printLogs: kDebugMode);
     await _discovery!.initialize();
     _discoverySub = _discovery!.eventStream!.listen(_onDiscoveryEvent);
     await _discovery!.start();
   }
 
-  String _serviceKey(BonsoirService service) => '${service.name}|${service.type}';
+  String _serviceKey(BonsoirService service) =>
+      '${service.name}|${service.type}';
 
   void _trackService(BonsoirService service) {
     _servicesByKey[_serviceKey(service)] = service;
@@ -152,7 +151,8 @@ class DiscoveryRepository extends ChangeNotifier {
       connectionState: _connected.containsKey(peer.id)
           ? PeerConnectionState.connected
           : (existing?.connectionState ?? PeerConnectionState.discovered),
-      resolveState: peer.hostAddresses.isNotEmpty ||
+      resolveState:
+          peer.hostAddresses.isNotEmpty ||
               (peer.hostname != null && peer.hostname!.isNotEmpty)
           ? PeerResolveState.resolved
           : (existing?.resolveState ?? PeerResolveState.resolving),
@@ -203,9 +203,7 @@ class DiscoveryRepository extends ChangeNotifier {
             final svc = _servicesByKey[key];
             return svc?.attributes['id'] == id;
           });
-          _servicesByKey.removeWhere(
-            (_, svc) => svc.attributes['id'] == id,
-          );
+          _servicesByKey.removeWhere((_, svc) => svc.attributes['id'] == id);
           if (!_connected.containsKey(id)) {
             _discovered.remove(id);
             notifyListeners();

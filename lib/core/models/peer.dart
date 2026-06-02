@@ -1,17 +1,8 @@
 import 'package:bonsoir/bonsoir.dart';
 
-enum PeerConnectionState {
-  discovered,
-  connecting,
-  pendingOutgoing,
-  connected,
-}
+enum PeerConnectionState { discovered, connecting, pendingOutgoing, connected }
 
-enum PeerResolveState {
-  resolving,
-  resolved,
-  failed,
-}
+enum PeerResolveState { resolving, resolved, failed }
 
 class Peer {
   Peer({

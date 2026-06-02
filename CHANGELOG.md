@@ -18,6 +18,10 @@ and this project currently tracks versions informally.
 - "This device" address banner with copy-to-clipboard support.
 - Auto-save and restore for note text and revision state.
 - Device rename flow that rebroadcasts discovery metadata without restart.
+- Session token enforcement for post-pair sync and disconnect messages.
+- Session-only connection log in the peers drawer.
+- Display-only pairing verification codes.
+- Basic copy/paste support via native selection and editor keyboard shortcuts.
 - Linux troubleshooting notes and dependency setup script.
 - Project roadmap in `ROADMAP.md`.
 

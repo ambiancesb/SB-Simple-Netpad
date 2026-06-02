@@ -113,10 +113,7 @@ class _ManualConnectDialogState extends State<_ManualConnectDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('Cancel'),
         ),
-        FilledButton(
-          onPressed: _submit,
-          child: const Text('Connect'),
-        ),
+        FilledButton(onPressed: _submit, child: const Text('Connect')),
       ],
     );
   }

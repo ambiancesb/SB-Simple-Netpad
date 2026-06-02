@@ -32,9 +32,9 @@ class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
     final text = '$_lanIp:$port';
     await Clipboard.setData(ClipboardData(text: text));
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Copied $text')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Copied $text')));
     }
   }
 
