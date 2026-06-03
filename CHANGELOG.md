@@ -26,11 +26,14 @@ and this project currently tracks versions informally.
 - Project roadmap in `ROADMAP.md`.
 
 ### Changed
+- Lowered Dart SDK constraint to `^3.10.0` and `bonsoir` to 6.x for Flutter 3.38 / Dart 3.10 toolchains.
+- Committed Android Gradle wrapper scripts and tuned IDE Gradle memory defaults.
 - Moved Flutter project contents to repository root.
 - Switched note persistence implementation to `shared_preferences` for better Linux build compatibility.
 - Hardened Linux CMake compiler selection and fallback behavior.
 
 ### Fixed
+- Android Studio project load: restore `gradlew`, stop gitignoring wrapper scripts, and remove committed `android/build` artifacts.
 - Linux discovery reliability improvements (re-resolve retries, endpoint handling, connect-time refresh).
 - Linux build breakages caused by JNI transitive dependencies.
 - Android Gradle compatibility issue with `bonsoir_android` Kotlin plugin application.

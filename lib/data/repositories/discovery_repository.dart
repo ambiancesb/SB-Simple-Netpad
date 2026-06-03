@@ -214,9 +214,7 @@ class DiscoveryRepository extends ChangeNotifier {
     }
   }
 
-  bool _hasEndpoint(BonsoirService service) =>
-      service.hostAddresses.isNotEmpty ||
-      (service.hostname != null && service.hostname!.isNotEmpty);
+  bool _hasEndpoint(BonsoirService service) => service.hasResolvedEndpoint;
 
   /// Re-resolve a peer before connecting (helps stale Linux Avahi cache).
   Future<Peer?> refreshPeerForConnect(String peerId) async {

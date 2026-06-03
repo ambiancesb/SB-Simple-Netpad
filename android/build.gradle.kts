@@ -19,7 +19,7 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
-// bonsoir_android 7.x uses kotlin { } without applying the Kotlin plugin (upstream bug).
+// bonsoir_android 6.x/7.x uses kotlin { } without applying the Kotlin plugin (upstream bug).
 subprojects {
     if (name == "bonsoir_android") {
         beforeEvaluate {

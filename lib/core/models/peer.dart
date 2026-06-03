@@ -1,4 +1,29 @@
+import 'dart:io';
+
 import 'package:bonsoir/bonsoir.dart';
+
+/// Maps [BonsoirService.host] (bonsoir 6.x) to [Peer] endpoint fields.
+extension BonsoirServiceEndpoints on BonsoirService {
+  List<String> get resolvedHostAddresses {
+    final h = host;
+    if (h == null || h.isEmpty) return const [];
+    final stripped = h.contains('%') ? h.substring(0, h.indexOf('%')) : h;
+    if (InternetAddress.tryParse(stripped) != null) return [h];
+    return const [];
+  }
+
+  String? get resolvedHostname {
+    final h = host;
+    if (h == null || h.isEmpty) return null;
+    final stripped = h.contains('%') ? h.substring(0, h.indexOf('%')) : h;
+    if (InternetAddress.tryParse(stripped) != null) return null;
+    return h;
+  }
+
+  bool get hasResolvedEndpoint =>
+      resolvedHostAddresses.isNotEmpty ||
+      (resolvedHostname != null && resolvedHostname!.isNotEmpty);
+}
 
 enum PeerConnectionState { discovered, connecting, pendingOutgoing, connected }
 
@@ -87,10 +112,9 @@ class Peer {
         : (service.port > 0 ? service.port : null);
     if (port == null) return null;
 
-    final hosts = List<String>.from(service.hostAddresses);
-    final hostname = service.hostname;
-    final hasEndpoint =
-        hosts.isNotEmpty || (hostname != null && hostname.isNotEmpty);
+    final hosts = service.resolvedHostAddresses;
+    final hostname = service.resolvedHostname;
+    final hasEndpoint = service.hasResolvedEndpoint;
 
     return Peer(
       id: id,

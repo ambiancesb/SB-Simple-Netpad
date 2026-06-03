@@ -13,7 +13,8 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 
 ## Requirements
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (stable)
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (stable, Dart 3.10+). The repo pins `bonsoir` 6.x for compatibility with Dart 3.10; upgrade to `bonsoir` 7.x after moving to Dart 3.11+.
+- **Android Studio:** open this repository root (not `android/` alone), install the Flutter and Dart plugins, then run `flutter pub get` before the first Gradle sync.
 - **Linux desktop build** (Flutter + CMake):
 
   ```bash
