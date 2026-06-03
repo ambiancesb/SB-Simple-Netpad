@@ -8,6 +8,10 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 | **2** | Done | Session token enforcement, connection log, pairing verification code |
 | **3** | Planned | Save/share files, incremental sync or CRDT, network-change listener |
 | **4** | Planned | TLS / pinned peers, optional shared “room” ID |
+| **5** | Planned | Multiple documents, note history, search |
+| **6** | Planned | Conflict UI, protocol version negotiation, heartbeat |
+| **7** | Planned | UX polish: find/replace, settings, theme, share sheet |
+| **8** | Planned | Code health: remove debug cruft, sync/relay tests |
 
 ---
 
@@ -52,8 +56,50 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 **Goal:** Safer on untrusted LANs and clearer multi-peer semantics.
 
 - [ ] **TLS** or Noise handshake; pin key at pair time.
+- [ ] **WSS upgrade milestone** — Ship plain ws -> wss as a standalone step before full Noise/pinning, since unencrypted ws:// is the current hard blocker for untrusted networks.
+- [ ] **Revoke / block peer** — Drop a previously paired peer (and refuse re-pair) without restarting the app.
 - [ ] Optional named **room** so not every instance on the LAN merges into one document.
 - [ ] Queue edits offline; merge on reconnect with user prompt if diverged.
+
+---
+
+## Phase 5 — Multiple documents and content
+
+**Goal:** Move beyond a single shared note.
+
+- [ ] **Multiple named notes / tabs** — Today there is one global note in [lib/data/repositories/document_repository.dart](lib/data/repositories/document_repository.dart); requires a document ID in `docSnapshot` / `docUpdate` payloads.
+- [ ] **Note history / versioning** — Local snapshots to recover text clobbered by "newer revision wins".
+- [ ] **Search** within and across notes.
+
+---
+
+## Phase 6 — Sync robustness and protocol
+
+**Goal:** Avoid silent data loss and brittle wire compatibility.
+
+- [ ] **Conflict resolution UI** — "Your version vs theirs" instead of silent tie-break by instance ID.
+- [ ] **Protocol version negotiation** — Handshake on connect; today `v:1` is hardcoded in [lib/core/constants.dart](lib/core/constants.dart) and [lib/core/models/protocol_message.dart](lib/core/models/protocol_message.dart).
+- [ ] **Heartbeat / dead-peer detection** — Prune half-open WebSockets.
+
+---
+
+## Phase 7 — UX and platform polish
+
+**Goal:** Make daily editing pleasant across platforms.
+
+- [ ] **Editor tools** — Find/replace, word-wrap toggle, adjustable font size (via `code_text_field`).
+- [ ] **Settings screen** consolidating device name, port, and theme.
+- [ ] **Dark/light theme** switch.
+- [ ] **Mobile share sheet** integration (complements the Phase 3 save/share work).
+
+---
+
+## Phase 8 — Code health and quality
+
+**Goal:** Reduce maintenance risk and harden the sync core.
+
+- [ ] **Remove debug logging cruft** — The `#region agent log` blocks and hardcoded path `/home/spencer/Coding Projects/...` in [lib/features/editor/editor_screen.dart](lib/features/editor/editor_screen.dart).
+- [ ] **Sync/relay tests** — Cover the merge and relay logic (currently only pairing code and connection log are tested).
 
 ---
 
