@@ -6,7 +6,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 |-------|--------|--------|
 | **1** | Done | Manual IP connect, persist note to disk, rebroadcast on device rename |
 | **2** | Done | Session token enforcement, connection log, pairing verification code |
-| **3** | Planned | Incremental sync or CRDT, network-change listener |
+| **3** | Planned | Save/share files, incremental sync or CRDT, network-change listener |
 | **4** | Planned | TLS / pinned peers, optional shared “room” ID |
 
 ---
@@ -35,8 +35,11 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 ## Phase 3 — Better collaboration
 
-**Goal:** Smoother multi-peer editing and network resilience.
+**Goal:** Smoother multi-peer editing, file workflows, and network resilience.
 
+- [ ] **Save to file** — Export the note to a user-chosen path (e.g. `.txt`) via the platform save/open dialog; optional “Save as” from the editor menu.
+- [ ] **Share note** — Send the current note (or exported file) through the OS share sheet on mobile and a desktop share/export action (email, Drive, adjacent apps, etc.).
+- [ ] **Open from file** — Load text from an existing file into the editor (with prompt if it would replace the live synced note).
 - [ ] **Incremental sync** (insert/delete ranges) or small CRDT instead of full-document replace.
 - [ ] **Network change listener** — Restart discovery/broadcast when interfaces change (not only periodic refresh).
 - [ ] Optional cursor / presence (who is connected).
@@ -58,7 +61,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 - Web platform
 - Cloud relay / WAN
-- End-to-end file open/save picker (beyond single auto-saved note)
+- Rich document formats (Markdown preview, Office, PDF) beyond plain text export
 
 ---
 
