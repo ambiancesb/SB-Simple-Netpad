@@ -7,7 +7,12 @@ and this project currently tracks versions informally.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-04
+
 ### Added
+- **Save to file** — Export the current note to a user-chosen path via the native save dialog (desktop).
+- **Open from file** — Load a text file into the editor, with confirmation before replacing a live synced note.
+- **Share note** — Send the current note through the OS share sheet / share dialog.
 - Initial Flutter app scaffold for Android, iOS, Windows, macOS, and Linux.
 - Line-numbered plain-text editor using `code_text_field`.
 - Local network discovery and broadcast using Bonsoir (`_sbnetpad._tcp`).
@@ -26,6 +31,7 @@ and this project currently tracks versions informally.
 - Project roadmap in `ROADMAP.md`.
 
 ### Changed
+- Pinned `path_provider_android` to 2.2.23 (pre-JNI) via `dependency_overrides`, since `share_plus` transitively pulls `path_provider` and newer `path_provider_android` uses JNI, which breaks Linux desktop builds.
 - Lowered Dart SDK constraint to `^3.10.0` and `bonsoir` to 6.x for Flutter 3.38 / Dart 3.10 toolchains.
 - Committed Android Gradle wrapper scripts and tuned IDE Gradle memory defaults.
 - Moved Flutter project contents to repository root.

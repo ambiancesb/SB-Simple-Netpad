@@ -1,7 +1,7 @@
 name: netpad
 description: SB Simple Netpad — LAN notepad with peer discovery and shared editing.
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ^3.10.0
@@ -16,8 +16,14 @@ dependencies:
   uuid: ^4.5.3
   provider: ^6.1.5+1
   shared_preferences: ^2.5.5
+  file_selector: ^1.1.0
+  share_plus: ^13.1.0
 
-# path_provider removed: path_provider_android pulls jni, which breaks Linux desktop builds.
+# share_plus transitively pulls path_provider. path_provider_android >=2.3.0 moved to
+# JNI (jni / jni_flutter), which breaks Linux desktop builds, so pin to the last
+# pre-JNI release. We only share plain text, so path_provider is not exercised at runtime.
+dependency_overrides:
+  path_provider_android: 2.2.23
 
 dev_dependencies:
   flutter_test:

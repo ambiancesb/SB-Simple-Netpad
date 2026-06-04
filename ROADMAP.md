@@ -41,9 +41,9 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 **Goal:** Smoother multi-peer editing, file workflows, and network resilience.
 
-- [ ] **Save to file** — Export the note to a user-chosen path (e.g. `.txt`) via the platform save/open dialog; optional “Save as” from the editor menu.
-- [ ] **Share note** — Send the current note (or exported file) through the OS share sheet on mobile and a desktop share/export action (email, Drive, adjacent apps, etc.).
-- [ ] **Open from file** — Load text from an existing file into the editor (with prompt if it would replace the live synced note).
+- [x] **Save to file** — Export the note to a user-chosen path (e.g. `.txt`) via the platform save/open dialog; optional “Save as” from the editor menu.
+- [x] **Share note** — Send the current note (or exported file) through the OS share sheet on mobile and a desktop share/export action (email, Drive, adjacent apps, etc.).
+- [x] **Open from file** — Load text from an existing file into the editor (with prompt if it would replace the live synced note).
 - [ ] **Incremental sync** (insert/delete ranges) or small CRDT instead of full-document replace.
 - [ ] **Network change listener** — Restart discovery/broadcast when interfaces change (not only periodic refresh).
 - [ ] Optional cursor / presence (who is connected).

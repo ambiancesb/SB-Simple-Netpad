@@ -53,6 +53,20 @@ class DocumentRepository extends ChangeNotifier {
     });
   }
 
+  /// Replaces the document with text loaded from an external file (local edit).
+  void loadExternalText(String text) {
+    _revision++;
+    _applyingRemote = true;
+    controller.value = controller.value.copyWith(
+      text: text,
+      selection: const TextSelection.collapsed(offset: 0),
+    );
+    _applyingRemote = false;
+    onLocalEditReady(_revision, text, instanceId);
+    _scheduleSave();
+    notifyListeners();
+  }
+
   /// Persists immediately (e.g. app backgrounded).
   Future<void> flushSave() async {
     _saveDebounce?.cancel();
