@@ -5,9 +5,11 @@ import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
+import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/local_server.dart';
 import 'package:netpad/services/note_storage_service.dart';
+import 'package:netpad/services/tls_identity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -18,7 +20,11 @@ Future<void> main() async {
   final instanceId = config.instanceId;
   final displayName = config.displayName;
 
-  final localServer = LocalServer();
+  // Generated once and persisted; first launch is slightly slower.
+  final tlsIdentity = await TlsIdentity.loadOrCreate(prefs);
+  final trustStore = TrustStore(prefs);
+
+  final localServer = LocalServer(securityContext: tlsIdentity.serverContext);
   final connectionLog = ConnectionLogRepository();
   final discovery = DiscoveryRepository(
     instanceId: instanceId,
@@ -43,6 +49,7 @@ Future<void> main() async {
     discovery: discovery,
     document: document,
     connectionLog: connectionLog,
+    trustStore: trustStore,
   );
 
   document.onCursorMoved = sync.broadcastPresence;
@@ -51,6 +58,7 @@ Future<void> main() async {
     sync: sync,
     discovery: discovery,
     connectionLog: connectionLog,
+    trustStore: trustStore,
   );
 
   final saved = await noteStorage.load();
@@ -63,6 +71,8 @@ Future<void> main() async {
   runApp(
     NetpadApp(
       config: config,
+      tlsIdentity: tlsIdentity,
+      trustStore: trustStore,
       connectionLog: connectionLog,
       discovery: discovery,
       document: document,

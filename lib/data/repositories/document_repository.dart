@@ -99,6 +99,21 @@ class DocumentRepository extends ChangeNotifier {
     await _storage.save(controller.text, _revision);
   }
 
+  /// Applies a remote document unconditionally (used to resolve a reconnect
+  /// divergence in favour of the peer).
+  void forceApplyRemote({required int revision, required String text}) {
+    _apply(revision, text);
+  }
+
+  /// Bumps the revision above [atLeastRevision] and rebroadcasts the local text
+  /// (used to resolve a reconnect divergence in favour of this device).
+  void bumpAndBroadcast(int atLeastRevision) {
+    _revision = (atLeastRevision > _revision ? atLeastRevision : _revision) + 1;
+    onLocalEditReady(_revision, controller.text, instanceId);
+    _scheduleSave();
+    notifyListeners();
+  }
+
   bool applyRemote({
     required int revision,
     required String text,

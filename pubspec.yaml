@@ -18,6 +18,8 @@ dependencies:
   shared_preferences: ^2.5.5
   file_picker: ^8.3.7
   share_plus: ^10.1.4
+  basic_utils: ^5.8.2
+  crypto: ^3.0.7
 
 # path_provider is removed as a direct dep, but share_plus pulls it transitively.
 # Newer platform implementations break the build via native dependencies:

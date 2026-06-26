@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:netpad/core/models/divergence_choice.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
+import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/features/editor/editor_screen.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
 import 'package:netpad/features/peers/peers_panel.dart';
 import 'package:netpad/services/file_service.dart';
 import 'package:netpad/services/instance_config.dart';
+import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -19,6 +22,8 @@ class NetpadApp extends StatelessWidget {
   const NetpadApp({
     super.key,
     required this.config,
+    required this.tlsIdentity,
+    required this.trustStore,
     required this.connectionLog,
     required this.discovery,
     required this.document,
@@ -27,6 +32,8 @@ class NetpadApp extends StatelessWidget {
   });
 
   final InstanceConfig config;
+  final TlsIdentity tlsIdentity;
+  final TrustStore trustStore;
   final ConnectionLogRepository connectionLog;
   final DiscoveryRepository discovery;
   final DocumentRepository document;
@@ -38,6 +45,8 @@ class NetpadApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider.value(value: config),
+        Provider.value(value: tlsIdentity),
+        ChangeNotifierProvider.value(value: trustStore),
         ChangeNotifierProvider.value(value: connectionLog),
         ChangeNotifierProvider.value(value: discovery),
         ChangeNotifierProvider.value(value: document),
@@ -71,7 +80,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    context.read<SyncRepository>().onConflictMerged = () {
+    final sync = context.read<SyncRepository>();
+    sync.onConflictMerged = () {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -80,6 +90,42 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
         ),
       );
     };
+    sync.onSnapshotDivergence = _resolveDivergence;
+  }
+
+  Future<DivergenceChoice> _resolveDivergence(
+    String peerName,
+    int localRevision,
+    String localText,
+    int remoteRevision,
+    String remoteText,
+  ) async {
+    if (!mounted) return DivergenceChoice.keepMine;
+    final choice = await showDialog<DivergenceChoice>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Notes have diverged'),
+        content: Text(
+          'Your note and $peerName\'s note changed differently while '
+          'disconnected.\n\n'
+          'Yours: ${localText.length} characters\n'
+          '$peerName: ${remoteText.length} characters\n\n'
+          'Which version should both devices keep?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, DivergenceChoice.takeTheirs),
+            child: Text('Use $peerName\'s'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, DivergenceChoice.keepMine),
+            child: const Text('Keep mine'),
+          ),
+        ],
+      ),
+    );
+    return choice ?? DivergenceChoice.keepMine;
   }
 
   @override

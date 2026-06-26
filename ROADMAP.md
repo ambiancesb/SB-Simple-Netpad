@@ -7,7 +7,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 | **1** | Done | Manual IP connect, persist note to disk, rebroadcast on device rename |
 | **2** | Done | Session token enforcement, connection log, pairing verification code |
 | **3** | Done | Save/open/share files, network-change listener, room ID, cursor presence (CRDT deferred) |
-| **4** | Planned | TLS / pinned peers, optional shared “room” ID |
+| **4** | Done | wss/TLS with pinned certs (TOFU), revoke/block peer, reconnect divergence prompt |
 | **5** | Planned | Multiple documents, note history, search |
 | **6** | Planned | Conflict UI, protocol version negotiation, heartbeat |
 | **7** | Planned | UX polish: find/replace, settings, theme, share sheet |
@@ -55,11 +55,11 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 **Goal:** Safer on untrusted LANs and clearer multi-peer semantics.
 
-- [ ] **TLS** or Noise handshake; pin key at pair time.
-- [ ] **WSS upgrade milestone** — Ship plain ws -> wss as a standalone step before full Noise/pinning, since unencrypted ws:// is the current hard blocker for untrusted networks.
-- [ ] **Revoke / block peer** — Drop a previously paired peer (and refuse re-pair) without restarting the app.
-- [ ] Optional named **room** so not every instance on the LAN merges into one document.
-- [ ] Queue edits offline; merge on reconnect with user prompt if diverged.
+- [x] **TLS** — Each device generates a persisted self-signed certificate and serves `wss://`. Peers pin the certificate fingerprint on first connect (TOFU); a mismatch later refuses the connection. (Noise handshake not pursued — TLS covers the channel.)
+- [x] **WSS upgrade milestone** — All peer traffic is now `wss://` instead of `ws://`.
+- [x] **Revoke / block peer** — Block from the peers drawer: disconnects, forgets the pinned cert, and refuses re-pair (inbound + outbound) until unblocked. Blocklist persists.
+- [x] Optional named **room** so not every instance on the LAN merges into one document. *(Delivered in Phase 3.)*
+- [x] Queue edits offline; merge on reconnect with user prompt if diverged — offline edits persist and bump the revision; on reconnect the snapshot exchange detects divergence and prompts (Keep mine / Use theirs) on one deterministic side so both devices converge.
 
 ---
 

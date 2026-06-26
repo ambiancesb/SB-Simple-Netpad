@@ -4,6 +4,7 @@ import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
+import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/services/pairing_verification_code.dart';
 
 class PairingRepository extends ChangeNotifier {
@@ -11,8 +12,10 @@ class PairingRepository extends ChangeNotifier {
     required SyncRepository sync,
     required DiscoveryRepository discovery,
     required ConnectionLogRepository connectionLog,
+    required TrustStore trustStore,
   }) : _sync = sync,
-       _discovery = discovery {
+       _discovery = discovery,
+       _trustStore = trustStore {
     _connectionLog = connectionLog;
     _sync.onIncomingPairRequest = _onIncomingPairRequest;
     _sync.onPairRequestResolved = _onPairRequestResolved;
@@ -20,6 +23,7 @@ class PairingRepository extends ChangeNotifier {
 
   final SyncRepository _sync;
   final DiscoveryRepository _discovery;
+  final TrustStore _trustStore;
   late final ConnectionLogRepository _connectionLog;
 
   final List<PairRequest> _pendingIncoming = [];
@@ -76,6 +80,22 @@ class PairingRepository extends ChangeNotifier {
 
   void disconnectPeer(String peerId) {
     _sync.disconnectPeer(peerId);
+  }
+
+  /// Drops any active connection, forgets the pinned cert, and refuses re-pair.
+  Future<void> blockPeer(String peerId, String displayName) async {
+    _sync.disconnectPeer(peerId);
+    await _trustStore.unpin(peerId);
+    await _trustStore.block(peerId, displayName);
+    _connectionLog.add('Blocked $displayName', peerId: peerId, peerName: displayName);
+    notifyListeners();
+  }
+
+  Future<void> unblockPeer(String peerId) async {
+    final name = _trustStore.blocked[peerId] ?? peerId;
+    await _trustStore.unblock(peerId);
+    _connectionLog.add('Unblocked $name', peerId: peerId, peerName: name);
+    notifyListeners();
   }
 
   void _onIncomingPairRequest(

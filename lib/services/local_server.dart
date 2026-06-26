@@ -10,6 +10,11 @@ typedef MessageHandler =
 typedef ConnectionClosedHandler = void Function(String connectionId);
 
 class LocalServer {
+  LocalServer({required this.securityContext});
+
+  /// TLS identity used to serve `wss://` (self-signed, pinned by peers).
+  final SecurityContext securityContext;
+
   HttpServer? _server;
   final Map<String, WebSocket> _sockets = {};
   int _connCounter = 0;
@@ -21,7 +26,11 @@ class LocalServer {
 
   Future<int> start() async {
     if (_server != null) return _server!.port;
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
+    _server = await HttpServer.bindSecure(
+      InternetAddress.anyIPv4,
+      0,
+      securityContext,
+    );
     _server!.listen(_handleRequest);
     return _server!.port;
   }

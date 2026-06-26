@@ -5,6 +5,7 @@ import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
+import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/features/peers/manual_connect_dialog.dart';
 import 'package:netpad/features/peers/this_device_banner.dart';
 import 'package:provider/provider.dart';
@@ -17,10 +18,18 @@ class PeersPanel extends StatelessWidget {
     final discovery = context.watch<DiscoveryRepository>();
     final connectionLog = context.watch<ConnectionLogRepository>();
     final sync = context.watch<SyncRepository>();
+    final trust = context.watch<TrustStore>();
     final pairing = context.read<PairingRepository>();
 
+    final connected = discovery.connectedPeers
+        .where((p) => !trust.isBlocked(p.id))
+        .toList();
     final nearby = discovery.discoveredPeers
-        .where((p) => p.connectionState != PeerConnectionState.connected)
+        .where(
+          (p) =>
+              p.connectionState != PeerConnectionState.connected &&
+              !trust.isBlocked(p.id),
+        )
         .toList();
 
     return ListView(
@@ -36,16 +45,21 @@ class PeersPanel extends StatelessWidget {
           ),
         ),
         _sectionHeader(context, 'Connected'),
-        if (discovery.connectedPeers.isEmpty)
-          const _EmptyHint('No active connections'),
-        ...discovery.connectedPeers.map(
+        if (connected.isEmpty) const _EmptyHint('No active connections'),
+        ...connected.map(
           (peer) => _PeerTile(
             peer: peer,
             presence: sync.presence[peer.id],
-            trailing: IconButton(
-              icon: const Icon(Icons.link_off, size: 20),
-              tooltip: 'Disconnect',
-              onPressed: () => pairing.disconnectPeer(peer.id),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.link_off, size: 20),
+                  tooltip: 'Disconnect',
+                  onPressed: () => pairing.disconnectPeer(peer.id),
+                ),
+                _BlockButton(peer: peer),
+              ],
             ),
           ),
         ),
@@ -58,12 +72,20 @@ class PeersPanel extends StatelessWidget {
         ...nearby.map(
           (peer) => _PeerTile(
             peer: peer,
-            trailing: _ConnectButton(
-              peer: peer,
-              onConnect: () => _connect(context, peer),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _ConnectButton(
+                  peer: peer,
+                  onConnect: () => _connect(context, peer),
+                ),
+                _BlockButton(peer: peer),
+              ],
             ),
           ),
         ),
+        const Divider(height: 24),
+        _BlockedSection(blocked: trust.blocked),
         const Divider(height: 24),
         _ConnectionLogSection(connectionLog: connectionLog),
       ],
@@ -209,6 +231,83 @@ class _PeerTile extends StatelessWidget {
       title: Text(peer.displayName),
       subtitle: Text(subtitle),
       trailing: trailing,
+    );
+  }
+}
+
+class _BlockButton extends StatelessWidget {
+  const _BlockButton({required this.peer});
+
+  final Peer peer;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.block, size: 20),
+      tooltip: 'Block',
+      onPressed: () async {
+        final pairing = context.read<PairingRepository>();
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Block ${peer.displayName}?'),
+            content: const Text(
+              'This disconnects the device, forgets its pinned certificate, and '
+              'refuses future connection requests until you unblock it.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Block'),
+              ),
+            ],
+          ),
+        );
+        if (confirmed == true) {
+          await pairing.blockPeer(peer.id, peer.displayName);
+        }
+      },
+    );
+  }
+}
+
+class _BlockedSection extends StatelessWidget {
+  const _BlockedSection({required this.blocked});
+
+  final Map<String, String> blocked;
+
+  @override
+  Widget build(BuildContext context) {
+    final pairing = context.read<PairingRepository>();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Text(
+            'Blocked',
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+        if (blocked.isEmpty) const _EmptyHint('No blocked devices'),
+        ...blocked.entries.map(
+          (entry) => ListTile(
+            dense: true,
+            leading: const Icon(Icons.block, size: 18, color: Colors.red),
+            title: Text(entry.value),
+            trailing: TextButton(
+              onPressed: () => pairing.unblockPeer(entry.key),
+              child: const Text('Unblock'),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

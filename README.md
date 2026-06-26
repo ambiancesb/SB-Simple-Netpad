@@ -115,9 +115,16 @@ Rejected requests never receive document data.
 
 Main entry: [`lib/main.dart`](lib/main.dart).
 
+## Phase 4 features (security)
+
+- **Encrypted transport** — Peers communicate over `wss://` (TLS). Each device generates a persisted self-signed certificate on first launch.
+- **Certificate pinning (TOFU)** — The first time you connect to a peer, its certificate fingerprint is pinned. If that fingerprint ever changes, the connection is refused (possible impersonation). The accepting device shows its own security code in the pairing dialog so you can compare.
+- **Block / unblock peers** — From the peers drawer, block a device to disconnect it, forget its pinned certificate, and refuse future requests (both directions) until you unblock it. The blocklist persists across restarts.
+- **Reconnect divergence prompt** — If your note and a peer's note changed differently while disconnected, on reconnect one device prompts you to keep yours or use theirs, and both devices converge on the choice.
+
 ## Security note
 
-v1 uses unencrypted `ws://` on the local network. Do not use on untrusted networks.
+Traffic is encrypted with TLS (`wss://`) and peers are certificate-pinned on first use (TOFU). Because certificates are self-signed, the very first connection is trusted on first use — compare the security code shown in the pairing dialog if you are on an untrusted network. There is no central CA; trust is established per-device at pair time.
 
 ## Changelog
 

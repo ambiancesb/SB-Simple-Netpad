@@ -2,16 +2,19 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:netpad/core/models/divergence_choice.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/models/peer_presence.dart';
 import 'package:netpad/core/models/protocol_message.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
+import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/services/local_server.dart';
 import 'package:netpad/services/pairing_verification_code.dart';
 import 'package:netpad/services/peer_host_resolver.dart';
 import 'package:netpad/services/protocol_codec.dart';
+import 'package:netpad/services/tls_identity.dart';
 import 'package:uuid/uuid.dart';
 
 class _PeerLink {
@@ -30,6 +33,10 @@ class _PeerLink {
   String? outboundConnectionId;
   WebSocket? outboundSocket;
   StreamSubscription<dynamic>? outboundSub;
+
+  /// Server cert fingerprint captured during the TLS handshake, pinned on
+  /// successful pairing (TOFU).
+  String? pendingCertFingerprint;
 }
 
 class SyncRepository extends ChangeNotifier {
@@ -40,11 +47,13 @@ class SyncRepository extends ChangeNotifier {
     required DiscoveryRepository discovery,
     required DocumentRepository document,
     required ConnectionLogRepository connectionLog,
+    required TrustStore trustStore,
   }) : _displayName = displayName,
        _server = localServer,
        _discovery = discovery,
        _document = document,
-       _connectionLog = connectionLog {
+       _connectionLog = connectionLog,
+       _trustStore = trustStore {
     _server.onMessage = _onInboundMessage;
     _server.onConnectionClosed = _onInboundClosed;
   }
@@ -56,6 +65,9 @@ class SyncRepository extends ChangeNotifier {
   final DiscoveryRepository _discovery;
   final DocumentRepository _document;
   final ConnectionLogRepository _connectionLog;
+  final TrustStore _trustStore;
+
+  bool _divergencePromptActive = false;
 
   final Map<String, _PeerLink> _linksByPeerId = {};
   final Map<String, String> _connectionToPeerId = {};
@@ -74,6 +86,16 @@ class SyncRepository extends ChangeNotifier {
   onIncomingPairRequest;
   void Function(String peerId, bool accepted)? onPairRequestResolved;
   void Function()? onConflictMerged;
+
+  /// Asked when a reconnecting peer's note diverges from the local one.
+  Future<DivergenceChoice> Function(
+    String peerName,
+    int localRevision,
+    String localText,
+    int remoteRevision,
+    String remoteText,
+  )?
+  onSnapshotDivergence;
 
   void updateDisplayName(String name) {
     _displayName = name;
@@ -137,6 +159,9 @@ class SyncRepository extends ChangeNotifier {
   }
 
   Future<void> connectAndRequestPair(Peer peer) async {
+    if (_trustStore.isBlocked(peer.id)) {
+      throw StateError('${peer.displayName} is blocked. Unblock it to connect.');
+    }
     final refreshed = peer.isManual
         ? peer
         : await _discovery.refreshPeerForConnect(peer.id) ?? peer;
@@ -150,8 +175,39 @@ class SyncRepository extends ChangeNotifier {
     _discovery.markPeerConnecting(peer.id);
     final requestId = const Uuid().v4();
     final hostInUri = PeerHostResolver.formatForWebSocket(host);
-    final uri = Uri.parse('ws://$hostInUri:${refreshed.port}/ws');
-    final socket = await WebSocket.connect(uri.toString());
+    final uri = Uri.parse('wss://$hostInUri:${refreshed.port}/ws');
+
+    // Pin the server certificate (TOFU): accept any cert the first time and
+    // remember its fingerprint; afterwards require it to match the pin.
+    final httpClient = HttpClient(
+      context: SecurityContext(withTrustedRoots: false),
+    );
+    String? capturedFingerprint;
+    var pinMismatch = false;
+    httpClient.badCertificateCallback = (cert, certHost, certPort) {
+      final fingerprint = fingerprintFromDer(cert.der);
+      final pinned = _trustStore.pinnedFingerprint(peer.id);
+      if (pinned != null && pinned != fingerprint) {
+        pinMismatch = true;
+        return false;
+      }
+      capturedFingerprint = fingerprint;
+      return true;
+    };
+
+    final WebSocket socket;
+    try {
+      socket = await WebSocket.connect(uri.toString(), customClient: httpClient);
+    } catch (e) {
+      _discovery.markPeerDisconnected(peer.id);
+      if (pinMismatch) {
+        throw StateError(
+          'Certificate for ${peer.displayName} does not match the pinned one. '
+          'Possible impersonation — connection refused.',
+        );
+      }
+      rethrow;
+    }
     final connectionId = 'out_${peer.id}';
     _pendingOutboundRequestId[connectionId] = requestId;
 
@@ -161,6 +217,7 @@ class SyncRepository extends ChangeNotifier {
       outboundConnectionId: connectionId,
     );
     link.outboundSocket = socket;
+    link.pendingCertFingerprint = capturedFingerprint;
     _linksByPeerId[peer.id] = link;
     _connectionToPeerId[connectionId] = peer.id;
 
@@ -340,8 +397,24 @@ class SyncRepository extends ChangeNotifier {
         final requestId = message.payload['requestId'] as String? ?? '';
         final fromId = message.payload['fromId'] as String? ?? '';
         final fromName = message.payload['fromName'] as String? ?? 'Unknown';
-        onIncomingPairRequest?.call(fromId, fromName, requestId, connectionId);
         _connectionToPeerId[connectionId] = fromId;
+        if (_trustStore.isBlocked(fromId)) {
+          _sendOnConnection(
+            connectionId,
+            ProtocolMessage(
+              type: MessageTypes.pairResponse,
+              payload: {'requestId': requestId, 'accepted': false},
+            ),
+          );
+          _connectionLog.add(
+            'Refused blocked peer $fromName',
+            peerId: fromId,
+            peerName: fromName,
+          );
+          unawaited(_server.closeConnection(connectionId));
+          return;
+        }
+        onIncomingPairRequest?.call(fromId, fromName, requestId, connectionId);
       case MessageTypes.pairResponse:
         final accepted = message.payload['accepted'] as bool? ?? false;
         final peerId = _connectionToPeerId[connectionId];
@@ -384,6 +457,18 @@ class SyncRepository extends ChangeNotifier {
         if (peer != null) {
           _discovery.markPeerConnected(peer);
         }
+        // TOFU: pin the server cert we saw when we initiated this connection.
+        if (isOutbound && link.pendingCertFingerprint != null) {
+          final fingerprint = link.pendingCertFingerprint!;
+          final isNew = !_trustStore.hasPin(peerId);
+          unawaited(_trustStore.pin(peerId, fingerprint));
+          _connectionLog.add(
+            '${isNew ? 'Pinned' : 'Verified'} ${link.displayName} security code '
+            '${shortFingerprint(fingerprint)}',
+            peerId: peerId,
+            peerName: link.displayName,
+          );
+        }
         _connectionLog.add(
           'Pairing complete with ${link.displayName}',
           peerId: peerId,
@@ -391,16 +476,14 @@ class SyncRepository extends ChangeNotifier {
         );
         _sendDocSnapshot(connectionId);
       case MessageTypes.docSnapshot:
+        if (!_hasValidSessionToken(connectionId, message)) {
+          _logTokenRejected(connectionId, message.type);
+          return;
+        }
+        unawaited(_handleSnapshot(message, connectionId));
       case MessageTypes.docUpdate:
         if (!_hasValidSessionToken(connectionId, message)) {
-          final peerId = _connectionToPeerId[connectionId];
-          _connectionLog.add(
-            'Rejected ${message.type}: invalid session token',
-            peerId: peerId,
-            peerName: peerId == null
-                ? null
-                : _linksByPeerId[peerId]?.displayName,
-          );
+          _logTokenRejected(connectionId, message.type);
           return;
         }
         _handleDocMessage(message, connectionId);
@@ -439,6 +522,83 @@ class SyncRepository extends ChangeNotifier {
       updatedAt: DateTime.now(),
     );
     notifyListeners();
+  }
+
+  void _logTokenRejected(String connectionId, String type) {
+    final peerId = _connectionToPeerId[connectionId];
+    _connectionLog.add(
+      'Rejected $type: invalid session token',
+      peerId: peerId,
+      peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
+    );
+  }
+
+  /// Handles a document snapshot received at pair/reconnect time. If the local
+  /// note has diverged from the peer's, prompt the user (on one deterministic
+  /// side) instead of silently merging.
+  Future<void> _handleSnapshot(
+    ProtocolMessage message,
+    String fromConnectionId,
+  ) async {
+    final revision = message.payload['revision'] as int? ?? 0;
+    final text = message.payload['text'] as String? ?? '';
+    final originId = message.payload['originId'] as String? ?? '';
+    final localText = _document.text;
+
+    final diverged =
+        text != localText &&
+        localText.trim().isNotEmpty &&
+        text.trim().isNotEmpty;
+
+    // Only the lexicographically-smaller instance prompts, so both devices
+    // converge on one decision instead of fighting.
+    final shouldPrompt =
+        diverged &&
+        onSnapshotDivergence != null &&
+        !_divergencePromptActive &&
+        instanceId.compareTo(originId) < 0;
+
+    if (!shouldPrompt) {
+      _handleDocMessage(message, fromConnectionId);
+      return;
+    }
+
+    final peerId = _connectionToPeerId[fromConnectionId];
+    final peerName = peerId == null
+        ? 'peer'
+        : (_linksByPeerId[peerId]?.displayName ?? 'peer');
+
+    _divergencePromptActive = true;
+    final DivergenceChoice choice;
+    try {
+      choice = await onSnapshotDivergence!(
+        peerName,
+        _document.revision,
+        localText,
+        revision,
+        text,
+      );
+    } finally {
+      _divergencePromptActive = false;
+    }
+
+    if (choice == DivergenceChoice.takeTheirs) {
+      _document.forceApplyRemote(revision: revision, text: text);
+      _relay(message, fromConnectionId);
+      _connectionLog.add(
+        'Reconnect divergence: used $peerName\'s version',
+        peerId: peerId,
+        peerName: peerName,
+        revision: revision,
+      );
+    } else {
+      _document.bumpAndBroadcast(revision);
+      _connectionLog.add(
+        'Reconnect divergence: kept local version',
+        peerId: peerId,
+        peerName: peerName,
+      );
+    }
   }
 
   void _handleDocMessage(ProtocolMessage message, String fromConnectionId) {
