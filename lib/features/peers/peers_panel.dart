@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/core/models/peer.dart';
+import 'package:netpad/core/models/peer_presence.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
+import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/features/peers/manual_connect_dialog.dart';
 import 'package:netpad/features/peers/this_device_banner.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,7 @@ class PeersPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final discovery = context.watch<DiscoveryRepository>();
     final connectionLog = context.watch<ConnectionLogRepository>();
+    final sync = context.watch<SyncRepository>();
     final pairing = context.read<PairingRepository>();
 
     final nearby = discovery.discoveredPeers
@@ -38,6 +41,7 @@ class PeersPanel extends StatelessWidget {
         ...discovery.connectedPeers.map(
           (peer) => _PeerTile(
             peer: peer,
+            presence: sync.presence[peer.id],
             trailing: IconButton(
               icon: const Icon(Icons.link_off, size: 20),
               tooltip: 'Disconnect',
@@ -177,10 +181,15 @@ String _peerSubtitle(Peer peer) {
 }
 
 class _PeerTile extends StatelessWidget {
-  const _PeerTile({required this.peer, required this.trailing});
+  const _PeerTile({
+    required this.peer,
+    required this.trailing,
+    this.presence,
+  });
 
   final Peer peer;
   final Widget trailing;
+  final PeerPresence? presence;
 
   @override
   Widget build(BuildContext context) {
@@ -190,11 +199,15 @@ class _PeerTile extends StatelessWidget {
       _ => peer.isManual ? Colors.blue : Colors.grey,
     };
 
+    final subtitle = presence == null
+        ? _peerSubtitle(peer)
+        : '${_peerSubtitle(peer)} • ${presence!.label}';
+
     return ListTile(
       dense: true,
       leading: Icon(Icons.circle, size: 10, color: color),
       title: Text(peer.displayName),
-      subtitle: Text(_peerSubtitle(peer)),
+      subtitle: Text(subtitle),
       trailing: trailing,
     );
   }

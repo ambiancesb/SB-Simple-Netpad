@@ -23,4 +23,5 @@ abstract final class MessageTypes {
   static const docSnapshot = 'doc_snapshot';
   static const docUpdate = 'doc_update';
   static const peerDisconnect = 'peer_disconnect';
+  static const presence = 'presence';
 }

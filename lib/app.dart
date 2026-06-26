@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
@@ -7,9 +8,16 @@ import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/features/editor/editor_screen.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
 import 'package:netpad/features/peers/peers_panel.dart';
+<<<<<<< Updated upstream
 import 'package:netpad/services/file_transfer_service.dart';
+=======
+import 'package:netpad/services/file_service.dart';
+>>>>>>> Stashed changes
 import 'package:netpad/services/instance_config.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+
+enum _FileAction { save, open, share }
 
 class NetpadApp extends StatelessWidget {
   const NetpadApp({
@@ -61,7 +69,11 @@ class _HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+<<<<<<< Updated upstream
   final FileTransferService _fileService = FileTransferService();
+=======
+  final FileService _fileService = const FileService();
+>>>>>>> Stashed changes
 
   @override
   void initState() {
@@ -114,6 +126,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               label: Text('$connected connected'),
             ),
           ),
+<<<<<<< Updated upstream
           PopupMenuButton<String>(
             icon: const Icon(Icons.description_outlined),
             tooltip: 'File',
@@ -131,13 +144,40 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               const PopupMenuItem(
                 value: 'share',
                 child: Text('Share note…'),
+=======
+          PopupMenuButton<_FileAction>(
+            icon: const Icon(Icons.description_outlined),
+            tooltip: 'File',
+            onSelected: (action) => _onFileAction(context, action),
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: _FileAction.save,
+                child: ListTile(
+                  leading: Icon(Icons.save_alt),
+                  title: Text('Save to file…'),
+                ),
+              ),
+              PopupMenuItem(
+                value: _FileAction.open,
+                child: ListTile(
+                  leading: Icon(Icons.folder_open),
+                  title: Text('Open file…'),
+                ),
+              ),
+              PopupMenuItem(
+                value: _FileAction.share,
+                child: ListTile(
+                  leading: Icon(Icons.ios_share),
+                  title: Text('Share note'),
+                ),
+>>>>>>> Stashed changes
               ),
             ],
           ),
           IconButton(
             icon: const Icon(Icons.settings),
-            tooltip: 'Device name',
-            onPressed: () => _editDeviceName(context, config),
+            tooltip: 'Settings',
+            onPressed: () => _editSettings(context, config),
           ),
           IconButton(
             icon: const Icon(Icons.devices),
@@ -164,7 +204,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'LAN notepad',
+                      'LAN notepad · room "${discovery.roomId}"',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     const SizedBox(height: 4),
@@ -184,25 +224,35 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> _editDeviceName(
+  Future<void> _editSettings(
     BuildContext context,
     InstanceConfig config,
   ) async {
-    final controller = TextEditingController(text: config.displayName);
-    final result = await showDialog<String>(
+    final nameController = TextEditingController(text: config.displayName);
+    final roomController = TextEditingController(text: config.roomId);
+    final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Device name'),
+        title: const Text('Settings'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
-              controller: controller,
+              controller: nameController,
               decoration: const InputDecoration(
+                labelText: 'Device name',
                 hintText: 'Name shown to other devices',
               ),
               autofocus: true,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: roomController,
+              decoration: const InputDecoration(
+                labelText: 'Session / room',
+                hintText: 'Only peers in the same room are discovered',
+              ),
             ),
             const SizedBox(height: 12),
             Text(
@@ -213,28 +263,121 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx),
+            onPressed: () => Navigator.pop(ctx, false),
             child: const Text('Cancel'),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(ctx, controller.text),
+            onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Save'),
           ),
         ],
       ),
     );
-    if (result != null && context.mounted) {
-      final discovery = context.read<DiscoveryRepository>();
-      final sync = context.read<SyncRepository>();
-      await config.setDisplayName(result);
-      final name = config.displayName;
-      await discovery.updateDisplayName(name);
-      sync.updateDisplayName(name);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Device name updated to "$name"')),
+    if (result != true || !context.mounted) return;
+
+    final discovery = context.read<DiscoveryRepository>();
+    final sync = context.read<SyncRepository>();
+    final previousRoom = config.roomId;
+
+    await config.setDisplayName(nameController.text);
+    await config.setRoomId(roomController.text);
+    final name = config.displayName;
+    final room = config.roomId;
+
+    await discovery.updateDisplayName(name);
+    sync.updateDisplayName(name);
+    if (room != previousRoom) {
+      await discovery.updateRoom(room);
+    }
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Settings saved · "$name" · room "$room"')),
+      );
+    }
+  }
+
+  Future<void> _onFileAction(BuildContext context, _FileAction action) async {
+    switch (action) {
+      case _FileAction.save:
+        await _saveNote(context);
+      case _FileAction.open:
+        await _openNote(context);
+      case _FileAction.share:
+        await _shareNote(context);
+    }
+  }
+
+  Future<void> _saveNote(BuildContext context) async {
+    final document = context.read<DocumentRepository>();
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final path = await _fileService.saveText(document.text);
+      if (path == null) return;
+      messenger.showSnackBar(SnackBar(content: Text('Saved to $path')));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text('Could not save: $e')));
+    }
+  }
+
+  Future<void> _openNote(BuildContext context) async {
+    final document = context.read<DocumentRepository>();
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final loaded = await _fileService.openText();
+      if (loaded == null || !context.mounted) return;
+
+      final hasContent = document.text.trim().isNotEmpty;
+      if (hasContent) {
+        final replace = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Replace current note?'),
+            content: Text(
+              'Opening "${loaded.name}" will replace the current note for you '
+              'and every connected peer.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Replace'),
+              ),
+            ],
+          ),
         );
+        if (replace != true) return;
       }
+
+      document.replaceLocal(loaded.text);
+      messenger.showSnackBar(SnackBar(content: Text('Opened ${loaded.name}')));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text('Could not open: $e')));
+    }
+  }
+
+  Future<void> _shareNote(BuildContext context) async {
+    final document = context.read<DocumentRepository>();
+    final messenger = ScaffoldMessenger.of(context);
+    final text = document.text;
+    if (text.trim().isEmpty) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Nothing to share — the note is empty')),
+      );
+      return;
+    }
+    try {
+      await Share.share(text, subject: 'Netpad note');
+    } catch (_) {
+      await Clipboard.setData(ClipboardData(text: text));
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Sharing not available here — copied to clipboard'),
+        ),
+      );
     }
   }
 

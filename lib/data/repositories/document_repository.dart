@@ -5,25 +5,34 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show TextSelection;
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/services/note_storage_service.dart';
+import 'package:netpad/services/text_position.dart';
 
 class DocumentRepository extends ChangeNotifier {
   DocumentRepository({
     required this.instanceId,
     required this.onLocalEditReady,
     required NoteStorageService storage,
-  }) : _storage = storage;
+  }) : _storage = storage {
+    controller.addListener(_onControllerChanged);
+  }
 
   final String instanceId;
   final void Function(int revision, String text, String originId)
   onLocalEditReady;
   final NoteStorageService _storage;
 
+  /// Reports the local cursor position so it can be shared with peers.
+  void Function(int line, int column)? onCursorMoved;
+
   late final CodeController controller = CodeController(text: '');
 
   int _revision = 0;
   Timer? _debounce;
   Timer? _saveDebounce;
+  Timer? _presenceDebounce;
   bool _applyingRemote = false;
+  int? _lastLine;
+  int? _lastColumn;
 
   int get revision => _revision;
   String get text => controller.text;
@@ -43,6 +52,37 @@ class DocumentRepository extends ChangeNotifier {
       onLocalEditReady(_revision, controller.text, instanceId);
       _scheduleSave();
       notifyListeners();
+    });
+  }
+
+  /// Replaces the whole document with [text] as a local edit (e.g. opening a
+  /// file) and broadcasts it immediately to connected peers.
+  void replaceLocal(String text) {
+    _applyingRemote = true;
+    controller.value = controller.value.copyWith(
+      text: text,
+      selection: const TextSelection.collapsed(offset: 0),
+    );
+    _applyingRemote = false;
+    _revision++;
+    onLocalEditReady(_revision, text, instanceId);
+    _scheduleSave();
+    notifyListeners();
+  }
+
+  void _onControllerChanged() {
+    if (_applyingRemote) return;
+    final callback = onCursorMoved;
+    if (callback == null) return;
+    _presenceDebounce?.cancel();
+    _presenceDebounce = Timer(kPresenceDebounce, () {
+      final offset = controller.selection.baseOffset;
+      if (offset < 0) return;
+      final pos = lineColumnForOffset(controller.text, offset);
+      if (pos.line == _lastLine && pos.column == _lastColumn) return;
+      _lastLine = pos.line;
+      _lastColumn = pos.column;
+      callback(pos.line, pos.column);
     });
   }
 
@@ -113,6 +153,8 @@ class DocumentRepository extends ChangeNotifier {
   void dispose() {
     _debounce?.cancel();
     _saveDebounce?.cancel();
+    _presenceDebounce?.cancel();
+    controller.removeListener(_onControllerChanged);
     unawaited(_storage.save(controller.text, _revision));
     controller.dispose();
     super.dispose();

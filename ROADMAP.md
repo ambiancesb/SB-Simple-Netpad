@@ -6,7 +6,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 |-------|--------|--------|
 | **1** | Done | Manual IP connect, persist note to disk, rebroadcast on device rename |
 | **2** | Done | Session token enforcement, connection log, pairing verification code |
-| **3** | Planned | Save/share files, incremental sync or CRDT, network-change listener |
+| **3** | Done | Save/open/share files, network-change listener, room ID, cursor presence (CRDT deferred) |
 | **4** | Planned | TLS / pinned peers, optional shared “room” ID |
 | **5** | Planned | Multiple documents, note history, search |
 | **6** | Planned | Conflict UI, protocol version negotiation, heartbeat |
@@ -41,6 +41,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 **Goal:** Smoother multi-peer editing, file workflows, and network resilience.
 
+<<<<<<< Updated upstream
 - [x] **Save to file** — Export the note to a user-chosen path (e.g. `.txt`) via the platform save/open dialog; optional “Save as” from the editor menu.
 - [x] **Share note** — Send the current note (or exported file) through the OS share sheet on mobile and a desktop share/export action (email, Drive, adjacent apps, etc.).
 - [x] **Open from file** — Load text from an existing file into the editor (with prompt if it would replace the live synced note).
@@ -48,6 +49,15 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 - [ ] **Network change listener** — Restart discovery/broadcast when interfaces change (not only periodic refresh).
 - [ ] Optional cursor / presence (who is connected).
 - [ ] Explicit **session / room ID** in TXT records for predictable groups.
+=======
+- [x] **Save to file** — Export the note to a user-chosen path (`.txt`/`.md`) via the platform save dialog (File menu).
+- [x] **Share note** — Send the current note through the OS share sheet (mobile/desktop), falling back to clipboard where no share sheet exists (e.g. Linux).
+- [x] **Open from file** — Load text from a file into the editor; prompts before replacing a non-empty note, then broadcasts the change to connected peers.
+- [ ] **Incremental sync** (insert/delete ranges) or small CRDT instead of full-document replace. *(Deferred — kept full-document replace for now.)*
+- [x] **Network change listener** — `NetworkMonitor` restarts discovery/broadcast when interface addresses change (not only on the periodic refresh timer).
+- [x] Optional cursor / presence — connected peers report cursor line/column, shown in the peers drawer.
+- [x] Explicit **session / room ID** in TXT records; only peers in the same room are discovered (editable in Settings).
+>>>>>>> Stashed changes
 
 ---
 
@@ -98,8 +108,8 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 **Goal:** Reduce maintenance risk and harden the sync core.
 
-- [ ] **Remove debug logging cruft** — The `#region agent log` blocks and hardcoded path `/home/spencer/Coding Projects/...` in [lib/features/editor/editor_screen.dart](lib/features/editor/editor_screen.dart).
-- [ ] **Sync/relay tests** — Cover the merge and relay logic (currently only pairing code and connection log are tested).
+- [x] **Remove debug logging cruft** — Removed the `#region agent log` blocks and hardcoded debug path from [lib/features/editor/editor_screen.dart](lib/features/editor/editor_screen.dart).
+- [ ] **Sync/relay tests** — Cover the merge and relay logic (currently only pairing code, connection log, and cursor math are tested).
 
 ---
 

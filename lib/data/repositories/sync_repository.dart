@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:netpad/core/models/peer.dart';
+import 'package:netpad/core/models/peer_presence.dart';
 import 'package:netpad/core/models/protocol_message.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
@@ -59,6 +60,10 @@ class SyncRepository extends ChangeNotifier {
   final Map<String, _PeerLink> _linksByPeerId = {};
   final Map<String, String> _connectionToPeerId = {};
   final Map<String, String> _pendingOutboundRequestId = {};
+  final Map<String, PeerPresence> _presence = {};
+
+  /// Last-known cursor position of each connected peer.
+  Map<String, PeerPresence> get presence => Map.unmodifiable(_presence);
 
   void Function(
     String fromId,
@@ -77,7 +82,8 @@ class SyncRepository extends ChangeNotifier {
   bool _requiresSessionToken(String type) {
     return type == MessageTypes.docSnapshot ||
         type == MessageTypes.docUpdate ||
-        type == MessageTypes.peerDisconnect;
+        type == MessageTypes.peerDisconnect ||
+        type == MessageTypes.presence;
   }
 
   ProtocolMessage _messageForConnection(
@@ -266,6 +272,20 @@ class SyncRepository extends ChangeNotifier {
     _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
   }
 
+  void broadcastPresence(int line, int column) {
+    if (_linksByPeerId.isEmpty) return;
+    final message = ProtocolMessage(
+      type: MessageTypes.presence,
+      payload: {
+        'peerId': instanceId,
+        'name': _displayName,
+        'line': line,
+        'column': column,
+      },
+    );
+    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
+  }
+
   void disconnectPeer(String peerId) {
     final link = _linksByPeerId[peerId];
     if (link == null) return;
@@ -292,6 +312,7 @@ class SyncRepository extends ChangeNotifier {
     }
 
     _linksByPeerId.remove(peerId);
+    _presence.remove(peerId);
     _discovery.markPeerDisconnected(peerId);
     _connectionLog.add(
       'Disconnected from ${link.displayName}',
@@ -399,9 +420,25 @@ class SyncRepository extends ChangeNotifier {
         if (remoteId.isNotEmpty) {
           _handleDisconnectByPeerId(remoteId);
         }
+      case MessageTypes.presence:
+        if (!_hasValidSessionToken(connectionId, message)) return;
+        _handlePresence(message);
       default:
         break;
     }
+  }
+
+  void _handlePresence(ProtocolMessage message) {
+    final peerId = message.payload['peerId'] as String? ?? '';
+    if (peerId.isEmpty || peerId == instanceId) return;
+    final line = message.payload['line'] as int? ?? 1;
+    final column = message.payload['column'] as int? ?? 1;
+    _presence[peerId] = PeerPresence(
+      line: line,
+      column: column,
+      updatedAt: DateTime.now(),
+    );
+    notifyListeners();
   }
 
   void _handleDocMessage(ProtocolMessage message, String fromConnectionId) {
@@ -498,6 +535,7 @@ class SyncRepository extends ChangeNotifier {
 
     if (link.inboundConnectionId == null && link.outboundSocket == null) {
       _linksByPeerId.remove(peerId);
+      _presence.remove(peerId);
       _discovery.markPeerDisconnected(peerId);
       notifyListeners();
     }
@@ -511,6 +549,7 @@ class SyncRepository extends ChangeNotifier {
     final peerId = _connectionToPeerId.remove(connectionId);
     if (peerId != null) {
       final link = _linksByPeerId.remove(peerId);
+      _presence.remove(peerId);
       unawaited(link?.outboundSocket?.close());
       _discovery.markPeerDisconnected(peerId);
       notifyListeners();

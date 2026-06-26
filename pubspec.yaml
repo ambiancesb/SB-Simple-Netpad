@@ -16,6 +16,7 @@ dependencies:
   uuid: ^4.5.3
   provider: ^6.1.5+1
   shared_preferences: ^2.5.5
+<<<<<<< Updated upstream
   file_selector: ^1.1.0
   share_plus: ^13.1.0
 
@@ -24,6 +25,20 @@ dependencies:
 # pre-JNI release. We only share plain text, so path_provider is not exercised at runtime.
 dependency_overrides:
   path_provider_android: 2.2.23
+=======
+  file_picker: ^8.3.7
+  share_plus: ^10.1.4
+
+# path_provider is removed as a direct dep, but share_plus pulls it transitively.
+# Newer platform implementations break the Linux desktop build via build hooks:
+#   - path_provider_android >=2.3.0 depends on `jni` (needs a JVM/jni.h).
+#   - path_provider_foundation >=2.5.0 depends on `objective_c`, whose build hook
+#     runs on Linux too and fails looking for a linker.
+# Pin both to the last versions before those native dependencies were added.
+dependency_overrides:
+  path_provider_android: 2.2.1
+  path_provider_foundation: 2.4.1
+>>>>>>> Stashed changes
 
 dev_dependencies:
   flutter_test:

@@ -10,6 +10,9 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 - mDNS/Bonjour discovery via [`bonsoir`](https://pub.dev/packages/bonsoir) (`_sbnetpad._tcp`)
 - Mutual pairing: the target device must tap **Accept** before sync starts
 - Multi-peer: connect to several devices; edits relay through intermediaries to reach peers without a direct pairing
+- File workflows: **Save**, **Open**, and **Share** the note from the File menu
+- **Rooms**: peers only discover each other when they share the same session/room ID
+- **Cursor presence**: see connected peers' cursor positions in the peers drawer
 
 ## Requirements
 
@@ -73,6 +76,23 @@ Use two or more devices on the same LAN (physical devices recommended for Androi
 - **Session tokens** — Post-pair sync and disconnect messages carry the session token issued during pairing.
 - **Connection log** — The peers drawer shows session-only connection and sync events, with a clear button.
 - **Pairing verification code** — Incoming pairing requests show a short code to compare between devices before accepting.
+
+## Phase 3 features
+
+- **Save to file** — File menu → *Save to file…* writes the note to a chosen `.txt`/`.md` path.
+- **Open file** — File menu → *Open file…* loads a text file; if the current note is non-empty it prompts before replacing, then broadcasts to connected peers.
+- **Share note** — File menu → *Share note* opens the OS share sheet; on platforms without one (e.g. Linux) it falls back to copying to the clipboard.
+- **Session / room ID** — Set in **Settings**. Only peers advertising the same room are discovered, so multiple groups can coexist on one LAN. Peers without a room are treated as the `default` room.
+- **Cursor presence** — Connected peers report their cursor line/column, shown under each peer in the drawer.
+- **Network change listener** — Discovery and broadcast restart automatically when network interfaces change (Wi‑Fi/VPN switches), not just on the periodic refresh.
+
+On **Linux**, native file dialogs require `zenity` (GNOME) or `kdialog` (KDE):
+
+```bash
+sudo apt install -y zenity
+```
+
+> The note sync model is still full-document replace; incremental/CRDT sync remains deferred.
 
 See [ROADMAP.md](ROADMAP.md) for planned phases.
 

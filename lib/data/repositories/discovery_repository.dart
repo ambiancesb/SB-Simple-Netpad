@@ -5,20 +5,28 @@ import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/services/local_server.dart';
+import 'package:netpad/services/network_monitor.dart';
 
 class DiscoveryRepository extends ChangeNotifier {
   DiscoveryRepository({
     required this.instanceId,
     required String displayName,
+    required String roomId,
     required LocalServer localServer,
+    NetworkMonitor? networkMonitor,
   }) : _displayName = displayName,
-       _localServer = localServer;
+       _roomId = roomId,
+       _localServer = localServer,
+       _networkMonitor = networkMonitor ?? NetworkMonitor();
 
   final String instanceId;
   String _displayName;
+  String _roomId;
   final LocalServer _localServer;
+  final NetworkMonitor _networkMonitor;
 
   String get displayName => _displayName;
+  String get roomId => _roomId;
 
   BonsoirBroadcast? _broadcast;
   BonsoirDiscovery? _discovery;
@@ -51,6 +59,32 @@ class DiscoveryRepository extends ChangeNotifier {
       _refreshInterval,
       (_) => _refreshAllServices(),
     );
+    _networkMonitor.start(_onNetworkChanged);
+    notifyListeners();
+  }
+
+  /// Restarts advertisement + discovery when network interfaces change.
+  Future<void> _onNetworkChanged() async {
+    if (kDebugMode) {
+      debugPrint('Network change detected — restarting discovery/broadcast');
+    }
+    await _restartNetworking();
+  }
+
+  Future<void> _restartNetworking() async {
+    final port = _localServer.port;
+    if (port == null) return;
+    await _broadcast?.stop();
+    _broadcast = null;
+    await _discoverySub?.cancel();
+    _discoverySub = null;
+    await _discovery?.stop();
+    _discovery = null;
+    _servicesByKey.clear();
+    _resolveAttempts.clear();
+    _discovered.removeWhere((id, _) => !_connected.containsKey(id));
+    await _startBroadcast(port);
+    await _startDiscovery();
     notifyListeners();
   }
 
@@ -64,6 +98,7 @@ class DiscoveryRepository extends ChangeNotifier {
         'id': instanceId,
         'name': _displayName,
         'port': port.toString(),
+        'room': _roomId,
       },
     );
     _broadcast = BonsoirBroadcast(service: service);
@@ -79,6 +114,22 @@ class DiscoveryRepository extends ChangeNotifier {
     await _broadcast?.stop();
     _broadcast = null;
     await _startBroadcast(port);
+    notifyListeners();
+  }
+
+  /// Switches the advertised session/room and re-filters discovered peers.
+  Future<void> updateRoom(String room) async {
+    _roomId = room;
+    // Drop discovered peers that are not connected; they will reappear only if
+    // they advertise the new room.
+    _discovered.removeWhere((id, _) => !_connected.containsKey(id));
+    final port = _localServer.port;
+    if (port != null) {
+      await _broadcast?.stop();
+      _broadcast = null;
+      await _startBroadcast(port);
+    }
+    _refreshAllServices();
     notifyListeners();
   }
 
@@ -145,6 +196,17 @@ class DiscoveryRepository extends ChangeNotifier {
   void _upsertPeer(BonsoirService service) {
     final peer = Peer.fromBonsoirService(service);
     if (peer == null || peer.id == instanceId) return;
+
+    // Only surface peers advertising the same room. Peers without a room
+    // attribute are treated as the default room for backward compatibility.
+    final peerRoom = service.attributes['room'] ?? kDefaultRoom;
+    if (peerRoom != _roomId) {
+      if (!_connected.containsKey(peer.id)) {
+        _discovered.remove(peer.id);
+        notifyListeners();
+      }
+      return;
+    }
 
     final existing = _discovered[peer.id];
     _discovered[peer.id] = peer.copyWith(
@@ -265,6 +327,7 @@ class DiscoveryRepository extends ChangeNotifier {
 
   Future<void> shutdown() async {
     _refreshTimer?.cancel();
+    _networkMonitor.stop();
     await _discoverySub?.cancel();
     await _discovery?.stop();
     await _broadcast?.stop();

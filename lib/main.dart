@@ -23,6 +23,7 @@ Future<void> main() async {
   final discovery = DiscoveryRepository(
     instanceId: instanceId,
     displayName: displayName,
+    roomId: config.roomId,
     localServer: localServer,
   );
 
@@ -43,6 +44,8 @@ Future<void> main() async {
     document: document,
     connectionLog: connectionLog,
   );
+
+  document.onCursorMoved = sync.broadcastPresence;
 
   final pairing = PairingRepository(
     sync: sync,
