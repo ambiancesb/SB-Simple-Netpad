@@ -41,15 +41,6 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 **Goal:** Smoother multi-peer editing, file workflows, and network resilience.
 
-<<<<<<< Updated upstream
-- [x] **Save to file** — Export the note to a user-chosen path (e.g. `.txt`) via the platform save/open dialog; optional “Save as” from the editor menu.
-- [x] **Share note** — Send the current note (or exported file) through the OS share sheet on mobile and a desktop share/export action (email, Drive, adjacent apps, etc.).
-- [x] **Open from file** — Load text from an existing file into the editor (with prompt if it would replace the live synced note).
-- [ ] **Incremental sync** (insert/delete ranges) or small CRDT instead of full-document replace.
-- [ ] **Network change listener** — Restart discovery/broadcast when interfaces change (not only periodic refresh).
-- [ ] Optional cursor / presence (who is connected).
-- [ ] Explicit **session / room ID** in TXT records for predictable groups.
-=======
 - [x] **Save to file** — Export the note to a user-chosen path (`.txt`/`.md`) via the platform save dialog (File menu).
 - [x] **Share note** — Send the current note through the OS share sheet (mobile/desktop), falling back to clipboard where no share sheet exists (e.g. Linux).
 - [x] **Open from file** — Load text from a file into the editor; prompts before replacing a non-empty note, then broadcasts the change to connected peers.
@@ -57,7 +48,6 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 - [x] **Network change listener** — `NetworkMonitor` restarts discovery/broadcast when interface addresses change (not only on the periodic refresh timer).
 - [x] Optional cursor / presence — connected peers report cursor line/column, shown in the peers drawer.
 - [x] Explicit **session / room ID** in TXT records; only peers in the same room are discovered (editable in Settings).
->>>>>>> Stashed changes
 
 ---
 

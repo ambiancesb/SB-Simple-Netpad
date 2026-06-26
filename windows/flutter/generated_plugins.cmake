@@ -4,10 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   bonsoir_windows
-<<<<<<< Updated upstream
-  file_selector_windows
-=======
->>>>>>> Stashed changes
   share_plus
   url_launcher_windows
 )

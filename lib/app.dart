@@ -8,11 +8,7 @@ import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/features/editor/editor_screen.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
 import 'package:netpad/features/peers/peers_panel.dart';
-<<<<<<< Updated upstream
-import 'package:netpad/services/file_transfer_service.dart';
-=======
 import 'package:netpad/services/file_service.dart';
->>>>>>> Stashed changes
 import 'package:netpad/services/instance_config.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -69,11 +65,7 @@ class _HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-<<<<<<< Updated upstream
-  final FileTransferService _fileService = FileTransferService();
-=======
   final FileService _fileService = const FileService();
->>>>>>> Stashed changes
 
   @override
   void initState() {
@@ -126,25 +118,6 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               label: Text('$connected connected'),
             ),
           ),
-<<<<<<< Updated upstream
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.description_outlined),
-            tooltip: 'File',
-            onSelected: (value) => _onFileAction(context, value),
-            itemBuilder: (_) => [
-              const PopupMenuItem(
-                value: 'open',
-                child: Text('Open from file…'),
-              ),
-              if (_fileService.canSaveToDisk)
-                const PopupMenuItem(
-                  value: 'save',
-                  child: Text('Save to file…'),
-                ),
-              const PopupMenuItem(
-                value: 'share',
-                child: Text('Share note…'),
-=======
           PopupMenuButton<_FileAction>(
             icon: const Icon(Icons.description_outlined),
             tooltip: 'File',
@@ -170,7 +143,6 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
                   leading: Icon(Icons.ios_share),
                   title: Text('Share note'),
                 ),
->>>>>>> Stashed changes
               ),
             ],
           ),
@@ -378,80 +350,6 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
           content: Text('Sharing not available here — copied to clipboard'),
         ),
       );
-    }
-  }
-
-  Future<void> _onFileAction(BuildContext context, String action) async {
-    final document = context.read<DocumentRepository>();
-    final messenger = ScaffoldMessenger.of(context);
-    switch (action) {
-      case 'open':
-        await _openFile(context, document, messenger);
-      case 'save':
-        await _saveFile(document, messenger);
-      case 'share':
-        await _fileService.shareText(document.text);
-    }
-  }
-
-  Future<void> _openFile(
-    BuildContext context,
-    DocumentRepository document,
-    ScaffoldMessengerState messenger,
-  ) async {
-    final String? text;
-    try {
-      text = await _fileService.openTextFile();
-    } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Could not open file: $e')));
-      return;
-    }
-    if (text == null) return;
-
-    if (document.text.isNotEmpty) {
-      if (!context.mounted) return;
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Replace current note?'),
-          content: const Text(
-            'Opening this file replaces the current note. If you are connected '
-            'to peers, the change syncs to them too.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Replace'),
-            ),
-          ],
-        ),
-      );
-      if (confirmed != true) return;
-    }
-
-    document.loadExternalText(text);
-    messenger.showSnackBar(
-      const SnackBar(content: Text('File opened into the editor')),
-    );
-  }
-
-  Future<void> _saveFile(
-    DocumentRepository document,
-    ScaffoldMessengerState messenger,
-  ) async {
-    try {
-      final saved = await _fileService.saveTextFile(document.text);
-      if (saved) {
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Note saved to file')),
-        );
-      }
-    } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Could not save file: $e')));
     }
   }
 }
