@@ -66,16 +66,6 @@ class DocumentRepository extends ChangeNotifier {
     history: List.of(_history),
   );
 
-  /// Updates the title from a remote peer without bumping the revision or
-  /// rebroadcasting (the change already came from the network).
-  void applyTitle(String title) {
-    final next = title.trim().isEmpty ? kDefaultNoteTitle : title.trim();
-    if (next == _title) return;
-    _title = next;
-    _scheduleSave();
-    notifyListeners();
-  }
-
   void rename(String title) {
     final next = title.trim().isEmpty ? kDefaultNoteTitle : title.trim();
     if (next == _title) return;
@@ -142,8 +132,17 @@ class DocumentRepository extends ChangeNotifier {
 
   /// Applies a remote document unconditionally (used to resolve a reconnect
   /// divergence in favour of the peer).
-  void forceApplyRemote({required int revision, required String text}) {
-    _apply(revision, text, snapshotLabel: 'Before using peer version');
+  void forceApplyRemote({
+    required int revision,
+    required String text,
+    String? title,
+  }) {
+    _apply(
+      revision,
+      text,
+      snapshotLabel: 'Before using peer version',
+      title: title,
+    );
   }
 
   /// Bumps the revision above [atLeastRevision] and rebroadcasts the local text
@@ -160,25 +159,52 @@ class DocumentRepository extends ChangeNotifier {
     replaceLocal(entry.text, snapshotLabel: 'Before restore');
   }
 
-  bool applyRemote({
-    required int revision,
-    required String text,
-    required String originId,
-  }) {
-    if (revision > _revision) {
-      _apply(revision, text);
-      return true;
-    }
+  /// Whether [revision] from [originId] should win over the local revision.
+  bool remoteRevisionWins(int revision, String originId) {
+    if (revision > _revision) return true;
     if (revision == _revision && originId.compareTo(instanceId) > 0) {
-      _apply(revision, text);
       return true;
     }
     return false;
   }
 
-  void _apply(int revision, String text, {String? snapshotLabel}) {
+  bool applyRemote({
+    required int revision,
+    required String text,
+    required String originId,
+    String? title,
+  }) {
+    if (!remoteRevisionWins(revision, originId)) return false;
+    _apply(revision, text, snapshotLabel: 'Before remote update', title: title);
+    return true;
+  }
+
+  /// Applies a title-only change from a peer when their revision wins.
+  bool applyRemoteRename({
+    required int revision,
+    required String title,
+    required String originId,
+  }) {
+    if (!remoteRevisionWins(revision, originId)) return false;
+    _revision = revision;
+    _title = title.trim().isEmpty ? kDefaultNoteTitle : title.trim();
+    _scheduleSave();
+    notifyListeners();
+    return true;
+  }
+
+  void _apply(
+    int revision,
+    String text, {
+    String? snapshotLabel,
+    String? title,
+  }) {
     _snapshot(snapshotLabel ?? 'Before remote update');
     _revision = revision;
+    if (title != null) {
+      final next = title.trim().isEmpty ? kDefaultNoteTitle : title.trim();
+      _title = next;
+    }
     _applyingRemote = true;
     _setControllerText(text, controller.selection.baseOffset);
     _applyingRemote = false;

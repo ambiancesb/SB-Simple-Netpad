@@ -67,7 +67,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 **Goal:** Move beyond a single shared note.
 
-- [x] **Multiple named notes** — A [WorkspaceRepository](lib/data/repositories/workspace_repository.dart) owns many notes; every `docSnapshot` / `docUpdate` / `presence` / `docDelete` payload now carries a `docId` (+ title). Notes are managed from a left **Notes** drawer (create / rename / delete) and create/rename/delete propagate to peers.
+- [x] **Multiple named notes** — A [WorkspaceRepository](lib/data/repositories/workspace_repository.dart) owns many notes; every `docSnapshot` / `docUpdate` / `presence` / `docDelete` payload carries a `docId` (+ title). Explicit `doc_create`, `doc_rename`, `doc_catalog`, and `doc_reorder` messages keep note names and drawer order in sync across peers (catalog + order on pair; live reorder via drag handles).
 - [x] **Note history / versioning** — Each note keeps a bounded local snapshot ring (`HistoryEntry`), captured before a remote edit clobbers local text, before file open/restore, and on throttled edit checkpoints. Restore from the per-note **Version history** sheet.
 - [x] **Search** — In-note find bar (match count + next/prev) and cross-note search in the Notes drawer (matches titles + bodies with snippets).
 

@@ -128,7 +128,7 @@ Main entry: [`lib/main.dart`](lib/main.dart).
 ## Phase 5 features (multiple documents)
 
 - **Multiple named notes** — Open the **Notes** drawer (top-left). Create with **+**, tap a note to switch, and use the per-note menu to **Rename**, view **Version history**, or **Delete**. The app bar shows the active note's title. Creating, renaming, and deleting a note propagates to every connected peer.
-- **Per-note sync** — Each note carries a `docId` and title in its sync messages, so peers reconcile each note independently. On pairing, all notes exchange snapshots; a divergence prompt now names the affected note.
+- **Per-note sync** — Each note carries a `docId` and title in its sync messages, so peers reconcile each note independently. On pairing, a `doc_catalog` lists every note name and order, then snapshots fill in content; live `doc_create` / `doc_rename` / `doc_reorder` / `doc_delete` messages keep the notes menu aligned while connected. Drag the handle beside a note to reorder (syncs to peers).
 - **Version history** — Snapshots are captured automatically before a remote edit replaces your text, before a file import, and on throttled edit checkpoints (up to 50 per note). Restore any version from File → *Version history…* or the note's menu.
 - **Search** — The toolbar search icon opens an in-note find bar with match count and next/previous navigation. The Notes drawer search box matches across all note titles and bodies and shows snippets.
 

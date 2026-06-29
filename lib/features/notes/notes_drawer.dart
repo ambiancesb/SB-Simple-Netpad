@@ -80,32 +80,9 @@ class _NotesDrawerState extends State<NotesDrawer> {
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: hits.isEmpty
-                  ? Center(
-                      child: Text(
-                        searching ? 'No matches' : 'No notes',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.zero,
-                      itemCount: hits.length,
-                      itemBuilder: (context, index) {
-                        final hit = hits[index];
-                        return _NoteTile(
-                          hit: hit,
-                          searching: searching,
-                          active: hit.doc.id == workspace.activeId,
-                          onTap: () {
-                            workspace.selectNote(hit.doc.id);
-                            Navigator.pop(context);
-                          },
-                          onRename: () => _rename(context, workspace, hit.doc),
-                          onDelete: () => _delete(context, workspace, hit.doc),
-                          onHistory: () => showVersionHistory(context, hit.doc),
-                        );
-                      },
-                    ),
+              child: searching
+                  ? _buildSearchResults(context, workspace, hits)
+                  : _buildOrderedList(context, workspace),
             ),
           ],
         ),
@@ -170,12 +147,86 @@ class _NotesDrawerState extends State<NotesDrawer> {
     );
     if (confirmed == true) workspace.deleteNote(doc.id);
   }
+
+  Widget _buildSearchResults(
+    BuildContext context,
+    WorkspaceRepository workspace,
+    List<NoteSearchHit> hits,
+  ) {
+    if (hits.isEmpty) {
+      return Center(
+        child: Text(
+          'No matches',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: hits.length,
+      itemBuilder: (context, index) {
+        final hit = hits[index];
+        return _NoteTile(
+          hit: hit,
+          searching: true,
+          active: hit.doc.id == workspace.activeId,
+          onTap: () {
+            workspace.selectNote(hit.doc.id);
+            Navigator.pop(context);
+          },
+          onRename: () => _rename(context, workspace, hit.doc),
+          onDelete: () => _delete(context, workspace, hit.doc),
+          onHistory: () => showVersionHistory(context, hit.doc),
+        );
+      },
+    );
+  }
+
+  Widget _buildOrderedList(
+    BuildContext context,
+    WorkspaceRepository workspace,
+  ) {
+    final docs = workspace.documents;
+    if (docs.isEmpty) {
+      return Center(
+        child: Text(
+          'No notes',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      );
+    }
+    return ReorderableListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: docs.length,
+      onReorder: workspace.reorderNote,
+      itemBuilder: (context, index) {
+        final doc = docs[index];
+        final hit = NoteSearchHit(doc: doc, matchCount: 0, snippet: '');
+        return _NoteTile(
+          key: ValueKey(doc.id),
+          listIndex: index,
+          hit: hit,
+          searching: false,
+          active: doc.id == workspace.activeId,
+          onTap: () {
+            workspace.selectNote(doc.id);
+            Navigator.pop(context);
+          },
+          onRename: () => _rename(context, workspace, doc),
+          onDelete: () => _delete(context, workspace, doc),
+          onHistory: () => showVersionHistory(context, doc),
+        );
+      },
+    );
+  }
 }
 
 enum _NoteMenu { rename, history, delete }
 
 class _NoteTile extends StatelessWidget {
   const _NoteTile({
+    super.key,
+    this.listIndex,
     required this.hit,
     required this.searching,
     required this.active,
@@ -185,6 +236,7 @@ class _NoteTile extends StatelessWidget {
     required this.onHistory,
   });
 
+  final int? listIndex;
   final NoteSearchHit hit;
   final bool searching;
   final bool active;
@@ -221,22 +273,39 @@ class _NoteTile extends StatelessWidget {
       ),
       subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
       onTap: onTap,
-      trailing: PopupMenuButton<_NoteMenu>(
-        icon: const Icon(Icons.more_vert, size: 20),
-        onSelected: (value) {
-          switch (value) {
-            case _NoteMenu.rename:
-              onRename();
-            case _NoteMenu.history:
-              onHistory();
-            case _NoteMenu.delete:
-              onDelete();
-          }
-        },
-        itemBuilder: (context) => const [
-          PopupMenuItem(value: _NoteMenu.rename, child: Text('Rename')),
-          PopupMenuItem(value: _NoteMenu.history, child: Text('Version history')),
-          PopupMenuItem(value: _NoteMenu.delete, child: Text('Delete')),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (!searching && listIndex != null)
+            ReorderableDragStartListener(
+              index: listIndex!,
+              child: Icon(
+                Icons.drag_handle,
+                size: 20,
+                color: Theme.of(context).colorScheme.outline,
+              ),
+            ),
+          PopupMenuButton<_NoteMenu>(
+            icon: const Icon(Icons.more_vert, size: 20),
+            onSelected: (value) {
+              switch (value) {
+                case _NoteMenu.rename:
+                  onRename();
+                case _NoteMenu.history:
+                  onHistory();
+                case _NoteMenu.delete:
+                  onDelete();
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: _NoteMenu.rename, child: Text('Rename')),
+              PopupMenuItem(
+                value: _NoteMenu.history,
+                child: Text('Version history'),
+              ),
+              PopupMenuItem(value: _NoteMenu.delete, child: Text('Delete')),
+            ],
+          ),
         ],
       ),
     );

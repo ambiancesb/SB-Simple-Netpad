@@ -105,6 +105,10 @@ class SyncRepository extends ChangeNotifier {
   bool _requiresSessionToken(String type) {
     return type == MessageTypes.docSnapshot ||
         type == MessageTypes.docUpdate ||
+        type == MessageTypes.docCreate ||
+        type == MessageTypes.docRename ||
+        type == MessageTypes.docCatalog ||
+        type == MessageTypes.docReorder ||
         type == MessageTypes.docDelete ||
         type == MessageTypes.peerDisconnect ||
         type == MessageTypes.presence;
@@ -343,6 +347,58 @@ class SyncRepository extends ChangeNotifier {
     _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
   }
 
+  void broadcastDocCreate(
+    String docId,
+    String title,
+    int revision,
+    String originId,
+  ) {
+    final message = ProtocolMessage(
+      type: MessageTypes.docCreate,
+      payload: {
+        'docId': docId,
+        'title': title,
+        'revision': revision,
+        'originId': originId,
+      },
+    );
+    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
+  }
+
+  void broadcastDocRename(
+    String docId,
+    String title,
+    int revision,
+    String originId,
+  ) {
+    final message = ProtocolMessage(
+      type: MessageTypes.docRename,
+      payload: {
+        'docId': docId,
+        'title': title,
+        'revision': revision,
+        'originId': originId,
+      },
+    );
+    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
+  }
+
+  void broadcastDocReorder(
+    List<String> order,
+    int orderRevision,
+    String originId,
+  ) {
+    final message = ProtocolMessage(
+      type: MessageTypes.docReorder,
+      payload: {
+        'originId': originId,
+        'orderRevision': orderRevision,
+        'order': order,
+      },
+    );
+    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
+  }
+
   void broadcastDocDelete(String docId, String originId) {
     final message = ProtocolMessage(
       type: MessageTypes.docDelete,
@@ -510,6 +566,30 @@ class SyncRepository extends ChangeNotifier {
           return;
         }
         _handleDocMessage(message, connectionId);
+      case MessageTypes.docCreate:
+        if (!_hasValidSessionToken(connectionId, message)) {
+          _logTokenRejected(connectionId, message.type);
+          return;
+        }
+        _handleDocCreate(message, connectionId);
+      case MessageTypes.docRename:
+        if (!_hasValidSessionToken(connectionId, message)) {
+          _logTokenRejected(connectionId, message.type);
+          return;
+        }
+        _handleDocRename(message, connectionId);
+      case MessageTypes.docCatalog:
+        if (!_hasValidSessionToken(connectionId, message)) {
+          _logTokenRejected(connectionId, message.type);
+          return;
+        }
+        _handleDocCatalog(message, connectionId);
+      case MessageTypes.docReorder:
+        if (!_hasValidSessionToken(connectionId, message)) {
+          _logTokenRejected(connectionId, message.type);
+          return;
+        }
+        _handleDocReorder(message, connectionId);
       case MessageTypes.docDelete:
         if (!_hasValidSessionToken(connectionId, message)) {
           _logTokenRejected(connectionId, message.type);
@@ -585,7 +665,7 @@ class SyncRepository extends ChangeNotifier {
     final docId = message.payload['docId'] as String? ?? '';
     final title = message.payload['title'] as String? ?? '';
     if (docId.isEmpty) return;
-    final document = _workspace.ensureDocument(docId, title);
+    final document = _workspace.ensureDocument(docId, title: title);
     final localText = document.text;
 
     final diverged =
@@ -627,7 +707,7 @@ class SyncRepository extends ChangeNotifier {
     }
 
     if (choice == DivergenceChoice.takeTheirs) {
-      document.forceApplyRemote(revision: revision, text: text);
+      document.forceApplyRemote(revision: revision, text: text, title: title);
       _relay(message, fromConnectionId);
       _connectionLog.add(
         'Reconnect divergence: used $peerName\'s version',
@@ -652,10 +732,13 @@ class SyncRepository extends ChangeNotifier {
     final docId = message.payload['docId'] as String? ?? '';
     final title = message.payload['title'] as String? ?? '';
     if (docId.isEmpty) return;
-    final document = _workspace.ensureDocument(docId, title);
 
-    final hadConflict = revision == document.revision;
-    final applied = document.applyRemote(
+    final document = _workspace.documentById(docId);
+    final hadConflict = document != null && revision == document.revision;
+
+    final applied = _workspace.receiveRemoteContent(
+      docId: docId,
+      title: title,
       revision: revision,
       text: text,
       originId: originId,
@@ -678,6 +761,115 @@ class SyncRepository extends ChangeNotifier {
     }
   }
 
+  void _handleDocCreate(ProtocolMessage message, String fromConnectionId) {
+    final docId = message.payload['docId'] as String? ?? '';
+    final title = message.payload['title'] as String? ?? '';
+    final revision = message.payload['revision'] as int? ?? 0;
+    final originId = message.payload['originId'] as String? ?? '';
+    if (docId.isEmpty || originId == instanceId) return;
+
+    final existed = _workspace.hasDocument(docId);
+    _workspace.receiveRemoteCreate(
+      docId: docId,
+      title: title,
+      revision: revision,
+      originId: originId,
+    );
+
+    final peerId = _connectionToPeerId[fromConnectionId];
+    _connectionLog.add(
+      existed ? 'Updated note "$title"' : 'Learned new note "$title"',
+      peerId: peerId,
+      peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
+      revision: revision,
+    );
+    _relay(message, fromConnectionId);
+  }
+
+  void _handleDocRename(ProtocolMessage message, String fromConnectionId) {
+    final docId = message.payload['docId'] as String? ?? '';
+    final title = message.payload['title'] as String? ?? '';
+    final revision = message.payload['revision'] as int? ?? 0;
+    final originId = message.payload['originId'] as String? ?? '';
+    if (docId.isEmpty || originId == instanceId) return;
+
+    final before = _workspace.documentById(docId)?.title;
+    _workspace.receiveRemoteRename(
+      docId: docId,
+      title: title,
+      revision: revision,
+      originId: originId,
+    );
+    final after = _workspace.documentById(docId)?.title;
+    if (before != after) {
+      final peerId = _connectionToPeerId[fromConnectionId];
+      _connectionLog.add(
+        'Renamed note to "$title"',
+        peerId: peerId,
+        peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
+        revision: revision,
+      );
+      _relay(message, fromConnectionId);
+    }
+  }
+
+  void _handleDocCatalog(ProtocolMessage message, String fromConnectionId) {
+    final originId = message.payload['originId'] as String? ?? '';
+    if (originId.isEmpty || originId == instanceId) return;
+
+    final rawNotes = message.payload['notes'] as List<dynamic>? ?? const [];
+    final entries = [
+      for (final n in rawNotes) Map<String, dynamic>.from(n as Map),
+    ];
+    final orderRevision = message.payload['orderRevision'] as int? ?? 0;
+    final beforeCount = _workspace.documents.length;
+    final beforeOrder = _workspace.noteOrder;
+    _workspace.mergeCatalog(
+      entries,
+      originId,
+      orderRevision: orderRevision,
+    );
+    final afterCount = _workspace.documents.length;
+    final afterOrder = _workspace.noteOrder;
+    if (afterCount > beforeCount || !_ordersEqual(beforeOrder, afterOrder)) {
+      final peerId = _connectionToPeerId[fromConnectionId];
+      _connectionLog.add(
+        afterCount > beforeCount
+            ? 'Synced ${afterCount - beforeCount} note(s) from peer catalog'
+            : 'Synced note order from peer catalog',
+        peerId: peerId,
+        peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
+      );
+    }
+    _relay(message, fromConnectionId);
+  }
+
+  void _handleDocReorder(ProtocolMessage message, String fromConnectionId) {
+    final originId = message.payload['originId'] as String? ?? '';
+    if (originId.isEmpty || originId == instanceId) return;
+
+    final orderRevision = message.payload['orderRevision'] as int? ?? 0;
+    final rawOrder = message.payload['order'] as List<dynamic>? ?? const [];
+    final order = [for (final id in rawOrder) id as String];
+    if (_workspace.applyRemoteOrder(order, orderRevision, originId)) {
+      final peerId = _connectionToPeerId[fromConnectionId];
+      _connectionLog.add(
+        'Synced note order from peer',
+        peerId: peerId,
+        peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
+      );
+      _relay(message, fromConnectionId);
+    }
+  }
+
+  bool _ordersEqual(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
   void _relay(ProtocolMessage message, String fromConnectionId) {
     final fromPeerId = _connectionToPeerId[fromConnectionId];
     for (final connId in _authenticatedConnectionIds(
@@ -689,6 +881,17 @@ class SyncRepository extends ChangeNotifier {
   }
 
   void _sendDocSnapshot(String connectionId) {
+    _sendOnConnection(
+      connectionId,
+      ProtocolMessage(
+        type: MessageTypes.docCatalog,
+        payload: {
+          'originId': instanceId,
+          'orderRevision': _workspace.orderRevision,
+          'notes': _workspace.catalogPayload(),
+        },
+      ),
+    );
     for (final doc in _workspace.documents) {
       _sendOnConnection(
         connectionId,

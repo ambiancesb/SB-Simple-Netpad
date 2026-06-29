@@ -46,10 +46,15 @@ class StoredDocument {
 
 /// The full set of notes plus which one was last active.
 class WorkspaceData {
-  WorkspaceData({required this.documents, required this.activeId});
+  WorkspaceData({
+    required this.documents,
+    required this.activeId,
+    this.orderRevision = 0,
+  });
 
   final List<StoredDocument> documents;
   final String? activeId;
+  final int orderRevision;
 }
 
 /// Persists notes via [SharedPreferences] (no JNI / path_provider on Linux).
@@ -60,6 +65,7 @@ class NoteStorageService {
 
   static const _keyIndex = 'docs_index';
   static const _keyActive = 'docs_active';
+  static const _keyOrderRevision = 'docs_order_revision';
   static const _docPrefix = 'doc_';
 
   // Legacy single-note keys (Phase 1–4).
@@ -84,6 +90,7 @@ class NoteStorageService {
     return WorkspaceData(
       documents: documents,
       activeId: _prefs.getString(_keyActive),
+      orderRevision: _prefs.getInt(_keyOrderRevision) ?? 0,
     );
   }
 
@@ -95,8 +102,15 @@ class NoteStorageService {
     await _prefs.remove('$_docPrefix$id');
   }
 
-  Future<void> saveIndex(List<String> ids, String? activeId) async {
+  Future<void> saveIndex(
+    List<String> ids,
+    String? activeId, {
+    int? orderRevision,
+  }) async {
     await _prefs.setStringList(_keyIndex, ids);
+    if (orderRevision != null) {
+      await _prefs.setInt(_keyOrderRevision, orderRevision);
+    }
     if (activeId != null) {
       await _prefs.setString(_keyActive, activeId);
     } else {

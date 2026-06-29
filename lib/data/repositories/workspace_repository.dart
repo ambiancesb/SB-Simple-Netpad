@@ -34,6 +34,15 @@ class WorkspaceRepository extends ChangeNotifier {
   final Map<String, DocumentRepository> _docs = {};
   final List<String> _order = [];
   String? _activeId;
+  int _orderRevision = 0;
+
+  /// Broadcasts that a new note was created locally.
+  void Function(String docId, String title, int revision, String originId)?
+  onDocCreate;
+
+  /// Broadcasts that a note was renamed locally.
+  void Function(String docId, String title, int revision, String originId)?
+  onDocRename;
 
   /// Broadcasts a local document edit; wired to [SyncRepository].
   void Function(
@@ -51,6 +60,10 @@ class WorkspaceRepository extends ChangeNotifier {
   /// Broadcasts a note deletion.
   void Function(String docId, String originId)? onDocDeleted;
 
+  /// Broadcasts the current note order (names follow each note's revision).
+  void Function(List<String> order, int orderRevision, String originId)?
+  onOrderChanged;
+
   List<DocumentRepository> get documents => [
     for (final id in _order)
       if (_docs.containsKey(id)) _docs[id]!,
@@ -59,7 +72,21 @@ class WorkspaceRepository extends ChangeNotifier {
   String? get activeId => _activeId;
   DocumentRepository? get active =>
       _activeId == null ? null : _docs[_activeId];
+  bool hasDocument(String id) => _docs.containsKey(id);
   DocumentRepository? documentById(String id) => _docs[id];
+
+  List<String> get noteOrder => List.unmodifiable(_order);
+  int get orderRevision => _orderRevision;
+
+  List<Map<String, dynamic>> catalogPayload() => [
+    for (final id in _order)
+      if (_docs.containsKey(id))
+        {
+          'docId': id,
+          'title': _docs[id]!.title,
+          'revision': _docs[id]!.revision,
+        },
+  ];
 
   Future<void> load() async {
     final data = await _storage.loadWorkspace();
@@ -91,6 +118,7 @@ class WorkspaceRepository extends ChangeNotifier {
       _activeId = data.activeId != null && _docs.containsKey(data.activeId)
           ? data.activeId
           : _order.first;
+      _orderRevision = data.orderRevision;
     }
   }
 
@@ -105,15 +133,17 @@ class WorkspaceRepository extends ChangeNotifier {
     );
     _activeId = doc.id;
     unawaited(_storage.saveDocument(doc.toStored()));
-    unawaited(_persistIndex());
-    // Tell peers about the new (empty) note so it shows up in their list.
-    onDocUpdate?.call(doc.id, doc.title, doc.revision, '', instanceId);
+    onDocCreate?.call(doc.id, doc.title, doc.revision, instanceId);
+    _broadcastOrder();
     notifyListeners();
     return doc;
   }
 
   void renameNote(String id, String title) {
-    _docs[id]?.rename(title);
+    final doc = _docs[id];
+    if (doc == null) return;
+    doc.rename(title);
+    onDocRename?.call(id, doc.title, doc.revision, instanceId);
     unawaited(_persistIndex());
     notifyListeners();
   }
@@ -125,6 +155,22 @@ class WorkspaceRepository extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Moves a note within the drawer list and syncs the new order to peers.
+  void reorderNote(int oldIndex, int newIndex) {
+    if (oldIndex < 0 ||
+        oldIndex >= _order.length ||
+        newIndex < 0 ||
+        newIndex > _order.length) {
+      return;
+    }
+    if (oldIndex < newIndex) newIndex -= 1;
+    if (oldIndex == newIndex) return;
+    final id = _order.removeAt(oldIndex);
+    _order.insert(newIndex, id);
+    _broadcastOrder();
+    notifyListeners();
+  }
+
   void deleteNote(String id) {
     final doc = _docs[id];
     if (doc == null) return;
@@ -132,33 +178,170 @@ class WorkspaceRepository extends ChangeNotifier {
     onDocDeleted?.call(id, instanceId);
     unawaited(_storage.deleteDocument(id));
     _ensureAtLeastOneNote();
-    unawaited(_persistIndex());
+    _broadcastOrder();
     notifyListeners();
   }
 
   // ----- Remote-driven changes ------------------------------------------------
 
-  /// Returns the note with [docId], creating it (with [title]) if a peer is the
-  /// first to mention it. Updates the title if it changed remotely.
-  DocumentRepository ensureDocument(String docId, String title) {
+  /// Ensures a note shell exists locally (does not change an existing title).
+  DocumentRepository ensureDocument(String docId, {String title = ''}) {
     final existing = _docs[docId];
-    if (existing != null) {
-      if (title.isNotEmpty && title != existing.title) {
-        existing.applyTitle(title);
-        unawaited(_persistIndex());
-        notifyListeners();
-      }
-      return existing;
-    }
+    if (existing != null) return existing;
     final doc = _createLocal(
       id: docId,
       title: title.isEmpty ? kDefaultNoteTitle : title,
       text: '',
       revision: 0,
     );
+    unawaited(_storage.saveDocument(doc.toStored()));
     unawaited(_persistIndex());
     notifyListeners();
     return doc;
+  }
+
+  /// Creates a note advertised by a peer, or bumps metadata if theirs is newer.
+  void receiveRemoteCreate({
+    required String docId,
+    required String title,
+    required int revision,
+    required String originId,
+  }) {
+    final existing = _docs[docId];
+    if (existing == null) {
+      final doc = _createLocal(
+        id: docId,
+        title: title.isEmpty ? kDefaultNoteTitle : title,
+        text: '',
+        revision: revision,
+      );
+      unawaited(_storage.saveDocument(doc.toStored()));
+      unawaited(_persistIndex());
+      notifyListeners();
+      return;
+    }
+    existing.applyRemoteRename(
+      revision: revision,
+      title: title,
+      originId: originId,
+    );
+    unawaited(_persistIndex());
+    notifyListeners();
+  }
+
+  /// Applies a peer rename when their revision wins.
+  void receiveRemoteRename({
+    required String docId,
+    required String title,
+    required int revision,
+    required String originId,
+  }) {
+    final doc = ensureDocument(docId, title: title);
+    if (doc.applyRemoteRename(
+      revision: revision,
+      title: title,
+      originId: originId,
+    )) {
+      unawaited(_persistIndex());
+      notifyListeners();
+    }
+  }
+
+  /// Merges a peer's note catalog on connect: names, revisions, and list order.
+  void mergeCatalog(
+    List<Map<String, dynamic>> entries,
+    String originId, {
+    required int orderRevision,
+  }) {
+    var metadataChanged = false;
+    for (final entry in entries) {
+      final docId = entry['docId'] as String? ?? '';
+      if (docId.isEmpty) continue;
+      final title = entry['title'] as String? ?? '';
+      final revision = entry['revision'] as int? ?? 0;
+      if (!_docs.containsKey(docId)) {
+        _createLocal(
+          id: docId,
+          title: title.isEmpty ? kDefaultNoteTitle : title,
+          text: '',
+          revision: revision,
+        );
+        metadataChanged = true;
+        continue;
+      }
+      final doc = _docs[docId]!;
+      if (doc.applyRemoteRename(
+        revision: revision,
+        title: title,
+        originId: originId,
+      )) {
+        metadataChanged = true;
+      }
+    }
+
+    final peerOrder = [
+      for (final entry in entries)
+        entry['docId'] as String? ?? '',
+    ].where((id) => id.isNotEmpty).toList();
+    applyRemoteOrder(peerOrder, orderRevision, originId);
+
+    if (metadataChanged) {
+      unawaited(_persistIndex());
+      notifyListeners();
+    }
+  }
+
+  /// Applies a peer's note order when their [orderRevision] wins.
+  bool applyRemoteOrder(
+    List<String> peerOrder,
+    int orderRevision,
+    String originId,
+  ) {
+    if (!_remoteOrderWins(orderRevision, originId)) return false;
+
+    final merged = <String>[];
+    for (final id in peerOrder) {
+      if (_docs.containsKey(id)) merged.add(id);
+    }
+    for (final id in _order) {
+      if (!merged.contains(id)) merged.add(id);
+    }
+
+    final orderChanged = !_listsEqual(merged, _order);
+    if (orderChanged) {
+      _order
+        ..clear()
+        ..addAll(merged);
+    }
+    _orderRevision = orderRevision;
+    unawaited(_persistIndex());
+    if (orderChanged) notifyListeners();
+    return orderChanged;
+  }
+
+  /// Applies remote document content; creates the note if this is the first
+  /// time we hear about it. Returns whether the content revision was applied.
+  bool receiveRemoteContent({
+    required String docId,
+    required String title,
+    required int revision,
+    required String text,
+    required String originId,
+  }) {
+    final created = !_docs.containsKey(docId);
+    final doc = ensureDocument(docId, title: title);
+    final applied = doc.applyRemote(
+      revision: revision,
+      text: text,
+      originId: originId,
+      title: title,
+    );
+    if (created || applied) {
+      unawaited(_storage.saveDocument(doc.toStored()));
+      unawaited(_persistIndex());
+      notifyListeners();
+    }
+    return applied;
   }
 
   void removeDocumentRemote(String docId) {
@@ -229,7 +412,33 @@ class WorkspaceRepository extends ChangeNotifier {
     await _persistIndex();
   }
 
-  Future<void> _persistIndex() => _storage.saveIndex(_order, _activeId);
+  Future<void> _persistIndex() => _storage.saveIndex(
+    _order,
+    _activeId,
+    orderRevision: _orderRevision,
+  );
+
+  void _broadcastOrder() {
+    _orderRevision++;
+    onOrderChanged?.call(List.of(_order), _orderRevision, instanceId);
+    unawaited(_persistIndex());
+  }
+
+  bool _remoteOrderWins(int revision, String originId) {
+    if (revision > _orderRevision) return true;
+    if (revision == _orderRevision && originId.compareTo(instanceId) > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  bool _listsEqual(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
 
   // ----- Internals ------------------------------------------------------------
 

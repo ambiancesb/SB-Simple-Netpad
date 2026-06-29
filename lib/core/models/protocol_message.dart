@@ -22,6 +22,10 @@ abstract final class MessageTypes {
   static const pairComplete = 'pair_complete';
   static const docSnapshot = 'doc_snapshot';
   static const docUpdate = 'doc_update';
+  static const docCreate = 'doc_create';
+  static const docRename = 'doc_rename';
+  static const docCatalog = 'doc_catalog';
+  static const docReorder = 'doc_reorder';
   static const docDelete = 'doc_delete';
   static const peerDisconnect = 'peer_disconnect';
   static const presence = 'presence';

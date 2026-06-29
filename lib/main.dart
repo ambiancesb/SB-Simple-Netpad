@@ -50,6 +50,9 @@ Future<void> main() async {
   );
 
   workspace.onDocUpdate = sync.broadcastDocUpdate;
+  workspace.onDocCreate = sync.broadcastDocCreate;
+  workspace.onDocRename = sync.broadcastDocRename;
+  workspace.onOrderChanged = sync.broadcastDocReorder;
   workspace.onPresence = sync.broadcastPresence;
   workspace.onDocDeleted = sync.broadcastDocDelete;
 

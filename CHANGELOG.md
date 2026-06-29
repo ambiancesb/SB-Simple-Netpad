@@ -8,9 +8,10 @@ and this project currently tracks versions informally.
 ## [Unreleased]
 
 ### Added
-- **Multiple named notes** — Manage many notes from a left Notes drawer (create / rename / delete). Each note has its own id, title, revision, and editor; notes sync per-document and creating/renaming/deleting propagates to peers.
+- **Multiple named notes** — Manage many notes from a left Notes drawer (create / rename / delete). Each note has its own id, title, revision, and editor; notes sync per-document and creating/renaming/deleting propagates to peers via `doc_create`, `doc_rename`, `doc_delete`, and a `doc_catalog` exchange on pair.
 - **Note history / versioning** — Each note keeps a bounded local snapshot ring, captured before remote edits clobber local text and before file imports/restores. Restore any version from the per-note Version history sheet.
 - **Search** — In-note find bar (match count with next/previous navigation) and cross-note search in the Notes drawer (matches titles and bodies, with snippets).
+- **Note order sync** — Drag-to-reorder in the Notes drawer; order propagates via `doc_reorder` and is included in the `doc_catalog` exchange on pair.
 - **Per-note presence** — A peer's cursor now reports which note they are editing, shown in the peers drawer.
 - **TLS transport** — each device generates a persisted self-signed certificate; all peer traffic upgraded from `ws://` to `wss://` (`basic_utils`/`pointycastle` for cert generation, `crypto` for fingerprints).
 - **Certificate pinning (TOFU)** — peer certificate fingerprints are pinned on first connect and verified afterwards; a mismatch refuses the connection. The accepting device shows its security code in the pairing dialog.
