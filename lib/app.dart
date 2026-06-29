@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:netpad/core/models/divergence_choice.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
-import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
+import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/features/editor/editor_screen.dart';
+import 'package:netpad/features/notes/notes_drawer.dart';
+import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
 import 'package:netpad/features/peers/peers_panel.dart';
 import 'package:netpad/services/file_service.dart';
@@ -16,7 +18,7 @@ import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-enum _FileAction { save, open, share }
+enum _FileAction { save, open, share, history }
 
 class NetpadApp extends StatelessWidget {
   const NetpadApp({
@@ -26,7 +28,7 @@ class NetpadApp extends StatelessWidget {
     required this.trustStore,
     required this.connectionLog,
     required this.discovery,
-    required this.document,
+    required this.workspace,
     required this.sync,
     required this.pairing,
   });
@@ -36,7 +38,7 @@ class NetpadApp extends StatelessWidget {
   final TrustStore trustStore;
   final ConnectionLogRepository connectionLog;
   final DiscoveryRepository discovery;
-  final DocumentRepository document;
+  final WorkspaceRepository workspace;
   final SyncRepository sync;
   final PairingRepository pairing;
 
@@ -49,7 +51,7 @@ class NetpadApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: trustStore),
         ChangeNotifierProvider.value(value: connectionLog),
         ChangeNotifierProvider.value(value: discovery),
-        ChangeNotifierProvider.value(value: document),
+        ChangeNotifierProvider.value(value: workspace),
         ChangeNotifierProvider.value(value: sync),
         ChangeNotifierProvider.value(value: pairing),
       ],
@@ -75,6 +77,7 @@ class _HomeShell extends StatefulWidget {
 class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FileService _fileService = const FileService();
+  bool _findVisible = false;
 
   @override
   void initState() {
@@ -95,6 +98,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
 
   Future<DivergenceChoice> _resolveDivergence(
     String peerName,
+    String docTitle,
     int localRevision,
     String localText,
     int remoteRevision,
@@ -105,10 +109,10 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Notes have diverged'),
+        title: Text('"$docTitle" has diverged'),
         content: Text(
-          'Your note and $peerName\'s note changed differently while '
-          'disconnected.\n\n'
+          'Your copy and $peerName\'s copy of "$docTitle" changed differently '
+          'while disconnected.\n\n'
           'Yours: ${localText.length} characters\n'
           '$peerName: ${remoteText.length} characters\n\n'
           'Which version should both devices keep?',
@@ -138,7 +142,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
-      context.read<DocumentRepository>().flushSave();
+      context.read<WorkspaceRepository>().flushSaveAll();
     }
   }
 
@@ -146,13 +150,21 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final config = context.read<InstanceConfig>();
     final discovery = context.watch<DiscoveryRepository>();
+    final workspace = context.watch<WorkspaceRepository>();
     final connected = discovery.connectedPeers.length;
+    final activeTitle = workspace.active?.title ?? 'SB Simple Netpad';
 
     return Scaffold(
       key: _scaffoldKey,
+      drawer: const NotesDrawer(),
       appBar: AppBar(
-        title: const Text('SB Simple Netpad'),
+        title: Text(activeTitle, overflow: TextOverflow.ellipsis),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Find in note',
+            onPressed: () => setState(() => _findVisible = !_findVisible),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: Chip(
@@ -180,7 +192,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
                 value: _FileAction.open,
                 child: ListTile(
                   leading: Icon(Icons.folder_open),
-                  title: Text('Open file…'),
+                  title: Text('Open file as new note…'),
                 ),
               ),
               PopupMenuItem(
@@ -188,6 +200,13 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
                 child: ListTile(
                   leading: Icon(Icons.ios_share),
                   title: Text('Share note'),
+                ),
+              ),
+              PopupMenuItem(
+                value: _FileAction.history,
+                child: ListTile(
+                  leading: Icon(Icons.history),
+                  title: Text('Version history…'),
                 ),
               ),
             ],
@@ -238,7 +257,10 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
           ),
         ),
       ),
-      body: const EditorScreen(),
+      body: EditorScreen(
+        findVisible: _findVisible,
+        onCloseFind: () => setState(() => _findVisible = false),
+      ),
     );
   }
 
@@ -323,14 +345,21 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
         await _openNote(context);
       case _FileAction.share:
         await _shareNote(context);
+      case _FileAction.history:
+        final doc = context.read<WorkspaceRepository>().active;
+        if (doc != null) await showVersionHistory(context, doc);
     }
   }
 
   Future<void> _saveNote(BuildContext context) async {
-    final document = context.read<DocumentRepository>();
+    final doc = context.read<WorkspaceRepository>().active;
+    if (doc == null) return;
     final messenger = ScaffoldMessenger.of(context);
     try {
-      final path = await _fileService.saveText(document.text);
+      final path = await _fileService.saveText(
+        doc.text,
+        suggestedName: '${_safeName(doc.title)}.txt',
+      );
       if (path == null) return;
       messenger.showSnackBar(SnackBar(content: Text('Saved to $path')));
     } catch (e) {
@@ -339,48 +368,27 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   }
 
   Future<void> _openNote(BuildContext context) async {
-    final document = context.read<DocumentRepository>();
+    final workspace = context.read<WorkspaceRepository>();
     final messenger = ScaffoldMessenger.of(context);
     try {
       final loaded = await _fileService.openText();
       if (loaded == null || !context.mounted) return;
 
-      final hasContent = document.text.trim().isNotEmpty;
-      if (hasContent) {
-        final replace = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Replace current note?'),
-            content: Text(
-              'Opening "${loaded.name}" will replace the current note for you '
-              'and every connected peer.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Replace'),
-              ),
-            ],
-          ),
-        );
-        if (replace != true) return;
-      }
-
-      document.replaceLocal(loaded.text);
-      messenger.showSnackBar(SnackBar(content: Text('Opened ${loaded.name}')));
+      final doc = workspace.createNote(title: _titleFromFile(loaded.name));
+      doc.replaceLocal(loaded.text, snapshotLabel: 'Imported file');
+      messenger.showSnackBar(
+        SnackBar(content: Text('Opened ${loaded.name} as a new note')),
+      );
     } catch (e) {
       messenger.showSnackBar(SnackBar(content: Text('Could not open: $e')));
     }
   }
 
   Future<void> _shareNote(BuildContext context) async {
-    final document = context.read<DocumentRepository>();
+    final doc = context.read<WorkspaceRepository>().active;
+    if (doc == null) return;
     final messenger = ScaffoldMessenger.of(context);
-    final text = document.text;
+    final text = doc.text;
     if (text.trim().isEmpty) {
       messenger.showSnackBar(
         const SnackBar(content: Text('Nothing to share — the note is empty')),
@@ -388,7 +396,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       return;
     }
     try {
-      await Share.share(text, subject: 'Netpad note');
+      await Share.share(text, subject: doc.title);
     } catch (_) {
       await Clipboard.setData(ClipboardData(text: text));
       messenger.showSnackBar(
@@ -397,5 +405,15 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
         ),
       );
     }
+  }
+
+  String _safeName(String title) {
+    final cleaned = title.replaceAll(RegExp(r'[^\w\- ]'), '').trim();
+    return cleaned.isEmpty ? 'netpad-note' : cleaned;
+  }
+
+  String _titleFromFile(String fileName) {
+    final dot = fileName.lastIndexOf('.');
+    return dot > 0 ? fileName.substring(0, dot) : fileName;
   }
 }

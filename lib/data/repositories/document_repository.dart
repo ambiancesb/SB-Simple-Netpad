@@ -4,20 +4,35 @@ import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show TextSelection;
 import 'package:netpad/core/constants.dart';
+import 'package:netpad/core/models/history_entry.dart';
 import 'package:netpad/services/note_storage_service.dart';
 import 'package:netpad/services/text_position.dart';
 
+/// A single note: its text controller, replicated revision, and local version
+/// history. The owning [WorkspaceRepository] wires the broadcast callbacks.
 class DocumentRepository extends ChangeNotifier {
   DocumentRepository({
     required this.instanceId,
-    required this.onLocalEditReady,
+    required this.id,
+    required String title,
+    required int revision,
+    required String text,
     required NoteStorageService storage,
-  }) : _storage = storage {
+    required this.onLocalEditReady,
+    List<HistoryEntry> history = const [],
+  }) : _storage = storage,
+       _title = title,
+       _revision = revision,
+       _history = List.of(history) {
+    controller.text = text;
     controller.addListener(_onControllerChanged);
   }
 
   final String instanceId;
-  final void Function(int revision, String text, String originId)
+  final String id;
+
+  /// Reports a ready-to-send local edit: (docId, revision, text, originId).
+  final void Function(String docId, int revision, String text, String originId)
   onLocalEditReady;
   final NoteStorageService _storage;
 
@@ -26,7 +41,11 @@ class DocumentRepository extends ChangeNotifier {
 
   late final CodeController controller = CodeController(text: '');
 
-  int _revision = 0;
+  String _title;
+  int _revision;
+  final List<HistoryEntry> _history;
+  DateTime? _lastAutoSnapshot;
+
   Timer? _debounce;
   Timer? _saveDebounce;
   Timer? _presenceDebounce;
@@ -34,13 +53,36 @@ class DocumentRepository extends ChangeNotifier {
   int? _lastLine;
   int? _lastColumn;
 
+  String get title => _title;
   int get revision => _revision;
   String get text => controller.text;
+  List<HistoryEntry> get history => List.unmodifiable(_history.reversed);
 
-  /// Restores a previously saved note from disk.
-  void loadSaved(SavedNote saved) {
-    _revision = saved.revision;
-    controller.text = saved.text;
+  StoredDocument toStored() => StoredDocument(
+    id: id,
+    title: _title,
+    text: controller.text,
+    revision: _revision,
+    history: List.of(_history),
+  );
+
+  /// Updates the title from a remote peer without bumping the revision or
+  /// rebroadcasting (the change already came from the network).
+  void applyTitle(String title) {
+    final next = title.trim().isEmpty ? kDefaultNoteTitle : title.trim();
+    if (next == _title) return;
+    _title = next;
+    _scheduleSave();
+    notifyListeners();
+  }
+
+  void rename(String title) {
+    final next = title.trim().isEmpty ? kDefaultNoteTitle : title.trim();
+    if (next == _title) return;
+    _title = next;
+    _revision++;
+    onLocalEditReady(id, _revision, controller.text, instanceId);
+    _scheduleSave();
     notifyListeners();
   }
 
@@ -48,24 +90,23 @@ class DocumentRepository extends ChangeNotifier {
     if (_applyingRemote) return;
     _debounce?.cancel();
     _debounce = Timer(kDocDebounce, () {
+      _maybeAutoSnapshot('Edit checkpoint');
       _revision++;
-      onLocalEditReady(_revision, controller.text, instanceId);
+      onLocalEditReady(id, _revision, controller.text, instanceId);
       _scheduleSave();
       notifyListeners();
     });
   }
 
   /// Replaces the whole document with [text] as a local edit (e.g. opening a
-  /// file) and broadcasts it immediately to connected peers.
-  void replaceLocal(String text) {
+  /// file or restoring a version) and broadcasts it immediately.
+  void replaceLocal(String text, {String snapshotLabel = 'Before replace'}) {
+    _snapshot(snapshotLabel);
     _applyingRemote = true;
-    controller.value = controller.value.copyWith(
-      text: text,
-      selection: const TextSelection.collapsed(offset: 0),
-    );
+    _setControllerText(text, 0);
     _applyingRemote = false;
     _revision++;
-    onLocalEditReady(_revision, text, instanceId);
+    onLocalEditReady(id, _revision, text, instanceId);
     _scheduleSave();
     notifyListeners();
   }
@@ -89,29 +130,34 @@ class DocumentRepository extends ChangeNotifier {
   void _scheduleSave() {
     _saveDebounce?.cancel();
     _saveDebounce = Timer(const Duration(milliseconds: 500), () {
-      unawaited(_storage.save(controller.text, _revision));
+      unawaited(_storage.saveDocument(toStored()));
     });
   }
 
   /// Persists immediately (e.g. app backgrounded).
   Future<void> flushSave() async {
     _saveDebounce?.cancel();
-    await _storage.save(controller.text, _revision);
+    await _storage.saveDocument(toStored());
   }
 
   /// Applies a remote document unconditionally (used to resolve a reconnect
   /// divergence in favour of the peer).
   void forceApplyRemote({required int revision, required String text}) {
-    _apply(revision, text);
+    _apply(revision, text, snapshotLabel: 'Before using peer version');
   }
 
   /// Bumps the revision above [atLeastRevision] and rebroadcasts the local text
   /// (used to resolve a reconnect divergence in favour of this device).
   void bumpAndBroadcast(int atLeastRevision) {
     _revision = (atLeastRevision > _revision ? atLeastRevision : _revision) + 1;
-    onLocalEditReady(_revision, controller.text, instanceId);
+    onLocalEditReady(id, _revision, controller.text, instanceId);
     _scheduleSave();
     notifyListeners();
+  }
+
+  /// Restores a saved version, broadcasting it as a fresh local edit.
+  void restore(HistoryEntry entry) {
+    replaceLocal(entry.text, snapshotLabel: 'Before restore');
   }
 
   bool applyRemote({
@@ -130,21 +176,65 @@ class DocumentRepository extends ChangeNotifier {
     return false;
   }
 
-  void _apply(int revision, String text) {
+  void _apply(int revision, String text, {String? snapshotLabel}) {
+    _snapshot(snapshotLabel ?? 'Before remote update');
     _revision = revision;
     _applyingRemote = true;
-    final selection = controller.selection;
-    final offset = selection.baseOffset.clamp(0, text.length);
-    controller.value = controller.value.copyWith(
-      text: text,
-      selection: TextSelection.collapsed(offset: offset),
-    );
+    _setControllerText(text, controller.selection.baseOffset);
     _applyingRemote = false;
     _scheduleSave();
     notifyListeners();
   }
 
+  /// Replaces the controller text + caret, first normalising any invalid
+  /// (-1) selection so code_text_field's auto-close detection can't index out
+  /// of range when the text grows by exactly one character.
+  void _setControllerText(String text, int caret) {
+    final safeOld = controller.selection.baseOffset.clamp(
+      0,
+      controller.text.length,
+    );
+    if (controller.selection.baseOffset != safeOld) {
+      controller.selection = TextSelection.collapsed(offset: safeOld);
+    }
+    controller.value = controller.value.copyWith(
+      text: text,
+      selection: TextSelection.collapsed(offset: caret.clamp(0, text.length)),
+    );
+  }
+
+  /// Records the current text as a recoverable version, unless it would
+  /// duplicate the most recent snapshot or the note is empty.
+  void _snapshot(String label) {
+    final current = controller.text;
+    if (current.trim().isEmpty) return;
+    if (_history.isNotEmpty && _history.last.text == current) return;
+    _history.add(
+      HistoryEntry(
+        text: current,
+        revision: _revision,
+        savedAt: DateTime.now(),
+        label: label,
+      ),
+    );
+    if (_history.length > kMaxHistoryEntries) {
+      _history.removeRange(0, _history.length - kMaxHistoryEntries);
+    }
+  }
+
+  void _maybeAutoSnapshot(String label) {
+    final now = DateTime.now();
+    if (_lastAutoSnapshot != null &&
+        now.difference(_lastAutoSnapshot!) < kHistoryMinInterval) {
+      return;
+    }
+    _lastAutoSnapshot = now;
+    _snapshot(label);
+  }
+
   Map<String, dynamic> snapshotPayload() => {
+    'docId': id,
+    'title': _title,
     'revision': _revision,
     'text': controller.text,
     'originId': instanceId,
@@ -156,7 +246,7 @@ class DocumentRepository extends ChangeNotifier {
     _saveDebounce?.cancel();
     _presenceDebounce?.cancel();
     controller.removeListener(_onControllerChanged);
-    unawaited(_storage.save(controller.text, _revision));
+    unawaited(_storage.saveDocument(toStored()));
     controller.dispose();
     super.dispose();
   }

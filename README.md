@@ -10,9 +10,12 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 - mDNS/Bonjour discovery via [`bonsoir`](https://pub.dev/packages/bonsoir) (`_sbnetpad._tcp`)
 - Mutual pairing: the target device must tap **Accept** before sync starts
 - Multi-peer: connect to several devices; edits relay through intermediaries to reach peers without a direct pairing
-- File workflows: **Save**, **Open**, and **Share** the note from the File menu
+- **Multiple named notes**: manage many notes from the Notes drawer; each syncs independently and propagates create/rename/delete to peers
+- **Version history**: per-note local snapshots you can restore after a remote edit overwrites your text
+- **Search**: find within a note (next/prev) and search across all notes
+- File workflows: **Save**, **Open** (as a new note), and **Share** the note from the File menu
 - **Rooms**: peers only discover each other when they share the same session/room ID
-- **Cursor presence**: see connected peers' cursor positions in the peers drawer
+- **Cursor presence**: see which note each connected peer is editing, and where
 
 ## Requirements
 
@@ -121,6 +124,15 @@ Main entry: [`lib/main.dart`](lib/main.dart).
 - **Certificate pinning (TOFU)** — The first time you connect to a peer, its certificate fingerprint is pinned. If that fingerprint ever changes, the connection is refused (possible impersonation). The accepting device shows its own security code in the pairing dialog so you can compare.
 - **Block / unblock peers** — From the peers drawer, block a device to disconnect it, forget its pinned certificate, and refuse future requests (both directions) until you unblock it. The blocklist persists across restarts.
 - **Reconnect divergence prompt** — If your note and a peer's note changed differently while disconnected, on reconnect one device prompts you to keep yours or use theirs, and both devices converge on the choice.
+
+## Phase 5 features (multiple documents)
+
+- **Multiple named notes** — Open the **Notes** drawer (top-left). Create with **+**, tap a note to switch, and use the per-note menu to **Rename**, view **Version history**, or **Delete**. The app bar shows the active note's title. Creating, renaming, and deleting a note propagates to every connected peer.
+- **Per-note sync** — Each note carries a `docId` and title in its sync messages, so peers reconcile each note independently. On pairing, all notes exchange snapshots; a divergence prompt now names the affected note.
+- **Version history** — Snapshots are captured automatically before a remote edit replaces your text, before a file import, and on throttled edit checkpoints (up to 50 per note). Restore any version from File → *Version history…* or the note's menu.
+- **Search** — The toolbar search icon opens an in-note find bar with match count and next/previous navigation. The Notes drawer search box matches across all note titles and bodies and shows snippets.
+
+> Notes are persisted in `shared_preferences` under a document index; a note from earlier versions is migrated automatically on first launch.
 
 ## Security note
 

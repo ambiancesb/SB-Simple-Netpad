@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:netpad/app.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
-import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
+import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/local_server.dart';
 import 'package:netpad/services/note_storage_service.dart';
@@ -33,26 +33,25 @@ Future<void> main() async {
     localServer: localServer,
   );
 
-  late final SyncRepository sync;
-  final document = DocumentRepository(
+  final workspace = WorkspaceRepository(
     instanceId: instanceId,
     storage: noteStorage,
-    onLocalEditReady: (revision, text, originId) {
-      sync.broadcastDocUpdate(revision, text, originId);
-    },
   );
+  await workspace.load();
 
-  sync = SyncRepository(
+  final sync = SyncRepository(
     instanceId: instanceId,
     displayName: displayName,
     localServer: localServer,
     discovery: discovery,
-    document: document,
+    workspace: workspace,
     connectionLog: connectionLog,
     trustStore: trustStore,
   );
 
-  document.onCursorMoved = sync.broadcastPresence;
+  workspace.onDocUpdate = sync.broadcastDocUpdate;
+  workspace.onPresence = sync.broadcastPresence;
+  workspace.onDocDeleted = sync.broadcastDocDelete;
 
   final pairing = PairingRepository(
     sync: sync,
@@ -60,11 +59,6 @@ Future<void> main() async {
     connectionLog: connectionLog,
     trustStore: trustStore,
   );
-
-  final saved = await noteStorage.load();
-  if (saved != null) {
-    document.loadSaved(saved);
-  }
 
   await discovery.start();
 
@@ -75,7 +69,7 @@ Future<void> main() async {
       trustStore: trustStore,
       connectionLog: connectionLog,
       discovery: discovery,
-      document: document,
+      workspace: workspace,
       sync: sync,
       pairing: pairing,
     ),

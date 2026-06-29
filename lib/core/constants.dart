@@ -15,3 +15,12 @@ const String kEditorFontFamily = 'JetBrainsMono';
 
 /// Default session / room group advertised in TXT records.
 const String kDefaultRoom = 'default';
+
+/// Title used for a freshly created note before the user renames it.
+const String kDefaultNoteTitle = 'Untitled note';
+
+/// Maximum number of local version snapshots kept per note.
+const int kMaxHistoryEntries = 50;
+
+/// Minimum spacing between automatic local version snapshots.
+const Duration kHistoryMinInterval = Duration(minutes: 2);

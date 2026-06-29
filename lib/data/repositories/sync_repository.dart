@@ -8,8 +8,8 @@ import 'package:netpad/core/models/peer_presence.dart';
 import 'package:netpad/core/models/protocol_message.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
-import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
+import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/services/local_server.dart';
 import 'package:netpad/services/pairing_verification_code.dart';
 import 'package:netpad/services/peer_host_resolver.dart';
@@ -45,13 +45,13 @@ class SyncRepository extends ChangeNotifier {
     required String displayName,
     required LocalServer localServer,
     required DiscoveryRepository discovery,
-    required DocumentRepository document,
+    required WorkspaceRepository workspace,
     required ConnectionLogRepository connectionLog,
     required TrustStore trustStore,
   }) : _displayName = displayName,
        _server = localServer,
        _discovery = discovery,
-       _document = document,
+       _workspace = workspace,
        _connectionLog = connectionLog,
        _trustStore = trustStore {
     _server.onMessage = _onInboundMessage;
@@ -63,7 +63,7 @@ class SyncRepository extends ChangeNotifier {
   String get displayName => _displayName;
   final LocalServer _server;
   final DiscoveryRepository _discovery;
-  final DocumentRepository _document;
+  final WorkspaceRepository _workspace;
   final ConnectionLogRepository _connectionLog;
   final TrustStore _trustStore;
 
@@ -90,6 +90,7 @@ class SyncRepository extends ChangeNotifier {
   /// Asked when a reconnecting peer's note diverges from the local one.
   Future<DivergenceChoice> Function(
     String peerName,
+    String docTitle,
     int localRevision,
     String localText,
     int remoteRevision,
@@ -104,6 +105,7 @@ class SyncRepository extends ChangeNotifier {
   bool _requiresSessionToken(String type) {
     return type == MessageTypes.docSnapshot ||
         type == MessageTypes.docUpdate ||
+        type == MessageTypes.docDelete ||
         type == MessageTypes.peerDisconnect ||
         type == MessageTypes.presence;
   }
@@ -321,21 +323,42 @@ class SyncRepository extends ChangeNotifier {
     }
   }
 
-  void broadcastDocUpdate(int revision, String text, String originId) {
+  void broadcastDocUpdate(
+    String docId,
+    String title,
+    int revision,
+    String text,
+    String originId,
+  ) {
     final message = ProtocolMessage(
       type: MessageTypes.docUpdate,
-      payload: {'revision': revision, 'text': text, 'originId': originId},
+      payload: {
+        'docId': docId,
+        'title': title,
+        'revision': revision,
+        'text': text,
+        'originId': originId,
+      },
     );
     _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
   }
 
-  void broadcastPresence(int line, int column) {
+  void broadcastDocDelete(String docId, String originId) {
+    final message = ProtocolMessage(
+      type: MessageTypes.docDelete,
+      payload: {'docId': docId, 'originId': originId},
+    );
+    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
+  }
+
+  void broadcastPresence(String docId, int line, int column) {
     if (_linksByPeerId.isEmpty) return;
     final message = ProtocolMessage(
       type: MessageTypes.presence,
       payload: {
         'peerId': instanceId,
         'name': _displayName,
+        'docId': docId,
         'line': line,
         'column': column,
       },
@@ -487,6 +510,16 @@ class SyncRepository extends ChangeNotifier {
           return;
         }
         _handleDocMessage(message, connectionId);
+      case MessageTypes.docDelete:
+        if (!_hasValidSessionToken(connectionId, message)) {
+          _logTokenRejected(connectionId, message.type);
+          return;
+        }
+        final docId = message.payload['docId'] as String? ?? '';
+        if (docId.isNotEmpty) {
+          _workspace.removeDocumentRemote(docId);
+          _relay(message, connectionId);
+        }
       case MessageTypes.peerDisconnect:
         if (!_hasValidSessionToken(connectionId, message)) {
           final peerId = _connectionToPeerId[connectionId];
@@ -516,10 +549,16 @@ class SyncRepository extends ChangeNotifier {
     if (peerId.isEmpty || peerId == instanceId) return;
     final line = message.payload['line'] as int? ?? 1;
     final column = message.payload['column'] as int? ?? 1;
+    final docId = message.payload['docId'] as String?;
+    final docTitle = docId == null
+        ? null
+        : _workspace.documentById(docId)?.title;
     _presence[peerId] = PeerPresence(
       line: line,
       column: column,
       updatedAt: DateTime.now(),
+      docId: docId,
+      docTitle: docTitle,
     );
     notifyListeners();
   }
@@ -543,7 +582,11 @@ class SyncRepository extends ChangeNotifier {
     final revision = message.payload['revision'] as int? ?? 0;
     final text = message.payload['text'] as String? ?? '';
     final originId = message.payload['originId'] as String? ?? '';
-    final localText = _document.text;
+    final docId = message.payload['docId'] as String? ?? '';
+    final title = message.payload['title'] as String? ?? '';
+    if (docId.isEmpty) return;
+    final document = _workspace.ensureDocument(docId, title);
+    final localText = document.text;
 
     final diverged =
         text != localText &&
@@ -573,7 +616,8 @@ class SyncRepository extends ChangeNotifier {
     try {
       choice = await onSnapshotDivergence!(
         peerName,
-        _document.revision,
+        document.title,
+        document.revision,
         localText,
         revision,
         text,
@@ -583,7 +627,7 @@ class SyncRepository extends ChangeNotifier {
     }
 
     if (choice == DivergenceChoice.takeTheirs) {
-      _document.forceApplyRemote(revision: revision, text: text);
+      document.forceApplyRemote(revision: revision, text: text);
       _relay(message, fromConnectionId);
       _connectionLog.add(
         'Reconnect divergence: used $peerName\'s version',
@@ -592,7 +636,7 @@ class SyncRepository extends ChangeNotifier {
         revision: revision,
       );
     } else {
-      _document.bumpAndBroadcast(revision);
+      document.bumpAndBroadcast(revision);
       _connectionLog.add(
         'Reconnect divergence: kept local version',
         peerId: peerId,
@@ -605,9 +649,13 @@ class SyncRepository extends ChangeNotifier {
     final revision = message.payload['revision'] as int? ?? 0;
     final text = message.payload['text'] as String? ?? '';
     final originId = message.payload['originId'] as String? ?? '';
+    final docId = message.payload['docId'] as String? ?? '';
+    final title = message.payload['title'] as String? ?? '';
+    if (docId.isEmpty) return;
+    final document = _workspace.ensureDocument(docId, title);
 
-    final hadConflict = revision == _document.revision;
-    final applied = _document.applyRemote(
+    final hadConflict = revision == document.revision;
+    final applied = document.applyRemote(
       revision: revision,
       text: text,
       originId: originId,
@@ -641,13 +689,15 @@ class SyncRepository extends ChangeNotifier {
   }
 
   void _sendDocSnapshot(String connectionId) {
-    _sendOnConnection(
-      connectionId,
-      ProtocolMessage(
-        type: MessageTypes.docSnapshot,
-        payload: _document.snapshotPayload(),
-      ),
-    );
+    for (final doc in _workspace.documents) {
+      _sendOnConnection(
+        connectionId,
+        ProtocolMessage(
+          type: MessageTypes.docSnapshot,
+          payload: doc.snapshotPayload(),
+        ),
+      );
+    }
   }
 
   void _fanOut(

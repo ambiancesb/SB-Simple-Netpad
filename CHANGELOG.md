@@ -8,13 +8,22 @@ and this project currently tracks versions informally.
 ## [Unreleased]
 
 ### Added
+- **Multiple named notes** — Manage many notes from a left Notes drawer (create / rename / delete). Each note has its own id, title, revision, and editor; notes sync per-document and creating/renaming/deleting propagates to peers.
+- **Note history / versioning** — Each note keeps a bounded local snapshot ring, captured before remote edits clobber local text and before file imports/restores. Restore any version from the per-note Version history sheet.
+- **Search** — In-note find bar (match count with next/previous navigation) and cross-note search in the Notes drawer (matches titles and bodies, with snippets).
+- **Per-note presence** — A peer's cursor now reports which note they are editing, shown in the peers drawer.
 - **TLS transport** — each device generates a persisted self-signed certificate; all peer traffic upgraded from `ws://` to `wss://` (`basic_utils`/`pointycastle` for cert generation, `crypto` for fingerprints).
 - **Certificate pinning (TOFU)** — peer certificate fingerprints are pinned on first connect and verified afterwards; a mismatch refuses the connection. The accepting device shows its security code in the pairing dialog.
 - **Block / unblock peers** — disconnects, forgets the pinned certificate, and refuses re-pair in both directions; persisted blocklist with a Blocked section in the peers drawer.
 - **Reconnect divergence prompt** — detects when a reconnecting peer's note diverged from the local one and prompts to keep mine / use theirs, converging both devices.
 
 ### Changed
+- Storage reworked from a single note to a multi-document layout (`docs_index` + per-note keys in `shared_preferences`); a legacy single note is migrated automatically on first launch.
+- "Open file" now imports into a **new** note instead of replacing the active one.
 - Bumped `path_provider_android` override to 2.2.23 (last pre-JNI release that still targets the modern Android v2 embedding) so both Android and Linux builds work; added a `path_provider_foundation` 2.4.1 override to avoid the `objective_c` build hook on Linux.
+
+### Fixed
+- Avoided a `code_text_field` range crash when a remote update grew a note by exactly one character while the editor selection was uninitialised.
 
 ## [1.1.0] - 2026-06-04
 

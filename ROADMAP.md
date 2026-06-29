@@ -63,13 +63,15 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 ---
 
-## Phase 5 — Multiple documents and content
+## Phase 5 — Multiple documents and content — Done
 
 **Goal:** Move beyond a single shared note.
 
-- [ ] **Multiple named notes / tabs** — Today there is one global note in [lib/data/repositories/document_repository.dart](lib/data/repositories/document_repository.dart); requires a document ID in `docSnapshot` / `docUpdate` payloads.
-- [ ] **Note history / versioning** — Local snapshots to recover text clobbered by "newer revision wins".
-- [ ] **Search** within and across notes.
+- [x] **Multiple named notes** — A [WorkspaceRepository](lib/data/repositories/workspace_repository.dart) owns many notes; every `docSnapshot` / `docUpdate` / `presence` / `docDelete` payload now carries a `docId` (+ title). Notes are managed from a left **Notes** drawer (create / rename / delete) and create/rename/delete propagate to peers.
+- [x] **Note history / versioning** — Each note keeps a bounded local snapshot ring (`HistoryEntry`), captured before a remote edit clobbers local text, before file open/restore, and on throttled edit checkpoints. Restore from the per-note **Version history** sheet.
+- [x] **Search** — In-note find bar (match count + next/prev) and cross-note search in the Notes drawer (matches titles + bodies with snippets).
+
+> Sync model remains full-document replace per note; incremental/CRDT sync stays deferred.
 
 ---
 
