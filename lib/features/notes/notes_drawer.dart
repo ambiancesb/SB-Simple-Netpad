@@ -197,6 +197,7 @@ class _NotesDrawerState extends State<NotesDrawer> {
     }
     return ReorderableListView.builder(
       padding: EdgeInsets.zero,
+      buildDefaultDragHandles: false,
       itemCount: docs.length,
       onReorder: workspace.reorderNote,
       itemBuilder: (context, index) {
