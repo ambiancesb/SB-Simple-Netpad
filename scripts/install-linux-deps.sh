@@ -14,15 +14,17 @@ sudo apt-get install -y \
   build-essential \
   avahi-daemon \
   avahi-utils \
+  dbus \
   libnss-mdns
 
-sudo systemctl enable --now avahi-daemon 2>/dev/null || true
+sudo systemctl enable --now dbus avahi-daemon 2>/dev/null || true
 
 echo ""
 echo "Verifying compilers..."
 command -v clang++
 command -v cmake
 command -v ninja
+systemctl is-active dbus 2>/dev/null && echo "dbus: running" || echo "dbus: not running (start with: sudo systemctl start dbus)"
 systemctl is-active avahi-daemon 2>/dev/null && echo "avahi-daemon: running" || echo "avahi-daemon: not running (start with: sudo systemctl start avahi-daemon)"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

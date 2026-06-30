@@ -37,6 +37,13 @@ class PeersPanel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
         ThisDeviceBanner(port: discovery.serverPort),
+        if (discovery.networkingError != null)
+          _NetworkingErrorBanner(
+            message: discovery.networkingError!,
+            onRetry: () => discovery.retryNetworking(),
+          ),
+        if (discovery.networkingNote != null)
+          _NetworkingInfoBanner(message: discovery.networkingNote!),
         const SessionSecurityBanner(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -311,6 +318,73 @@ class _BlockedSection extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _NetworkingInfoBanner extends StatelessWidget {
+  const _NetworkingInfoBanner({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Material(
+        color: Theme.of(context).colorScheme.secondaryContainer.withValues(
+          alpha: 0.45,
+        ),
+        borderRadius: BorderRadius.circular(8),
+        child: ListTile(
+          dense: true,
+          leading: Icon(
+            Icons.info_outline,
+            size: 20,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          title: const Text('Discovery mode'),
+          subtitle: Text(message),
+        ),
+      ),
+    );
+  }
+}
+
+class _NetworkingErrorBanner extends StatelessWidget {
+  const _NetworkingErrorBanner({
+    required this.message,
+    required this.onRetry,
+  });
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Material(
+        color: Theme.of(context).colorScheme.errorContainer.withValues(
+          alpha: 0.55,
+        ),
+        borderRadius: BorderRadius.circular(8),
+        child: ListTile(
+          dense: true,
+          leading: Icon(
+            Icons.wifi_off,
+            size: 20,
+            color: Theme.of(context).colorScheme.error,
+          ),
+          title: const Text('Peer discovery unavailable'),
+          subtitle: Text(message),
+          trailing: IconButton(
+            icon: const Icon(Icons.refresh, size: 20),
+            tooltip: 'Retry discovery',
+            onPressed: onRetry,
+          ),
+        ),
+      ),
     );
   }
 }

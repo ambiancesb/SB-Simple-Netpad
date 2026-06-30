@@ -38,12 +38,20 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
   flutter run -d linux
   ```
 
-- **Linux:** Avahi for discovery and advertising (required for finding peers):
+- **Linux:** D-Bus and Avahi for discovery and advertising (required for finding peers):
 
   ```bash
-  sudo apt install -y avahi-daemon avahi-utils libnss-mdns
-  sudo systemctl enable --now avahi-daemon
+  sudo apt install -y dbus avahi-daemon avahi-utils libnss-mdns
+  sudo systemctl enable --now dbus avahi-daemon
   ```
+
+  If the app logs `system_bus_socket` or peers never appear, confirm both services are running:
+
+  ```bash
+  systemctl is-active dbus avahi-daemon
+  ```
+
+  Manual **Connect by IP** still works when mDNS is unavailable. On Linux, if D-Bus is missing the app automatically falls back to direct mDNS (no Avahi required).
 
   If peers show as **Resolving…** or never appear:
 
