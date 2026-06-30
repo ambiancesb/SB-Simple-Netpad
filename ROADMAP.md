@@ -8,10 +8,10 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 | **2** | Done | Session token enforcement, connection log, pairing verification code |
 | **3** | Done | Save/open/share files, network-change listener, room ID, cursor presence (CRDT deferred) |
 | **4** | Done | wss/TLS with pinned certs (TOFU), revoke/block peer, reconnect divergence prompt |
-| **5** | Planned | Multiple documents, note history, search |
+| **5** | Done | Multiple documents, note history, search |
 | **6** | Planned | Conflict UI, protocol version negotiation, heartbeat |
 | **7** | Planned | UX polish: find/replace, settings, theme, share sheet |
-| **8** | Planned | Code health: remove debug cruft, sync/relay tests |
+| **8** | In progress | Code health: sync/relay tests (debug cruft removed) |
 
 ---
 
@@ -63,13 +63,15 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 ---
 
-## Phase 5 — Multiple documents and content — Done
+## Phase 5 — Multiple documents and content
 
 **Goal:** Move beyond a single shared note.
 
 - [x] **Multiple named notes** — A [WorkspaceRepository](lib/data/repositories/workspace_repository.dart) owns many notes; every `docSnapshot` / `docUpdate` / `presence` / `docDelete` payload carries a `docId` (+ title). Explicit `doc_create`, `doc_rename`, `doc_catalog`, and `doc_reorder` messages keep note names and drawer order in sync across peers (catalog + order on pair; live reorder via drag handles).
 - [x] **Note history / versioning** — Each note keeps a bounded local snapshot ring (`HistoryEntry`), captured before a remote edit clobbers local text, before file open/restore, and on throttled edit checkpoints. Restore from the per-note **Version history** sheet.
 - [x] **Search** — In-note find bar (match count + next/prev) and cross-note search in the Notes drawer (matches titles + bodies with snippets).
+- [x] **Per-note presence** — Cursor/presence payloads include `docId`; the peers drawer shows which note each peer is editing.
+- [x] **Automated verification** — [test/phase5_test.dart](test/phase5_test.dart) covers history capture/restore, workspace CRUD, catalog merge, order sync, and cross-note search (14 tests; run `flutter test test/phase5_test.dart`).
 
 > Sync model remains full-document replace per note; incremental/CRDT sync stays deferred.
 
@@ -101,7 +103,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 **Goal:** Reduce maintenance risk and harden the sync core.
 
 - [x] **Remove debug logging cruft** — Removed the `#region agent log` blocks and hardcoded debug path from [lib/features/editor/editor_screen.dart](lib/features/editor/editor_screen.dart).
-- [ ] **Sync/relay tests** — Cover the merge and relay logic (currently only pairing code, connection log, and cursor math are tested).
+- [ ] **Sync/relay tests** — Cover multi-peer relay and divergence merge end-to-end (phase 1–5 unit tests cover pairing code, connection log, cursor math, TLS/trust, and workspace/history/search).
 
 ---
 

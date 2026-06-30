@@ -83,7 +83,7 @@ Use two or more devices on the same LAN (physical devices recommended for Androi
 ## Phase 3 features
 
 - **Save to file** — File menu → *Save to file…* writes the note to a chosen `.txt`/`.md` path.
-- **Open file** — File menu → *Open file…* loads a text file; if the current note is non-empty it prompts before replacing, then broadcasts to connected peers.
+- **Open file** — File menu → *Open file…* imports a text file into a **new** note (Phase 5); the new note syncs to connected peers like any other create.
 - **Share note** — File menu → *Share note* opens the OS share sheet; on platforms without one (e.g. Linux) it falls back to copying to the clipboard.
 - **Session / room ID** — Set in **Settings**. Only peers advertising the same room are discovered, so multiple groups can coexist on one LAN. Peers without a room are treated as the `default` room.
 - **Cursor presence** — Connected peers report their cursor line/column, shown under each peer in the drawer.
@@ -95,28 +95,40 @@ On **Linux**, native file dialogs require `zenity` (GNOME) or `kdialog` (KDE):
 sudo apt install -y zenity
 ```
 
-> The note sync model is still full-document replace; incremental/CRDT sync remains deferred.
+> The note sync model is still full-document replace per note; incremental/CRDT sync remains deferred.
 
-See [ROADMAP.md](ROADMAP.md) for planned phases.
+Phases 1–5 are complete. See [ROADMAP.md](ROADMAP.md) for Phase 6 and beyond.
 
 ## How pairing works
 
 1. Open the **Peers** drawer (devices icon).
 2. Under **Nearby**, tap **Connect** on a discovered instance.
 3. On the other device, compare the verification code and accept the **Connection request** dialog.
-4. After acceptance, both sides exchange a document snapshot and stream debounced updates.
+4. After acceptance, both sides exchange a **document catalog** (every note’s id, title, and order), per-note snapshots, and then stream debounced updates.
 
 Rejected requests never receive document data.
 
 ## Sync behavior
 
-- Each edit bumps a monotonic **revision**; the full document text is sent (debounced ~300 ms).
-- Newer revisions win; equal revisions tie-break by instance ID.
+- Each **note** has its own monotonic **revision**; edits send the full note text (debounced ~300 ms) tagged with `docId` and title.
+- Newer revisions win per note; equal revisions tie-break by instance ID.
+- Creating, renaming, reordering, or deleting a note propagates via `doc_create`, `doc_rename`, `doc_reorder`, and `doc_delete` so every peer’s Notes drawer stays aligned.
 - When a peer receives an update, it may **relay** it to other connected peers (except the sender), so a device paired only with a hub still receives edits from the hub’s other connections.
+- **Divergence on reconnect** (Phase 4) is evaluated per note: if your copy and a peer’s copy of the same note changed while disconnected, one device prompts you to keep yours or use theirs.
 
 ## Project layout
 
 Main entry: [`lib/main.dart`](lib/main.dart).
+
+Key Phase 5 modules:
+
+| Area | Path |
+|------|------|
+| Workspace / multi-note | [`lib/data/repositories/workspace_repository.dart`](lib/data/repositories/workspace_repository.dart) |
+| Per-note text + history | [`lib/data/repositories/document_repository.dart`](lib/data/repositories/document_repository.dart) |
+| Notes drawer + search | [`lib/features/notes/notes_drawer.dart`](lib/features/notes/notes_drawer.dart) |
+| Version history UI | [`lib/features/notes/version_history_sheet.dart`](lib/features/notes/version_history_sheet.dart) |
+| Phase 5 tests | [`test/phase5_test.dart`](test/phase5_test.dart) |
 
 ## Phase 4 features (security)
 
@@ -125,14 +137,22 @@ Main entry: [`lib/main.dart`](lib/main.dart).
 - **Block / unblock peers** — From the peers drawer, block a device to disconnect it, forget its pinned certificate, and refuse future requests (both directions) until you unblock it. The blocklist persists across restarts.
 - **Reconnect divergence prompt** — If your note and a peer's note changed differently while disconnected, on reconnect one device prompts you to keep yours or use theirs, and both devices converge on the choice.
 
-## Phase 5 features (multiple documents)
+## Phase 5 features (multiple documents) — complete
 
 - **Multiple named notes** — Open the **Notes** drawer (top-left). Create with **+**, tap a note to switch, and use the per-note menu to **Rename**, view **Version history**, or **Delete**. The app bar shows the active note's title. Creating, renaming, and deleting a note propagates to every connected peer.
 - **Per-note sync** — Each note carries a `docId` and title in its sync messages, so peers reconcile each note independently. On pairing, a `doc_catalog` lists every note name and order, then snapshots fill in content; live `doc_create` / `doc_rename` / `doc_reorder` / `doc_delete` messages keep the notes menu aligned while connected. Drag the handle beside a note to reorder (syncs to peers).
 - **Version history** — Snapshots are captured automatically before a remote edit replaces your text, before a file import, and on throttled edit checkpoints (up to 50 per note). Restore any version from File → *Version history…* or the note's menu.
 - **Search** — The toolbar search icon opens an in-note find bar with match count and next/previous navigation. The Notes drawer search box matches across all note titles and bodies and shows snippets.
+- **Per-note presence** — The peers drawer shows which note each connected peer is editing, along with their cursor line/column.
 
-> Notes are persisted in `shared_preferences` under a document index; a note from earlier versions is migrated automatically on first launch.
+> Notes are persisted in `shared_preferences` under a document index; a single note from Phases 1–4 is migrated automatically on first launch.
+
+### Verifying Phase 5
+
+```bash
+flutter test test/phase5_test.dart   # workspace, history, catalog/order sync, search
+flutter test                       # full suite (28 tests, phases 1–5)
+```
 
 ## Security note
 
