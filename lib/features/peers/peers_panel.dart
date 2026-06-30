@@ -7,6 +7,7 @@ import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/features/peers/manual_connect_dialog.dart';
+import 'package:netpad/features/peers/session_security_banner.dart';
 import 'package:netpad/features/peers/this_device_banner.dart';
 import 'package:provider/provider.dart';
 
@@ -36,6 +37,7 @@ class PeersPanel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
         ThisDeviceBanner(port: discovery.serverPort),
+        const SessionSecurityBanner(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: OutlinedButton.icon(
@@ -53,6 +55,7 @@ class PeersPanel extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                PeerSecurityIcon(peerId: peer.id),
                 IconButton(
                   icon: const Icon(Icons.link_off, size: 20),
                   tooltip: 'Disconnect',

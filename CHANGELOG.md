@@ -7,7 +7,16 @@ and this project currently tracks versions informally.
 
 ## [Unreleased]
 
-_Nothing yet — next up: Phase 6 (conflict UI, protocol negotiation, heartbeat)._
+### Added
+- **Live edit conflict dialog** — When two peers edit the same note at the same revision, one device prompts with text previews to keep yours or use theirs (replaces silent tie-break snackbar).
+- **Protocol version negotiation** — Pair handshake carries `protocolVersion`; peers must match exactly (`v2`). Older builds are refused with a connection-log entry.
+- **Heartbeat** — `ping`/`pong` on authenticated links every 15s; peers that stop responding for 45s are disconnected automatically.
+
+### Changed
+- Wire protocol bumped to **v2** (`kProtocolVersion`); all messages encode `v: 2`.
+
+### Removed
+- Silent "revision conflict resolved" snackbar — live conflicts now always prompt on the deterministic device.
 
 ## [1.2.0] - 2026-06-30
 

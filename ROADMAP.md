@@ -9,7 +9,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 | **3** | Done | Save/open/share files, network-change listener, room ID, cursor presence (CRDT deferred) |
 | **4** | Done | wss/TLS with pinned certs (TOFU), revoke/block peer, reconnect divergence prompt |
 | **5** | Done | Multiple documents, note history, search |
-| **6** | Planned | Conflict UI, protocol version negotiation, heartbeat |
+| **6** | Done | Conflict UI, protocol version negotiation, heartbeat |
 | **7** | Planned | UX polish: find/replace, settings, theme, share sheet |
 | **8** | In progress | Code health: sync/relay tests (debug cruft removed) |
 
@@ -77,13 +77,14 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 ---
 
-## Phase 6 — Sync robustness and protocol
+## Phase 6 — Sync robustness and protocol — Done
 
 **Goal:** Avoid silent data loss and brittle wire compatibility.
 
-- [ ] **Conflict resolution UI** — "Your version vs theirs" instead of silent tie-break by instance ID.
-- [ ] **Protocol version negotiation** — Handshake on connect; today `v:1` is hardcoded in [lib/core/constants.dart](lib/core/constants.dart) and [lib/core/models/protocol_message.dart](lib/core/models/protocol_message.dart).
-- [ ] **Heartbeat / dead-peer detection** — Prune half-open WebSockets.
+- [x] **Conflict resolution UI** — Live same-revision edit collisions prompt "Keep mine / Use theirs" with text previews (deterministic prompt side); reconnect divergence dialog unchanged from Phase 4.
+- [x] **Protocol version negotiation** — `protocolVersion` in pair handshake; strict match required (`kProtocolVersion` = 2); incompatible peers refused with a connection-log entry.
+- [x] **Heartbeat / dead-peer detection** — `ping`/`pong` every 15s on authenticated links; disconnect after 45s without reply.
+- [x] **Automated verification** — [test/phase6_test.dart](test/phase6_test.dart) covers protocol v2 encoding, live-conflict detection, and heartbeat constants.
 
 ---
 

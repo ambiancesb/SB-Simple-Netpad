@@ -1,10 +1,16 @@
+import 'package:netpad/core/constants.dart';
+
 class ProtocolMessage {
   const ProtocolMessage({required this.type, required this.payload});
 
   final String type;
   final Map<String, dynamic> payload;
 
-  Map<String, dynamic> toJson() => {'type': type, 'v': 1, ...payload};
+  Map<String, dynamic> toJson() => {
+    'type': type,
+    'v': kProtocolVersion,
+    ...payload,
+  };
 
   factory ProtocolMessage.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String? ?? '';
@@ -13,6 +19,10 @@ class ProtocolMessage {
       ..remove('v');
     return ProtocolMessage(type: type, payload: payload);
   }
+
+  /// Wire protocol version from the top-level `v` field (defaults to 1).
+  static int versionFromJson(Map<String, dynamic> json) =>
+      json['v'] as int? ?? 1;
 }
 
 /// Message type constants.
@@ -29,4 +39,6 @@ abstract final class MessageTypes {
   static const docDelete = 'doc_delete';
   static const peerDisconnect = 'peer_disconnect';
   static const presence = 'presence';
+  static const ping = 'ping';
+  static const pong = 'pong';
 }

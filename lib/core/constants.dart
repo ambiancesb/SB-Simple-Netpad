@@ -1,14 +1,20 @@
 /// Bonsoir service type for LAN discovery.
 const String kServiceType = '_sbnetpad._tcp';
 
-/// Protocol version sent in messages.
-const int kProtocolVersion = 1;
+/// Protocol version sent in messages (bump when wire format changes).
+const int kProtocolVersion = 2;
 
 /// Debounce delay before broadcasting local edits.
 const Duration kDocDebounce = Duration(milliseconds: 300);
 
 /// Debounce delay before broadcasting cursor presence.
 const Duration kPresenceDebounce = Duration(milliseconds: 180);
+
+/// Interval between heartbeat pings on authenticated peer links.
+const Duration kHeartbeatInterval = Duration(seconds: 15);
+
+/// Disconnect a peer when no pong arrives within this window.
+const Duration kHeartbeatTimeout = Duration(seconds: 45);
 
 /// Monospace font bundled in assets.
 const String kEditorFontFamily = 'JetBrainsMono';

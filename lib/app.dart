@@ -84,16 +84,51 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     final sync = context.read<SyncRepository>();
-    sync.onConflictMerged = () {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Remote edit applied (revision conflict resolved)'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    };
+    sync.onLiveConflict = _resolveLiveConflict;
     sync.onSnapshotDivergence = _resolveDivergence;
+  }
+
+  String _previewText(String text, {int maxLen = 200}) {
+    final singleLine = text.replaceAll('\n', ' ').trim();
+    if (singleLine.length <= maxLen) return singleLine;
+    return '${singleLine.substring(0, maxLen)}…';
+  }
+
+  Future<DivergenceChoice> _resolveLiveConflict(
+    String peerName,
+    String docTitle,
+    int revision,
+    String localText,
+    String remoteText,
+  ) async {
+    if (!mounted) return DivergenceChoice.keepMine;
+    final choice = await showDialog<DivergenceChoice>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: Text('Edit conflict in "$docTitle"'),
+        content: SingleChildScrollView(
+          child: Text(
+            '$peerName edited the same note at the same time (revision '
+            '$revision).\n\n'
+            'Yours:\n${_previewText(localText)}\n\n'
+            '$peerName:\n${_previewText(remoteText)}\n\n'
+            'Which version should both devices keep?',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, DivergenceChoice.takeTheirs),
+            child: Text('Use $peerName\'s'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, DivergenceChoice.keepMine),
+            child: const Text('Keep mine'),
+          ),
+        ],
+      ),
+    );
+    return choice ?? DivergenceChoice.keepMine;
   }
 
   Future<DivergenceChoice> _resolveDivergence(
@@ -167,13 +202,19 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: Chip(
-              avatar: Icon(
-                Icons.circle,
-                size: 10,
-                color: connected > 0 ? Colors.green : Colors.grey,
+            child: Tooltip(
+              message: connected > 0
+                  ? '$connected peer session${connected == 1 ? '' : 's'} '
+                        'encrypted with WSS/TLS'
+                  : 'No active peer sessions · this device still uses WSS/TLS',
+              child: Chip(
+                avatar: Icon(
+                  connected > 0 ? Icons.lock : Icons.lock_outline,
+                  size: 16,
+                  color: connected > 0 ? Colors.green : Colors.grey,
+                ),
+                label: Text('$connected connected'),
               ),
-              label: Text('$connected connected'),
             ),
           ),
           PopupMenuButton<_FileAction>(

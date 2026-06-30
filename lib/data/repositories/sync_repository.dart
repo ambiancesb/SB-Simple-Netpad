@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/divergence_choice.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/models/peer_presence.dart';
@@ -37,6 +38,9 @@ class _PeerLink {
   /// Server cert fingerprint captured during the TLS handshake, pinned on
   /// successful pairing (TOFU).
   String? pendingCertFingerprint;
+
+  DateTime? lastPongAt;
+  Timer? heartbeatTimer;
 }
 
 class SyncRepository extends ChangeNotifier {
@@ -68,6 +72,7 @@ class SyncRepository extends ChangeNotifier {
   final TrustStore _trustStore;
 
   bool _divergencePromptActive = false;
+  bool _liveConflictPromptActive = false;
 
   final Map<String, _PeerLink> _linksByPeerId = {};
   final Map<String, String> _connectionToPeerId = {};
@@ -85,7 +90,16 @@ class SyncRepository extends ChangeNotifier {
   )?
   onIncomingPairRequest;
   void Function(String peerId, bool accepted)? onPairRequestResolved;
-  void Function()? onConflictMerged;
+
+  /// Asked when a live edit collides at the same revision as the local note.
+  Future<DivergenceChoice> Function(
+    String peerName,
+    String docTitle,
+    int revision,
+    String localText,
+    String remoteText,
+  )?
+  onLiveConflict;
 
   /// Asked when a reconnecting peer's note diverges from the local one.
   Future<DivergenceChoice> Function(
@@ -111,7 +125,9 @@ class SyncRepository extends ChangeNotifier {
         type == MessageTypes.docReorder ||
         type == MessageTypes.docDelete ||
         type == MessageTypes.peerDisconnect ||
-        type == MessageTypes.presence;
+        type == MessageTypes.presence ||
+        type == MessageTypes.ping ||
+        type == MessageTypes.pong;
   }
 
   ProtocolMessage _messageForConnection(
@@ -247,6 +263,7 @@ class SyncRepository extends ChangeNotifier {
           'requestId': requestId,
           'fromId': instanceId,
           'fromName': _displayName,
+          'protocolVersion': kProtocolVersion,
         },
       ),
     );
@@ -285,7 +302,11 @@ class SyncRepository extends ChangeNotifier {
         connectionId,
         ProtocolMessage(
           type: MessageTypes.pairResponse,
-          payload: {'requestId': requestId, 'accepted': true},
+          payload: {
+            'requestId': requestId,
+            'accepted': true,
+            'protocolVersion': kProtocolVersion,
+          },
         ),
       );
       _sendOnConnection(
@@ -310,6 +331,7 @@ class SyncRepository extends ChangeNotifier {
         peerName: fromName,
       );
       _sendDocSnapshot(connectionId);
+      _startHeartbeat(fromId);
     } else {
       _sendOnConnection(
         connectionId,
@@ -426,6 +448,7 @@ class SyncRepository extends ChangeNotifier {
     final link = _linksByPeerId[peerId];
     if (link == null) return;
 
+    _stopHeartbeat(link);
     final message = ProtocolMessage(
       type: MessageTypes.peerDisconnect,
       payload: {'peerId': instanceId},
@@ -476,6 +499,7 @@ class SyncRepository extends ChangeNotifier {
         final requestId = message.payload['requestId'] as String? ?? '';
         final fromId = message.payload['fromId'] as String? ?? '';
         final fromName = message.payload['fromName'] as String? ?? 'Unknown';
+        final peerProtocol = message.payload['protocolVersion'] as int? ?? 1;
         _connectionToPeerId[connectionId] = fromId;
         if (_trustStore.isBlocked(fromId)) {
           _sendOnConnection(
@@ -493,12 +517,50 @@ class SyncRepository extends ChangeNotifier {
           unawaited(_server.closeConnection(connectionId));
           return;
         }
+        if (peerProtocol != kProtocolVersion) {
+          _sendOnConnection(
+            connectionId,
+            ProtocolMessage(
+              type: MessageTypes.pairResponse,
+              payload: {
+                'requestId': requestId,
+                'accepted': false,
+                'protocolVersion': kProtocolVersion,
+                'reason': 'protocol_mismatch',
+              },
+            ),
+          );
+          _connectionLog.add(
+            'Refused $fromName: protocol v$peerProtocol '
+            '(requires v$kProtocolVersion)',
+            peerId: fromId,
+            peerName: fromName,
+          );
+          unawaited(_server.closeConnection(connectionId));
+          return;
+        }
         onIncomingPairRequest?.call(fromId, fromName, requestId, connectionId);
       case MessageTypes.pairResponse:
         final accepted = message.payload['accepted'] as bool? ?? false;
         final peerId = _connectionToPeerId[connectionId];
         if (peerId != null) {
           final peerName = _discovery.peerById(peerId)?.displayName ?? peerId;
+          if (accepted) {
+            final peerProtocol =
+                message.payload['protocolVersion'] as int? ?? 1;
+            if (peerProtocol != kProtocolVersion) {
+              _connectionLog.add(
+                'Pairing failed with $peerName: protocol v$peerProtocol '
+                '(requires v$kProtocolVersion)',
+                peerId: peerId,
+                peerName: peerName,
+              );
+              onPairRequestResolved?.call(peerId, false);
+              _cleanupConnection(connectionId);
+              _pendingOutboundRequestId.remove(connectionId);
+              return;
+            }
+          }
           _connectionLog.add(
             accepted
                 ? 'Pairing accepted by $peerName'
@@ -554,6 +616,7 @@ class SyncRepository extends ChangeNotifier {
           peerName: link.displayName,
         );
         _sendDocSnapshot(connectionId);
+        _startHeartbeat(peerId);
       case MessageTypes.docSnapshot:
         if (!_hasValidSessionToken(connectionId, message)) {
           _logTokenRejected(connectionId, message.type);
@@ -565,7 +628,7 @@ class SyncRepository extends ChangeNotifier {
           _logTokenRejected(connectionId, message.type);
           return;
         }
-        _handleDocMessage(message, connectionId);
+        unawaited(_handleDocMessage(message, connectionId));
       case MessageTypes.docCreate:
         if (!_hasValidSessionToken(connectionId, message)) {
           _logTokenRejected(connectionId, message.type);
@@ -619,6 +682,12 @@ class SyncRepository extends ChangeNotifier {
       case MessageTypes.presence:
         if (!_hasValidSessionToken(connectionId, message)) return;
         _handlePresence(message);
+      case MessageTypes.ping:
+        if (!_hasValidSessionToken(connectionId, message)) return;
+        _handlePing(message, connectionId);
+      case MessageTypes.pong:
+        if (!_hasValidSessionToken(connectionId, message)) return;
+        _handlePong(connectionId);
       default:
         break;
     }
@@ -682,7 +751,7 @@ class SyncRepository extends ChangeNotifier {
         instanceId.compareTo(originId) < 0;
 
     if (!shouldPrompt) {
-      _handleDocMessage(message, fromConnectionId);
+      unawaited(_handleDocMessage(message, fromConnectionId));
       return;
     }
 
@@ -725,7 +794,10 @@ class SyncRepository extends ChangeNotifier {
     }
   }
 
-  void _handleDocMessage(ProtocolMessage message, String fromConnectionId) {
+  Future<void> _handleDocMessage(
+    ProtocolMessage message,
+    String fromConnectionId,
+  ) async {
     final revision = message.payload['revision'] as int? ?? 0;
     final text = message.payload['text'] as String? ?? '';
     final originId = message.payload['originId'] as String? ?? '';
@@ -734,7 +806,60 @@ class SyncRepository extends ChangeNotifier {
     if (docId.isEmpty) return;
 
     final document = _workspace.documentById(docId);
-    final hadConflict = document != null && revision == document.revision;
+    final shouldPrompt =
+        document != null &&
+        document.isLiveEditConflict(
+          revision: revision,
+          text: text,
+          originId: originId,
+        ) &&
+        onLiveConflict != null &&
+        !_liveConflictPromptActive &&
+        instanceId.compareTo(originId) < 0;
+
+    if (shouldPrompt) {
+      final peerId = _connectionToPeerId[fromConnectionId];
+      final peerName = peerId == null
+          ? 'peer'
+          : (_linksByPeerId[peerId]?.displayName ?? 'peer');
+
+      _liveConflictPromptActive = true;
+      final DivergenceChoice choice;
+      try {
+        choice = await onLiveConflict!(
+          peerName,
+          document.title,
+          revision,
+          document.text,
+          text,
+        );
+      } finally {
+        _liveConflictPromptActive = false;
+      }
+
+      if (choice == DivergenceChoice.takeTheirs) {
+        document.forceApplyRemote(
+          revision: revision,
+          text: text,
+          title: title,
+        );
+        _connectionLog.add(
+          'Live conflict: used $peerName\'s version',
+          peerId: peerId,
+          peerName: peerName,
+          revision: revision,
+        );
+        _relay(message, fromConnectionId);
+      } else {
+        document.bumpAndBroadcast(revision);
+        _connectionLog.add(
+          'Live conflict: kept local version',
+          peerId: peerId,
+          peerName: peerName,
+        );
+      }
+      return;
+    }
 
     final applied = _workspace.receiveRemoteContent(
       docId: docId,
@@ -754,9 +879,6 @@ class SyncRepository extends ChangeNotifier {
         peerName: peerName,
         revision: revision,
       );
-      if (hadConflict && originId != instanceId) {
-        onConflictMerged?.call();
-      }
       _relay(message, fromConnectionId);
     }
   }
@@ -947,6 +1069,7 @@ class SyncRepository extends ChangeNotifier {
     }
 
     if (link.inboundConnectionId == null && link.outboundSocket == null) {
+      _stopHeartbeat(link);
       _linksByPeerId.remove(peerId);
       _presence.remove(peerId);
       _discovery.markPeerDisconnected(peerId);
@@ -962,11 +1085,84 @@ class SyncRepository extends ChangeNotifier {
     final peerId = _connectionToPeerId.remove(connectionId);
     if (peerId != null) {
       final link = _linksByPeerId.remove(peerId);
+      if (link != null) _stopHeartbeat(link);
       _presence.remove(peerId);
       unawaited(link?.outboundSocket?.close());
       _discovery.markPeerDisconnected(peerId);
       notifyListeners();
     }
     unawaited(_server.closeConnection(connectionId));
+  }
+
+  void _startHeartbeat(String peerId) {
+    final link = _linksByPeerId[peerId];
+    if (link == null || !link.authenticated) return;
+    _stopHeartbeat(link);
+    link.lastPongAt = DateTime.now();
+    link.heartbeatTimer = Timer.periodic(kHeartbeatInterval, (_) {
+      _tickHeartbeat(peerId);
+    });
+  }
+
+  void _stopHeartbeat(_PeerLink link) {
+    link.heartbeatTimer?.cancel();
+    link.heartbeatTimer = null;
+  }
+
+  void _tickHeartbeat(String peerId) {
+    final link = _linksByPeerId[peerId];
+    if (link == null || !link.authenticated) return;
+
+    final last = link.lastPongAt;
+    if (last != null &&
+        DateTime.now().difference(last) > kHeartbeatTimeout) {
+      _connectionLog.add(
+        'Peer unresponsive (heartbeat timeout)',
+        peerId: peerId,
+        peerName: link.displayName,
+      );
+      disconnectPeer(peerId);
+      return;
+    }
+
+    final message = ProtocolMessage(
+      type: MessageTypes.ping,
+      payload: {
+        'peerId': instanceId,
+        'sentAt': DateTime.now().millisecondsSinceEpoch,
+      },
+    );
+    if (link.inboundConnectionId != null) {
+      _sendOnConnection(link.inboundConnectionId!, message);
+    }
+    if (link.outboundConnectionId != null) {
+      _sendOnConnection(link.outboundConnectionId!, message);
+    }
+  }
+
+  void _handlePing(ProtocolMessage message, String connectionId) {
+    final peerId = _connectionToPeerId[connectionId];
+    if (peerId == null) return;
+    final link = _linksByPeerId[peerId];
+    if (link == null) return;
+    link.lastPongAt = DateTime.now();
+    _sendOnConnection(
+      connectionId,
+      ProtocolMessage(
+        type: MessageTypes.pong,
+        payload: {
+          'peerId': instanceId,
+          'sentAt': DateTime.now().millisecondsSinceEpoch,
+        },
+      ),
+    );
+  }
+
+  void _handlePong(String connectionId) {
+    final peerId = _connectionToPeerId[connectionId];
+    if (peerId == null) return;
+    final link = _linksByPeerId[peerId];
+    if (link == null) return;
+    link.lastPongAt = DateTime.now();
   }
 }

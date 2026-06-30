@@ -16,6 +16,8 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 - File workflows: **Save**, **Open** (as a new note), and **Share** the note from the File menu
 - **Rooms**: peers only discover each other when they share the same session/room ID
 - **Cursor presence**: see which note each connected peer is editing, and where
+- **Live conflict prompts**: simultaneous edits at the same revision ask which version to keep
+- **Heartbeat**: unresponsive peers are disconnected automatically
 
 ## Requirements
 
@@ -151,7 +153,17 @@ Key Phase 5 modules:
 
 ```bash
 flutter test test/phase5_test.dart   # workspace, history, catalog/order sync, search
-flutter test                       # full suite (28 tests, phases 1–5)
+flutter test                       # full suite
+```
+
+## Phase 6 features (sync robustness) — complete
+
+- **Live conflict resolution** — If you and a peer edit the same note at the same revision simultaneously, one device (chosen deterministically) shows a dialog with previews of both versions. Choose **Keep mine** or **Use theirs**; both devices converge.
+- **Protocol v2** — Pairing requires matching protocol version (`protocolVersion` in the pair handshake). Running mismatched builds refuses the connection; check the connection log for details.
+- **Heartbeat** — Connected peers exchange `ping`/`pong` every 15 seconds. A peer that stops responding for 45 seconds is disconnected automatically.
+
+```bash
+flutter test test/phase6_test.dart   # protocol v2, live-conflict detection, heartbeat constants
 ```
 
 ## Security note

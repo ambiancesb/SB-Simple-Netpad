@@ -168,6 +168,17 @@ class DocumentRepository extends ChangeNotifier {
     return false;
   }
 
+  /// True when a peer edit collides at the same revision with different text.
+  bool isLiveEditConflict({
+    required int revision,
+    required String text,
+    required String originId,
+  }) {
+    return revision == _revision &&
+        text != controller.text &&
+        originId != instanceId;
+  }
+
   bool applyRemote({
     required int revision,
     required String text,
