@@ -114,6 +114,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 - Web platform
 - Cloud relay / WAN
 - Rich document formats (Markdown preview, Office, PDF) beyond plain text export
+- Image / attachment sync between peers (notes stay plain text)
 
 ---
 
