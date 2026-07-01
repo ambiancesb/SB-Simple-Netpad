@@ -12,18 +12,21 @@ import 'package:netpad/features/notes/notes_drawer.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
 import 'package:netpad/features/peers/peers_panel.dart';
+import 'package:netpad/features/settings/settings_screen.dart';
+import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/file_service.dart';
 import 'package:netpad/services/instance_config.dart';
+import 'package:netpad/services/share_service.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
-enum _FileAction { save, open, share, history }
+enum _AppMenuAction { wordWrap, save, open, share, history, settings }
 
 class NetpadApp extends StatelessWidget {
   const NetpadApp({
     super.key,
     required this.config,
+    required this.preferences,
     required this.tlsIdentity,
     required this.trustStore,
     required this.connectionLog,
@@ -34,6 +37,7 @@ class NetpadApp extends StatelessWidget {
   });
 
   final InstanceConfig config;
+  final AppPreferences preferences;
   final TlsIdentity tlsIdentity;
   final TrustStore trustStore;
   final ConnectionLogRepository connectionLog;
@@ -42,11 +46,14 @@ class NetpadApp extends StatelessWidget {
   final SyncRepository sync;
   final PairingRepository pairing;
 
+  static const _seedColor = Color(0xFF2563EB);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         Provider.value(value: config),
+        ChangeNotifierProvider.value(value: preferences),
         Provider.value(value: tlsIdentity),
         ChangeNotifierProvider.value(value: trustStore),
         ChangeNotifierProvider.value(value: connectionLog),
@@ -55,13 +62,28 @@ class NetpadApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: sync),
         ChangeNotifierProvider.value(value: pairing),
       ],
-      child: MaterialApp(
-        title: 'SB Simple Netpad',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2563EB)),
-          useMaterial3: true,
-        ),
-        home: const PairingListener(child: _HomeShell()),
+      child: Consumer<AppPreferences>(
+        builder: (context, prefs, _) {
+          return MaterialApp(
+            title: 'SB Simple Netpad',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: _seedColor,
+                brightness: Brightness.light,
+              ),
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: _seedColor,
+                brightness: Brightness.dark,
+              ),
+              useMaterial3: true,
+            ),
+            themeMode: prefs.themeMode,
+            home: const PairingListener(child: _HomeShell()),
+          );
+        },
       ),
     );
   }
@@ -77,7 +99,9 @@ class _HomeShell extends StatefulWidget {
 class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FileService _fileService = const FileService();
+  final ShareService _shareService = const ShareService();
   bool _findVisible = false;
+  bool _replaceMode = false;
 
   @override
   void initState() {
@@ -92,6 +116,18 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     final singleLine = text.replaceAll('\n', ' ').trim();
     if (singleLine.length <= maxLen) return singleLine;
     return '${singleLine.substring(0, maxLen)}…';
+  }
+
+  void _toggleFind({bool replace = false}) {
+    setState(() {
+      if (_findVisible && _replaceMode == replace) {
+        _findVisible = false;
+        _replaceMode = false;
+      } else {
+        _findVisible = true;
+        _replaceMode = replace;
+      }
+    });
   }
 
   Future<DivergenceChoice> _resolveLiveConflict(
@@ -183,212 +219,210 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final config = context.read<InstanceConfig>();
     final discovery = context.watch<DiscoveryRepository>();
     final workspace = context.watch<WorkspaceRepository>();
+    final prefs = context.watch<AppPreferences>();
     final connected = discovery.connectedPeers.length;
     final activeTitle = workspace.active?.title ?? 'SB Simple Netpad';
 
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: const NotesDrawer(),
-      appBar: AppBar(
-        title: Text(activeTitle, overflow: TextOverflow.ellipsis),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: 'Find in note',
-            onPressed: () => setState(() => _findVisible = !_findVisible),
+    return Shortcuts(
+      shortcuts: {
+        const SingleActivator(LogicalKeyboardKey.keyF, control: true):
+            const _FindIntent(),
+        const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
+            const _FindIntent(),
+        const SingleActivator(LogicalKeyboardKey.keyH, control: true):
+            const _ReplaceIntent(),
+        const SingleActivator(LogicalKeyboardKey.keyH, meta: true):
+            const _ReplaceIntent(),
+      },
+      child: Actions(
+        actions: {
+          _FindIntent: CallbackAction<_FindIntent>(
+            onInvoke: (_) {
+              _toggleFind();
+              return null;
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Tooltip(
-              message: connected > 0
-                  ? '$connected peer session${connected == 1 ? '' : 's'} '
-                        'encrypted with WSS/TLS'
-                  : 'No active peer sessions · this device still uses WSS/TLS',
-              child: Chip(
-                avatar: Icon(
-                  connected > 0 ? Icons.lock : Icons.lock_outline,
-                  size: 16,
-                  color: connected > 0 ? Colors.green : Colors.grey,
-                ),
-                label: Text('$connected connected'),
-              ),
-            ),
+          _ReplaceIntent: CallbackAction<_ReplaceIntent>(
+            onInvoke: (_) {
+              _toggleFind(replace: true);
+              return null;
+            },
           ),
-          PopupMenuButton<_FileAction>(
-            icon: const Icon(Icons.description_outlined),
-            tooltip: 'File',
-            onSelected: (action) => _onFileAction(context, action),
-            itemBuilder: (context) => const [
-              PopupMenuItem(
-                value: _FileAction.save,
-                child: ListTile(
-                  leading: Icon(Icons.save_alt),
-                  title: Text('Save to file…'),
+        },
+        child: Focus(
+          autofocus: true,
+          child: Scaffold(
+            key: _scaffoldKey,
+            drawer: const NotesDrawer(),
+            appBar: AppBar(
+              title: Text(activeTitle, overflow: TextOverflow.ellipsis),
+              actions: [
+                IconButton(
+                  icon: Icon(
+                    _findVisible ? Icons.search_off : Icons.search,
+                  ),
+                  tooltip: 'Find in note (Ctrl+F)',
+                  onPressed: () => _toggleFind(),
                 ),
-              ),
-              PopupMenuItem(
-                value: _FileAction.open,
-                child: ListTile(
-                  leading: Icon(Icons.folder_open),
-                  title: Text('Open file as new note…'),
-                ),
-              ),
-              PopupMenuItem(
-                value: _FileAction.share,
-                child: ListTile(
-                  leading: Icon(Icons.ios_share),
-                  title: Text('Share note'),
-                ),
-              ),
-              PopupMenuItem(
-                value: _FileAction.history,
-                child: ListTile(
-                  leading: Icon(Icons.history),
-                  title: Text('Version history…'),
-                ),
-              ),
-            ],
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: 'Settings',
-            onPressed: () => _editSettings(context, config),
-          ),
-          IconButton(
-            icon: const Icon(Icons.devices),
-            tooltip: 'Peers',
-            onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
-          ),
-        ],
-      ),
-      endDrawer: Drawer(
-        width: 320,
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DrawerHeader(
-                margin: EdgeInsets.zero,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      discovery.displayName,
-                      style: Theme.of(context).textTheme.titleLarge,
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: Tooltip(
+                    message: connected > 0
+                        ? '$connected peer session${connected == 1 ? '' : 's'} '
+                              'encrypted with WSS/TLS · tap for peers'
+                        : 'No active peer sessions · tap for peers',
+                    child: ActionChip(
+                      avatar: Icon(
+                        connected > 0 ? Icons.lock : Icons.lock_outline,
+                        size: 16,
+                        color: connected > 0 ? Colors.green : Colors.grey,
+                      ),
+                      label: Text('$connected'),
+                      onPressed: () =>
+                          _scaffoldKey.currentState?.openEndDrawer(),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'LAN notepad · room "${discovery.roomId}"',
-                      style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                PopupMenuButton<_AppMenuAction>(
+                  icon: const Icon(Icons.more_vert),
+                  tooltip: 'More',
+                  onSelected: (action) => _onAppMenuAction(context, action),
+                  itemBuilder: (context) => [
+                    CheckedPopupMenuItem(
+                      value: _AppMenuAction.wordWrap,
+                      checked: prefs.wordWrap,
+                      child: const ListTile(
+                        leading: Icon(Icons.wrap_text),
+                        title: Text('Word wrap'),
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '© 2026 Spencer Beaumier',
-                      style: Theme.of(context).textTheme.bodySmall,
+                    const PopupMenuDivider(),
+                    const PopupMenuItem(
+                      value: _AppMenuAction.save,
+                      child: ListTile(
+                        leading: Icon(Icons.save_alt),
+                        title: Text('Save to file…'),
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: _AppMenuAction.open,
+                      child: ListTile(
+                        leading: Icon(Icons.folder_open),
+                        title: Text('Open file as new note…'),
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: _AppMenuAction.share,
+                      child: ListTile(
+                        leading: Icon(Icons.ios_share),
+                        title: Text('Share note'),
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: _AppMenuAction.history,
+                      child: ListTile(
+                        leading: Icon(Icons.history),
+                        title: Text('Version history…'),
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                    const PopupMenuDivider(),
+                    const PopupMenuItem(
+                      value: _AppMenuAction.settings,
+                      child: ListTile(
+                        leading: Icon(Icons.settings),
+                        title: Text('Settings'),
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
                     ),
                   ],
                 ),
+              ],
+            ),
+            endDrawer: Drawer(
+              width: 320,
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    DrawerHeader(
+                      margin: EdgeInsets.zero,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            discovery.displayName,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'LAN notepad · room "${discovery.roomId}"',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '© 2026 Spencer Beaumier',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Expanded(child: PeersPanel()),
+                  ],
+                ),
               ),
-              const Expanded(child: PeersPanel()),
-            ],
+            ),
+            body: EditorScreen(
+              findVisible: _findVisible,
+              replaceMode: _replaceMode,
+              onReplaceModeChanged: (replace) =>
+                  setState(() => _replaceMode = replace),
+              onCloseFind: () => setState(() {
+                _findVisible = false;
+                _replaceMode = false;
+              }),
+            ),
           ),
         ),
-      ),
-      body: EditorScreen(
-        findVisible: _findVisible,
-        onCloseFind: () => setState(() => _findVisible = false),
       ),
     );
   }
 
-  Future<void> _editSettings(
+  Future<void> _onAppMenuAction(
     BuildContext context,
-    InstanceConfig config,
+    _AppMenuAction action,
   ) async {
-    final nameController = TextEditingController(text: config.displayName);
-    final roomController = TextEditingController(text: config.roomId);
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Settings'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Device name',
-                hintText: 'Name shown to other devices',
-              ),
-              autofocus: true,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: roomController,
-              decoration: const InputDecoration(
-                labelText: 'Session / room',
-                hintText: 'Only peers in the same room are discovered',
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '© 2026 Spencer Beaumier',
-              style: Theme.of(ctx).textTheme.bodySmall,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
-    if (result != true || !context.mounted) return;
-
-    final discovery = context.read<DiscoveryRepository>();
-    final sync = context.read<SyncRepository>();
-    final previousRoom = config.roomId;
-
-    await config.setDisplayName(nameController.text);
-    await config.setRoomId(roomController.text);
-    final name = config.displayName;
-    final room = config.roomId;
-
-    await discovery.updateDisplayName(name);
-    sync.updateDisplayName(name);
-    if (room != previousRoom) {
-      await discovery.updateRoom(room);
-    }
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Settings saved · "$name" · room "$room"')),
-      );
-    }
-  }
-
-  Future<void> _onFileAction(BuildContext context, _FileAction action) async {
+    final prefs = context.read<AppPreferences>();
     switch (action) {
-      case _FileAction.save:
+      case _AppMenuAction.wordWrap:
+        await prefs.setWordWrap(!prefs.wordWrap);
+      case _AppMenuAction.save:
         await _saveNote(context);
-      case _FileAction.open:
+      case _AppMenuAction.open:
         await _openNote(context);
-      case _FileAction.share:
+      case _AppMenuAction.share:
         await _shareNote(context);
-      case _FileAction.history:
+      case _AppMenuAction.history:
         final doc = context.read<WorkspaceRepository>().active;
         if (doc != null) await showVersionHistory(context, doc);
+      case _AppMenuAction.settings:
+        if (!context.mounted) return;
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+        );
     }
   }
 
@@ -437,7 +471,11 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       return;
     }
     try {
-      await Share.share(text, subject: doc.title);
+      await _shareService.shareNote(
+        text: text,
+        title: doc.title,
+        context: context,
+      );
     } catch (_) {
       await Clipboard.setData(ClipboardData(text: text));
       messenger.showSnackBar(
@@ -457,4 +495,12 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     final dot = fileName.lastIndexOf('.');
     return dot > 0 ? fileName.substring(0, dot) : fileName;
   }
+}
+
+class _FindIntent extends Intent {
+  const _FindIntent();
+}
+
+class _ReplaceIntent extends Intent {
+  const _ReplaceIntent();
 }

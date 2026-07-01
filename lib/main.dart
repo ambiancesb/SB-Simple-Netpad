@@ -6,6 +6,7 @@ import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
+import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/local_server.dart';
 import 'package:netpad/services/note_storage_service.dart';
@@ -17,6 +18,8 @@ Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
   final noteStorage = NoteStorageService(prefs);
   final config = InstanceConfig(prefs);
+  final preferences = AppPreferences(prefs);
+  await preferences.load();
   final instanceId = config.instanceId;
   final displayName = config.displayName;
 
@@ -68,6 +71,7 @@ Future<void> main() async {
   runApp(
     NetpadApp(
       config: config,
+      preferences: preferences,
       tlsIdentity: tlsIdentity,
       trustStore: trustStore,
       connectionLog: connectionLog,

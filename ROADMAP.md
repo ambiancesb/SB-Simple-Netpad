@@ -10,7 +10,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 | **4** | Done | wss/TLS with pinned certs (TOFU), revoke/block peer, reconnect divergence prompt |
 | **5** | Done | Multiple documents, note history, search |
 | **6** | Done | Conflict UI, protocol version negotiation, heartbeat |
-| **7** | Planned | UX polish: find/replace, settings, theme, share sheet |
+| **7** | Done | UX polish: find/replace, settings, theme, share sheet |
 | **8** | In progress | Code health: sync/relay tests (debug cruft removed) |
 
 ---
@@ -88,14 +88,15 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 ---
 
-## Phase 7 — UX and platform polish
+## Phase 7 — UX and platform polish — Done
 
 **Goal:** Make daily editing pleasant across platforms.
 
-- [ ] **Editor tools** — Find/replace, word-wrap toggle, adjustable font size (via `code_text_field`).
-- [ ] **Settings screen** consolidating device name, port, and theme.
-- [ ] **Dark/light theme** switch.
-- [ ] **Mobile share sheet** integration (complements the Phase 3 save/share work).
+- [x] **Editor tools** — Find/replace, word-wrap toggle, adjustable font size (via `code_text_field`).
+- [x] **Settings screen** consolidating device name, port, and theme.
+- [x] **Dark/light theme** switch.
+- [x] **Mobile share sheet** integration (complements the Phase 3 save/share work).
+- [x] **Automated verification** — [test/phase7_test.dart](test/phase7_test.dart) covers find/replace helpers and preference persistence.
 
 ---
 
