@@ -66,6 +66,7 @@ class NetpadApp extends StatelessWidget {
         builder: (context, prefs, _) {
           return MaterialApp(
             title: 'SB Simple Netpad',
+            debugShowCheckedModeBanner: false,
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: _seedColor,
