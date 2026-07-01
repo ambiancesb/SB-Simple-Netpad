@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/divergence_choice.dart';
+import 'package:netpad/core/pairing_negotiation.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/models/peer_presence.dart';
 import 'package:netpad/core/models/protocol_message.dart';
@@ -22,8 +23,6 @@ class _PeerLink {
   _PeerLink({
     required this.peerId,
     required this.displayName,
-    this.inboundConnectionId,
-    this.outboundConnectionId,
   });
 
   final String peerId;
@@ -77,7 +76,11 @@ class SyncRepository extends ChangeNotifier {
   final Map<String, _PeerLink> _linksByPeerId = {};
   final Map<String, String> _connectionToPeerId = {};
   final Map<String, String> _pendingOutboundRequestId = {};
+  final Map<String, Timer> _pairingTimeouts = {};
   final Map<String, PeerPresence> _presence = {};
+
+  static const _connectTimeout = Duration(seconds: 20);
+  static const _pairingTimeout = Duration(seconds: 45);
 
   /// Last-known cursor position of each connected peer.
   Map<String, PeerPresence> get presence => Map.unmodifiable(_presence);
@@ -184,6 +187,14 @@ class SyncRepository extends ChangeNotifier {
     if (_trustStore.isBlocked(peer.id)) {
       throw StateError('${peer.displayName} is blocked. Unblock it to connect.');
     }
+    final existing = _linksByPeerId[peer.id];
+    if (existing?.authenticated == true) {
+      throw StateError('Already connected to ${peer.displayName}.');
+    }
+    if (existing?.outboundSocket != null) {
+      throw StateError('Already connecting to ${peer.displayName}.');
+    }
+
     final refreshed = peer.isManual
         ? peer
         : await _discovery.refreshPeerForConnect(peer.id) ?? peer;
@@ -199,8 +210,6 @@ class SyncRepository extends ChangeNotifier {
     final hostInUri = PeerHostResolver.formatForWebSocket(host);
     final uri = Uri.parse('wss://$hostInUri:${refreshed.port}/ws');
 
-    // Pin the server certificate (TOFU): accept any cert the first time and
-    // remember its fingerprint; afterwards require it to match the pin.
     final httpClient = HttpClient(
       context: SecurityContext(withTrustedRoots: false),
     );
@@ -219,8 +228,19 @@ class SyncRepository extends ChangeNotifier {
 
     final WebSocket socket;
     try {
-      socket = await WebSocket.connect(uri.toString(), customClient: httpClient);
+      socket = await WebSocket.connect(
+        uri.toString(),
+        customClient: httpClient,
+      ).timeout(
+        _connectTimeout,
+        onTimeout: () {
+          throw TimeoutException(
+            'Timed out reaching ${peer.displayName} at $hostInUri:${refreshed.port}',
+          );
+        },
+      );
     } catch (e) {
+      httpClient.close(force: true);
       _discovery.markPeerDisconnected(peer.id);
       if (pinMismatch) {
         throw StateError(
@@ -230,14 +250,13 @@ class SyncRepository extends ChangeNotifier {
       }
       rethrow;
     }
+
     final connectionId = 'out_${peer.id}';
     _pendingOutboundRequestId[connectionId] = requestId;
 
-    final link = _PeerLink(
-      peerId: peer.id,
-      displayName: peer.displayName,
-      outboundConnectionId: connectionId,
-    );
+    final link = _linksByPeerId[peer.id] ??
+        _PeerLink(peerId: peer.id, displayName: peer.displayName);
+    link.outboundConnectionId = connectionId;
     link.outboundSocket = socket;
     link.pendingCertFingerprint = capturedFingerprint;
     _linksByPeerId[peer.id] = link;
@@ -267,6 +286,8 @@ class SyncRepository extends ChangeNotifier {
         },
       ),
     );
+    _startPairingTimeout(connectionId, peer.id, peer.displayName);
+
     final verificationCode = peer.isManual
         ? null
         : PairingVerificationCode.generate(instanceId, peer.id);
@@ -288,15 +309,14 @@ class SyncRepository extends ChangeNotifier {
   }) {
     if (accepted) {
       final token = const Uuid().v4();
-      final link = _PeerLink(
-        peerId: fromId,
-        displayName: fromName,
-        inboundConnectionId: connectionId,
-      );
+      final link = _linksByPeerId[fromId] ??
+          _PeerLink(peerId: fromId, displayName: fromName);
+      link.inboundConnectionId = connectionId;
       link.sessionToken = token;
       link.authenticated = true;
       _linksByPeerId[fromId] = link;
       _connectionToPeerId[connectionId] = fromId;
+      _cancelPairingTimeoutForPeer(fromId);
 
       _sendOnConnection(
         connectionId,
@@ -539,6 +559,59 @@ class SyncRepository extends ChangeNotifier {
           unawaited(_server.closeConnection(connectionId));
           return;
         }
+        final existingLink = _linksByPeerId[fromId];
+        if (existingLink?.authenticated == true) {
+          _sendOnConnection(
+            connectionId,
+            ProtocolMessage(
+              type: MessageTypes.pairResponse,
+              payload: {
+                'requestId': requestId,
+                'accepted': false,
+                'reason': 'already_connected',
+              },
+            ),
+          );
+          _connectionLog.add(
+            'Refused duplicate pairing from $fromName (already connected)',
+            peerId: fromId,
+            peerName: fromName,
+          );
+          unawaited(_server.closeConnection(connectionId));
+          return;
+        }
+        final outboundId = existingLink?.outboundConnectionId;
+        if (outboundId != null &&
+            _pendingOutboundRequestId.containsKey(outboundId) &&
+            existingLink?.outboundSocket != null) {
+          if (outboundPairingWins(instanceId, fromId)) {
+            _sendOnConnection(
+              connectionId,
+              ProtocolMessage(
+                type: MessageTypes.pairResponse,
+                payload: {
+                  'requestId': requestId,
+                  'accepted': false,
+                  'reason': 'simultaneous_connect',
+                },
+              ),
+            );
+            _connectionLog.add(
+              'Declined inbound pairing from $fromName '
+              '(outbound request in progress)',
+              peerId: fromId,
+              peerName: fromName,
+            );
+            unawaited(_server.closeConnection(connectionId));
+            return;
+          }
+          _connectionLog.add(
+            'Dropped outbound pairing to $fromName (accepting their request)',
+            peerId: fromId,
+            peerName: fromName,
+          );
+          _abandonOutbound(fromId);
+        }
         onIncomingPairRequest?.call(fromId, fromName, requestId, connectionId);
       case MessageTypes.pairResponse:
         final accepted = message.payload['accepted'] as bool? ?? false;
@@ -564,27 +637,31 @@ class SyncRepository extends ChangeNotifier {
           _connectionLog.add(
             accepted
                 ? 'Pairing accepted by $peerName'
-                : 'Pairing rejected by $peerName',
+                : 'Pairing rejected by $peerName'
+                    '${message.payload['reason'] != null ? ' (${message.payload['reason']})' : ''}',
             peerId: peerId,
             peerName: peerName,
           );
           onPairRequestResolved?.call(peerId, accepted);
           if (!accepted) {
             _cleanupConnection(connectionId);
+          } else {
+            _startPairingTimeout(connectionId, peerId, peerName);
           }
         }
         _pendingOutboundRequestId.remove(connectionId);
       case MessageTypes.pairComplete:
         final token = message.payload['sessionToken'] as String? ?? '';
         final peerId = _connectionToPeerId[connectionId];
-        if (peerId == null) return;
-        var link = _linksByPeerId[peerId];
-        link ??= _PeerLink(
-          peerId: peerId,
-          displayName: _discovery.peerById(peerId)?.displayName ?? peerId,
-          outboundConnectionId: isOutbound ? connectionId : null,
-          inboundConnectionId: isOutbound ? null : connectionId,
-        );
+        if (peerId == null || token.isEmpty) return;
+        _cancelPairingTimeout(connectionId);
+
+        final link = _linksByPeerId[peerId] ??
+            _PeerLink(
+              peerId: peerId,
+              displayName:
+                  _discovery.peerById(peerId)?.displayName ?? peerId,
+            );
         link.sessionToken = token;
         link.authenticated = true;
         if (isOutbound) {
@@ -1055,10 +1132,12 @@ class SyncRepository extends ChangeNotifier {
 
   void _handleDisconnect(String connectionId) {
     final peerId = _connectionToPeerId.remove(connectionId);
+    _cancelPairingTimeout(connectionId);
     if (peerId == null) return;
     final link = _linksByPeerId[peerId];
     if (link == null) return;
 
+    final wasPending = !link.authenticated;
     if (link.inboundConnectionId == connectionId) {
       link.inboundConnectionId = null;
     }
@@ -1066,6 +1145,7 @@ class SyncRepository extends ChangeNotifier {
       link.outboundConnectionId = null;
       unawaited(link.outboundSub?.cancel());
       link.outboundSocket = null;
+      _pendingOutboundRequestId.remove(connectionId);
     }
 
     if (link.inboundConnectionId == null && link.outboundSocket == null) {
@@ -1073,6 +1153,13 @@ class SyncRepository extends ChangeNotifier {
       _linksByPeerId.remove(peerId);
       _presence.remove(peerId);
       _discovery.markPeerDisconnected(peerId);
+      if (wasPending) {
+        _connectionLog.add(
+          'Pairing interrupted with ${link.displayName}',
+          peerId: peerId,
+          peerName: link.displayName,
+        );
+      }
       notifyListeners();
     }
   }
@@ -1082,16 +1169,81 @@ class SyncRepository extends ChangeNotifier {
   }
 
   void _cleanupConnection(String connectionId) {
+    _cancelPairingTimeout(connectionId);
     final peerId = _connectionToPeerId.remove(connectionId);
     if (peerId != null) {
       final link = _linksByPeerId.remove(peerId);
       if (link != null) _stopHeartbeat(link);
       _presence.remove(peerId);
+      unawaited(link?.outboundSub?.cancel());
       unawaited(link?.outboundSocket?.close());
       _discovery.markPeerDisconnected(peerId);
       notifyListeners();
     }
+    _pendingOutboundRequestId.remove(connectionId);
+    if (connectionId.startsWith('out_')) {
+      return;
+    }
     unawaited(_server.closeConnection(connectionId));
+  }
+
+  void _startPairingTimeout(
+    String connectionId,
+    String peerId,
+    String peerName,
+  ) {
+    _cancelPairingTimeout(connectionId);
+    _pairingTimeouts[connectionId] = Timer(_pairingTimeout, () {
+      _pairingTimeouts.remove(connectionId);
+      final link = _linksByPeerId[peerId];
+      if (link == null || link.authenticated) return;
+      _connectionLog.add(
+        'Pairing timed out with $peerName',
+        peerId: peerId,
+        peerName: peerName,
+      );
+      onPairRequestResolved?.call(peerId, false);
+      _cleanupConnection(connectionId);
+    });
+  }
+
+  void _cancelPairingTimeout(String connectionId) {
+    _pairingTimeouts.remove(connectionId)?.cancel();
+  }
+
+  void _cancelPairingTimeoutForPeer(String peerId) {
+    final link = _linksByPeerId[peerId];
+    if (link == null) return;
+    if (link.inboundConnectionId != null) {
+      _cancelPairingTimeout(link.inboundConnectionId!);
+    }
+    if (link.outboundConnectionId != null) {
+      _cancelPairingTimeout(link.outboundConnectionId!);
+    }
+  }
+
+  void _abandonOutbound(String peerId) {
+    final link = _linksByPeerId[peerId];
+    if (link == null) return;
+
+    final outId = link.outboundConnectionId;
+    if (outId != null) {
+      _cancelPairingTimeout(outId);
+      _pendingOutboundRequestId.remove(outId);
+      _connectionToPeerId.remove(outId);
+    }
+    unawaited(link.outboundSub?.cancel());
+    link.outboundSub = null;
+    unawaited(link.outboundSocket?.close());
+    link.outboundSocket = null;
+    link.outboundConnectionId = null;
+    link.pendingCertFingerprint = null;
+
+    if (link.inboundConnectionId == null && !link.authenticated) {
+      _linksByPeerId.remove(peerId);
+      _discovery.markPeerDisconnected(peerId);
+      notifyListeners();
+    }
   }
 
   void _startHeartbeat(String peerId) {
