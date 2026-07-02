@@ -12,6 +12,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 | **6** | Done | Conflict UI, protocol version negotiation, heartbeat |
 | **7** | Done | UX polish: find/replace, settings, theme, share sheet |
 | **8** | In progress | Code health: sync/relay tests (debug cruft removed) |
+| **9** | Planned | Trusted peers and auto-sync tokens (reconnect without re-pairing) |
 
 ---
 
@@ -106,6 +107,41 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 - [x] **Remove debug logging cruft** — Removed the `#region agent log` blocks and hardcoded debug path from [lib/features/editor/editor_screen.dart](lib/features/editor/editor_screen.dart).
 - [ ] **Sync/relay tests** — Cover multi-peer relay and divergence merge end-to-end (phase 1–5 unit tests cover pairing code, connection log, cursor math, TLS/trust, and workspace/history/search).
+
+---
+
+## Phase 9 — Trusted peers and auto-sync
+
+**Goal:** Reconnect and sync with devices you have already paired, without tapping **Accept** every time — while staying LAN-only, peer-to-peer, and revocable. See [Threat model](README.md#threat-model) in the README.
+
+Today, each new TCP link requires manual pairing even when the peer’s certificate is already pinned. Phase 9 adds a **persistent auto-sync token** (distinct from the ephemeral per-connection `sessionToken` issued on Accept).
+
+### Design
+
+| Concept | Lifetime | Purpose |
+|---------|----------|---------|
+| **Session token** | One connection | Gates post-pair sync messages (unchanged) |
+| **Cert pin** | Persistent | TOFU TLS identity (unchanged) |
+| **Auto-sync token** | Persistent until revoked | Skips the Accept dialog on reconnect when token + pin match |
+
+**First pair (unchanged UX):** user taps **Accept** → both sides store `autoSyncToken` keyed by `peerId` alongside the cert pin.
+
+**Later reconnect:** outbound `pair_request` includes `autoSyncToken`; inbound side auto-accepts when token matches stored value, cert pin matches, peer is not blocked, and protocol version matches — then issues a fresh session token and runs catalog + sync as today.
+
+**Fallback:** wrong or missing token, cert mismatch, or blocked peer → normal Accept dialog or refusal (no weaker path).
+
+- [ ] **TrustStore: trusted peers** — Persist `peerId → { displayName, autoSyncToken, pairedAt }` in [lib/data/repositories/trust_store.dart](lib/data/repositories/trust_store.dart). Blocklist still wins over auto-sync.
+- [ ] **Issue token on Accept** — Generate a random token (32+ bytes) in [lib/data/repositories/sync_repository.dart](lib/data/repositories/sync_repository.dart) when pairing completes; store on both sides via `pair_complete` (protocol v3 bump).
+- [ ] **Auto-accept reconnect** — Inbound and outbound paths: if stored token + pin validate, skip the pairing dialog and complete pairing automatically. Optional: rotate token on each successful pair.
+- [ ] **Background reconnect** — When a trusted peer appears in discovery (or after network change), initiate connect without user action; show a lightweight “Reconnected to …” notice in the peers drawer / connection log.
+- [ ] **Trusted devices UI** — Settings or peers drawer: list trusted peers, per-peer auto-sync toggle, **Revoke** (forget token; require Accept again without necessarily unpinning), distinct from **Block**.
+- [ ] **`peer_disconnect` hardening** — Only honor disconnect when payload `peerId` matches the sender (closes LAN peer-abuse gap on multi-peer hubs).
+- [ ] **Automated verification** — `test/phase9_test.dart`: token persistence, auto-accept when token + pin match, fallback to manual pair when token wrong or revoked, blocklist overrides auto-sync.
+
+### Deferred (post–Phase 9)
+
+- [ ] **One-time invite token** — Generate a QR or short code in Settings for pairing a new device without mDNS (still requires first Accept or pre-shared invite secret).
+- [ ] **Per-device “always ask”** — Trusted but never auto-connect until user taps Connect.
 
 ---
 
