@@ -174,7 +174,37 @@ flutter test                       # full suite
 flutter test test/phase6_test.dart   # protocol v2, live-conflict detection, heartbeat constants
 ```
 
-## Security note
+## Threat model
+
+SB Simple Netpad is a **peer-to-peer LAN notepad**. Notes live on your devices only — there is no central server, cloud account, or remote API. Security assumptions follow from that scope.
+
+### In scope
+
+| Assumption | Implication |
+|------------|-------------|
+| Same local network | Discovery (mDNS) and sync require devices on the same subnet or otherwise reachable on the LAN. This is not designed for internet-wide or cross-network sync without a VPN or tunnel you provide yourself. |
+| Mutual pairing | A device must tap **Accept** before any note data is exchanged. Unpaired connections cannot read or write notes. |
+| Untrusted LAN peers | Other devices on the network might try to pair or interfere. Controls below apply to **peers on your LAN**, not anonymous internet hosts. |
+
+### What we protect against
+
+- **Unpaired access** — Rejected pairing requests never receive document data; post-pair messages require a session token.
+- **Impersonation after first trust** — TLS (`wss://`) plus certificate pinning (TOFU): if a peer’s certificate fingerprint changes, the connection is refused.
+- **Blocked devices** — Blocklist persists; blocked peers are disconnected and cannot reconnect until unblocked.
+- **Protocol mismatch** — Pairing requires matching protocol version; mismatched builds refuse the connection.
+- **Stale peers** — Heartbeat disconnects unresponsive links automatically.
+
+### Out of scope
+
+These are intentional limits, not oversights:
+
+- **No cloud or server storage** — Notes are not uploaded to a service you do not control. Backup, sync across the internet, and multi-site availability are your responsibility (e.g. Save to file, OS backup).
+- **No internet attacker model** — There is no public attack surface; remote adversaries who are not on your LAN cannot reach the sync port through this app alone.
+- **No multi-tenant isolation** — Room IDs filter discovery for convenience so groups on one LAN do not merge accidentally; they are **not** an authentication boundary. **Connect by IP** can still reach a peer if you know its address.
+- **No CA-backed identity** — Certificates are self-signed per device. The first connection to a new peer is TOFU; compare the security code in the pairing dialog on untrusted networks.
+- **Trusted paired peers** — Once you accept a peer, it can send sync traffic like any collaborator. A malicious paired peer could disrupt sync (e.g. overwrite notes, relay spam) — the same class of risk as sharing a folder with someone on the LAN. Pair only with devices you trust.
+
+### Transport note
 
 Traffic is encrypted with TLS (`wss://`) and peers are certificate-pinned on first use (TOFU). Because certificates are self-signed, the very first connection is trusted on first use — compare the security code shown in the pairing dialog if you are on an untrusted network. There is no central CA; trust is established per-device at pair time.
 
