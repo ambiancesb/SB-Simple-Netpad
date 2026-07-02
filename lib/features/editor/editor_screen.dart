@@ -1,4 +1,5 @@
-import 'package:code_text_field/code_text_field.dart';
+import 'package:code_text_field/code_text_field.dart' show CodeController, LineNumberStyle;
+import 'package:netpad/features/editor/netpad_code_field.dart';
 import 'package:flutter/material.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/find_replace.dart';
@@ -88,7 +89,7 @@ class _EditorScreenState extends State<EditorScreen> {
             onClose: widget.onCloseFind,
           ),
         Expanded(
-          child: CodeField(
+          child: NetpadCodeField(
             key: ValueKey('editor-${document.id}'),
             controller: document.controller,
             focusNode: _editorFocusNode,

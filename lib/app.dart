@@ -17,6 +17,7 @@ import 'package:netpad/features/peers/peers_drawer.dart';
 import 'package:netpad/features/shell/desktop_side_panel.dart';
 import 'package:netpad/features/settings/settings_screen.dart';
 import 'package:netpad/features/shell/desktop_menus.dart';
+import 'package:netpad/features/shell/mobile_overflow_menu.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/file_service.dart';
 import 'package:netpad/services/instance_config.dart';
@@ -24,7 +25,6 @@ import 'package:netpad/services/share_service.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 
-enum _AppMenuAction { wordWrap, save, open, share, history, settings }
 
 class NetpadApp extends StatelessWidget {
   const NetpadApp({
@@ -302,6 +302,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     required String activeTitle,
     required int connected,
     required bool desktopMenus,
+    required bool wordWrap,
     required Widget body,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -361,6 +362,11 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
                         'encrypted with WSS/TLS · tap for peers'
                   : 'No active peer sessions · tap for peers',
               child: ActionChip(
+                visualDensity: VisualDensity.compact,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: desktopMenus
+                    ? null
+                    : const EdgeInsets.symmetric(horizontal: 4),
                 avatar: Icon(
                   connected > 0 ? Icons.lock : Icons.lock_outline,
                   size: 16,
@@ -372,11 +378,9 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
             ),
           ),
           if (!desktopMenus)
-            PopupMenuButton<_AppMenuAction>(
-              icon: const Icon(Icons.more_vert),
-              tooltip: 'More',
+            MobileOverflowMenuButton(
+              wordWrap: wordWrap,
               onSelected: (action) => _onAppMenuAction(context, action),
-              itemBuilder: (context) => _mobileOverflowItems(context),
             ),
         ],
       ),
@@ -416,69 +420,29 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     );
   }
 
-  List<PopupMenuEntry<_AppMenuAction>> _mobileOverflowItems(
+  Future<void> _onAppMenuAction(
     BuildContext context,
-  ) {
-    final prefs = context.watch<AppPreferences>();
-    return [
-      CheckedPopupMenuItem(
-        value: _AppMenuAction.wordWrap,
-        checked: prefs.wordWrap,
-        child: const ListTile(
-          leading: Icon(Icons.wrap_text),
-          title: Text('Word wrap'),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-        ),
-      ),
-      const PopupMenuDivider(),
-      const PopupMenuItem(
-        value: _AppMenuAction.save,
-        child: ListTile(
-          leading: Icon(Icons.save_alt),
-          title: Text('Save to file…'),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-        ),
-      ),
-      const PopupMenuItem(
-        value: _AppMenuAction.open,
-        child: ListTile(
-          leading: Icon(Icons.folder_open),
-          title: Text('Open file as new note…'),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-        ),
-      ),
-      const PopupMenuItem(
-        value: _AppMenuAction.share,
-        child: ListTile(
-          leading: Icon(Icons.ios_share),
-          title: Text('Share note'),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-        ),
-      ),
-      const PopupMenuItem(
-        value: _AppMenuAction.history,
-        child: ListTile(
-          leading: Icon(Icons.history),
-          title: Text('Version history…'),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-        ),
-      ),
-      const PopupMenuDivider(),
-      const PopupMenuItem(
-        value: _AppMenuAction.settings,
-        child: ListTile(
-          leading: Icon(Icons.settings),
-          title: Text('Settings'),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-        ),
-      ),
-    ];
+    MobileAppMenuAction action,
+  ) async {
+    final prefs = context.read<AppPreferences>();
+    switch (action) {
+      case MobileAppMenuAction.wordWrap:
+        await prefs.setWordWrap(!prefs.wordWrap);
+      case MobileAppMenuAction.save:
+        await _saveNote(context);
+      case MobileAppMenuAction.open:
+        await _openNote(context);
+      case MobileAppMenuAction.share:
+        await _shareNote(context);
+      case MobileAppMenuAction.history:
+        final doc = context.read<WorkspaceRepository>().active;
+        if (doc != null) await showVersionHistory(context, doc);
+      case MobileAppMenuAction.settings:
+        if (!context.mounted) return;
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+        );
+    }
   }
 
   @override
@@ -559,37 +523,13 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               activeTitle: activeTitle,
               connected: connected,
               desktopMenus: desktopMenus,
+              wordWrap: prefs.wordWrap,
               body: shellBody,
             ),
           ),
         ),
       ),
     );
-  }
-
-  Future<void> _onAppMenuAction(
-    BuildContext context,
-    _AppMenuAction action,
-  ) async {
-    final prefs = context.read<AppPreferences>();
-    switch (action) {
-      case _AppMenuAction.wordWrap:
-        await prefs.setWordWrap(!prefs.wordWrap);
-      case _AppMenuAction.save:
-        await _saveNote(context);
-      case _AppMenuAction.open:
-        await _openNote(context);
-      case _AppMenuAction.share:
-        await _shareNote(context);
-      case _AppMenuAction.history:
-        final doc = context.read<WorkspaceRepository>().active;
-        if (doc != null) await showVersionHistory(context, doc);
-      case _AppMenuAction.settings:
-        if (!context.mounted) return;
-        await Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
-        );
-    }
   }
 
   Future<void> _saveNote(BuildContext context) async {
