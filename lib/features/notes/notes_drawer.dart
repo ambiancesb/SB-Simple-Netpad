@@ -4,16 +4,36 @@ import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:provider/provider.dart';
 
-/// Left drawer listing every note with create / rename / delete / history and a
-/// cross-note search box.
-class NotesDrawer extends StatefulWidget {
+/// Mobile slide-out drawer wrapping [NotesPanel].
+class NotesDrawer extends StatelessWidget {
   const NotesDrawer({super.key});
 
   @override
-  State<NotesDrawer> createState() => _NotesDrawerState();
+  Widget build(BuildContext context) {
+    return const Drawer(
+      width: 340,
+      child: SafeArea(child: NotesPanel(dismissOnSelect: true)),
+    );
+  }
 }
 
-class _NotesDrawerState extends State<NotesDrawer> {
+/// Note list with search — shared by the drawer (mobile) and docked panel.
+class NotesPanel extends StatefulWidget {
+  const NotesPanel({
+    super.key,
+    this.dismissOnSelect = false,
+    this.showTitle = true,
+  });
+
+  /// When true, closes the enclosing [Drawer] after selecting a note.
+  final bool dismissOnSelect;
+  final bool showTitle;
+
+  @override
+  State<NotesPanel> createState() => _NotesPanelState();
+}
+
+class _NotesPanelState extends State<NotesPanel> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
 
@@ -23,70 +43,83 @@ class _NotesDrawerState extends State<NotesDrawer> {
     super.dispose();
   }
 
+  void _maybeDismiss() {
+    if (widget.dismissOnSelect) Navigator.maybePop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final workspace = context.watch<WorkspaceRepository>();
     final hits = workspace.search(_query);
     final searching = _query.trim().isNotEmpty;
 
-    return Drawer(
-      width: 340,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Notes',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (widget.showTitle)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Notes',
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  IconButton.filledTonal(
-                    icon: const Icon(Icons.add),
-                    tooltip: 'New note',
-                    onPressed: () {
-                      workspace.createNote();
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  isDense: true,
-                  prefixIcon: const Icon(Icons.search, size: 20),
-                  hintText: 'Search all notes',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: searching
-                      ? IconButton(
-                          icon: const Icon(Icons.clear, size: 18),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() => _query = '');
-                          },
-                        )
-                      : null,
                 ),
-                onChanged: (value) => setState(() => _query = value),
+                IconButton.filledTonal(
+                  icon: const Icon(Icons.add),
+                  tooltip: 'New note',
+                  onPressed: () {
+                    workspace.createNote();
+                    _maybeDismiss();
+                  },
+                ),
+              ],
+            ),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: IconButton.filledTonal(
+                icon: const Icon(Icons.add, size: 20),
+                tooltip: 'New note',
+                visualDensity: VisualDensity.compact,
+                onPressed: () => workspace.createNote(),
               ),
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: searching
-                  ? _buildSearchResults(context, workspace, hits)
-                  : _buildOrderedList(context, workspace),
+          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              isDense: true,
+              prefixIcon: const Icon(Icons.search, size: 20),
+              hintText: 'Search all notes',
+              border: const OutlineInputBorder(),
+              suffixIcon: searching
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, size: 18),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _query = '');
+                      },
+                    )
+                  : null,
             ),
-          ],
+            onChanged: (value) => setState(() => _query = value),
+          ),
         ),
-      ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: searching
+              ? _buildSearchResults(context, workspace, hits)
+              : _buildOrderedList(context, workspace),
+        ),
+      ],
     );
   }
 
@@ -172,7 +205,7 @@ class _NotesDrawerState extends State<NotesDrawer> {
           active: hit.doc.id == workspace.activeId,
           onTap: () {
             workspace.selectNote(hit.doc.id);
-            Navigator.pop(context);
+            _maybeDismiss();
           },
           onRename: () => _rename(context, workspace, hit.doc),
           onDelete: () => _delete(context, workspace, hit.doc),
@@ -211,7 +244,7 @@ class _NotesDrawerState extends State<NotesDrawer> {
           active: doc.id == workspace.activeId,
           onTap: () {
             workspace.selectNote(doc.id);
-            Navigator.pop(context);
+            _maybeDismiss();
           },
           onRename: () => _rename(context, workspace, doc),
           onDelete: () => _delete(context, workspace, doc),

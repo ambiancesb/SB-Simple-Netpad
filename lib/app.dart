@@ -1,3 +1,5 @@
+import 'dart:ui' show AppExitType;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/core/models/divergence_choice.dart';
@@ -11,8 +13,10 @@ import 'package:netpad/features/editor/editor_screen.dart';
 import 'package:netpad/features/notes/notes_drawer.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
-import 'package:netpad/features/peers/peers_panel.dart';
+import 'package:netpad/features/peers/peers_sidebar.dart';
+import 'package:netpad/features/shell/desktop_side_panel.dart';
 import 'package:netpad/features/settings/settings_screen.dart';
+import 'package:netpad/features/shell/desktop_menus.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/file_service.dart';
 import 'package:netpad/services/instance_config.dart';
@@ -103,10 +107,15 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   final ShareService _shareService = const ShareService();
   bool _findVisible = false;
   bool _replaceMode = false;
+  bool _notesPanelVisible = true;
+  bool _peersPanelVisible = false;
 
   @override
   void initState() {
     super.initState();
+    if (!isDesktopMenuPlatform()) {
+      _notesPanelVisible = false;
+    }
     WidgetsBinding.instance.addObserver(this);
     final sync = context.read<SyncRepository>();
     sync.onLiveConflict = _resolveLiveConflict;
@@ -218,6 +227,258 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     }
   }
 
+  void _toggleNotes() => setState(() => _notesPanelVisible = !_notesPanelVisible);
+  void _togglePeers() => setState(() => _peersPanelVisible = !_peersPanelVisible);
+
+  void _openPeers() {
+    if (isDesktopMenuPlatform()) {
+      _togglePeers();
+    } else {
+      _scaffoldKey.currentState?.openEndDrawer();
+    }
+  }
+
+  void _exitApp() {
+    ServicesBinding.instance.exitApplication(AppExitType.required);
+  }
+
+  DesktopMenuActions _menuActions(AppPreferences prefs) {
+    return DesktopMenuActions(
+      wordWrap: prefs.wordWrap,
+      notesPanelVisible: _notesPanelVisible,
+      peersPanelVisible: _peersPanelVisible,
+      onSave: () => _saveNote(context),
+      onOpen: () => _openNote(context),
+      onShare: () => _shareNote(context),
+      onHistory: () async {
+        final doc = context.read<WorkspaceRepository>().active;
+        if (doc != null) await showVersionHistory(context, doc);
+      },
+      onSettings: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+      ),
+      onFind: () => _toggleFind(),
+      onFindReplace: () => _toggleFind(replace: true),
+      onToggleWordWrap: () => prefs.setWordWrap(!prefs.wordWrap),
+      onToggleNotes: _toggleNotes,
+      onTogglePeers: _togglePeers,
+      onExit: _exitApp,
+    );
+  }
+
+  Map<ShortcutActivator, Intent> _shortcutMap() {
+    final isMac = Theme.of(context).platform == TargetPlatform.macOS;
+    final mod = isMac
+        ? const SingleActivator(LogicalKeyboardKey.keyS, meta: true)
+        : const SingleActivator(LogicalKeyboardKey.keyS, control: true);
+    final modO = isMac
+        ? const SingleActivator(LogicalKeyboardKey.keyO, meta: true)
+        : const SingleActivator(LogicalKeyboardKey.keyO, control: true);
+    final modN = isMac
+        ? const SingleActivator(LogicalKeyboardKey.keyN, meta: true)
+        : const SingleActivator(LogicalKeyboardKey.keyN, control: true);
+    final modP = isMac
+        ? const SingleActivator(LogicalKeyboardKey.keyP, meta: true)
+        : const SingleActivator(LogicalKeyboardKey.keyP, control: true);
+    return {
+      const SingleActivator(LogicalKeyboardKey.keyF, control: true):
+          const _FindIntent(),
+      const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
+          const _FindIntent(),
+      const SingleActivator(LogicalKeyboardKey.keyH, control: true):
+          const _ReplaceIntent(),
+      const SingleActivator(LogicalKeyboardKey.keyH, meta: true):
+          const _ReplaceIntent(),
+      if (isDesktopMenuPlatform()) ...{
+        mod: const _SaveIntent(),
+        modO: const _OpenIntent(),
+        modN: const _ToggleNotesIntent(),
+        modP: const _TogglePeersIntent(),
+      },
+    };
+  }
+
+  Widget _buildScaffold({
+    required String activeTitle,
+    required int connected,
+    required bool desktopMenus,
+    required Widget body,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      key: _scaffoldKey,
+      drawer: desktopMenus ? null : const NotesDrawer(),
+      endDrawer: desktopMenus
+          ? null
+          : Drawer(
+              width: 320,
+              child: SafeArea(child: const PeersSidebar()),
+            ),
+      appBar: AppBar(
+        automaticallyImplyLeading: !desktopMenus,
+        title: Text(activeTitle, overflow: TextOverflow.ellipsis),
+        actions: [
+          if (desktopMenus) ...[
+            IconButton(
+              icon: Icon(
+                Icons.notes,
+                color: _notesPanelVisible ? colorScheme.primary : null,
+              ),
+              tooltip: _notesPanelVisible
+                  ? 'Hide notes panel'
+                  : 'Show notes panel (Ctrl+N)',
+              onPressed: _toggleNotes,
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.devices,
+                color: _peersPanelVisible ? colorScheme.primary : null,
+              ),
+              tooltip: _peersPanelVisible
+                  ? 'Hide peers panel'
+                  : 'Show peers panel (Ctrl+P)',
+              onPressed: _togglePeers,
+            ),
+          ],
+          if (!desktopMenus)
+            IconButton(
+              icon: Icon(_findVisible ? Icons.search_off : Icons.search),
+              tooltip: 'Find in note (Ctrl+F)',
+              onPressed: () => _toggleFind(),
+            ),
+          Padding(
+            padding: EdgeInsets.only(right: desktopMenus ? 8 : 4),
+            child: Tooltip(
+              message: connected > 0
+                  ? '$connected peer session${connected == 1 ? '' : 's'} '
+                        'encrypted with WSS/TLS · tap for peers'
+                  : 'No active peer sessions · tap for peers',
+              child: ActionChip(
+                avatar: Icon(
+                  connected > 0 ? Icons.lock : Icons.lock_outline,
+                  size: 16,
+                  color: connected > 0 ? Colors.green : Colors.grey,
+                ),
+                label: Text('$connected'),
+                onPressed: _openPeers,
+              ),
+            ),
+          ),
+          if (!desktopMenus)
+            PopupMenuButton<_AppMenuAction>(
+              icon: const Icon(Icons.more_vert),
+              tooltip: 'More',
+              onSelected: (action) => _onAppMenuAction(context, action),
+              itemBuilder: (context) => _mobileOverflowItems(context),
+            ),
+        ],
+      ),
+      body: body,
+    );
+  }
+
+  Widget _buildDesktopBody({
+    required Widget editor,
+    required bool showMaterialMenuBar,
+    required DesktopMenuActions menuActions,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (_notesPanelVisible)
+          DesktopSidePanel(
+            title: 'Notes',
+            width: 300,
+            onClose: _toggleNotes,
+            child: const NotesPanel(showTitle: false),
+          ),
+        Expanded(
+          child: showMaterialMenuBar
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    DesktopMaterialMenuBar(actions: menuActions),
+                    Expanded(child: editor),
+                  ],
+                )
+              : editor,
+        ),
+        if (_peersPanelVisible)
+          DesktopSidePanel(
+            title: 'Peers',
+            width: 320,
+            onClose: _togglePeers,
+            child: const PeersSidebar(showHeader: true),
+          ),
+      ],
+    );
+  }
+
+  List<PopupMenuEntry<_AppMenuAction>> _mobileOverflowItems(
+    BuildContext context,
+  ) {
+    final prefs = context.watch<AppPreferences>();
+    return [
+      CheckedPopupMenuItem(
+        value: _AppMenuAction.wordWrap,
+        checked: prefs.wordWrap,
+        child: const ListTile(
+          leading: Icon(Icons.wrap_text),
+          title: Text('Word wrap'),
+          contentPadding: EdgeInsets.zero,
+          visualDensity: VisualDensity.compact,
+        ),
+      ),
+      const PopupMenuDivider(),
+      const PopupMenuItem(
+        value: _AppMenuAction.save,
+        child: ListTile(
+          leading: Icon(Icons.save_alt),
+          title: Text('Save to file…'),
+          contentPadding: EdgeInsets.zero,
+          visualDensity: VisualDensity.compact,
+        ),
+      ),
+      const PopupMenuItem(
+        value: _AppMenuAction.open,
+        child: ListTile(
+          leading: Icon(Icons.folder_open),
+          title: Text('Open file as new note…'),
+          contentPadding: EdgeInsets.zero,
+          visualDensity: VisualDensity.compact,
+        ),
+      ),
+      const PopupMenuItem(
+        value: _AppMenuAction.share,
+        child: ListTile(
+          leading: Icon(Icons.ios_share),
+          title: Text('Share note'),
+          contentPadding: EdgeInsets.zero,
+          visualDensity: VisualDensity.compact,
+        ),
+      ),
+      const PopupMenuItem(
+        value: _AppMenuAction.history,
+        child: ListTile(
+          leading: Icon(Icons.history),
+          title: Text('Version history…'),
+          contentPadding: EdgeInsets.zero,
+          visualDensity: VisualDensity.compact,
+        ),
+      ),
+      const PopupMenuDivider(),
+      const PopupMenuItem(
+        value: _AppMenuAction.settings,
+        child: ListTile(
+          leading: Icon(Icons.settings),
+          title: Text('Settings'),
+          contentPadding: EdgeInsets.zero,
+          visualDensity: VisualDensity.compact,
+        ),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final discovery = context.watch<DiscoveryRepository>();
@@ -225,18 +486,30 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     final prefs = context.watch<AppPreferences>();
     final connected = discovery.connectedPeers.length;
     final activeTitle = workspace.active?.title ?? 'SB Simple Netpad';
+    final desktopMenus = isDesktopMenuPlatform();
+    final menuActions = _menuActions(prefs);
+
+    final editor = EditorScreen(
+      findVisible: _findVisible,
+      replaceMode: _replaceMode,
+      onReplaceModeChanged: (replace) =>
+          setState(() => _replaceMode = replace),
+      onCloseFind: () => setState(() {
+        _findVisible = false;
+        _replaceMode = false;
+      }),
+    );
+
+    final shellBody = desktopMenus
+        ? _buildDesktopBody(
+            editor: editor,
+            showMaterialMenuBar: useMaterialWindowMenuBar(),
+            menuActions: menuActions,
+          )
+        : editor;
 
     return Shortcuts(
-      shortcuts: {
-        const SingleActivator(LogicalKeyboardKey.keyF, control: true):
-            const _FindIntent(),
-        const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
-            const _FindIntent(),
-        const SingleActivator(LogicalKeyboardKey.keyH, control: true):
-            const _ReplaceIntent(),
-        const SingleActivator(LogicalKeyboardKey.keyH, meta: true):
-            const _ReplaceIntent(),
-      },
+      shortcuts: _shortcutMap(),
       child: Actions(
         actions: {
           _FindIntent: CallbackAction<_FindIntent>(
@@ -251,150 +524,40 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               return null;
             },
           ),
+          _SaveIntent: CallbackAction<_SaveIntent>(
+            onInvoke: (_) {
+              _saveNote(context);
+              return null;
+            },
+          ),
+          _OpenIntent: CallbackAction<_OpenIntent>(
+            onInvoke: (_) {
+              _openNote(context);
+              return null;
+            },
+          ),
+          _ToggleNotesIntent: CallbackAction<_ToggleNotesIntent>(
+            onInvoke: (_) {
+              _toggleNotes();
+              return null;
+            },
+          ),
+          _TogglePeersIntent: CallbackAction<_TogglePeersIntent>(
+            onInvoke: (_) {
+              _togglePeers();
+              return null;
+            },
+          ),
         },
         child: Focus(
           autofocus: true,
-          child: Scaffold(
-            key: _scaffoldKey,
-            drawer: const NotesDrawer(),
-            appBar: AppBar(
-              title: Text(activeTitle, overflow: TextOverflow.ellipsis),
-              actions: [
-                IconButton(
-                  icon: Icon(
-                    _findVisible ? Icons.search_off : Icons.search,
-                  ),
-                  tooltip: 'Find in note (Ctrl+F)',
-                  onPressed: () => _toggleFind(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 4),
-                  child: Tooltip(
-                    message: connected > 0
-                        ? '$connected peer session${connected == 1 ? '' : 's'} '
-                              'encrypted with WSS/TLS · tap for peers'
-                        : 'No active peer sessions · tap for peers',
-                    child: ActionChip(
-                      avatar: Icon(
-                        connected > 0 ? Icons.lock : Icons.lock_outline,
-                        size: 16,
-                        color: connected > 0 ? Colors.green : Colors.grey,
-                      ),
-                      label: Text('$connected'),
-                      onPressed: () =>
-                          _scaffoldKey.currentState?.openEndDrawer(),
-                    ),
-                  ),
-                ),
-                PopupMenuButton<_AppMenuAction>(
-                  icon: const Icon(Icons.more_vert),
-                  tooltip: 'More',
-                  onSelected: (action) => _onAppMenuAction(context, action),
-                  itemBuilder: (context) => [
-                    CheckedPopupMenuItem(
-                      value: _AppMenuAction.wordWrap,
-                      checked: prefs.wordWrap,
-                      child: const ListTile(
-                        leading: Icon(Icons.wrap_text),
-                        title: Text('Word wrap'),
-                        contentPadding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                    const PopupMenuDivider(),
-                    const PopupMenuItem(
-                      value: _AppMenuAction.save,
-                      child: ListTile(
-                        leading: Icon(Icons.save_alt),
-                        title: Text('Save to file…'),
-                        contentPadding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: _AppMenuAction.open,
-                      child: ListTile(
-                        leading: Icon(Icons.folder_open),
-                        title: Text('Open file as new note…'),
-                        contentPadding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: _AppMenuAction.share,
-                      child: ListTile(
-                        leading: Icon(Icons.ios_share),
-                        title: Text('Share note'),
-                        contentPadding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: _AppMenuAction.history,
-                      child: ListTile(
-                        leading: Icon(Icons.history),
-                        title: Text('Version history…'),
-                        contentPadding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                    const PopupMenuDivider(),
-                    const PopupMenuItem(
-                      value: _AppMenuAction.settings,
-                      child: ListTile(
-                        leading: Icon(Icons.settings),
-                        title: Text('Settings'),
-                        contentPadding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            endDrawer: Drawer(
-              width: 320,
-              child: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    DrawerHeader(
-                      margin: EdgeInsets.zero,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            discovery.displayName,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'LAN notepad · room "${discovery.roomId}"',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '© 2026 Spencer Beaumier',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Expanded(child: PeersPanel()),
-                  ],
-                ),
-              ),
-            ),
-            body: EditorScreen(
-              findVisible: _findVisible,
-              replaceMode: _replaceMode,
-              onReplaceModeChanged: (replace) =>
-                  setState(() => _replaceMode = replace),
-              onCloseFind: () => setState(() {
-                _findVisible = false;
-                _replaceMode = false;
-              }),
+          child: DesktopMenuHost(
+            actions: menuActions,
+            child: _buildScaffold(
+              activeTitle: activeTitle,
+              connected: connected,
+              desktopMenus: desktopMenus,
+              body: shellBody,
             ),
           ),
         ),
@@ -504,4 +667,20 @@ class _FindIntent extends Intent {
 
 class _ReplaceIntent extends Intent {
   const _ReplaceIntent();
+}
+
+class _SaveIntent extends Intent {
+  const _SaveIntent();
+}
+
+class _OpenIntent extends Intent {
+  const _OpenIntent();
+}
+
+class _ToggleNotesIntent extends Intent {
+  const _ToggleNotesIntent();
+}
+
+class _TogglePeersIntent extends Intent {
+  const _TogglePeersIntent();
 }
