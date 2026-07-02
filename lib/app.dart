@@ -13,7 +13,7 @@ import 'package:netpad/features/editor/editor_screen.dart';
 import 'package:netpad/features/notes/notes_drawer.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
-import 'package:netpad/features/peers/peers_sidebar.dart';
+import 'package:netpad/features/peers/peers_drawer.dart';
 import 'package:netpad/features/shell/desktop_side_panel.dart';
 import 'package:netpad/features/settings/settings_screen.dart';
 import 'package:netpad/features/shell/desktop_menus.dart';
@@ -232,7 +232,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
 
   void _openPeers() {
     if (isDesktopMenuPlatform()) {
-      _togglePeers();
+      setState(() => _peersPanelVisible = true);
     } else {
       _scaffoldKey.currentState?.openEndDrawer();
     }
@@ -308,12 +308,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     return Scaffold(
       key: _scaffoldKey,
       drawer: desktopMenus ? null : const NotesDrawer(),
-      endDrawer: desktopMenus
-          ? null
-          : Drawer(
-              width: 320,
-              child: SafeArea(child: const PeersSidebar()),
-            ),
+      endDrawer: desktopMenus ? null : const PeersDrawer(),
       appBar: AppBar(
         automaticallyImplyLeading: !desktopMenus,
         title: Text(activeTitle, overflow: TextOverflow.ellipsis),
@@ -330,11 +325,23 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               onPressed: _toggleNotes,
             ),
             IconButton(
-              icon: Icon(
-                Icons.devices,
-                color: _peersPanelVisible ? colorScheme.primary : null,
+              icon: Badge(
+                isLabelVisible: connected > 0,
+                label: Text('$connected'),
+                backgroundColor: Colors.green.shade700,
+                child: Icon(
+                  connected > 0 ? Icons.devices : Icons.devices_outlined,
+                  color: _peersPanelVisible
+                      ? colorScheme.primary
+                      : connected > 0
+                      ? Colors.green.shade700
+                      : null,
+                ),
               ),
-              tooltip: _peersPanelVisible
+              tooltip: connected > 0
+                  ? '$connected encrypted peer session${connected == 1 ? '' : 's'} · '
+                        '${_peersPanelVisible ? 'hide' : 'show'} peers panel (Ctrl+P)'
+                  : _peersPanelVisible
                   ? 'Hide peers panel'
                   : 'Show peers panel (Ctrl+P)',
               onPressed: _togglePeers,
@@ -404,12 +411,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               : editor,
         ),
         if (_peersPanelVisible)
-          DesktopSidePanel(
-            title: 'Peers',
-            width: 320,
-            onClose: _togglePeers,
-            child: const PeersSidebar(showHeader: true),
-          ),
+          PeersDesktopPanel(onClose: _togglePeers),
       ],
     );
   }

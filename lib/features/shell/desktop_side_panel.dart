@@ -6,11 +6,13 @@ class DesktopSidePanel extends StatelessWidget {
     super.key,
     required this.title,
     required this.child,
+    this.subtitle,
     this.onClose,
     this.width = 320,
   });
 
   final String title;
+  final Widget? subtitle;
   final Widget child;
   final VoidCallback? onClose;
   final double width;
@@ -28,17 +30,30 @@ class DesktopSidePanel extends StatelessWidget {
             Material(
               elevation: 0,
               color: colorScheme.surfaceContainerHighest,
-              child: SizedBox(
-                height: 40,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 6, 4, 8),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          if (subtitle != null) ...[
+                            const SizedBox(height: 2),
+                            DefaultTextStyle(
+                              style:
+                                  Theme.of(context).textTheme.bodySmall ??
+                                  const TextStyle(),
+                              child: subtitle!,
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                     if (onClose != null)

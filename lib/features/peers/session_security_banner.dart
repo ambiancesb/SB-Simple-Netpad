@@ -4,12 +4,19 @@ import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 
-/// Summarises transport security for this device and any connected peers.
-class SessionSecurityBanner extends StatelessWidget {
-  const SessionSecurityBanner({super.key});
+/// Shared security counts and labels for peers UI chrome and banners.
+class SessionSecuritySummary {
+  const SessionSecuritySummary({
+    required this.connectedCount,
+    required this.pinnedCount,
+    required this.localCode,
+  });
 
-  @override
-  Widget build(BuildContext context) {
+  final int connectedCount;
+  final int pinnedCount;
+  final String localCode;
+
+  factory SessionSecuritySummary.of(BuildContext context) {
     final tls = context.read<TlsIdentity>();
     final trust = context.watch<TrustStore>();
     final discovery = context.watch<DiscoveryRepository>();
@@ -17,12 +24,31 @@ class SessionSecurityBanner extends StatelessWidget {
         .where((p) => !trust.isBlocked(p.id))
         .toList();
     final pinnedCount = connected.where((p) => trust.hasPin(p.id)).length;
-    final localCode = shortFingerprint(tls.fingerprint);
+    return SessionSecuritySummary(
+      connectedCount: connected.length,
+      pinnedCount: pinnedCount,
+      localCode: shortFingerprint(tls.fingerprint),
+    );
+  }
 
-    final subtitle = connected.isEmpty
-        ? 'This device advertises over WSS/TLS · code $localCode'
-        : '${connected.length} encrypted session(s) · '
-              '$pinnedCount certificate${pinnedCount == 1 ? '' : 's'} pinned';
+  String get bannerSubtitle => connectedCount == 0
+      ? 'This device advertises over WSS/TLS · code $localCode'
+      : '$connectedCount encrypted session(s) · '
+            '$pinnedCount certificate${pinnedCount == 1 ? '' : 's'} pinned';
+
+  String get compactLabel => connectedCount == 0
+      ? 'WSS/TLS · code $localCode'
+      : '$connectedCount encrypted · $pinnedCount pinned';
+}
+
+/// Summarises transport security for this device and any connected peers.
+class SessionSecurityBanner extends StatelessWidget {
+  const SessionSecurityBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final security = SessionSecuritySummary.of(context);
+    final subtitle = security.bannerSubtitle;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),

@@ -9,6 +9,7 @@ import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/features/peers/manual_connect_dialog.dart';
 import 'package:netpad/features/peers/session_security_banner.dart';
 import 'package:netpad/features/peers/this_device_banner.dart';
+import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 
 class PeersPanel extends StatelessWidget {
@@ -234,12 +235,22 @@ class _PeerTile extends StatelessWidget {
     final subtitle = presence == null
         ? _peerSubtitle(peer)
         : '${_peerSubtitle(peer)} • ${presence!.label}';
+    final trust = context.watch<TrustStore>();
+    final pinned = trust.hasPin(peer.id);
+    final securityLabel = peer.connectionState == PeerConnectionState.connected
+        ? pinned
+              ? 'Encrypted · pinned ${shortFingerprint(trust.pinnedFingerprint(peer.id)!)}'
+              : 'Encrypted (WSS/TLS)'
+        : null;
+    final fullSubtitle = securityLabel == null
+        ? subtitle
+        : '$subtitle • $securityLabel';
 
     return ListTile(
       dense: true,
       leading: Icon(Icons.circle, size: 10, color: color),
       title: Text(peer.displayName),
-      subtitle: Text(subtitle),
+      subtitle: Text(fullSubtitle),
       trailing: trailing,
     );
   }
