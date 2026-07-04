@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart' show TextSelection;
 import 'package:netpad/core/models/history_entry.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
@@ -119,6 +120,25 @@ void main() {
       );
       expect(doc.title, 'Updated');
       expect(doc.text, 'new body');
+    });
+
+    test('insertAtSelection inserts at the caret', () async {
+      final storage = await _storage();
+      final doc = DocumentRepository(
+        instanceId: 'aaa',
+        id: 'doc1',
+        title: 'Note',
+        text: 'hello world',
+        revision: 1,
+        storage: storage,
+        onLocalEditReady: (_, _, _, _) {},
+      );
+      doc.controller.selection = const TextSelection.collapsed(offset: 5);
+
+      doc.insertAtSelection('brave');
+
+      expect(doc.text, 'hello brave world');
+      expect(doc.controller.selection.baseOffset, 11);
     });
   });
 

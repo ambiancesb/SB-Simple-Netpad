@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui' show AppExitType;
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/features/editor/editor_screen.dart';
+import 'package:netpad/features/editor/mobile_voice_input_button.dart';
 import 'package:netpad/features/notes/notes_drawer.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
@@ -22,6 +24,7 @@ import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/file_service.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/share_service.dart';
+import 'package:netpad/services/speech_input_service.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 
@@ -105,6 +108,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FileService _fileService = const FileService();
   final ShareService _shareService = const ShareService();
+  final SpeechInputService _speechInput = SpeechInputService();
   bool _findVisible = false;
   bool _replaceMode = false;
   bool _notesPanelVisible = true;
@@ -120,6 +124,32 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     final sync = context.read<SyncRepository>();
     sync.onLiveConflict = _resolveLiveConflict;
     sync.onSnapshotDivergence = _resolveDivergence;
+    _speechInput.onFinalPhrase = _onDictatedPhrase;
+  }
+
+  void _onDictatedPhrase(String phrase) {
+    final doc = context.read<WorkspaceRepository>().active;
+    doc?.insertAtSelection(phrase);
+  }
+
+  Future<void> _toggleVoiceInput() async {
+    final started = await _speechInput.toggleListening();
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    if (_speechInput.lastError != null) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(_speechInput.lastError!)),
+      );
+      return;
+    }
+    if (started) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Listening… tap the mic again to stop'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   String _previewText(String text, {int maxLen = 200}) {
@@ -216,6 +246,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _speechInput.dispose();
     super.dispose();
   }
 
@@ -224,6 +255,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       context.read<WorkspaceRepository>().flushSaveAll();
+      unawaited(_speechInput.stopListening());
     }
   }
 
@@ -353,6 +385,11 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               icon: Icon(_findVisible ? Icons.search_off : Icons.search),
               tooltip: 'Find in note (Ctrl+F)',
               onPressed: () => _toggleFind(),
+            ),
+          if (!desktopMenus && SpeechInputService.isSupported)
+            MobileVoiceInputButton(
+              service: _speechInput,
+              onToggle: _toggleVoiceInput,
             ),
           Padding(
             padding: EdgeInsets.only(right: desktopMenus ? 8 : 4),

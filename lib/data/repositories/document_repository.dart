@@ -76,6 +76,21 @@ class DocumentRepository extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Inserts [text] at the current selection, replacing any selected range.
+  void insertAtSelection(String text) {
+    if (text.isEmpty || _applyingRemote) return;
+    final body = controller.text;
+    final sel = controller.selection;
+    final start = sel.start.clamp(0, body.length);
+    final end = sel.end.clamp(0, body.length);
+    final needsLeadingSpace =
+        start > 0 && body[start - 1] != ' ' && body[start - 1] != '\n';
+    final insertion = needsLeadingSpace ? ' $text' : text;
+    final updated = body.replaceRange(start, end, insertion);
+    _setControllerText(updated, start + insertion.length);
+    onLocalEdit();
+  }
+
   void onLocalEdit() {
     if (_applyingRemote) return;
     _debounce?.cancel();

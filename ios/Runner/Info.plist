@@ -10,6 +10,10 @@
 	<string>SB Simple Netpad</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>SB Simple Netpad discovers and connects to other notepad instances on your local network.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>SB Simple Netpad uses the microphone so you can dictate notes with your voice.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>SB Simple Netpad converts your speech to text when you dictate into a note.</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_sbnetpad._tcp</string>
