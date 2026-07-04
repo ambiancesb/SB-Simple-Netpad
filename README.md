@@ -61,6 +61,7 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
   - Restart the app after network changes; discovery re-resolves every 12 seconds.
 
 - **Desktop:** allow incoming connections on the app’s TCP port when the OS firewall prompts you
+- **Windows desktop build:** requires Visual Studio with the **Desktop development with C++** workload (CMake + MSVC). Mobile dictation uses [`speech_to_text`](https://pub.dev/packages/speech_to_text), which builds on Windows without extra tools. Do **not** add [`flutter_tts`](https://pub.dev/packages/flutter_tts) unless you also install [NuGet CLI](https://www.nuget.org/downloads) (`winget install Microsoft.NuGet`) — that package’s Windows plugin requires `nuget.exe` even if you only use text-to-speech on Android/iOS.
 
 ## Build and run
 
