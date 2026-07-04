@@ -33,6 +33,7 @@ class WorkspaceRepository extends ChangeNotifier {
 
   final Map<String, DocumentRepository> _docs = {};
   final List<String> _order = [];
+  final Set<String> _syncDisabledIds = {};
   String? _activeId;
   int _orderRevision = 0;
 
@@ -78,9 +79,28 @@ class WorkspaceRepository extends ChangeNotifier {
   List<String> get noteOrder => List.unmodifiable(_order);
   int get orderRevision => _orderRevision;
 
+  /// Whether [docId] participates in peer sync (catalog, edits, renames, etc.).
+  bool isSyncEnabled(String docId) => !_syncDisabledIds.contains(docId);
+
+  /// Inbound peer messages for an existing local-only note are ignored.
+  bool shouldIgnoreInboundSync(String docId) =>
+      _docs.containsKey(docId) && !isSyncEnabled(docId);
+
+  /// Turns peer sync on or off for an existing note. New notes default to on.
+  void setSyncEnabled(String docId, bool enabled) {
+    if (!_docs.containsKey(docId)) return;
+    if (enabled) {
+      if (!_syncDisabledIds.remove(docId)) return;
+    } else if (!_syncDisabledIds.add(docId)) {
+      return;
+    }
+    unawaited(_persistSyncFlags());
+    notifyListeners();
+  }
+
   List<Map<String, dynamic>> catalogPayload() => [
     for (final id in _order)
-      if (_docs.containsKey(id))
+      if (_docs.containsKey(id) && isSyncEnabled(id))
         {
           'docId': id,
           'title': _docs[id]!.title,
@@ -119,6 +139,9 @@ class WorkspaceRepository extends ChangeNotifier {
           ? data.activeId
           : _order.first;
       _orderRevision = data.orderRevision;
+      _syncDisabledIds
+        ..clear()
+        ..addAll(data.syncDisabledIds.where(_docs.containsKey));
     }
   }
 
@@ -143,7 +166,9 @@ class WorkspaceRepository extends ChangeNotifier {
     final doc = _docs[id];
     if (doc == null) return;
     doc.rename(title);
-    onDocRename?.call(id, doc.title, doc.revision, instanceId);
+    if (isSyncEnabled(id)) {
+      onDocRename?.call(id, doc.title, doc.revision, instanceId);
+    }
     unawaited(_persistIndex());
     notifyListeners();
   }
@@ -174,8 +199,11 @@ class WorkspaceRepository extends ChangeNotifier {
   void deleteNote(String id) {
     final doc = _docs[id];
     if (doc == null) return;
+    final syncEnabled = isSyncEnabled(id);
     _removeFromState(id);
-    onDocDeleted?.call(id, instanceId);
+    if (syncEnabled) {
+      onDocDeleted?.call(id, instanceId);
+    }
     unawaited(_storage.deleteDocument(id));
     _ensureAtLeastOneNote();
     _broadcastOrder();
@@ -207,6 +235,7 @@ class WorkspaceRepository extends ChangeNotifier {
     required int revision,
     required String originId,
   }) {
+    if (shouldIgnoreInboundSync(docId)) return;
     final existing = _docs[docId];
     if (existing == null) {
       final doc = _createLocal(
@@ -236,6 +265,7 @@ class WorkspaceRepository extends ChangeNotifier {
     required int revision,
     required String originId,
   }) {
+    if (shouldIgnoreInboundSync(docId)) return;
     final doc = ensureDocument(docId, title: title);
     if (doc.applyRemoteRename(
       revision: revision,
@@ -257,6 +287,7 @@ class WorkspaceRepository extends ChangeNotifier {
     for (final entry in entries) {
       final docId = entry['docId'] as String? ?? '';
       if (docId.isEmpty) continue;
+      if (shouldIgnoreInboundSync(docId)) continue;
       final title = entry['title'] as String? ?? '';
       final revision = entry['revision'] as int? ?? 0;
       if (!_docs.containsKey(docId)) {
@@ -328,6 +359,7 @@ class WorkspaceRepository extends ChangeNotifier {
     required String text,
     required String originId,
   }) {
+    if (shouldIgnoreInboundSync(docId)) return false;
     final created = !_docs.containsKey(docId);
     final doc = ensureDocument(docId, title: title);
     final applied = doc.applyRemote(
@@ -346,6 +378,7 @@ class WorkspaceRepository extends ChangeNotifier {
 
   void removeDocumentRemote(String docId) {
     if (!_docs.containsKey(docId)) return;
+    if (!isSyncEnabled(docId)) return;
     _removeFromState(docId);
     unawaited(_storage.deleteDocument(docId));
     _ensureAtLeastOneNote();
@@ -410,6 +443,7 @@ class WorkspaceRepository extends ChangeNotifier {
       await doc.flushSave();
     }
     await _persistIndex();
+    await _persistSyncFlags();
   }
 
   Future<void> _persistIndex() => _storage.saveIndex(
@@ -418,11 +452,19 @@ class WorkspaceRepository extends ChangeNotifier {
     orderRevision: _orderRevision,
   );
 
+  Future<void> _persistSyncFlags() =>
+      _storage.saveSyncDisabled(_syncDisabledIds);
+
   void _broadcastOrder() {
     _orderRevision++;
-    onOrderChanged?.call(List.of(_order), _orderRevision, instanceId);
+    onOrderChanged?.call(_syncedOrder(), _orderRevision, instanceId);
     unawaited(_persistIndex());
   }
+
+  List<String> _syncedOrder() => [
+    for (final id in _order)
+      if (_docs.containsKey(id) && isSyncEnabled(id)) id,
+  ];
 
   bool _remoteOrderWins(int revision, String originId) {
     if (revision > _orderRevision) return true;
@@ -463,7 +505,9 @@ class WorkspaceRepository extends ChangeNotifier {
 
   void _register(DocumentRepository doc) {
     doc.onCursorMoved = (line, column) {
-      if (doc.id == _activeId) onPresence?.call(doc.id, line, column);
+      if (doc.id == _activeId && isSyncEnabled(doc.id)) {
+        onPresence?.call(doc.id, line, column);
+      }
     };
     doc.addListener(_onDocChanged);
     _docs[doc.id] = doc;
@@ -476,6 +520,7 @@ class WorkspaceRepository extends ChangeNotifier {
     String text,
     String originId,
   ) {
+    if (!isSyncEnabled(docId)) return;
     final title = _docs[docId]?.title ?? '';
     onDocUpdate?.call(docId, title, revision, text, originId);
   }
@@ -485,6 +530,7 @@ class WorkspaceRepository extends ChangeNotifier {
   void _removeFromState(String id) {
     final doc = _docs.remove(id);
     _order.remove(id);
+    _syncDisabledIds.remove(id);
     doc?.removeListener(_onDocChanged);
     doc?.dispose();
     if (_activeId == id) {

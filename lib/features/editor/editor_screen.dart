@@ -6,6 +6,7 @@ import 'package:netpad/core/find_replace.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/services/app_preferences.dart';
+import 'package:netpad/services/speech_input_service.dart';
 import 'package:provider/provider.dart';
 
 class EditorScreen extends StatefulWidget {
@@ -15,12 +16,14 @@ class EditorScreen extends StatefulWidget {
     required this.replaceMode,
     required this.onReplaceModeChanged,
     required this.onCloseFind,
+    this.speechInput,
   });
 
   final bool findVisible;
   final bool replaceMode;
   final ValueChanged<bool> onReplaceModeChanged;
   final VoidCallback onCloseFind;
+  final SpeechInputService? speechInput;
 
   @override
   State<EditorScreen> createState() => _EditorScreenState();
@@ -78,6 +81,8 @@ class _EditorScreenState extends State<EditorScreen> {
 
     return Column(
       children: [
+        if (widget.speechInput != null)
+          _DictationBar(service: widget.speechInput!),
         if (widget.findVisible)
           _FindReplaceBar(
             key: ValueKey('find-${document.id}'),
@@ -332,6 +337,44 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DictationBar extends StatelessWidget {
+  const _DictationBar({required this.service});
+
+  final SpeechInputService service;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: service,
+      builder: (context, _) {
+        if (!service.isListening) return const SizedBox.shrink();
+        final colorScheme = Theme.of(context).colorScheme;
+        final preview = service.liveText.trim();
+        return Material(
+          color: colorScheme.errorContainer,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: [
+                Icon(Icons.mic, size: 18, color: colorScheme.onErrorContainer),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    preview.isEmpty ? 'Listening…' : preview,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: colorScheme.onErrorContainer),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

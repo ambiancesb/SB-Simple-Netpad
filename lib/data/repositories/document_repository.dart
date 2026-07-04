@@ -39,7 +39,10 @@ class DocumentRepository extends ChangeNotifier {
   /// Reports the local cursor position so it can be shared with peers.
   void Function(int line, int column)? onCursorMoved;
 
-  late final CodeController controller = CodeController(text: '');
+  late final CodeController controller = CodeController(
+    text: '',
+    modifiers: const [],
+  );
 
   String _title;
   int _revision;
@@ -79,16 +82,51 @@ class DocumentRepository extends ChangeNotifier {
   /// Inserts [text] at the current selection, replacing any selected range.
   void insertAtSelection(String text) {
     if (text.isEmpty || _applyingRemote) return;
-    final body = controller.text;
     final sel = controller.selection;
-    final start = sel.start.clamp(0, body.length);
-    final end = sel.end.clamp(0, body.length);
-    final needsLeadingSpace =
-        start > 0 && body[start - 1] != ' ' && body[start - 1] != '\n';
-    final insertion = needsLeadingSpace ? ' $text' : text;
+    applyDictation(
+      anchorOffset: sel.start,
+      previousSpan: sel.textInside(controller.text),
+      recognizedWords: text,
+      isFinal: true,
+    );
+  }
+
+  /// Applies live or final speech recognition at [anchorOffset].
+  /// Returns the text span that was written (for dictation tracking).
+  String applyDictation({
+    required int anchorOffset,
+    required String previousSpan,
+    required String recognizedWords,
+    required bool isFinal,
+  }) {
+    if (recognizedWords.isEmpty || _applyingRemote) return previousSpan;
+
+    final body = controller.text;
+    final start = anchorOffset.clamp(0, body.length);
+    final end = (start + previousSpan.length).clamp(start, body.length);
+    final prefix = previousSpan.isNotEmpty
+        ? (previousSpan.startsWith(' ') ? ' ' : '')
+        : (start > 0 && body[start - 1] != ' ' && body[start - 1] != '\n'
+            ? ' '
+            : '');
+    final insertion = '$prefix$recognizedWords';
     final updated = body.replaceRange(start, end, insertion);
-    _setControllerText(updated, start + insertion.length);
-    onLocalEdit();
+    final caret = start + insertion.length;
+    _setControllerText(updated, caret);
+    if (isFinal) {
+      onLocalEdit();
+    } else {
+      notifyListeners();
+    }
+    return insertion;
+  }
+
+  int dictationAnchorOffset() {
+    final sel = controller.selection;
+    final start = sel.start.clamp(0, controller.text.length);
+    final end = sel.end.clamp(0, controller.text.length);
+    if (start != end) return start;
+    return start;
   }
 
   void onLocalEdit() {

@@ -122,6 +122,35 @@ void main() {
       expect(doc.text, 'new body');
     });
 
+    test('applyDictation updates partial text then commits on final', () async {
+      final storage = await _storage();
+      final doc = DocumentRepository(
+        instanceId: 'aaa',
+        id: 'doc1',
+        title: 'Note',
+        text: 'hello world',
+        revision: 1,
+        storage: storage,
+        onLocalEditReady: (_, _, _, _) {},
+      );
+
+      doc.applyDictation(
+        anchorOffset: 5,
+        previousSpan: '',
+        recognizedWords: 'br',
+        isFinal: false,
+      );
+      expect(doc.text, 'hello br world');
+
+      doc.applyDictation(
+        anchorOffset: 5,
+        previousSpan: ' br',
+        recognizedWords: 'brave',
+        isFinal: true,
+      );
+      expect(doc.text, 'hello brave world');
+    });
+
     test('insertAtSelection inserts at the caret', () async {
       final storage = await _storage();
       final doc = DocumentRepository(

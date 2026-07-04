@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:math';
 
 import 'package:code_text_field/code_text_field.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:netpad/features/editor/netpad_line_number_controller.dart';
@@ -76,6 +78,9 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
   FocusNode? _focusNode;
   String longestLine = '';
   double? _wrapContentWidth;
+
+  static bool get _mobileTextInput =>
+      !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
   @override
   void initState() {
@@ -269,8 +274,17 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
     }
 
     final codeField = TextField(
-      keyboardType: widget.keyboardType,
-      smartQuotesType: widget.smartQuotesType,
+      keyboardType: _mobileTextInput
+          ? TextInputType.multiline
+          : widget.keyboardType,
+      smartQuotesType: _mobileTextInput
+          ? SmartQuotesType.enabled
+          : widget.smartQuotesType,
+      textCapitalization: _mobileTextInput
+          ? TextCapitalization.sentences
+          : TextCapitalization.none,
+      textInputAction:
+          _mobileTextInput ? TextInputAction.newline : TextInputAction.newline,
       focusNode: _focusNode,
       onTap: widget.onTap,
       scrollPadding: widget.padding,
@@ -288,8 +302,13 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
         isDense: widget.isDense,
       ),
       cursorColor: cursorColor,
-      autocorrect: false,
-      enableSuggestions: false,
+      autocorrect: _mobileTextInput,
+      enableSuggestions: _mobileTextInput,
+      spellCheckConfiguration: _mobileTextInput
+          ? const SpellCheckConfiguration(
+              misspelledTextStyle: TextStyle(decoration: TextDecoration.underline),
+            )
+          : null,
       enabled: widget.enabled,
       onChanged: widget.onChanged,
       readOnly: widget.readOnly,

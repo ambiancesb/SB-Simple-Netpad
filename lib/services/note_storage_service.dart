@@ -50,11 +50,15 @@ class WorkspaceData {
     required this.documents,
     required this.activeId,
     this.orderRevision = 0,
+    this.syncDisabledIds = const {},
   });
 
   final List<StoredDocument> documents;
   final String? activeId;
   final int orderRevision;
+
+  /// Note ids with peer sync turned off. Omitted ids default to synced.
+  final Set<String> syncDisabledIds;
 }
 
 /// Persists notes via [SharedPreferences] (no JNI / path_provider on Linux).
@@ -66,6 +70,7 @@ class NoteStorageService {
   static const _keyIndex = 'docs_index';
   static const _keyActive = 'docs_active';
   static const _keyOrderRevision = 'docs_order_revision';
+  static const _keySyncDisabled = 'docs_sync_disabled';
   static const _docPrefix = 'doc_';
 
   // Legacy single-note keys (Phase 1–4).
@@ -91,6 +96,8 @@ class NoteStorageService {
       documents: documents,
       activeId: _prefs.getString(_keyActive),
       orderRevision: _prefs.getInt(_keyOrderRevision) ?? 0,
+      syncDisabledIds: (_prefs.getStringList(_keySyncDisabled) ?? const [])
+          .toSet(),
     );
   }
 
@@ -116,6 +123,14 @@ class NoteStorageService {
     } else {
       await _prefs.remove(_keyActive);
     }
+  }
+
+  Future<void> saveSyncDisabled(Set<String> ids) async {
+    if (ids.isEmpty) {
+      await _prefs.remove(_keySyncDisabled);
+      return;
+    }
+    await _prefs.setStringList(_keySyncDisabled, ids.toList()..sort());
   }
 
   /// Migrates a Phase 1–4 single note (prefs or legacy file) into the

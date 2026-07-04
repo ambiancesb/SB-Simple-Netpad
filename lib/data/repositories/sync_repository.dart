@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/divergence_choice.dart';
 import 'package:netpad/core/pairing_negotiation.dart';
+import 'package:netpad/core/reconnect_divergence.dart';
+import 'package:netpad/core/sync_relay.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/models/peer_presence.dart';
 import 'package:netpad/core/models/protocol_message.dart';
@@ -166,20 +168,22 @@ class SyncRepository extends ChangeNotifier {
   Iterable<String> _authenticatedConnectionIds({
     String? exceptConnectionId,
     String? exceptPeerId,
-  }) sync* {
+  }) {
+    return authenticatedConnectionIds(
+      links: _syncPeerLinks(),
+      exceptConnectionId: exceptConnectionId,
+      exceptPeerId: exceptPeerId,
+    );
+  }
+
+  Iterable<SyncPeerLink> _syncPeerLinks() sync* {
     for (final link in _linksByPeerId.values) {
-      if (!link.authenticated) continue;
-      if (link.peerId == exceptPeerId) continue;
-
-      final inbound = link.inboundConnectionId;
-      if (inbound != null && inbound != exceptConnectionId) {
-        yield inbound;
-      }
-
-      final outbound = link.outboundConnectionId;
-      if (outbound != null && outbound != exceptConnectionId) {
-        yield outbound;
-      }
+      yield SyncPeerLink(
+        peerId: link.peerId,
+        authenticated: link.authenticated,
+        inboundConnectionId: link.inboundConnectionId,
+        outboundConnectionId: link.outboundConnectionId,
+      );
     }
   }
 
@@ -737,8 +741,10 @@ class SyncRepository extends ChangeNotifier {
         }
         final docId = message.payload['docId'] as String? ?? '';
         if (docId.isNotEmpty) {
-          _workspace.removeDocumentRemote(docId);
-          _relay(message, connectionId);
+          if (!_workspace.shouldIgnoreInboundSync(docId)) {
+            _workspace.removeDocumentRemote(docId);
+            _relay(message, connectionId);
+          }
         }
       case MessageTypes.peerDisconnect:
         if (!_hasValidSessionToken(connectionId, message)) {
@@ -811,13 +817,11 @@ class SyncRepository extends ChangeNotifier {
     final docId = message.payload['docId'] as String? ?? '';
     final title = message.payload['title'] as String? ?? '';
     if (docId.isEmpty) return;
+    if (_workspace.shouldIgnoreInboundSync(docId)) return;
     final document = _workspace.ensureDocument(docId, title: title);
     final localText = document.text;
 
-    final diverged =
-        text != localText &&
-        localText.trim().isNotEmpty &&
-        text.trim().isNotEmpty;
+    final diverged = noteTextsDiverged(localText, text);
 
     // Only the lexicographically-smaller instance prompts, so both devices
     // converge on one decision instead of fighting.
@@ -825,7 +829,12 @@ class SyncRepository extends ChangeNotifier {
         diverged &&
         onSnapshotDivergence != null &&
         !_divergencePromptActive &&
-        instanceId.compareTo(originId) < 0;
+        isReconnectDivergencePromptDevice(
+          localInstanceId: instanceId,
+          remoteOriginId: originId,
+          localText: localText,
+          remoteText: text,
+        );
 
     if (!shouldPrompt) {
       unawaited(_handleDocMessage(message, fromConnectionId));
@@ -881,6 +890,7 @@ class SyncRepository extends ChangeNotifier {
     final docId = message.payload['docId'] as String? ?? '';
     final title = message.payload['title'] as String? ?? '';
     if (docId.isEmpty) return;
+    if (_workspace.shouldIgnoreInboundSync(docId)) return;
 
     final document = _workspace.documentById(docId);
     final shouldPrompt =
@@ -966,6 +976,7 @@ class SyncRepository extends ChangeNotifier {
     final revision = message.payload['revision'] as int? ?? 0;
     final originId = message.payload['originId'] as String? ?? '';
     if (docId.isEmpty || originId == instanceId) return;
+    if (_workspace.shouldIgnoreInboundSync(docId)) return;
 
     final existed = _workspace.hasDocument(docId);
     _workspace.receiveRemoteCreate(
@@ -991,6 +1002,7 @@ class SyncRepository extends ChangeNotifier {
     final revision = message.payload['revision'] as int? ?? 0;
     final originId = message.payload['originId'] as String? ?? '';
     if (docId.isEmpty || originId == instanceId) return;
+    if (_workspace.shouldIgnoreInboundSync(docId)) return;
 
     final before = _workspace.documentById(docId)?.title;
     _workspace.receiveRemoteRename(
@@ -1070,10 +1082,10 @@ class SyncRepository extends ChangeNotifier {
   }
 
   void _relay(ProtocolMessage message, String fromConnectionId) {
-    final fromPeerId = _connectionToPeerId[fromConnectionId];
-    for (final connId in _authenticatedConnectionIds(
-      exceptConnectionId: fromConnectionId,
-      exceptPeerId: fromPeerId,
+    for (final connId in relayConnectionTargets(
+      links: _syncPeerLinks(),
+      connectionToPeerId: _connectionToPeerId,
+      fromConnectionId: fromConnectionId,
     )) {
       _sendOnConnection(connId, message);
     }
@@ -1092,6 +1104,7 @@ class SyncRepository extends ChangeNotifier {
       ),
     );
     for (final doc in _workspace.documents) {
+      if (!_workspace.isSyncEnabled(doc.id)) continue;
       _sendOnConnection(
         connectionId,
         ProtocolMessage(

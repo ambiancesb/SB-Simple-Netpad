@@ -124,15 +124,27 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     final sync = context.read<SyncRepository>();
     sync.onLiveConflict = _resolveLiveConflict;
     sync.onSnapshotDivergence = _resolveDivergence;
-    _speechInput.onFinalPhrase = _onDictatedPhrase;
+    _speechInput.getDictationAnchor = () {
+      final doc = context.read<WorkspaceRepository>().active;
+      return doc?.dictationAnchorOffset() ?? 0;
+    };
+    _speechInput.onDictationUpdate = _onDictationUpdate;
   }
 
-  void _onDictatedPhrase(String phrase) {
+  String _onDictationUpdate(DictationUpdate update) {
     final doc = context.read<WorkspaceRepository>().active;
-    doc?.insertAtSelection(phrase);
+    return doc?.applyDictation(
+      anchorOffset: update.anchorOffset,
+      previousSpan: update.previousSpan,
+      recognizedWords: update.recognizedWords,
+      isFinal: update.isFinal,
+    ) ?? '';
   }
 
   Future<void> _toggleVoiceInput() async {
+    if (!_speechInput.isListening) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
     final started = await _speechInput.toggleListening();
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
@@ -501,6 +513,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
         _findVisible = false;
         _replaceMode = false;
       }),
+      speechInput: SpeechInputService.isSupported ? _speechInput : null,
     );
 
     final shellBody = desktopMenus

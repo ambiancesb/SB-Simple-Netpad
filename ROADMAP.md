@@ -11,7 +11,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 | **5** | Done | Multiple documents, note history, search |
 | **6** | Done | Conflict UI, protocol version negotiation, heartbeat |
 | **7** | Done | UX polish: find/replace, settings, theme, share sheet |
-| **8** | In progress | Code health, sync/relay tests, per-note sync toggle |
+| **8** | Done | Code health, sync/relay tests, per-note sync toggle |
 | **9** | Planned | Trusted peers and auto-sync tokens (reconnect without re-pairing) |
 
 ---
@@ -101,19 +101,19 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 ---
 
-## Phase 8 — Code health and per-note sync control
+## Phase 8 — Code health and per-note sync control — Done
 
 **Goal:** Reduce maintenance risk, harden the sync core, and let each note opt in or out of peer sync.
 
 - [x] **Remove debug logging cruft** — Removed the `#region agent log` blocks and hardcoded debug path from [lib/features/editor/editor_screen.dart](lib/features/editor/editor_screen.dart).
-- [ ] **Sync/relay tests** — Cover multi-peer relay and divergence merge end-to-end (phase 1–5 unit tests cover pairing code, connection log, cursor math, TLS/trust, and workspace/history/search).
-- [ ] **Per-note sync toggle** — A switch on each item in the [Notes drawer](lib/features/notes/notes_drawer.dart) (`NotesPanel` / `_NoteTile`) to mark a note as synced or local-only.
+- [x] **Sync/relay tests** — [lib/core/sync_relay.dart](lib/core/sync_relay.dart) and [test/phase8_test.dart](test/phase8_test.dart) cover multi-peer relay targets and reconnect divergence helpers; [test/phase8_pairing_test.dart](test/phase8_pairing_test.dart) covers pairing tie-break.
+- [x] **Per-note sync toggle** — A switch on each item in the [Notes drawer](lib/features/notes/notes_drawer.dart) (`NotesPanel` / `_NoteTile`) to mark a note as synced or local-only.
   - Persist `syncEnabled` (default `true`) per `docId` in the workspace index via [lib/data/repositories/workspace_repository.dart](lib/data/repositories/workspace_repository.dart) / [lib/services/note_storage_service.dart](lib/services/note_storage_service.dart).
   - **When off:** do not broadcast `doc_update`, `doc_create`, `doc_rename`, or `doc_delete` for that note; omit from `doc_catalog` on pair/reconnect; ignore inbound sync for that `docId` (or store locally without relaying).
   - **When on:** unchanged behavior.
   - Visual hint on local-only notes (e.g. muted icon or “Local only” subtitle) so sync state is obvious at a glance.
   - Toggling sync on for an existing local-only note may offer to push a snapshot to connected peers (optional; defer if complex).
-- [ ] **Automated verification** — Extend or add tests: local-only notes excluded from catalog payload; edits on a local-only note do not invoke `onDocUpdate`; remote updates for a local-only `docId` are not applied (or not relayed).
+- [x] **Automated verification** — [test/phase8_test.dart](test/phase8_test.dart): local-only notes excluded from catalog payload; edits on a local-only note do not invoke `onDocUpdate`; remote updates for a local-only `docId` are not applied.
 
 ---
 

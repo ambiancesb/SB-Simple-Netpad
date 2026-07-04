@@ -2,7 +2,23 @@ import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+
+/// Live dictation update for a single phrase segment at [anchorOffset].
+class DictationUpdate {
+  const DictationUpdate({
+    required this.anchorOffset,
+    required this.previousSpan,
+    required this.recognizedWords,
+    required this.isFinal,
+  });
+
+  final int anchorOffset;
+  final String previousSpan;
+  final String recognizedWords;
+  final bool isFinal;
+}
 
 /// Wraps platform speech recognition for dictating into the editor on mobile.
 class SpeechInputService extends ChangeNotifier {
@@ -13,15 +29,22 @@ class SpeechInputService extends ChangeNotifier {
   bool _initialized = false;
   bool _listening = false;
   String? _lastError;
+  String _liveText = '';
+  int? _segmentAnchor;
+  String _segmentSpan = '';
 
   static bool get isSupported =>
       !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
   bool get isListening => _listening;
   String? get lastError => _lastError;
+  String get liveText => _liveText;
 
-  /// Called with each finalized phrase while listening.
-  void Function(String phrase)? onFinalPhrase;
+  /// Returns the text actually written into the document for span tracking.
+  String Function(DictationUpdate update)? onDictationUpdate;
+
+  /// Supplies the text offset where the current phrase should be inserted.
+  int Function()? getDictationAnchor;
 
   Future<bool> initialize() async {
     if (!isSupported) return false;
@@ -62,33 +85,68 @@ class SpeechInputService extends ChangeNotifier {
     if (!ready || !_speech.isAvailable) return false;
 
     _lastError = null;
+    _liveText = '';
+    _segmentAnchor = getDictationAnchor?.call();
+    _segmentSpan = '';
+
     final started = await _speech.listen(
-      onResult: (result) {
-        if (!result.finalResult) return;
-        final phrase = result.recognizedWords.trim();
-        if (phrase.isEmpty) return;
-        onFinalPhrase?.call(phrase);
-      },
+      onResult: _onSpeechResult,
       listenOptions: SpeechListenOptions(
-        listenFor: const Duration(minutes: 2),
-        pauseFor: const Duration(seconds: 4),
+        listenMode: ListenMode.dictation,
+        listenFor: const Duration(minutes: 5),
+        pauseFor: const Duration(seconds: 5),
         partialResults: true,
-        cancelOnError: true,
+        cancelOnError: false,
+        autoPunctuation: Platform.isIOS,
       ),
     );
     _setListening(started);
     return started;
   }
 
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    final words = result.recognizedWords.trim();
+    _liveText = words;
+
+    final anchor = _segmentAnchor;
+    if (anchor != null && words.isNotEmpty) {
+      final inserted = onDictationUpdate?.call(
+        DictationUpdate(
+          anchorOffset: anchor,
+          previousSpan: _segmentSpan,
+          recognizedWords: words,
+          isFinal: result.finalResult,
+        ),
+      );
+      _segmentSpan = inserted ?? words;
+    }
+
+    if (result.finalResult) {
+      _segmentSpan = '';
+      _liveText = '';
+      _segmentAnchor = getDictationAnchor?.call();
+    }
+
+    notifyListeners();
+  }
+
   Future<void> stopListening() async {
     if (!_listening) return;
     await _speech.stop();
+    _resetSession();
     _setListening(false);
+  }
+
+  void _resetSession() {
+    _liveText = '';
+    _segmentAnchor = null;
+    _segmentSpan = '';
   }
 
   void _setListening(bool value) {
     if (_listening == value) return;
     _listening = value;
+    if (!value) _resetSession();
     notifyListeners();
   }
 

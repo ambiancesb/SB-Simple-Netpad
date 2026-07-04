@@ -159,12 +159,15 @@ class _NotesPanelState extends State<NotesPanel> {
     WorkspaceRepository workspace,
     DocumentRepository doc,
   ) async {
+    final synced = workspace.isSyncEnabled(doc.id);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('Delete "${doc.title}"?'),
-        content: const Text(
-          'This removes the note for you and every connected peer.',
+        content: Text(
+          synced
+              ? 'This removes the note for you and every connected peer.'
+              : 'This removes the note from this device only.',
         ),
         actions: [
           TextButton(
@@ -203,6 +206,9 @@ class _NotesPanelState extends State<NotesPanel> {
           hit: hit,
           searching: true,
           active: hit.doc.id == workspace.activeId,
+          syncEnabled: workspace.isSyncEnabled(hit.doc.id),
+          onSyncChanged: (enabled) =>
+              workspace.setSyncEnabled(hit.doc.id, enabled),
           onTap: () {
             workspace.selectNote(hit.doc.id);
             _maybeDismiss();
@@ -242,6 +248,9 @@ class _NotesPanelState extends State<NotesPanel> {
           hit: hit,
           searching: false,
           active: doc.id == workspace.activeId,
+          syncEnabled: workspace.isSyncEnabled(doc.id),
+          onSyncChanged: (enabled) =>
+              workspace.setSyncEnabled(doc.id, enabled),
           onTap: () {
             workspace.selectNote(doc.id);
             _maybeDismiss();
@@ -264,6 +273,8 @@ class _NoteTile extends StatelessWidget {
     required this.hit,
     required this.searching,
     required this.active,
+    required this.syncEnabled,
+    required this.onSyncChanged,
     required this.onTap,
     required this.onRename,
     required this.onDelete,
@@ -274,6 +285,8 @@ class _NoteTile extends StatelessWidget {
   final NoteSearchHit hit;
   final bool searching;
   final bool active;
+  final bool syncEnabled;
+  final ValueChanged<bool> onSyncChanged;
   final VoidCallback onTap;
   final VoidCallback onRename;
   final VoidCallback onDelete;
@@ -282,20 +295,20 @@ class _NoteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final doc = hit.doc;
-    final subtitle = searching
-        ? (hit.snippet.isEmpty
-              ? '${hit.matchCount} match(es)'
-              : '${hit.snippet}  ·  ${hit.matchCount} match(es)')
-        : _firstLine(doc.text);
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.outline;
+    final subtitle = _subtitle(doc.text);
 
     return ListTile(
       selected: active,
-      selectedTileColor: Theme.of(context).colorScheme.primary.withValues(
+      selectedTileColor: theme.colorScheme.primary.withValues(
         alpha: 0.08,
       ),
       leading: Icon(
-        active ? Icons.edit_note : Icons.description_outlined,
-        color: active ? Theme.of(context).colorScheme.primary : null,
+        _leadingIcon(active, syncEnabled),
+        color: active && syncEnabled
+            ? theme.colorScheme.primary
+            : (!syncEnabled ? muted : null),
       ),
       title: Text(
         doc.title,
@@ -303,20 +316,36 @@ class _NoteTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+          color: !syncEnabled ? theme.colorScheme.onSurface.withValues(alpha: 0.75) : null,
         ),
       ),
-      subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
+      subtitle: Text(
+        subtitle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: !syncEnabled
+            ? TextStyle(color: muted, fontSize: theme.textTheme.bodySmall?.fontSize)
+            : null,
+      ),
       onTap: onTap,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Tooltip(
+            message: syncEnabled ? 'Sync with peers' : 'Local only',
+            child: Switch.adaptive(
+              value: syncEnabled,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              onChanged: onSyncChanged,
+            ),
+          ),
           if (!searching && listIndex != null)
             ReorderableDragStartListener(
               index: listIndex!,
               child: Icon(
                 Icons.drag_handle,
                 size: 20,
-                color: Theme.of(context).colorScheme.outline,
+                color: muted,
               ),
             ),
           PopupMenuButton<_NoteMenu>(
@@ -343,6 +372,29 @@ class _NoteTile extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  IconData _leadingIcon(bool active, bool syncEnabled) {
+    if (!syncEnabled) return Icons.cloud_off_outlined;
+    return active ? Icons.edit_note : Icons.description_outlined;
+  }
+
+  String _subtitle(String text) {
+    if (!syncEnabled) {
+      if (searching) {
+        final matchLine = hit.snippet.isEmpty
+            ? '${hit.matchCount} match(es)'
+            : '${hit.snippet}  ·  ${hit.matchCount} match(es)';
+        return 'Local only · $matchLine';
+      }
+      return 'Local only';
+    }
+    if (searching) {
+      return hit.snippet.isEmpty
+          ? '${hit.matchCount} match(es)'
+          : '${hit.snippet}  ·  ${hit.matchCount} match(es)';
+    }
+    return _firstLine(text);
   }
 
   String _firstLine(String text) {

@@ -8,6 +8,8 @@ and this project currently tracks versions informally.
 ## [Unreleased]
 
 ### Added
+- **Per-note sync toggle** — Each note in the Notes drawer has a switch to mark it synced or local-only. Local-only notes stay on device: excluded from peer catalog/snapshots, edits are not broadcast, and inbound peer updates for that note are ignored. Visual “Local only” hint with a muted cloud-off icon.
+- **Phase 8 test suite** — [test/phase8_test.dart](test/phase8_test.dart) covers sync flags, outbound/inbound guards, multi-peer relay targets, and reconnect divergence convergence.
 - **Live edit conflict dialog** — When two peers edit the same note at the same revision, one device prompts with text previews to keep yours or use theirs (replaces silent tie-break snackbar).
 - **Protocol version negotiation** — Pair handshake carries `protocolVersion`; peers must match exactly (`v2`). Older builds are refused with a connection-log entry.
 - **Heartbeat** — `ping`/`pong` on authenticated links every 15s; peers that stop responding for 45s are disconnected automatically.
