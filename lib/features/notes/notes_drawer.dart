@@ -333,10 +333,17 @@ class _NoteTile extends StatelessWidget {
         children: [
           Tooltip(
             message: syncEnabled ? 'Sync with peers' : 'Local only',
-            child: Switch.adaptive(
-              value: syncEnabled,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onChanged: onSyncChanged,
+            child: SizedBox(
+              width: 36,
+              height: 20,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Switch.adaptive(
+                  value: syncEnabled,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  onChanged: onSyncChanged,
+                ),
+              ),
             ),
           ),
           if (!searching && listIndex != null)
