@@ -60,7 +60,8 @@ final class Subnet {
 /// Local-network address policy for Netpad sync.
 ///
 /// Peers must be on one of this device's **active subnets** (for example the
-/// same `192.168.1.0/24` Wi‑Fi segment), not anywhere in the private IP space.
+/// same `192.168.1.0/24` Wi‑Fi segment). Cellular interfaces are excluded
+/// entirely — Netpad does not scan, advertise, or listen on mobile data.
 abstract final class LocalNetwork {
   /// Seconds to wait for a valid Netpad `pair_request` before closing a socket.
   static const prePairTimeout = Duration(seconds: 8);

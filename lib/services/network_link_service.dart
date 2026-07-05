@@ -35,8 +35,9 @@ class NetworkLinkService {
         return const NetworkLinkStatus(
           canSync: false,
           note:
-              'Connect to Wi‑Fi or a personal hotspot to sync with nearby devices. '
-              'Cellular data alone does not provide a local network.',
+              'Cellular data is not used for peer discovery. Netpad does not '
+              'scan or advertise on mobile networks — connect to Wi‑Fi or a '
+              'personal hotspot first.',
         );
       }
 

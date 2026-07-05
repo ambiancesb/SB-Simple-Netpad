@@ -74,46 +74,44 @@ class DiscoveryRepository extends ChangeNotifier {
   bool _canDiscoverPeers = true;
 
   Future<void> start() async {
-    await LocalNetwork.refreshActiveSubnets();
-    final port = await _localServer.start();
-    await _startNetworking(port);
-    _refreshTimer = Timer.periodic(
-      _refreshInterval,
-      (_) => _refreshAllServices(),
-    );
     _networkMonitor.start(_onNetworkChanged);
+    await _applyNetworkPolicy();
     notifyListeners();
   }
 
   /// Retries Bonsoir advertise/discover after a failure.
   Future<void> retryNetworking() async {
-    final port = _localServer.port;
-    if (port == null) return;
-    await _startNetworking(port);
+    await _applyNetworkPolicy();
     notifyListeners();
   }
 
-  Future<void> _startNetworking(int port) async {
+  /// Starts, pauses, or restarts peer sync based on the active link type.
+  Future<void> _applyNetworkPolicy() async {
     _networkingError = null;
     _networkingNote = null;
     _networkingPolicyNote = null;
 
+    await LocalNetwork.refreshActiveSubnets();
     final linkStatus = await NetworkLinkService.evaluate();
     _canDiscoverPeers = linkStatus.canSync;
+
     if (!linkStatus.canSync) {
       _networkingPolicyNote = linkStatus.note;
-      await _stopBonsoir();
-      await _stopLinuxMdns();
+      await _pauseLanSync();
       return;
     }
 
-    if (Platform.isLinux && !isLinuxSystemDBusAvailable()) {
-      final started = await _startLinuxMdns(port);
-      if (started) return;
-    }
-
+    final port = await _localServer.start();
     await _stopBonsoir();
     await _stopLinuxMdns();
+
+    if (Platform.isLinux && !isLinuxSystemDBusAvailable()) {
+      final started = await _startLinuxMdns(port);
+      if (started) {
+        _ensureRefreshTimer();
+        return;
+      }
+    }
 
     final errors = <String>[];
     try {
@@ -138,11 +136,32 @@ class DiscoveryRepository extends ChangeNotifier {
         Platform.isLinux &&
         errors.any((msg) => msg.contains('D-Bus'))) {
       final started = await _startLinuxMdns(port);
-      if (started) return;
+      if (started) {
+        _ensureRefreshTimer();
+        return;
+      }
     }
 
     _useLinuxMdns = false;
     _networkingError = errors.isEmpty ? null : errors.join('\n');
+    _ensureRefreshTimer();
+  }
+
+  Future<void> _pauseLanSync() async {
+    _refreshTimer?.cancel();
+    _refreshTimer = null;
+    await _stopBonsoir();
+    await _stopLinuxMdns();
+    await _localServer.stop();
+  }
+
+  void _ensureRefreshTimer() {
+    if (!_canDiscoverPeers) return;
+    _refreshTimer?.cancel();
+    _refreshTimer = Timer.periodic(
+      _refreshInterval,
+      (_) => _refreshAllServices(),
+    );
   }
 
   Future<bool> _startLinuxMdns(int port) async {
@@ -202,29 +221,12 @@ class DiscoveryRepository extends ChangeNotifier {
     return 'Peer discovery unavailable: $e';
   }
 
-  /// Restarts advertisement + discovery when network interfaces change.
   Future<void> _onNetworkChanged() async {
     if (kDebugMode) {
       debugPrint('Network change detected — restarting discovery/broadcast');
     }
-    await LocalNetwork.refreshActiveSubnets();
-    await _restartNetworking();
-  }
-
-  Future<void> _restartNetworking() async {
-    final port = _localServer.port;
-    if (port == null) return;
-    await _stopBonsoir();
-    await _stopLinuxMdns();
     _discovered.removeWhere((id, _) => !_connected.containsKey(id));
-    try {
-      await _startNetworking(port);
-    } catch (e, st) {
-      _networkingError = _formatNetworkingError(e);
-      if (kDebugMode) {
-        debugPrint('Network restart failed: $e\n$st');
-      }
-    }
+    await _applyNetworkPolicy();
     notifyListeners();
   }
 
@@ -249,6 +251,10 @@ class DiscoveryRepository extends ChangeNotifier {
   /// Updates Bonsoir advertisement after the user changes device name.
   Future<void> updateDisplayName(String name) async {
     _displayName = name;
+    if (!_canDiscoverPeers) {
+      notifyListeners();
+      return;
+    }
     final port = _localServer.port;
     if (port == null) return;
     if (_useLinuxMdns) {
@@ -271,6 +277,10 @@ class DiscoveryRepository extends ChangeNotifier {
     // Drop discovered peers that are not connected; they will reappear only if
     // they advertise the new room.
     _discovered.removeWhere((id, _) => !_connected.containsKey(id));
+    if (!_canDiscoverPeers) {
+      notifyListeners();
+      return;
+    }
     final port = _localServer.port;
     if (port != null) {
       if (_useLinuxMdns) {
@@ -348,6 +358,7 @@ class DiscoveryRepository extends ChangeNotifier {
   }
 
   void _refreshAllServices() {
+    if (!_canDiscoverPeers) return;
     if (_useLinuxMdns) {
       unawaited(_linuxMdns?.scan());
       return;
@@ -492,6 +503,7 @@ class DiscoveryRepository extends ChangeNotifier {
   /// Re-resolve a peer before connecting (helps stale Linux Avahi cache).
   Future<Peer?> refreshPeerForConnect(String peerId) async {
     final peer = _discovered[peerId] ?? _connected[peerId];
+    if (!_canDiscoverPeers) return peer;
     if (_useLinuxMdns) {
       await _linuxMdns?.scan();
       return _discovered[peerId] ?? _connected[peerId];
@@ -545,6 +557,7 @@ class DiscoveryRepository extends ChangeNotifier {
     _networkMonitor.stop();
     await _stopBonsoir();
     await _stopLinuxMdns();
+    await _localServer.stop();
   }
 }
 

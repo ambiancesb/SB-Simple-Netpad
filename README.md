@@ -187,7 +187,8 @@ Netpad enforces three rules at the transport layer:
 | Rule | What it means |
 |------|----------------|
 | **Active local subnet only** | Inbound and outbound connections must fall on a subnet derived from this device's current interfaces (for example the same `192.168.1.0/24` Wi‑Fi segment). Other private ranges — even other `192.168.x.x` subnets — are refused. VPN overlays (for example Tailscale) are allowed only on the subnet of the active VPN interface. |
-| **Wi‑Fi first** | On cellular-only devices, mDNS discovery and advertisement are paused until you join Wi‑Fi or a personal hotspot. A phone hotspot **is** a local network and works normally. |
+| **Wi‑Fi first** | On cellular-only devices, peer sync is fully paused: no mDNS, no listening port, no periodic scans. Connect to Wi‑Fi or a personal hotspot first. A phone hotspot **is** a local network and works normally. |
+| **Passive discovery only** | Netpad never scans IP ranges or probes random devices. It only listens for `_sbnetpad._tcp` mDNS announcements on the active LAN, and only advertises its own presence there. |
 | **Netpad instances only** | Only clients that complete the Netpad pairing handshake (`pair_request` with matching protocol version) stay connected. Other inbound sockets are closed after a short timeout. |
 
 **Connect by IP** remains available on the same subnet when mDNS fails (guest Wi‑Fi isolation, some VPNs). It still validates that the resolved address is on an active local subnet before dialing.
@@ -203,7 +204,7 @@ Netpad enforces three rules at the transport layer:
 ### What we protect against
 
 - **Non-local connections** — Inbound sockets from outside the active subnet are rejected; outbound dials to other subnets or public addresses are refused before pairing.
-- **Cellular-only sync** — Discovery is paused when the device has only a cellular data path (no Wi‑Fi or hotspot LAN address).
+- **Cellular-only sync** — Peer sync is fully off on cellular data: no mDNS, no listen port, no subnet scanning. Discovery resumes when you join Wi‑Fi or a hotspot.
 - **Unpaired access** — Rejected pairing requests never receive document data; post-pair messages require a session token.
 - **Non-Netpad clients** — Inbound WebSockets that never send a valid `pair_request` are closed automatically.
 - **Impersonation after first trust** — TLS (`wss://`) plus certificate pinning (TOFU): if a peer’s certificate fingerprint changes, the connection is refused.
