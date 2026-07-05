@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=SB Simple Netpad
+Comment=LAN notepad with peer discovery and shared editing
+Exec=netpad
+Icon=com.sb.netpad
+Terminal=false
+Type=Application
+Categories=Office;TextEditor;Network;
+StartupWMClass=netpad
