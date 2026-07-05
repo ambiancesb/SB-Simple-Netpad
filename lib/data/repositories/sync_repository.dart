@@ -21,28 +21,11 @@ import 'package:netpad/services/protocol_codec.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:uuid/uuid.dart';
 
-class _PeerLink {
-  _PeerLink({
-    required this.peerId,
-    required this.displayName,
-  });
+import 'package:netpad/data/repositories/peer_connection.dart';
 
-  final String peerId;
-  final String displayName;
-  String? sessionToken;
-  bool authenticated = false;
-  String? inboundConnectionId;
-  String? outboundConnectionId;
-  WebSocket? outboundSocket;
-  StreamSubscription<dynamic>? outboundSub;
-
-  /// Server cert fingerprint captured during the TLS handshake, pinned on
-  /// successful pairing (TOFU).
-  String? pendingCertFingerprint;
-
-  DateTime? lastPongAt;
-  Timer? heartbeatTimer;
-}
+part 'sync_repository_pairing.dart';
+part 'sync_repository_heartbeat.dart';
+part 'sync_repository_documents.dart';
 
 class SyncRepository extends ChangeNotifier {
   SyncRepository({
@@ -75,11 +58,13 @@ class SyncRepository extends ChangeNotifier {
   bool _divergencePromptActive = false;
   bool _liveConflictPromptActive = false;
 
-  final Map<String, _PeerLink> _linksByPeerId = {};
+  final Map<String, PeerConnection> _linksByPeerId = {};
   final Map<String, String> _connectionToPeerId = {};
   final Map<String, String> _pendingOutboundRequestId = {};
   final Map<String, Timer> _pairingTimeouts = {};
   final Map<String, PeerPresence> _presence = {};
+
+  bool _disposed = false;
 
   static const _connectTimeout = Duration(seconds: 20);
   static const _pairingTimeout = Duration(seconds: 45);
@@ -120,6 +105,9 @@ class SyncRepository extends ChangeNotifier {
   void updateDisplayName(String name) {
     _displayName = name;
   }
+
+  /// Notifies listeners; used by [SyncRepository] part modules.
+  void notifyPeersChanged() => notifyListeners();
 
   bool _requiresSessionToken(String type) {
     return type == MessageTypes.docSnapshot ||
@@ -187,324 +175,6 @@ class SyncRepository extends ChangeNotifier {
     }
   }
 
-  Future<void> connectAndRequestPair(Peer peer) async {
-    if (_trustStore.isBlocked(peer.id)) {
-      throw StateError('${peer.displayName} is blocked. Unblock it to connect.');
-    }
-    final existing = _linksByPeerId[peer.id];
-    if (existing?.authenticated == true) {
-      throw StateError('Already connected to ${peer.displayName}.');
-    }
-    if (existing?.outboundSocket != null) {
-      throw StateError('Already connecting to ${peer.displayName}.');
-    }
-
-    final refreshed = peer.isManual
-        ? peer
-        : await _discovery.refreshPeerForConnect(peer.id) ?? peer;
-    final host = await PeerHostResolver.resolveConnectHost(refreshed);
-    if (host == null) {
-      throw StateError(
-        'Peer ${peer.displayName} has no resolved address. '
-        'On Linux, ensure Avahi is running and both devices are on the same subnet.',
-      );
-    }
-    _discovery.markPeerConnecting(peer.id);
-    final requestId = const Uuid().v4();
-    final hostInUri = PeerHostResolver.formatForWebSocket(host);
-    final uri = Uri.parse('wss://$hostInUri:${refreshed.port}/ws');
-
-    final httpClient = HttpClient(
-      context: SecurityContext(withTrustedRoots: false),
-    );
-    String? capturedFingerprint;
-    var pinMismatch = false;
-    httpClient.badCertificateCallback = (cert, certHost, certPort) {
-      final fingerprint = fingerprintFromDer(cert.der);
-      final pinned = _trustStore.pinnedFingerprint(peer.id);
-      if (pinned != null && pinned != fingerprint) {
-        pinMismatch = true;
-        return false;
-      }
-      capturedFingerprint = fingerprint;
-      return true;
-    };
-
-    final WebSocket socket;
-    try {
-      socket = await WebSocket.connect(
-        uri.toString(),
-        customClient: httpClient,
-      ).timeout(
-        _connectTimeout,
-        onTimeout: () {
-          throw TimeoutException(
-            'Timed out reaching ${peer.displayName} at $hostInUri:${refreshed.port}',
-          );
-        },
-      );
-    } catch (e) {
-      httpClient.close(force: true);
-      _discovery.markPeerDisconnected(peer.id);
-      if (pinMismatch) {
-        throw StateError(
-          'Certificate for ${peer.displayName} does not match the pinned one. '
-          'Possible impersonation — connection refused.',
-        );
-      }
-      rethrow;
-    }
-
-    final connectionId = 'out_${peer.id}';
-    _pendingOutboundRequestId[connectionId] = requestId;
-
-    final link = _linksByPeerId[peer.id] ??
-        _PeerLink(peerId: peer.id, displayName: peer.displayName);
-    link.outboundConnectionId = connectionId;
-    link.outboundSocket = socket;
-    link.pendingCertFingerprint = capturedFingerprint;
-    _linksByPeerId[peer.id] = link;
-    _connectionToPeerId[connectionId] = peer.id;
-
-    link.outboundSub = socket.listen(
-      (data) {
-        if (data is String) {
-          final msg = ProtocolCodec.decode(data);
-          if (msg != null) _handleMessage(connectionId, msg, isOutbound: true);
-        }
-      },
-      onDone: () => _handleDisconnect(connectionId),
-      onError: (_) => _handleDisconnect(connectionId),
-      cancelOnError: true,
-    );
-
-    _sendOnConnection(
-      connectionId,
-      ProtocolMessage(
-        type: MessageTypes.pairRequest,
-        payload: {
-          'requestId': requestId,
-          'fromId': instanceId,
-          'fromName': _displayName,
-          'protocolVersion': kProtocolVersion,
-        },
-      ),
-    );
-    _startPairingTimeout(connectionId, peer.id, peer.displayName);
-
-    final verificationCode = peer.isManual
-        ? null
-        : PairingVerificationCode.generate(instanceId, peer.id);
-    _connectionLog.add(
-      verificationCode == null
-          ? 'Pairing request sent to ${peer.displayName}'
-          : 'Pairing request sent to ${peer.displayName} (code $verificationCode)',
-      peerId: peer.id,
-      peerName: peer.displayName,
-    );
-  }
-
-  void respondToPairRequest({
-    required String connectionId,
-    required String requestId,
-    required String fromId,
-    required String fromName,
-    required bool accepted,
-  }) {
-    if (accepted) {
-      final token = const Uuid().v4();
-      final link = _linksByPeerId[fromId] ??
-          _PeerLink(peerId: fromId, displayName: fromName);
-      link.inboundConnectionId = connectionId;
-      link.sessionToken = token;
-      link.authenticated = true;
-      _linksByPeerId[fromId] = link;
-      _connectionToPeerId[connectionId] = fromId;
-      _cancelPairingTimeoutForPeer(fromId);
-
-      _sendOnConnection(
-        connectionId,
-        ProtocolMessage(
-          type: MessageTypes.pairResponse,
-          payload: {
-            'requestId': requestId,
-            'accepted': true,
-            'protocolVersion': kProtocolVersion,
-          },
-        ),
-      );
-      _sendOnConnection(
-        connectionId,
-        ProtocolMessage(
-          type: MessageTypes.pairComplete,
-          payload: {'sessionToken': token},
-        ),
-      );
-
-      _discovery.markPeerConnected(
-        Peer(
-          id: fromId,
-          displayName: fromName,
-          port: _discovery.serverPort ?? 0,
-          connectionState: PeerConnectionState.connected,
-        ),
-      );
-      _connectionLog.add(
-        'Accepted pairing with $fromName',
-        peerId: fromId,
-        peerName: fromName,
-      );
-      _sendDocSnapshot(connectionId);
-      _startHeartbeat(fromId);
-    } else {
-      _sendOnConnection(
-        connectionId,
-        ProtocolMessage(
-          type: MessageTypes.pairResponse,
-          payload: {'requestId': requestId, 'accepted': false},
-        ),
-      );
-      _connectionLog.add(
-        'Rejected pairing with $fromName',
-        peerId: fromId,
-        peerName: fromName,
-      );
-      unawaited(_server.closeConnection(connectionId));
-    }
-  }
-
-  void broadcastDocUpdate(
-    String docId,
-    String title,
-    int revision,
-    String text,
-    String originId,
-  ) {
-    final message = ProtocolMessage(
-      type: MessageTypes.docUpdate,
-      payload: {
-        'docId': docId,
-        'title': title,
-        'revision': revision,
-        'text': text,
-        'originId': originId,
-      },
-    );
-    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
-  }
-
-  void broadcastDocCreate(
-    String docId,
-    String title,
-    int revision,
-    String originId,
-  ) {
-    final message = ProtocolMessage(
-      type: MessageTypes.docCreate,
-      payload: {
-        'docId': docId,
-        'title': title,
-        'revision': revision,
-        'originId': originId,
-      },
-    );
-    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
-  }
-
-  void broadcastDocRename(
-    String docId,
-    String title,
-    int revision,
-    String originId,
-  ) {
-    final message = ProtocolMessage(
-      type: MessageTypes.docRename,
-      payload: {
-        'docId': docId,
-        'title': title,
-        'revision': revision,
-        'originId': originId,
-      },
-    );
-    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
-  }
-
-  void broadcastDocReorder(
-    List<String> order,
-    int orderRevision,
-    String originId,
-  ) {
-    final message = ProtocolMessage(
-      type: MessageTypes.docReorder,
-      payload: {
-        'originId': originId,
-        'orderRevision': orderRevision,
-        'order': order,
-      },
-    );
-    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
-  }
-
-  void broadcastDocDelete(String docId, String originId) {
-    final message = ProtocolMessage(
-      type: MessageTypes.docDelete,
-      payload: {'docId': docId, 'originId': originId},
-    );
-    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
-  }
-
-  void broadcastPresence(String docId, int line, int column) {
-    if (_linksByPeerId.isEmpty) return;
-    final message = ProtocolMessage(
-      type: MessageTypes.presence,
-      payload: {
-        'peerId': instanceId,
-        'name': _displayName,
-        'docId': docId,
-        'line': line,
-        'column': column,
-      },
-    );
-    _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
-  }
-
-  void disconnectPeer(String peerId) {
-    final link = _linksByPeerId[peerId];
-    if (link == null) return;
-
-    _stopHeartbeat(link);
-    final message = ProtocolMessage(
-      type: MessageTypes.peerDisconnect,
-      payload: {'peerId': instanceId},
-    );
-
-    if (link.inboundConnectionId != null) {
-      _sendOnConnection(link.inboundConnectionId!, message);
-      unawaited(_server.closeConnection(link.inboundConnectionId!));
-    }
-    if (link.outboundSocket != null) {
-      _sendOnConnection(link.outboundConnectionId!, message);
-      unawaited(link.outboundSocket?.close());
-    }
-
-    if (link.inboundConnectionId != null) {
-      _connectionToPeerId.remove(link.inboundConnectionId);
-    }
-    if (link.outboundConnectionId != null) {
-      _connectionToPeerId.remove(link.outboundConnectionId);
-    }
-
-    _linksByPeerId.remove(peerId);
-    _presence.remove(peerId);
-    _discovery.markPeerDisconnected(peerId);
-    _connectionLog.add(
-      'Disconnected from ${link.displayName}',
-      peerId: peerId,
-      peerName: link.displayName,
-    );
-    notifyListeners();
-  }
-
   void _onInboundMessage(String connectionId, ProtocolMessage message) {
     _handleMessage(connectionId, message, isOutbound: false);
   }
@@ -520,184 +190,9 @@ class SyncRepository extends ChangeNotifier {
   }) {
     switch (message.type) {
       case MessageTypes.pairRequest:
-        final requestId = message.payload['requestId'] as String? ?? '';
-        final fromId = message.payload['fromId'] as String? ?? '';
-        final fromName = message.payload['fromName'] as String? ?? 'Unknown';
-        final peerProtocol = message.payload['protocolVersion'] as int? ?? 1;
-        _connectionToPeerId[connectionId] = fromId;
-        if (_trustStore.isBlocked(fromId)) {
-          _sendOnConnection(
-            connectionId,
-            ProtocolMessage(
-              type: MessageTypes.pairResponse,
-              payload: {'requestId': requestId, 'accepted': false},
-            ),
-          );
-          _connectionLog.add(
-            'Refused blocked peer $fromName',
-            peerId: fromId,
-            peerName: fromName,
-          );
-          unawaited(_server.closeConnection(connectionId));
-          return;
-        }
-        if (peerProtocol != kProtocolVersion) {
-          _sendOnConnection(
-            connectionId,
-            ProtocolMessage(
-              type: MessageTypes.pairResponse,
-              payload: {
-                'requestId': requestId,
-                'accepted': false,
-                'protocolVersion': kProtocolVersion,
-                'reason': 'protocol_mismatch',
-              },
-            ),
-          );
-          _connectionLog.add(
-            'Refused $fromName: protocol v$peerProtocol '
-            '(requires v$kProtocolVersion)',
-            peerId: fromId,
-            peerName: fromName,
-          );
-          unawaited(_server.closeConnection(connectionId));
-          return;
-        }
-        final existingLink = _linksByPeerId[fromId];
-        if (existingLink?.authenticated == true) {
-          _sendOnConnection(
-            connectionId,
-            ProtocolMessage(
-              type: MessageTypes.pairResponse,
-              payload: {
-                'requestId': requestId,
-                'accepted': false,
-                'reason': 'already_connected',
-              },
-            ),
-          );
-          _connectionLog.add(
-            'Refused duplicate pairing from $fromName (already connected)',
-            peerId: fromId,
-            peerName: fromName,
-          );
-          unawaited(_server.closeConnection(connectionId));
-          return;
-        }
-        final outboundId = existingLink?.outboundConnectionId;
-        if (outboundId != null &&
-            _pendingOutboundRequestId.containsKey(outboundId) &&
-            existingLink?.outboundSocket != null) {
-          if (outboundPairingWins(instanceId, fromId)) {
-            _sendOnConnection(
-              connectionId,
-              ProtocolMessage(
-                type: MessageTypes.pairResponse,
-                payload: {
-                  'requestId': requestId,
-                  'accepted': false,
-                  'reason': 'simultaneous_connect',
-                },
-              ),
-            );
-            _connectionLog.add(
-              'Declined inbound pairing from $fromName '
-              '(outbound request in progress)',
-              peerId: fromId,
-              peerName: fromName,
-            );
-            unawaited(_server.closeConnection(connectionId));
-            return;
-          }
-          _connectionLog.add(
-            'Dropped outbound pairing to $fromName (accepting their request)',
-            peerId: fromId,
-            peerName: fromName,
-          );
-          _abandonOutbound(fromId);
-        }
-        onIncomingPairRequest?.call(fromId, fromName, requestId, connectionId);
       case MessageTypes.pairResponse:
-        final accepted = message.payload['accepted'] as bool? ?? false;
-        final peerId = _connectionToPeerId[connectionId];
-        if (peerId != null) {
-          final peerName = _discovery.peerById(peerId)?.displayName ?? peerId;
-          if (accepted) {
-            final peerProtocol =
-                message.payload['protocolVersion'] as int? ?? 1;
-            if (peerProtocol != kProtocolVersion) {
-              _connectionLog.add(
-                'Pairing failed with $peerName: protocol v$peerProtocol '
-                '(requires v$kProtocolVersion)',
-                peerId: peerId,
-                peerName: peerName,
-              );
-              onPairRequestResolved?.call(peerId, false);
-              _cleanupConnection(connectionId);
-              _pendingOutboundRequestId.remove(connectionId);
-              return;
-            }
-          }
-          _connectionLog.add(
-            accepted
-                ? 'Pairing accepted by $peerName'
-                : 'Pairing rejected by $peerName'
-                    '${message.payload['reason'] != null ? ' (${message.payload['reason']})' : ''}',
-            peerId: peerId,
-            peerName: peerName,
-          );
-          onPairRequestResolved?.call(peerId, accepted);
-          if (!accepted) {
-            _cleanupConnection(connectionId);
-          } else {
-            _startPairingTimeout(connectionId, peerId, peerName);
-          }
-        }
-        _pendingOutboundRequestId.remove(connectionId);
       case MessageTypes.pairComplete:
-        final token = message.payload['sessionToken'] as String? ?? '';
-        final peerId = _connectionToPeerId[connectionId];
-        if (peerId == null || token.isEmpty) return;
-        _cancelPairingTimeout(connectionId);
-
-        final link = _linksByPeerId[peerId] ??
-            _PeerLink(
-              peerId: peerId,
-              displayName:
-                  _discovery.peerById(peerId)?.displayName ?? peerId,
-            );
-        link.sessionToken = token;
-        link.authenticated = true;
-        if (isOutbound) {
-          link.outboundConnectionId = connectionId;
-        } else {
-          link.inboundConnectionId = connectionId;
-        }
-        _linksByPeerId[peerId] = link;
-
-        final peer = _discovery.peerById(peerId);
-        if (peer != null) {
-          _discovery.markPeerConnected(peer);
-        }
-        // TOFU: pin the server cert we saw when we initiated this connection.
-        if (isOutbound && link.pendingCertFingerprint != null) {
-          final fingerprint = link.pendingCertFingerprint!;
-          final isNew = !_trustStore.hasPin(peerId);
-          unawaited(_trustStore.pin(peerId, fingerprint));
-          _connectionLog.add(
-            '${isNew ? 'Pinned' : 'Verified'} ${link.displayName} security code '
-            '${shortFingerprint(fingerprint)}',
-            peerId: peerId,
-            peerName: link.displayName,
-          );
-        }
-        _connectionLog.add(
-          'Pairing complete with ${link.displayName}',
-          peerId: peerId,
-          peerName: link.displayName,
-        );
-        _sendDocSnapshot(connectionId);
-        _startHeartbeat(peerId);
+        _handlePairingMessage(connectionId, message, isOutbound: isOutbound);
       case MessageTypes.docSnapshot:
         if (!_hasValidSessionToken(connectionId, message)) {
           _logTokenRejected(connectionId, message.type);
@@ -776,345 +271,6 @@ class SyncRepository extends ChangeNotifier {
     }
   }
 
-  void _handlePresence(ProtocolMessage message) {
-    final peerId = message.payload['peerId'] as String? ?? '';
-    if (peerId.isEmpty || peerId == instanceId) return;
-    final line = message.payload['line'] as int? ?? 1;
-    final column = message.payload['column'] as int? ?? 1;
-    final docId = message.payload['docId'] as String?;
-    final docTitle = docId == null
-        ? null
-        : _workspace.documentById(docId)?.title;
-    _presence[peerId] = PeerPresence(
-      line: line,
-      column: column,
-      updatedAt: DateTime.now(),
-      docId: docId,
-      docTitle: docTitle,
-    );
-    notifyListeners();
-  }
-
-  void _logTokenRejected(String connectionId, String type) {
-    final peerId = _connectionToPeerId[connectionId];
-    _connectionLog.add(
-      'Rejected $type: invalid session token',
-      peerId: peerId,
-      peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
-    );
-  }
-
-  /// Handles a document snapshot received at pair/reconnect time. If the local
-  /// note has diverged from the peer's, prompt the user (on one deterministic
-  /// side) instead of silently merging.
-  Future<void> _handleSnapshot(
-    ProtocolMessage message,
-    String fromConnectionId,
-  ) async {
-    final revision = message.payload['revision'] as int? ?? 0;
-    final text = message.payload['text'] as String? ?? '';
-    final originId = message.payload['originId'] as String? ?? '';
-    final docId = message.payload['docId'] as String? ?? '';
-    final title = message.payload['title'] as String? ?? '';
-    if (docId.isEmpty) return;
-    if (_workspace.shouldIgnoreInboundSync(docId)) return;
-    final document = _workspace.ensureDocument(docId, title: title);
-    final localText = document.text;
-
-    final diverged = noteTextsDiverged(localText, text);
-
-    // Only the lexicographically-smaller instance prompts, so both devices
-    // converge on one decision instead of fighting.
-    final shouldPrompt =
-        diverged &&
-        onSnapshotDivergence != null &&
-        !_divergencePromptActive &&
-        isReconnectDivergencePromptDevice(
-          localInstanceId: instanceId,
-          remoteOriginId: originId,
-          localText: localText,
-          remoteText: text,
-        );
-
-    if (!shouldPrompt) {
-      unawaited(_handleDocMessage(message, fromConnectionId));
-      return;
-    }
-
-    final peerId = _connectionToPeerId[fromConnectionId];
-    final peerName = peerId == null
-        ? 'peer'
-        : (_linksByPeerId[peerId]?.displayName ?? 'peer');
-
-    _divergencePromptActive = true;
-    final DivergenceChoice choice;
-    try {
-      choice = await onSnapshotDivergence!(
-        peerName,
-        document.title,
-        document.revision,
-        localText,
-        revision,
-        text,
-      );
-    } finally {
-      _divergencePromptActive = false;
-    }
-
-    if (choice == DivergenceChoice.takeTheirs) {
-      document.forceApplyRemote(revision: revision, text: text, title: title);
-      _relay(message, fromConnectionId);
-      _connectionLog.add(
-        'Reconnect divergence: used $peerName\'s version',
-        peerId: peerId,
-        peerName: peerName,
-        revision: revision,
-      );
-    } else {
-      document.bumpAndBroadcast(revision);
-      _connectionLog.add(
-        'Reconnect divergence: kept local version',
-        peerId: peerId,
-        peerName: peerName,
-      );
-    }
-  }
-
-  Future<void> _handleDocMessage(
-    ProtocolMessage message,
-    String fromConnectionId,
-  ) async {
-    final revision = message.payload['revision'] as int? ?? 0;
-    final text = message.payload['text'] as String? ?? '';
-    final originId = message.payload['originId'] as String? ?? '';
-    final docId = message.payload['docId'] as String? ?? '';
-    final title = message.payload['title'] as String? ?? '';
-    if (docId.isEmpty) return;
-    if (_workspace.shouldIgnoreInboundSync(docId)) return;
-
-    final document = _workspace.documentById(docId);
-    final shouldPrompt =
-        document != null &&
-        document.isLiveEditConflict(
-          revision: revision,
-          text: text,
-          originId: originId,
-        ) &&
-        onLiveConflict != null &&
-        !_liveConflictPromptActive &&
-        instanceId.compareTo(originId) < 0;
-
-    if (shouldPrompt) {
-      final peerId = _connectionToPeerId[fromConnectionId];
-      final peerName = peerId == null
-          ? 'peer'
-          : (_linksByPeerId[peerId]?.displayName ?? 'peer');
-
-      _liveConflictPromptActive = true;
-      final DivergenceChoice choice;
-      try {
-        choice = await onLiveConflict!(
-          peerName,
-          document.title,
-          revision,
-          document.text,
-          text,
-        );
-      } finally {
-        _liveConflictPromptActive = false;
-      }
-
-      if (choice == DivergenceChoice.takeTheirs) {
-        document.forceApplyRemote(
-          revision: revision,
-          text: text,
-          title: title,
-        );
-        _connectionLog.add(
-          'Live conflict: used $peerName\'s version',
-          peerId: peerId,
-          peerName: peerName,
-          revision: revision,
-        );
-        _relay(message, fromConnectionId);
-      } else {
-        document.bumpAndBroadcast(revision);
-        _connectionLog.add(
-          'Live conflict: kept local version',
-          peerId: peerId,
-          peerName: peerName,
-        );
-      }
-      return;
-    }
-
-    final applied = _workspace.receiveRemoteContent(
-      docId: docId,
-      title: title,
-      revision: revision,
-      text: text,
-      originId: originId,
-    );
-    if (applied) {
-      final peerId = _connectionToPeerId[fromConnectionId];
-      final peerName = peerId == null
-          ? null
-          : _linksByPeerId[peerId]?.displayName;
-      _connectionLog.add(
-        'Applied ${message.type} revision $revision',
-        peerId: peerId,
-        peerName: peerName,
-        revision: revision,
-      );
-      _relay(message, fromConnectionId);
-    }
-  }
-
-  void _handleDocCreate(ProtocolMessage message, String fromConnectionId) {
-    final docId = message.payload['docId'] as String? ?? '';
-    final title = message.payload['title'] as String? ?? '';
-    final revision = message.payload['revision'] as int? ?? 0;
-    final originId = message.payload['originId'] as String? ?? '';
-    if (docId.isEmpty || originId == instanceId) return;
-    if (_workspace.shouldIgnoreInboundSync(docId)) return;
-
-    final existed = _workspace.hasDocument(docId);
-    _workspace.receiveRemoteCreate(
-      docId: docId,
-      title: title,
-      revision: revision,
-      originId: originId,
-    );
-
-    final peerId = _connectionToPeerId[fromConnectionId];
-    _connectionLog.add(
-      existed ? 'Updated note "$title"' : 'Learned new note "$title"',
-      peerId: peerId,
-      peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
-      revision: revision,
-    );
-    _relay(message, fromConnectionId);
-  }
-
-  void _handleDocRename(ProtocolMessage message, String fromConnectionId) {
-    final docId = message.payload['docId'] as String? ?? '';
-    final title = message.payload['title'] as String? ?? '';
-    final revision = message.payload['revision'] as int? ?? 0;
-    final originId = message.payload['originId'] as String? ?? '';
-    if (docId.isEmpty || originId == instanceId) return;
-    if (_workspace.shouldIgnoreInboundSync(docId)) return;
-
-    final before = _workspace.documentById(docId)?.title;
-    _workspace.receiveRemoteRename(
-      docId: docId,
-      title: title,
-      revision: revision,
-      originId: originId,
-    );
-    final after = _workspace.documentById(docId)?.title;
-    if (before != after) {
-      final peerId = _connectionToPeerId[fromConnectionId];
-      _connectionLog.add(
-        'Renamed note to "$title"',
-        peerId: peerId,
-        peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
-        revision: revision,
-      );
-      _relay(message, fromConnectionId);
-    }
-  }
-
-  void _handleDocCatalog(ProtocolMessage message, String fromConnectionId) {
-    final originId = message.payload['originId'] as String? ?? '';
-    if (originId.isEmpty || originId == instanceId) return;
-
-    final rawNotes = message.payload['notes'] as List<dynamic>? ?? const [];
-    final entries = [
-      for (final n in rawNotes) Map<String, dynamic>.from(n as Map),
-    ];
-    final orderRevision = message.payload['orderRevision'] as int? ?? 0;
-    final beforeCount = _workspace.documents.length;
-    final beforeOrder = _workspace.noteOrder;
-    _workspace.mergeCatalog(
-      entries,
-      originId,
-      orderRevision: orderRevision,
-    );
-    final afterCount = _workspace.documents.length;
-    final afterOrder = _workspace.noteOrder;
-    if (afterCount > beforeCount || !_ordersEqual(beforeOrder, afterOrder)) {
-      final peerId = _connectionToPeerId[fromConnectionId];
-      _connectionLog.add(
-        afterCount > beforeCount
-            ? 'Synced ${afterCount - beforeCount} note(s) from peer catalog'
-            : 'Synced note order from peer catalog',
-        peerId: peerId,
-        peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
-      );
-    }
-    _relay(message, fromConnectionId);
-  }
-
-  void _handleDocReorder(ProtocolMessage message, String fromConnectionId) {
-    final originId = message.payload['originId'] as String? ?? '';
-    if (originId.isEmpty || originId == instanceId) return;
-
-    final orderRevision = message.payload['orderRevision'] as int? ?? 0;
-    final rawOrder = message.payload['order'] as List<dynamic>? ?? const [];
-    final order = [for (final id in rawOrder) id as String];
-    if (_workspace.applyRemoteOrder(order, orderRevision, originId)) {
-      final peerId = _connectionToPeerId[fromConnectionId];
-      _connectionLog.add(
-        'Synced note order from peer',
-        peerId: peerId,
-        peerName: peerId == null ? null : _linksByPeerId[peerId]?.displayName,
-      );
-      _relay(message, fromConnectionId);
-    }
-  }
-
-  bool _ordersEqual(List<String> a, List<String> b) {
-    if (a.length != b.length) return false;
-    for (var i = 0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
-    }
-    return true;
-  }
-
-  void _relay(ProtocolMessage message, String fromConnectionId) {
-    for (final connId in relayConnectionTargets(
-      links: _syncPeerLinks(),
-      connectionToPeerId: _connectionToPeerId,
-      fromConnectionId: fromConnectionId,
-    )) {
-      _sendOnConnection(connId, message);
-    }
-  }
-
-  void _sendDocSnapshot(String connectionId) {
-    _sendOnConnection(
-      connectionId,
-      ProtocolMessage(
-        type: MessageTypes.docCatalog,
-        payload: {
-          'originId': instanceId,
-          'orderRevision': _workspace.orderRevision,
-          'notes': _workspace.catalogPayload(),
-        },
-      ),
-    );
-    for (final doc in _workspace.documents) {
-      if (!_workspace.isSyncEnabled(doc.id)) continue;
-      _sendOnConnection(
-        connectionId,
-        ProtocolMessage(
-          type: MessageTypes.docSnapshot,
-          payload: doc.snapshotPayload(),
-        ),
-      );
-    }
-  }
-
   void _fanOut(
     ProtocolMessage message, {
     String? exceptConnectionId,
@@ -1129,6 +285,7 @@ class SyncRepository extends ChangeNotifier {
   }
 
   void _sendOnConnection(String connectionId, ProtocolMessage message) {
+    if (_disposed) return;
     final outboundMessage = _messageForConnection(connectionId, message);
     if (connectionId.startsWith('out_')) {
       final peerId = _connectionToPeerId[connectionId];
@@ -1155,9 +312,7 @@ class SyncRepository extends ChangeNotifier {
       link.inboundConnectionId = null;
     }
     if (link.outboundConnectionId == connectionId) {
-      link.outboundConnectionId = null;
-      unawaited(link.outboundSub?.cancel());
-      link.outboundSocket = null;
+      tearDownPeerOutbound(link);
       _pendingOutboundRequestId.remove(connectionId);
     }
 
@@ -1173,7 +328,7 @@ class SyncRepository extends ChangeNotifier {
           peerName: link.displayName,
         );
       }
-      notifyListeners();
+      notifyPeersChanged();
     }
   }
 
@@ -1186,12 +341,13 @@ class SyncRepository extends ChangeNotifier {
     final peerId = _connectionToPeerId.remove(connectionId);
     if (peerId != null) {
       final link = _linksByPeerId.remove(peerId);
-      if (link != null) _stopHeartbeat(link);
+      if (link != null) {
+        _stopHeartbeat(link);
+        tearDownPeerOutbound(link);
+      }
       _presence.remove(peerId);
-      unawaited(link?.outboundSub?.cancel());
-      unawaited(link?.outboundSocket?.close());
       _discovery.markPeerDisconnected(peerId);
-      notifyListeners();
+      notifyPeersChanged();
     }
     _pendingOutboundRequestId.remove(connectionId);
     if (connectionId.startsWith('out_')) {
@@ -1200,134 +356,33 @@ class SyncRepository extends ChangeNotifier {
     unawaited(_server.closeConnection(connectionId));
   }
 
-  void _startPairingTimeout(
-    String connectionId,
-    String peerId,
-    String peerName,
-  ) {
-    _cancelPairingTimeout(connectionId);
-    _pairingTimeouts[connectionId] = Timer(_pairingTimeout, () {
-      _pairingTimeouts.remove(connectionId);
-      final link = _linksByPeerId[peerId];
-      if (link == null || link.authenticated) return;
-      _connectionLog.add(
-        'Pairing timed out with $peerName',
-        peerId: peerId,
-        peerName: peerName,
-      );
-      onPairRequestResolved?.call(peerId, false);
-      _cleanupConnection(connectionId);
-    });
-  }
+  @override
+  void dispose() {
+    if (_disposed) return;
+    _disposed = true;
 
-  void _cancelPairingTimeout(String connectionId) {
-    _pairingTimeouts.remove(connectionId)?.cancel();
-  }
+    _server.onMessage = null;
+    _server.onConnectionClosed = null;
 
-  void _cancelPairingTimeoutForPeer(String peerId) {
-    final link = _linksByPeerId[peerId];
-    if (link == null) return;
-    if (link.inboundConnectionId != null) {
-      _cancelPairingTimeout(link.inboundConnectionId!);
+    for (final timer in _pairingTimeouts.values) {
+      timer.cancel();
     }
-    if (link.outboundConnectionId != null) {
-      _cancelPairingTimeout(link.outboundConnectionId!);
-    }
-  }
+    _pairingTimeouts.clear();
 
-  void _abandonOutbound(String peerId) {
-    final link = _linksByPeerId[peerId];
-    if (link == null) return;
-
-    final outId = link.outboundConnectionId;
-    if (outId != null) {
-      _cancelPairingTimeout(outId);
-      _pendingOutboundRequestId.remove(outId);
-      _connectionToPeerId.remove(outId);
-    }
-    unawaited(link.outboundSub?.cancel());
-    link.outboundSub = null;
-    unawaited(link.outboundSocket?.close());
-    link.outboundSocket = null;
-    link.outboundConnectionId = null;
-    link.pendingCertFingerprint = null;
-
-    if (link.inboundConnectionId == null && !link.authenticated) {
-      _linksByPeerId.remove(peerId);
-      _discovery.markPeerDisconnected(peerId);
-      notifyListeners();
-    }
-  }
-
-  void _startHeartbeat(String peerId) {
-    final link = _linksByPeerId[peerId];
-    if (link == null || !link.authenticated) return;
-    _stopHeartbeat(link);
-    link.lastPongAt = DateTime.now();
-    link.heartbeatTimer = Timer.periodic(kHeartbeatInterval, (_) {
-      _tickHeartbeat(peerId);
-    });
-  }
-
-  void _stopHeartbeat(_PeerLink link) {
-    link.heartbeatTimer?.cancel();
-    link.heartbeatTimer = null;
-  }
-
-  void _tickHeartbeat(String peerId) {
-    final link = _linksByPeerId[peerId];
-    if (link == null || !link.authenticated) return;
-
-    final last = link.lastPongAt;
-    if (last != null &&
-        DateTime.now().difference(last) > kHeartbeatTimeout) {
-      _connectionLog.add(
-        'Peer unresponsive (heartbeat timeout)',
-        peerId: peerId,
-        peerName: link.displayName,
-      );
-      disconnectPeer(peerId);
-      return;
+    for (final link in _linksByPeerId.values) {
+      _stopHeartbeat(link);
+      tearDownPeerOutbound(link);
+      final inboundId = link.inboundConnectionId;
+      if (inboundId != null) {
+        unawaited(_server.closeConnection(inboundId));
+      }
     }
 
-    final message = ProtocolMessage(
-      type: MessageTypes.ping,
-      payload: {
-        'peerId': instanceId,
-        'sentAt': DateTime.now().millisecondsSinceEpoch,
-      },
-    );
-    if (link.inboundConnectionId != null) {
-      _sendOnConnection(link.inboundConnectionId!, message);
-    }
-    if (link.outboundConnectionId != null) {
-      _sendOnConnection(link.outboundConnectionId!, message);
-    }
-  }
+    _linksByPeerId.clear();
+    _connectionToPeerId.clear();
+    _pendingOutboundRequestId.clear();
+    _presence.clear();
 
-  void _handlePing(ProtocolMessage message, String connectionId) {
-    final peerId = _connectionToPeerId[connectionId];
-    if (peerId == null) return;
-    final link = _linksByPeerId[peerId];
-    if (link == null) return;
-    link.lastPongAt = DateTime.now();
-    _sendOnConnection(
-      connectionId,
-      ProtocolMessage(
-        type: MessageTypes.pong,
-        payload: {
-          'peerId': instanceId,
-          'sentAt': DateTime.now().millisecondsSinceEpoch,
-        },
-      ),
-    );
-  }
-
-  void _handlePong(String connectionId) {
-    final peerId = _connectionToPeerId[connectionId];
-    if (peerId == null) return;
-    final link = _linksByPeerId[peerId];
-    if (link == null) return;
-    link.lastPongAt = DateTime.now();
+    super.dispose();
   }
 }

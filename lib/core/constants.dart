@@ -28,5 +28,11 @@ const String kDefaultNoteTitle = 'Untitled note';
 /// Maximum number of local version snapshots kept per note.
 const int kMaxHistoryEntries = 50;
 
+/// Notes larger than this skip version-history snapshots (shared_preferences).
+const int kMaxHistorySnapshotChars = 100 * 1024;
+
+/// Total characters stored across all history entries for one note.
+const int kMaxHistoryTotalChars = 512 * 1024;
+
 /// Minimum spacing between automatic local version snapshots.
 const Duration kHistoryMinInterval = Duration(minutes: 2);

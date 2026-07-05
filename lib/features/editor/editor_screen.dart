@@ -30,6 +30,55 @@ class EditorScreen extends StatefulWidget {
 }
 
 class _EditorScreenState extends State<EditorScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final prefs = context.watch<AppPreferences>();
+
+    return Selector<WorkspaceRepository, DocumentRepository?>(
+      selector: (_, workspace) => workspace.active,
+      builder: (context, document, _) {
+        if (document == null) {
+          return const Center(child: Text('No note selected'));
+        }
+
+        return _EditorBody(
+          document: document,
+          prefs: prefs,
+          findVisible: widget.findVisible,
+          replaceMode: widget.replaceMode,
+          onReplaceModeChanged: widget.onReplaceModeChanged,
+          onCloseFind: widget.onCloseFind,
+          speechInput: widget.speechInput,
+        );
+      },
+    );
+  }
+}
+
+class _EditorBody extends StatefulWidget {
+  const _EditorBody({
+    required this.document,
+    required this.prefs,
+    required this.findVisible,
+    required this.replaceMode,
+    required this.onReplaceModeChanged,
+    required this.onCloseFind,
+    this.speechInput,
+  });
+
+  final DocumentRepository document;
+  final AppPreferences prefs;
+  final bool findVisible;
+  final bool replaceMode;
+  final ValueChanged<bool> onReplaceModeChanged;
+  final VoidCallback onCloseFind;
+  final SpeechInputService? speechInput;
+
+  @override
+  State<_EditorBody> createState() => _EditorBodyState();
+}
+
+class _EditorBodyState extends State<_EditorBody> {
   late final FocusNode _editorFocusNode;
 
   @override
@@ -71,13 +120,8 @@ class _EditorScreenState extends State<EditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final workspace = context.watch<WorkspaceRepository>();
-    final prefs = context.watch<AppPreferences>();
-    final document = workspace.active;
-
-    if (document == null) {
-      return const Center(child: Text('No note selected'));
-    }
+    final document = widget.document;
+    final prefs = widget.prefs;
 
     return Column(
       children: [

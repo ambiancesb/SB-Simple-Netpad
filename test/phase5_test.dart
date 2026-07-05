@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart' show TextSelection;
+import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/history_entry.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
@@ -169,6 +170,45 @@ void main() {
       expect(doc.text, 'hello brave world');
       expect(doc.controller.selection.baseOffset, 11);
     });
+
+    test('skips snapshots when note text exceeds per-entry cap', () async {
+      final storage = await _storage();
+      final large = 'x' * (kMaxHistorySnapshotChars + 1);
+      final doc = DocumentRepository(
+        instanceId: 'aaa',
+        id: 'doc1',
+        title: 'Note',
+        text: large,
+        revision: 1,
+        storage: storage,
+        onLocalEditReady: (_, _, _, _) {},
+      );
+      doc.replaceLocal('$large\nedit');
+      expect(doc.history, isEmpty);
+    });
+
+    test('trims oldest snapshots when total stored chars exceed cap', () async {
+      final storage = await _storage();
+      final chunk = 'a' * 100000;
+      final doc = DocumentRepository(
+        instanceId: 'aaa',
+        id: 'doc1',
+        title: 'Note',
+        text: chunk,
+        revision: 1,
+        storage: storage,
+        onLocalEditReady: (_, _, _, _) {},
+      );
+      for (var i = 0; i < 6; i++) {
+        doc.replaceLocal('$chunk$i');
+      }
+      final totalChars = doc.history.fold<int>(
+        0,
+        (sum, entry) => sum + entry.text.length,
+      );
+      expect(totalChars, lessThanOrEqualTo(kMaxHistoryTotalChars));
+      expect(doc.history.length, lessThan(6));
+    });
   });
 
   group('WorkspaceRepository', () {
@@ -221,6 +261,38 @@ void main() {
       expect(ws.hasDocument('peer-a'), isTrue);
       expect(ws.hasDocument('peer-b'), isTrue);
       expect(ws.documentById('peer-a')!.title, 'Shopping');
+    });
+
+    test('mergeCatalog persists new peer note shells', () async {
+      final storage = await _storage();
+      final ws = WorkspaceRepository(instanceId: 'aaa', storage: storage);
+      await ws.load();
+      ws.mergeCatalog([
+        {'docId': 'peer-a', 'title': 'Shopping', 'revision': 3},
+      ], 'peer-device', orderRevision: 1);
+      await Future<void>.delayed(Duration.zero);
+
+      final reloaded = WorkspaceRepository(instanceId: 'aaa', storage: storage);
+      await reloaded.load();
+      expect(reloaded.hasDocument('peer-a'), isTrue);
+      expect(reloaded.documentById('peer-a')!.title, 'Shopping');
+      expect(reloaded.documentById('peer-a')!.revision, 3);
+    });
+
+    test('rename broadcasts doc_rename only, not doc_update', () async {
+      final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
+      await ws.load();
+      final created = ws.createNote(title: 'Second');
+      var updateCount = 0;
+      var renameCount = 0;
+      ws.onDocUpdate = (_, _, _, _, _) => updateCount++;
+      ws.onDocRename = (_, _, _, _) => renameCount++;
+
+      ws.renameNote(created.id, 'Renamed');
+
+      expect(renameCount, 1);
+      expect(updateCount, 0);
+      expect(ws.documentById(created.id)!.revision, 2);
     });
 
     test('mergeCatalog applies peer note order', () async {

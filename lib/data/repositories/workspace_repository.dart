@@ -291,12 +291,13 @@ class WorkspaceRepository extends ChangeNotifier {
       final title = entry['title'] as String? ?? '';
       final revision = entry['revision'] as int? ?? 0;
       if (!_docs.containsKey(docId)) {
-        _createLocal(
+        final doc = _createLocal(
           id: docId,
           title: title.isEmpty ? kDefaultNoteTitle : title,
           text: '',
           revision: revision,
         );
+        unawaited(_storage.saveDocument(doc.toStored()));
         metadataChanged = true;
         continue;
       }

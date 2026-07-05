@@ -74,7 +74,6 @@ class DocumentRepository extends ChangeNotifier {
     if (next == _title) return;
     _title = next;
     _revision++;
-    onLocalEditReady(id, _revision, controller.text, instanceId);
     _scheduleSave();
     notifyListeners();
   }
@@ -294,10 +293,11 @@ class DocumentRepository extends ChangeNotifier {
   }
 
   /// Records the current text as a recoverable version, unless it would
-  /// duplicate the most recent snapshot or the note is empty.
+  /// duplicate the most recent snapshot, the note is empty, or storage caps apply.
   void _snapshot(String label) {
     final current = controller.text;
     if (current.trim().isEmpty) return;
+    if (current.length > kMaxHistorySnapshotChars) return;
     if (_history.isNotEmpty && _history.last.text == current) return;
     _history.add(
       HistoryEntry(
@@ -309,6 +309,18 @@ class DocumentRepository extends ChangeNotifier {
     );
     if (_history.length > kMaxHistoryEntries) {
       _history.removeRange(0, _history.length - kMaxHistoryEntries);
+    }
+    _trimHistoryTotalChars();
+  }
+
+  void _trimHistoryTotalChars() {
+    var total = 0;
+    for (final entry in _history) {
+      total += entry.text.length;
+    }
+    while (total > kMaxHistoryTotalChars && _history.isNotEmpty) {
+      total -= _history.first.text.length;
+      _history.removeAt(0);
     }
   }
 

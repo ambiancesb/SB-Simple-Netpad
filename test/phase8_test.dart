@@ -318,7 +318,7 @@ void main() {
       doc.replaceLocal('keep mine');
 
       var broadcastRevision = 0;
-      ws.onDocUpdate = (_, _, revision, text, __) {
+      ws.onDocUpdate = (_, _, revision, text, originId) {
         broadcastRevision = revision;
         expect(text, 'keep mine');
       };

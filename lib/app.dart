@@ -109,6 +109,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   final FileService _fileService = const FileService();
   final ShareService _shareService = const ShareService();
   final SpeechInputService _speechInput = SpeechInputService();
+  late final SyncRepository _sync;
+  late final WorkspaceRepository _workspace;
   bool _findVisible = false;
   bool _replaceMode = false;
   bool _notesPanelVisible = true;
@@ -121,11 +123,12 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       _notesPanelVisible = false;
     }
     WidgetsBinding.instance.addObserver(this);
-    final sync = context.read<SyncRepository>();
-    sync.onLiveConflict = _resolveLiveConflict;
-    sync.onSnapshotDivergence = _resolveDivergence;
+    _sync = context.read<SyncRepository>();
+    _workspace = context.read<WorkspaceRepository>();
+    _sync.onLiveConflict = _resolveLiveConflict;
+    _sync.onSnapshotDivergence = _resolveDivergence;
     _speechInput.getDictationAnchor = () {
-      final doc = context.read<WorkspaceRepository>().active;
+      final doc = _workspace.active;
       return doc?.dictationAnchorOffset() ?? 0;
     };
     _speechInput.onDictationUpdate = _onDictationUpdate;
@@ -259,6 +262,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _speechInput.dispose();
+    unawaited(_workspace.flushSaveAll());
+    _sync.dispose();
     super.dispose();
   }
 
@@ -266,7 +271,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
-      context.read<WorkspaceRepository>().flushSaveAll();
+      unawaited(_workspace.flushSaveAll());
       unawaited(_speechInput.stopListening());
     }
   }
@@ -283,6 +288,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   }
 
   void _exitApp() {
+    unawaited(_workspace.flushSaveAll());
+    _sync.dispose();
     ServicesBinding.instance.exitApplication(AppExitType.required);
   }
 

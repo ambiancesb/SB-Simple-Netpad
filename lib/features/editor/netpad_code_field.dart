@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:netpad/features/editor/netpad_line_number_controller.dart';
 import 'package:netpad/features/editor/wrap_line_metrics.dart';
@@ -91,8 +92,7 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
     _numberController = NetpadLineNumberController(widget.lineNumberBuilder);
     widget.controller.addListener(_onTextChanged);
     _focusNode = widget.focusNode ?? FocusNode();
-    _focusNode!.onKey = _onKey;
-    _focusNode!.attach(context, onKey: _onKey);
+    _focusNode!.onKeyEvent = _onKeyEvent;
 
     _updateLineNumbers();
   }
@@ -106,11 +106,23 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
     }
   }
 
-  KeyEventResult _onKey(FocusNode node, RawKeyEvent event) {
+  KeyEventResult _onKeyEvent(FocusNode node, KeyEvent event) {
     if (widget.readOnly) {
       return KeyEventResult.ignored;
     }
-    return widget.controller.onKey(event);
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.tab) {
+      final sel = widget.controller.selection;
+      widget.controller.text = widget.controller.text.replaceRange(
+        sel.start,
+        sel.end,
+        '\t',
+      );
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
   @override
@@ -228,7 +240,7 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
     var numberTextStyle =
         widget.lineNumberStyle.textStyle ?? const TextStyle();
     final numberColor =
-        (styles?[rootKey]?.color ?? defaultText).withOpacity(0.7);
+        (styles?[rootKey]?.color ?? defaultText).withValues(alpha: 0.7);
 
     numberTextStyle = numberTextStyle.copyWith(
       color: numberTextStyle.color ?? numberColor,
