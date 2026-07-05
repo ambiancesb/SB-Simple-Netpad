@@ -53,8 +53,10 @@ flutter_launcher_icons:
     generate: true
   linux:
     generate: true
+  # Solid brand blue behind the foreground layer (must match icon edges).
   adaptive_icon_background: '#2563EB'
   adaptive_icon_foreground: assets/icon/app_icon.png
+  adaptive_icon_foreground_inset: 0
   remove_alpha_ios: true
 
 flutter:
