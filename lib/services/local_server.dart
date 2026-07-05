@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:netpad/core/local_network.dart';
 import 'package:netpad/services/protocol_codec.dart';
 import 'package:netpad/core/models/protocol_message.dart';
 
@@ -8,6 +9,11 @@ typedef MessageHandler =
     void Function(String connectionId, ProtocolMessage message);
 
 typedef ConnectionClosedHandler = void Function(String connectionId);
+
+typedef ConnectionOpenedHandler = void Function(String connectionId);
+
+typedef InboundRejectedHandler =
+    void Function(String reason, InternetAddress? remoteAddress);
 
 class LocalServer {
   LocalServer({required this.securityContext});
@@ -21,6 +27,8 @@ class LocalServer {
 
   MessageHandler? onMessage;
   ConnectionClosedHandler? onConnectionClosed;
+  ConnectionOpenedHandler? onConnectionOpened;
+  InboundRejectedHandler? onInboundRejected;
 
   int? get port => _server?.port;
 
@@ -77,7 +85,29 @@ class LocalServer {
     await socket?.close();
   }
 
+  bool _isLocalClient(HttpRequest request) {
+    final remote = request.connectionInfo?.remoteAddress;
+    if (remote == null) return true;
+    return LocalNetwork.isOnActiveSubnet(remote);
+  }
+
+  void _rejectInbound(HttpRequest request, String reason) {
+    onInboundRejected?.call(reason, request.connectionInfo?.remoteAddress);
+    request.response
+      ..statusCode = HttpStatus.forbidden
+      ..write('forbidden')
+      ..close();
+  }
+
   Future<void> _handleRequest(HttpRequest request) async {
+    if (!_isLocalClient(request)) {
+        _rejectInbound(
+        request,
+        'Refused connection from outside the active local subnet',
+      );
+      return;
+    }
+
     if (request.uri.path == '/health' && request.method == 'GET') {
       request.response
         ..statusCode = HttpStatus.ok
@@ -91,6 +121,8 @@ class LocalServer {
       final socket = await WebSocketTransformer.upgrade(request);
       final connectionId = 'in_${++_connCounter}';
       _sockets[connectionId] = socket;
+
+      onConnectionOpened?.call(connectionId);
 
       socket.listen(
         (data) {

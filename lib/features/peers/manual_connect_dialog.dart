@@ -71,7 +71,8 @@ class _ManualConnectDialogState extends State<_ManualConnectDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Use when discovery cannot find peers (guest Wi‑Fi, VPN, etc.).',
+              'Use when discovery cannot find peers on the same subnet. '
+              'Only addresses on your active local network segment are allowed.',
             ),
             const SizedBox(height: 16),
             TextField(

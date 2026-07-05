@@ -43,13 +43,21 @@ class PeersPanel extends StatelessWidget {
             message: discovery.networkingError!,
             onRetry: () => discovery.retryNetworking(),
           ),
+        if (discovery.networkingPolicyNote != null)
+          _NetworkingInfoBanner(
+            message: discovery.networkingPolicyNote!,
+            icon: Icons.signal_cellular_alt,
+            title: 'Local network required',
+          ),
         if (discovery.networkingNote != null)
           _NetworkingInfoBanner(message: discovery.networkingNote!),
         const SessionSecurityBanner(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: OutlinedButton.icon(
-            onPressed: () => _manualConnect(context),
+            onPressed: discovery.canDiscoverPeers
+                ? () => _manualConnect(context)
+                : null,
             icon: const Icon(Icons.add_link),
             label: const Text('Connect by IP'),
           ),
@@ -77,8 +85,10 @@ class PeersPanel extends StatelessWidget {
         const Divider(height: 24),
         _sectionHeader(context, 'Nearby'),
         if (nearby.isEmpty)
-          const _EmptyHint(
-            'No discovered peers — try Connect by IP or share this device’s address',
+          _EmptyHint(
+            discovery.canDiscoverPeers
+                ? 'No discovered peers — try Connect by IP or share this device’s address'
+                : 'Peer discovery is paused until you join a local network',
           ),
         ...nearby.map(
           (peer) => _PeerTile(
@@ -334,9 +344,15 @@ class _BlockedSection extends StatelessWidget {
 }
 
 class _NetworkingInfoBanner extends StatelessWidget {
-  const _NetworkingInfoBanner({required this.message});
+  const _NetworkingInfoBanner({
+    required this.message,
+    this.icon = Icons.info_outline,
+    this.title = 'Discovery mode',
+  });
 
   final String message;
+  final IconData icon;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -350,11 +366,11 @@ class _NetworkingInfoBanner extends StatelessWidget {
         child: ListTile(
           dense: true,
           leading: Icon(
-            Icons.info_outline,
+            icon,
             size: 20,
             color: Theme.of(context).colorScheme.secondary,
           ),
-          title: const Text('Discovery mode'),
+          title: Text(title),
           subtitle: Text(message),
         ),
       ),

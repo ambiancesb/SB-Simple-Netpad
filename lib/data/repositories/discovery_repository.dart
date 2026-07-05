@@ -5,9 +5,11 @@ import 'package:bonsoir/bonsoir.dart';
 import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/peer.dart';
+import 'package:netpad/core/local_network.dart';
 import 'package:netpad/services/linux_dbus_availability.dart';
 import 'package:netpad/services/linux_mdns_backend.dart';
 import 'package:netpad/services/local_server.dart';
+import 'package:netpad/services/network_link_service.dart';
 import 'package:netpad/services/network_monitor.dart';
 
 class DiscoveryRepository extends ChangeNotifier {
@@ -64,7 +66,15 @@ class DiscoveryRepository extends ChangeNotifier {
   String? get networkingNote => _networkingNote;
   String? _networkingNote;
 
+  /// Set when sync is paused because only a cellular link is available.
+  String? get networkingPolicyNote => _networkingPolicyNote;
+  String? _networkingPolicyNote;
+
+  bool get canDiscoverPeers => _canDiscoverPeers;
+  bool _canDiscoverPeers = true;
+
   Future<void> start() async {
+    await LocalNetwork.refreshActiveSubnets();
     final port = await _localServer.start();
     await _startNetworking(port);
     _refreshTimer = Timer.periodic(
@@ -86,6 +96,16 @@ class DiscoveryRepository extends ChangeNotifier {
   Future<void> _startNetworking(int port) async {
     _networkingError = null;
     _networkingNote = null;
+    _networkingPolicyNote = null;
+
+    final linkStatus = await NetworkLinkService.evaluate();
+    _canDiscoverPeers = linkStatus.canSync;
+    if (!linkStatus.canSync) {
+      _networkingPolicyNote = linkStatus.note;
+      await _stopBonsoir();
+      await _stopLinuxMdns();
+      return;
+    }
 
     if (Platform.isLinux && !isLinuxSystemDBusAvailable()) {
       final started = await _startLinuxMdns(port);
@@ -187,6 +207,7 @@ class DiscoveryRepository extends ChangeNotifier {
     if (kDebugMode) {
       debugPrint('Network change detected — restarting discovery/broadcast');
     }
+    await LocalNetwork.refreshActiveSubnets();
     await _restartNetworking();
   }
 
@@ -336,8 +357,23 @@ class DiscoveryRepository extends ChangeNotifier {
     }
   }
 
+  bool _peerIsOnActiveSubnet(Peer peer) {
+    if (peer.hostAddresses.isEmpty) return true;
+    return peer.hostAddresses.any((raw) {
+      final addr = InternetAddress.tryParse(LocalNetwork.stripZoneId(raw));
+      return addr != null && LocalNetwork.isOnActiveSubnet(addr);
+    });
+  }
+
   void _upsertMdnsPeer(Peer peer) {
     if (peer.id == instanceId) return;
+    if (!_peerIsOnActiveSubnet(peer)) {
+      if (!_connected.containsKey(peer.id)) {
+        _discovered.remove(peer.id);
+        notifyListeners();
+      }
+      return;
+    }
 
     final existing = _discovered[peer.id];
     _discovered[peer.id] = peer.copyWith(
@@ -368,6 +404,14 @@ class DiscoveryRepository extends ChangeNotifier {
     // attribute are treated as the default room for backward compatibility.
     final peerRoom = service.attributes['room'] ?? kDefaultRoom;
     if (peerRoom != _roomId) {
+      if (!_connected.containsKey(peer.id)) {
+        _discovered.remove(peer.id);
+        notifyListeners();
+      }
+      return;
+    }
+
+    if (!_peerIsOnActiveSubnet(peer)) {
       if (!_connected.containsKey(peer.id)) {
         _discovered.remove(peer.id);
         notifyListeners();

@@ -8,6 +8,9 @@ and this project currently tracks versions informally.
 ## [Unreleased]
 
 ### Added
+- **Local-network enforcement** — Inbound and outbound peer connections must fall on this device's active subnet(s), derived from live interface addresses and netmasks; peers on other private subnets or public IPs are refused. Discovered peers outside the active subnet are hidden.
+- **Wi‑Fi-first sync policy** — mDNS discovery and advertisement pause on cellular-only devices; a banner explains that Wi‑Fi or a personal hotspot is required.
+- **Netpad-only inbound guard** — Inbound WebSockets that never send a valid `pair_request` are closed after 8 seconds.
 - **Per-note sync toggle** — Each note in the Notes drawer has a switch to mark it synced or local-only. Local-only notes stay on device: excluded from peer catalog/snapshots, edits are not broadcast, and inbound peer updates for that note are ignored. Visual “Local only” hint with a muted cloud-off icon.
 - **Phase 8 test suite** — [test/phase8_test.dart](test/phase8_test.dart) covers sync flags, outbound/inbound guards, multi-peer relay targets, and reconnect divergence convergence.
 - **Live edit conflict dialog** — When two peers edit the same note at the same revision, one device prompts with text previews to keep yours or use theirs (replaces silent tie-break snackbar).
@@ -15,6 +18,7 @@ and this project currently tracks versions informally.
 - **Heartbeat** — `ping`/`pong` on authenticated links every 15s; peers that stop responding for 45s are disconnected automatically.
 
 ### Changed
+- **Threat model** — README documents enforced local-network, Wi‑Fi-first, and Netpad-only policies.
 - Wire protocol bumped to **v2** (`kProtocolVersion`); all messages encode `v: 2`.
 
 ### Removed

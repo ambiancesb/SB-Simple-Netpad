@@ -5,6 +5,7 @@ extension SyncRepositoryPairing on SyncRepository {
     if (_trustStore.isBlocked(peer.id)) {
       throw StateError('${peer.displayName} is blocked. Unblock it to connect.');
     }
+    await LocalNetwork.refreshActiveSubnets();
     final existing = _linksByPeerId[peer.id];
     if (existing?.authenticated == true) {
       throw StateError('Already connected to ${peer.displayName}.');
@@ -21,6 +22,14 @@ extension SyncRepositoryPairing on SyncRepository {
       throw StateError(
         'Peer ${peer.displayName} has no resolved address. '
         'On Linux, ensure Avahi is running and both devices are on the same subnet.',
+      );
+    }
+    final resolvedAddr = InternetAddress.tryParse(LocalNetwork.stripZoneId(host));
+    if (resolvedAddr == null || !LocalNetwork.isOnActiveSubnet(resolvedAddr)) {
+      throw StateError(
+        'Refused to connect to ${peer.displayName}: '
+        '$host is not on your active local subnet. '
+        'Netpad only syncs with devices on the same network segment.',
       );
     }
     _discovery.markPeerConnecting(peer.id);
@@ -249,6 +258,7 @@ extension SyncRepositoryPairing on SyncRepository {
   }) {
     switch (message.type) {
       case MessageTypes.pairRequest:
+        _cancelPrePairTimeout(connectionId);
         final requestId = message.payload['requestId'] as String? ?? '';
         final fromId = message.payload['fromId'] as String? ?? '';
         final fromName = message.payload['fromName'] as String? ?? 'Unknown';

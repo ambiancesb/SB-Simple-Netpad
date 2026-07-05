@@ -15,6 +15,7 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 - **Search**: find within a note (next/prev) and search across all notes
 - File workflows: **Save**, **Open** (as a new note), and **Share** the note from the File menu
 - **Rooms**: peers only discover each other when they share the same session/room ID
+- **Local network only**: sync is limited to peers on your device's active subnet(s); cellular-only devices pause discovery until Wi‑Fi is available
 - **Cursor presence**: see which note each connected peer is editing, and where
 - **Live conflict prompts**: simultaneous edits at the same revision ask which version to keep
 - **Heartbeat**: unresponsive peers are disconnected automatically
@@ -177,19 +178,34 @@ flutter test test/phase6_test.dart   # protocol v2, live-conflict detection, hea
 
 ## Threat model
 
-SB Simple Netpad is a **peer-to-peer LAN notepad**. Notes live on your devices only — there is no central server, cloud account, or remote API. Security assumptions follow from that scope.
+SB Simple Netpad is a **peer-to-peer local-network notepad**. Notes live on your devices only — there is no central server, cloud account, or remote API. Security assumptions follow from that scope.
+
+### Network policy
+
+Netpad enforces three rules at the transport layer:
+
+| Rule | What it means |
+|------|----------------|
+| **Active local subnet only** | Inbound and outbound connections must fall on a subnet derived from this device's current interfaces (for example the same `192.168.1.0/24` Wi‑Fi segment). Other private ranges — even other `192.168.x.x` subnets — are refused. VPN overlays (for example Tailscale) are allowed only on the subnet of the active VPN interface. |
+| **Wi‑Fi first** | On cellular-only devices, mDNS discovery and advertisement are paused until you join Wi‑Fi or a personal hotspot. A phone hotspot **is** a local network and works normally. |
+| **Netpad instances only** | Only clients that complete the Netpad pairing handshake (`pair_request` with matching protocol version) stay connected. Other inbound sockets are closed after a short timeout. |
+
+**Connect by IP** remains available on the same subnet when mDNS fails (guest Wi‑Fi isolation, some VPNs). It still validates that the resolved address is on an active local subnet before dialing.
 
 ### In scope
 
 | Assumption | Implication |
 |------------|-------------|
-| Same local network | Discovery (mDNS) and sync require devices on the same subnet or otherwise reachable on the LAN. This is not designed for internet-wide or cross-network sync without a VPN or tunnel you provide yourself. |
+| Same local network | Discovery (mDNS) and sync require devices on the same subnet or otherwise reachable on a private LAN. Cross-internet sync is not supported unless you provide a private overlay (for example Tailscale) whose addresses fall in the allowed ranges. |
 | Mutual pairing | A device must tap **Accept** before any note data is exchanged. Unpaired connections cannot read or write notes. |
 | Untrusted LAN peers | Other devices on the network might try to pair or interfere. Controls below apply to **peers on your LAN**, not anonymous internet hosts. |
 
 ### What we protect against
 
+- **Non-local connections** — Inbound sockets from outside the active subnet are rejected; outbound dials to other subnets or public addresses are refused before pairing.
+- **Cellular-only sync** — Discovery is paused when the device has only a cellular data path (no Wi‑Fi or hotspot LAN address).
 - **Unpaired access** — Rejected pairing requests never receive document data; post-pair messages require a session token.
+- **Non-Netpad clients** — Inbound WebSockets that never send a valid `pair_request` are closed automatically.
 - **Impersonation after first trust** — TLS (`wss://`) plus certificate pinning (TOFU): if a peer’s certificate fingerprint changes, the connection is refused.
 - **Blocked devices** — Blocklist persists; blocked peers are disconnected and cannot reconnect until unblocked.
 - **Protocol mismatch** — Pairing requires matching protocol version; mismatched builds refuse the connection.
@@ -200,8 +216,8 @@ SB Simple Netpad is a **peer-to-peer LAN notepad**. Notes live on your devices o
 These are intentional limits, not oversights:
 
 - **No cloud or server storage** — Notes are not uploaded to a service you do not control. Backup, sync across the internet, and multi-site availability are your responsibility (e.g. Save to file, OS backup).
-- **No internet attacker model** — There is no public attack surface; remote adversaries who are not on your LAN cannot reach the sync port through this app alone.
-- **No multi-tenant isolation** — Room IDs filter discovery for convenience so groups on one LAN do not merge accidentally; they are **not** an authentication boundary. **Connect by IP** can still reach a peer if you know its address.
+- **No internet attacker model** — Non-local addresses are refused at the socket layer; remote adversaries cannot reach the sync port through this app alone.
+- **No multi-tenant isolation** — Room IDs filter discovery for convenience so groups on one LAN do not merge accidentally; they are **not** an authentication boundary. **Connect by IP** can still reach a peer on the same LAN if you know its address.
 - **No CA-backed identity** — Certificates are self-signed per device. The first connection to a new peer is TOFU; compare the security code in the pairing dialog on untrusted networks.
 - **Trusted paired peers** — Once you accept a peer, it can send sync traffic like any collaborator. A malicious paired peer could disrupt sync (e.g. overwrite notes, relay spam) — the same class of risk as sharing a folder with someone on the LAN. Pair only with devices you trust.
 

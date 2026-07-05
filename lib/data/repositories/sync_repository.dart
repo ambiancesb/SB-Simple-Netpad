@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
+import 'package:netpad/core/local_network.dart';
 import 'package:netpad/core/models/divergence_choice.dart';
 import 'package:netpad/core/pairing_negotiation.dart';
 import 'package:netpad/core/reconnect_divergence.dart';
@@ -44,6 +45,8 @@ class SyncRepository extends ChangeNotifier {
        _trustStore = trustStore {
     _server.onMessage = _onInboundMessage;
     _server.onConnectionClosed = _onInboundClosed;
+    _server.onConnectionOpened = _onInboundOpened;
+    _server.onInboundRejected = _onInboundRejected;
   }
 
   final String instanceId;
@@ -62,6 +65,7 @@ class SyncRepository extends ChangeNotifier {
   final Map<String, String> _connectionToPeerId = {};
   final Map<String, String> _pendingOutboundRequestId = {};
   final Map<String, Timer> _pairingTimeouts = {};
+  final Map<String, Timer> _prePairTimeouts = {};
   final Map<String, PeerPresence> _presence = {};
 
   bool _disposed = false;
@@ -180,7 +184,31 @@ class SyncRepository extends ChangeNotifier {
   }
 
   void _onInboundClosed(String connectionId) {
+    _cancelPrePairTimeout(connectionId);
     _handleDisconnect(connectionId);
+  }
+
+  void _onInboundOpened(String connectionId) {
+    _cancelPrePairTimeout(connectionId);
+    _prePairTimeouts[connectionId] = Timer(LocalNetwork.prePairTimeout, () {
+      _prePairTimeouts.remove(connectionId);
+      if (_connectionToPeerId.containsKey(connectionId)) return;
+      _connectionLog.add(
+        'Closed inbound connection with no Netpad pairing handshake',
+      );
+      unawaited(_server.closeConnection(connectionId));
+    });
+  }
+
+  void _onInboundRejected(String reason, InternetAddress? remoteAddress) {
+    final remote = remoteAddress?.address;
+    _connectionLog.add(
+      remote == null ? reason : '$reason ($remote)',
+    );
+  }
+
+  void _cancelPrePairTimeout(String connectionId) {
+    _prePairTimeouts.remove(connectionId)?.cancel();
   }
 
   void _handleMessage(
@@ -338,6 +366,7 @@ class SyncRepository extends ChangeNotifier {
 
   void _cleanupConnection(String connectionId) {
     _cancelPairingTimeout(connectionId);
+    _cancelPrePairTimeout(connectionId);
     final peerId = _connectionToPeerId.remove(connectionId);
     if (peerId != null) {
       final link = _linksByPeerId.remove(peerId);
@@ -363,11 +392,17 @@ class SyncRepository extends ChangeNotifier {
 
     _server.onMessage = null;
     _server.onConnectionClosed = null;
+    _server.onConnectionOpened = null;
+    _server.onInboundRejected = null;
 
     for (final timer in _pairingTimeouts.values) {
       timer.cancel();
     }
     _pairingTimeouts.clear();
+    for (final timer in _prePairTimeouts.values) {
+      timer.cancel();
+    }
+    _prePairTimeouts.clear();
 
     for (final link in _linksByPeerId.values) {
       _stopHeartbeat(link);

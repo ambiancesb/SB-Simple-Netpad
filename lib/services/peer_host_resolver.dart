@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:netpad/core/local_network.dart';
 import 'package:netpad/core/models/peer.dart';
 
 /// Resolves a connectable host for LAN WebSocket URLs (Linux/Avahi friendly).
 class PeerHostResolver {
-  /// Picks the best address from mDNS results and falls back to hostname lookup.
+  /// Picks the best local-network address from mDNS results and falls back to
+  /// hostname lookup.
   static Future<String?> resolveConnectHost(Peer peer) async {
     final fromList = _pickBestAddress(peer.hostAddresses);
     if (fromList != null) return fromList;
@@ -15,16 +17,22 @@ class PeerHostResolver {
       if (lookedUp != null) return lookedUp;
     }
 
+    if (peer.isManual) {
+      final manualHost = peer.primaryHost;
+      if (manualHost != null && manualHost.isNotEmpty) {
+        if (LocalNetwork.isOnActiveSubnetHost(manualHost)) {
+          return manualHost;
+        }
+        return _lookupHostname(manualHost);
+      }
+    }
+
     return null;
   }
 
   /// Formats host for `ws://` — brackets IPv6, strips zone IDs.
   static String formatForWebSocket(String host) {
-    var h = host.trim();
-    final zoneIndex = h.indexOf('%');
-    if (zoneIndex != -1) {
-      h = h.substring(0, zoneIndex);
-    }
+    var h = LocalNetwork.stripZoneId(host);
 
     final addr = InternetAddress.tryParse(h);
     if (addr != null && addr.type == InternetAddressType.IPv6) {
@@ -38,35 +46,22 @@ class PeerHostResolver {
     String? ipv6;
 
     for (final raw in addresses) {
-      final zoneIndex = raw.indexOf('%');
-      final host = zoneIndex == -1 ? raw : raw.substring(0, zoneIndex);
+      final host = LocalNetwork.stripZoneId(raw);
       final addr = InternetAddress.tryParse(host);
       if (addr == null) continue;
 
+      if (!LocalNetwork.isOnActiveSubnet(addr)) continue;
+
       if (addr.type == InternetAddressType.IPv4) {
-        if (_isUsableLanIpv4(addr)) {
-          ipv4 = host;
-          break;
-        }
-        ipv4 ??= host;
+        ipv4 = host;
+        break;
       } else if (addr.type == InternetAddressType.IPv6) {
-        if (!_isLoopback(addr)) {
-          ipv6 ??= host;
-        }
+        ipv6 ??= host;
       }
     }
 
     return ipv4 ?? ipv6;
   }
-
-  static bool _isUsableLanIpv4(InternetAddress addr) {
-    if (addr.isLoopback) return false;
-    final o = addr.rawAddress;
-    if (o[0] == 169 && o[1] == 254) return false; // link-local APIPA
-    return true;
-  }
-
-  static bool _isLoopback(InternetAddress addr) => addr.isLoopback;
 
   static Future<String?> _lookupHostname(String hostname) async {
     try {
