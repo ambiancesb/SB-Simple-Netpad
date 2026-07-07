@@ -83,6 +83,22 @@ extension SyncRepositoryPairing on SyncRepository {
       rethrow;
     }
 
+    // Inbound auto-accept may have finished while this outbound dial was in flight.
+    final activeLink = _linksByPeerId[peer.id];
+    if (activeLink?.authenticated == true) {
+      httpClient.close(force: true);
+      unawaited(socket.close());
+      _discovery.markPeerConnected(
+        _discovery.peerById(peer.id) ??
+            Peer(
+              id: peer.id,
+              displayName: peer.displayName,
+              port: peer.port,
+            ),
+      );
+      return;
+    }
+
     final connectionId = 'out_${peer.id}';
     _pendingOutboundRequestId[connectionId] = requestId;
 
@@ -188,6 +204,7 @@ extension SyncRepositoryPairing on SyncRepository {
     _linksByPeerId[fromId] = link;
     _connectionToPeerId[connectionId] = fromId;
     _cancelPairingTimeoutForPeer(fromId);
+    tearDownPeerOutbound(link);
 
     _sendOnConnection(
       connectionId,
@@ -511,19 +528,32 @@ extension SyncRepositoryPairing on SyncRepository {
               return;
             }
           }
-          _connectionLog.add(
-            accepted
-                ? 'Pairing accepted by $peerName'
-                : 'Pairing rejected by $peerName'
-                    '${message.payload['reason'] != null ? ' (${message.payload['reason']})' : ''}',
-            peerId: peerId,
-            peerName: peerName,
-          );
-          onPairRequestResolved?.call(peerId, accepted);
-          if (!accepted) {
-            _cleanupConnection(connectionId);
-          } else {
+          final reason = message.payload['reason'] as String?;
+          if (accepted) {
+            _connectionLog.add(
+              'Pairing accepted by $peerName',
+              peerId: peerId,
+              peerName: peerName,
+            );
+            onPairRequestResolved?.call(peerId, true);
             _startPairingTimeout(connectionId, peerId, peerName);
+          } else if (reason == 'already_connected' &&
+              _linksByPeerId[peerId]?.authenticated == true) {
+            _cleanupConnection(connectionId);
+            final peer = _discovery.peerById(peerId);
+            if (peer != null) {
+              _discovery.markPeerConnected(peer);
+            }
+            onPairRequestResolved?.call(peerId, true);
+          } else {
+            _connectionLog.add(
+              'Pairing rejected by $peerName'
+              '${reason != null ? ' ($reason)' : ''}',
+              peerId: peerId,
+              peerName: peerName,
+            );
+            onPairRequestResolved?.call(peerId, false);
+            _cleanupConnection(connectionId);
           }
         }
         _pendingOutboundRequestId.remove(connectionId);

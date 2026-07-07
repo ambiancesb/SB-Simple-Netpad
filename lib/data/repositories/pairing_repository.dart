@@ -33,8 +33,12 @@ class PairingRepository extends ChangeNotifier {
 
   final List<PairRequest> _pendingIncoming = [];
   final Set<String> _reconnectInFlight = {};
+  final Map<String, DateTime> _reconnectBackoffUntil = {};
   Timer? _reconnectDebounce;
   bool _watchingTrustedReconnect = false;
+
+  static const _reconnectRefusedBackoff = Duration(seconds: 20);
+  static const _reconnectAlreadyConnectedBackoff = Duration(seconds: 30);
 
   List<PairRequest> get pendingIncoming => List.unmodifiable(_pendingIncoming);
 
@@ -66,8 +70,12 @@ class PairingRepository extends ChangeNotifier {
   Future<void> _attemptTrustedReconnects() async {
     if (!_discovery.canDiscoverPeers) return;
 
+    _sync.reconcileDiscoveryConnectionState();
+
+    final now = DateTime.now();
     for (final peer in _discovery.discoveredPeers) {
       if (!_trustStore.canAutoSync(peer.id)) continue;
+      if (_sync.isPeerAuthenticated(peer.id)) continue;
       if (peer.connectionState == PeerConnectionState.connected) continue;
       if (peer.connectionState == PeerConnectionState.connecting ||
           peer.connectionState == PeerConnectionState.pendingOutgoing) {
@@ -75,6 +83,8 @@ class PairingRepository extends ChangeNotifier {
       }
       if (_sync.isPeerLinkBusy(peer.id)) continue;
       if (_reconnectInFlight.contains(peer.id)) continue;
+      final backoffUntil = _reconnectBackoffUntil[peer.id];
+      if (backoffUntil != null && backoffUntil.isAfter(now)) continue;
       if (!peer.isManual &&
           !peer.isConnectable &&
           peer.resolveState != PeerResolveState.failed) {
@@ -84,13 +94,27 @@ class PairingRepository extends ChangeNotifier {
       _reconnectInFlight.add(peer.id);
       try {
         await _sync.connectAndRequestPair(peer);
+        _reconnectBackoffUntil.remove(peer.id);
       } catch (e) {
+        if (e is StateError &&
+            e.message.startsWith('Already connected to ')) {
+          _reconnectBackoffUntil[peer.id] =
+              now.add(_reconnectAlreadyConnectedBackoff);
+          _sync.reconcileDiscoveryConnectionState();
+          continue;
+        }
         _connectionLog.add(
           'Auto-reconnect failed: ${_friendlyConnectError(e)}',
           peerId: peer.id,
           peerName: peer.displayName,
         );
-        _discovery.markPeerDisconnected(peer.id);
+        if (e is SocketException && e.osError?.errorCode == 111) {
+          _reconnectBackoffUntil[peer.id] =
+              now.add(_reconnectRefusedBackoff);
+        }
+        if (!_sync.isPeerAuthenticated(peer.id)) {
+          _discovery.markPeerDisconnected(peer.id);
+        }
       } finally {
         _reconnectInFlight.remove(peer.id);
       }
@@ -217,11 +241,12 @@ class PairingRepository extends ChangeNotifier {
 
   void _onPairRequestResolved(String peerId, bool accepted) {
     if (accepted) {
+      _reconnectBackoffUntil.remove(peerId);
       final peer = _discovery.peerById(peerId);
       if (peer != null) {
         _discovery.markPeerConnected(peer);
       }
-    } else {
+    } else if (!_sync.isPeerAuthenticated(peerId)) {
       _discovery.markPeerDisconnected(peerId);
     }
     notifyListeners();

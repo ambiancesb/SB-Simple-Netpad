@@ -125,6 +125,22 @@ class SyncRepository extends ChangeNotifier {
     return link.outboundSocket != null || link.inboundConnectionId != null;
   }
 
+  /// True when [peerId] has a completed pairing session.
+  bool isPeerAuthenticated(String peerId) =>
+      _linksByPeerId[peerId]?.authenticated == true;
+
+  /// Aligns discovery UI state with authenticated links (e.g. after inbound accept).
+  void reconcileDiscoveryConnectionState() {
+    for (final entry in _linksByPeerId.entries) {
+      if (!entry.value.authenticated) continue;
+      final peer = _discovery.peerById(entry.key);
+      if (peer != null &&
+          peer.connectionState != PeerConnectionState.connected) {
+        _discovery.markPeerConnected(peer);
+      }
+    }
+  }
+
   /// Notifies listeners; used by [SyncRepository] part modules.
   void notifyPeersChanged() => notifyListeners();
 
@@ -394,21 +410,39 @@ class SyncRepository extends ChangeNotifier {
   void _cleanupConnection(String connectionId) {
     _cancelPairingTimeout(connectionId);
     _cancelPrePairTimeout(connectionId);
-    final peerId = _connectionToPeerId.remove(connectionId);
-    if (peerId != null) {
-      final link = _linksByPeerId.remove(peerId);
-      if (link != null) {
-        _stopHeartbeat(link);
-        tearDownPeerOutbound(link);
-      }
-      _presence.remove(peerId);
-      _discovery.markPeerDisconnected(peerId);
-      notifyPeersChanged();
-    }
     _pendingOutboundRequestId.remove(connectionId);
-    if (connectionId.startsWith('out_')) {
+
+    final peerId = _connectionToPeerId.remove(connectionId);
+    if (peerId == null) {
+      if (!connectionId.startsWith('out_')) {
+        unawaited(_server.closeConnection(connectionId));
+      }
       return;
     }
+
+    if (connectionId.startsWith('out_')) {
+      final link = _linksByPeerId[peerId];
+      if (link != null) {
+        tearDownPeerOutbound(link);
+        if (link.inboundConnectionId == null && !link.authenticated) {
+          _stopHeartbeat(link);
+          _linksByPeerId.remove(peerId);
+          _presence.remove(peerId);
+          _discovery.markPeerDisconnected(peerId);
+          notifyPeersChanged();
+        }
+      }
+      return;
+    }
+
+    final link = _linksByPeerId.remove(peerId);
+    if (link != null) {
+      _stopHeartbeat(link);
+      tearDownPeerOutbound(link);
+    }
+    _presence.remove(peerId);
+    _discovery.markPeerDisconnected(peerId);
+    notifyPeersChanged();
     unawaited(_server.closeConnection(connectionId));
   }
 
