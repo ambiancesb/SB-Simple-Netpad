@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/pair_request.dart';
@@ -84,7 +86,7 @@ class PairingRepository extends ChangeNotifier {
         await _sync.connectAndRequestPair(peer);
       } catch (e) {
         _connectionLog.add(
-          'Auto-reconnect failed: $e',
+          'Auto-reconnect failed: ${_friendlyConnectError(e)}',
           peerId: peer.id,
           peerName: peer.displayName,
         );
@@ -100,7 +102,7 @@ class PairingRepository extends ChangeNotifier {
       await _sync.connectAndRequestPair(peer);
     } catch (e) {
       _connectionLog.add(
-        'Connect failed: $e',
+        'Connect failed: ${_friendlyConnectError(e)}',
         peerId: peer.id,
         peerName: peer.displayName,
       );
@@ -229,5 +231,30 @@ class PairingRepository extends ChangeNotifier {
   void dispose() {
     stopTrustedReconnectWatcher();
     super.dispose();
+  }
+
+  static String _friendlyConnectError(Object e) {
+    if (e is SocketException) {
+      final code = e.osError?.errorCode;
+      if (code == 111) {
+        return 'Connection refused (111) — the other device is not listening. '
+            'Confirm it shows a port under This device and both devices are '
+            'on the same Wi‑Fi with sync enabled (no "Local network required" banner).';
+      }
+      return e.message;
+    }
+    if (e is HandshakeException) {
+      return 'TLS handshake failed — ${e.message}. '
+          'If both devices are on the same Wi‑Fi, try Connect by IP with the '
+          'address shown under This device on the other side.';
+    }
+    if (e is TlsException) {
+      return 'TLS error — ${e.message}';
+    }
+    if (e is WebSocketException) {
+      return 'WebSocket failed — ${e.message}';
+    }
+    if (e is StateError) return e.message;
+    return e.toString();
   }
 }

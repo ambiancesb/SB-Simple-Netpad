@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:mdns_dart/mdns_dart.dart';
 import 'package:netpad/core/constants.dart';
+import 'package:netpad/core/local_network.dart';
 import 'package:netpad/core/models/peer.dart';
 
 /// Maps an mDNS [ServiceEntry] to a [Peer] using our TXT attributes.
@@ -12,9 +15,9 @@ Peer? peerFromMdnsEntry(ServiceEntry entry) {
 
   final name = attrs['name'] ?? entry.name;
   final portFromTxt = int.tryParse(attrs['port'] ?? '');
-  final port = (portFromTxt != null && portFromTxt > 0)
-      ? portFromTxt
-      : entry.port;
+  final port = entry.port > 0
+      ? entry.port
+      : ((portFromTxt != null && portFromTxt > 0) ? portFromTxt : 0);
   if (port <= 0) return null;
 
   final hosts = entry.allAddresses.map((a) => a.address).toList();
@@ -43,7 +46,7 @@ Peer? peerFromMdnsEntry(ServiceEntry entry) {
   );
 }
 
-/// Linux-only mDNS advertise/discover without D-Bus or Avahi.
+/// Raw mDNS advertise/discover (Linux fallback and Android primary path).
 class LinuxMdnsBackend {
   LinuxMdnsBackend({
     required this.instanceId,
@@ -57,20 +60,31 @@ class LinuxMdnsBackend {
 
   MDNSServer? _server;
   Timer? _discoverTimer;
+  NetworkInterface? _networkInterface;
   String _displayName = '';
   String _roomId = kDefaultRoom;
   final Set<String> _seenPeerIds = {};
 
   static const _discoverInterval = Duration(seconds: 12);
-  static const _discoverTimeout = Duration(seconds: 3);
+  static const _discoverTimeout = Duration(seconds: 5);
 
   Future<void> start({
     required int port,
     required String displayName,
     required String roomId,
+    bool bindWifiInterface = false,
   }) async {
     _displayName = displayName;
     _roomId = roomId;
+    if (bindWifiInterface) {
+      _networkInterface = await LocalNetwork.preferredLanInterface();
+      if (kDebugMode && _networkInterface != null) {
+        debugPrint(
+          'mDNS binding to ${_networkInterface!.name} '
+          '(${_networkInterface!.addresses.map((a) => a.address).join(", ")})',
+        );
+      }
+    }
     await _startBroadcast(port);
     _discoverTimer?.cancel();
     _discoverTimer = Timer.periodic(
@@ -96,6 +110,10 @@ class LinuxMdnsBackend {
     final results = await MDNSClient.discover(
       kServiceType,
       timeout: _discoverTimeout,
+      networkInterface: _networkInterface,
+      reuseAddress: true,
+      reusePort: false,
+      logger: kDebugMode ? debugPrint : null,
     );
     final foundIds = <String>{};
     for (final entry in results) {
@@ -105,6 +123,13 @@ class LinuxMdnsBackend {
       final attrs = MDNSService.parseTXTRecords(entry.infoFields);
       final peerRoom = attrs['room'] ?? kDefaultRoom;
       if (peerRoom != _roomId) continue;
+
+      if (kDebugMode) {
+        debugPrint(
+          'mDNS peer ${peer.displayName} at '
+          '${peer.hostAddresses.join(",")}:${peer.port}',
+        );
+      }
 
       foundIds.add(peer.id);
       onPeerDiscovered(peer);
@@ -123,6 +148,7 @@ class LinuxMdnsBackend {
     _discoverTimer = null;
     await _server?.stop();
     _server = null;
+    _networkInterface = null;
     _seenPeerIds.clear();
   }
 
@@ -139,7 +165,15 @@ class LinuxMdnsBackend {
         'room': _roomId,
       }),
     );
-    _server = MDNSServer(MDNSServerConfig(zone: service));
+    _server = MDNSServer(
+      MDNSServerConfig(
+        zone: service,
+        networkInterface: _networkInterface,
+        reuseAddress: true,
+        reusePort: false,
+        logger: kDebugMode ? debugPrint : null,
+      ),
+    );
     await _server!.start();
   }
 }

@@ -27,4 +27,17 @@ void main() {
 
     expect(log.entries, isEmpty);
   });
+
+  test('connection log clipboard text is chronological', () {
+    final log = ConnectionLogRepository();
+    log.add('first');
+    log.add('second', revision: 2);
+
+    expect(
+      log.clipboardText,
+      matches(RegExp(r'\[.*\] first\n\[.*\] second \(revision 2\)')),
+    );
+    log.clear();
+    expect(log.clipboardText, isEmpty);
+  });
 }

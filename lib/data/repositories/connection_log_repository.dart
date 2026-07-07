@@ -9,6 +9,12 @@ class ConnectionLogRepository extends ChangeNotifier {
 
   List<ConnectionLogEntry> get entries => List.unmodifiable(_entries);
 
+  /// Full log as plain text, oldest entry first (for clipboard / paste elsewhere).
+  String get clipboardText {
+    if (_entries.isEmpty) return '';
+    return _entries.reversed.map((e) => e.clipboardLine).join('\n');
+  }
+
   void add(String message, {String? peerId, String? peerName, int? revision}) {
     _entries.insert(
       0,

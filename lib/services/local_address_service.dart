@@ -8,13 +8,25 @@ class LocalAddressService {
     await LocalNetwork.refreshActiveSubnets();
     try {
       final interfaces = await NetworkInterface.list(
-        includeLinkLocal: false,
+        includeLinkLocal: true,
         type: InternetAddressType.IPv4,
       );
       for (final iface in interfaces) {
+        if (LocalNetwork.isCellularInterfaceName(iface.name)) continue;
         for (final addr in iface.addresses) {
           if (addr.isLoopback) continue;
-          if (LocalNetwork.isOnActiveSubnet(addr)) return addr.address;
+          if (LocalNetwork.isLanReachable(addr)) return addr.address;
+        }
+      }
+      // Last resort: first private IPv4 on a non-cellular interface.
+      for (final iface in interfaces) {
+        if (LocalNetwork.isCellularInterfaceName(iface.name)) continue;
+        for (final addr in iface.addresses) {
+          if (addr.isLoopback) continue;
+          if (LocalNetwork.isPrivateLanAddress(addr) &&
+              !LocalNetwork.isCarrierGradeNat(addr)) {
+            return addr.address;
+          }
         }
       }
       return null;

@@ -107,9 +107,9 @@ class Peer {
 
     final name = service.attributes['name'] ?? service.name;
     final portFromTxt = int.tryParse(service.attributes['port'] ?? '');
-    final port = (portFromTxt != null && portFromTxt > 0)
-        ? portFromTxt
-        : (service.port > 0 ? service.port : null);
+    final port = service.port > 0
+        ? service.port
+        : ((portFromTxt != null && portFromTxt > 0) ? portFromTxt : null);
     if (port == null) return null;
 
     final hosts = service.resolvedHostAddresses;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/models/peer_presence.dart';
 import 'package:netpad/core/models/trusted_peer.dart';
@@ -49,6 +50,14 @@ class PeersPanel extends StatelessWidget {
             message: discovery.networkingPolicyNote!,
             icon: Icons.signal_cellular_alt,
             title: 'Local network required',
+          )
+        else if (discovery.serverPort == null)
+          _NetworkingInfoBanner(
+            message:
+                'This device is not listening for peers yet. Wait a few seconds '
+                'after joining Wi‑Fi, or tap Retry on a networking error banner.',
+            icon: Icons.cloud_off,
+            title: 'Not listening',
           ),
         if (discovery.networkingNote != null)
           _NetworkingInfoBanner(message: discovery.networkingNote!),
@@ -93,7 +102,8 @@ class PeersPanel extends StatelessWidget {
         if (nearby.isEmpty)
           _EmptyHint(
             discovery.canDiscoverPeers
-                ? 'No discovered peers — try Connect by IP or share this device’s address'
+                ? 'No discovered peers — Linux must be on the same Wi‑Fi subnet '
+                  'as This device (check the address above), or use Connect by IP'
                 : 'Peer discovery is paused until you join a local network',
           ),
         ...nearby.map(
@@ -182,9 +192,10 @@ class PeersPanel extends StatelessWidget {
       }
     } catch (e) {
       if (context.mounted) {
+        final message = e is StateError ? e.message : e.toString();
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Could not connect: $e')));
+        ).showSnackBar(SnackBar(content: Text('Could not connect: $message')));
       }
     }
   }
@@ -585,6 +596,10 @@ class _ConnectionLogSection extends StatelessWidget {
                 ),
               ),
               TextButton(
+                onPressed: entries.isEmpty ? null : () => _copyLog(context),
+                child: const Text('Copy'),
+              ),
+              TextButton(
                 onPressed: entries.isEmpty ? null : connectionLog.clear,
                 child: const Text('Clear'),
               ),
@@ -592,21 +607,44 @@ class _ConnectionLogSection extends StatelessWidget {
           ),
         ),
         if (entries.isEmpty) const _EmptyHint('No connection events yet'),
-        ...entries
-            .take(8)
-            .map(
-              (entry) => ListTile(
-                dense: true,
-                visualDensity: VisualDensity.compact,
-                title: Text(entry.message),
-                subtitle: Text(
-                  entry.revision == null
-                      ? entry.timeLabel
-                      : '${entry.timeLabel} • revision ${entry.revision}',
-                ),
-              ),
+        if (entries.isNotEmpty)
+          SelectionArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: entries
+                  .take(8)
+                  .map(
+                    (entry) => ListTile(
+                      dense: true,
+                      visualDensity: VisualDensity.compact,
+                      title: Text(entry.message),
+                      subtitle: Text(
+                        entry.revision == null
+                            ? entry.timeLabel
+                            : '${entry.timeLabel} • revision ${entry.revision}',
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
+          ),
       ],
     );
+  }
+
+  Future<void> _copyLog(BuildContext context) async {
+    final text = connectionLog.clipboardText;
+    if (text.isEmpty) return;
+    await Clipboard.setData(ClipboardData(text: text));
+    if (context.mounted) {
+      final count = connectionLog.entries.length;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            count == 1 ? 'Copied 1 log entry' : 'Copied $count log entries',
+          ),
+        ),
+      );
+    }
   }
 }

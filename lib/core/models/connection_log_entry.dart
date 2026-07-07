@@ -21,4 +21,10 @@ class ConnectionLogEntry {
       twoDigits(timestamp.second),
     ].join(':');
   }
+
+  /// One line for clipboard export (chronological blocks use [timeLabel]).
+  String get clipboardLine {
+    final suffix = revision == null ? '' : ' (revision $revision)';
+    return '[$timeLabel] $message$suffix';
+  }
 }

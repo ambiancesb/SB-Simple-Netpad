@@ -67,6 +67,7 @@ abstract final class LocalNetwork {
   static const prePairTimeout = Duration(seconds: 8);
 
   static List<Subnet> _activeSubnets = [];
+  static List<InternetAddress> _localPrivateAddresses = [];
 
   static List<Subnet> get activeSubnets => List.unmodifiable(_activeSubnets);
 
@@ -75,14 +76,125 @@ abstract final class LocalNetwork {
     _activeSubnets = List<Subnet>.from(subnets);
   }
 
+  /// Replaces cached private LAN addresses in unit tests.
+  static void setLocalPrivateAddressesForTesting(List<InternetAddress> addresses) {
+    _localPrivateAddresses = List<InternetAddress>.from(addresses);
+  }
+
   /// Clears cached subnets in unit tests.
   static void clearActiveSubnetsForTesting() {
     _activeSubnets = [];
+    _localPrivateAddresses = [];
   }
 
-  /// Rebuilds cached subnets from current non-cellular interfaces.
-  static Future<void> refreshActiveSubnets() async {
-    final subnets = <Subnet>{};
+  /// True for RFC1918 / CGNAT IPv4 and link-local or ULA IPv6.
+  static bool isPrivateLanAddress(InternetAddress addr) {
+    return switch (addr.type) {
+      InternetAddressType.IPv4 => _isPrivateIpv4(addr),
+      InternetAddressType.IPv6 =>
+        _isLinkLocalIpv6(addr) || _isUlaIpv6(addr),
+      _ => false,
+    };
+  }
+
+  /// True when [addr] is on an active subnet or the same private LAN segment.
+  static bool isLanReachable(InternetAddress addr) {
+    if (isOnActiveSubnet(addr)) return true;
+    if (isLikelySameLanSegment(addr)) return true;
+    // Interface cache can be empty on Android while mDNS already resolves peers.
+    if (_activeSubnets.isEmpty &&
+        _localPrivateAddresses.isEmpty &&
+        isPrivateLanAddress(addr) &&
+        !isCarrierGradeNat(addr)) {
+      return true;
+    }
+    return false;
+  }
+
+  /// True when [addr] shares a private LAN segment with a local interface.
+  ///
+  /// Uses /16 for `10.0.0.0/8` (common on large Wi‑Fi deployments with mDNS
+  /// reflectors) and /24 for other RFC1918 IPv4; /64 for private IPv6.
+  static bool isLikelySameLanSegment(InternetAddress addr) {
+    if (addr.isLoopback || !isPrivateLanAddress(addr) || isCarrierGradeNat(addr)) {
+      return false;
+    }
+    if (addr.type == InternetAddressType.IPv4) {
+      return _localPrivateAddresses.any(
+        (local) =>
+            local.type == InternetAddressType.IPv4 &&
+            _sameIpv4PrivateSegment(local, addr),
+      );
+    }
+    if (addr.type == InternetAddressType.IPv6) {
+      return _localPrivateAddresses.any(
+        (local) =>
+            local.type == InternetAddressType.IPv6 &&
+            _sameIpv6Prefix64(local, addr),
+      );
+    }
+    return false;
+  }
+
+  /// True when a Wi‑Fi, AP, or Ethernet interface has an IPv4 address.
+  static Future<bool> hasWifiOrEthernetIpv4() async {
+    try {
+      final interfaces = await NetworkInterface.list(
+        includeLoopback: false,
+        type: InternetAddressType.IPv4,
+      );
+      for (final iface in interfaces) {
+        if (isCellularInterfaceName(iface.name)) continue;
+        final name = iface.name.toLowerCase();
+        if (!_isLanInterfaceName(name)) continue;
+        if (iface.addresses.any((a) => !a.isLoopback)) return true;
+      }
+    } catch (_) {
+      return false;
+    }
+    return false;
+  }
+
+  /// Wi‑Fi/Ethernet interface with a private IPv4, for mDNS bind on mobile.
+  static Future<NetworkInterface?> preferredLanInterface() async {
+    try {
+      final interfaces = await NetworkInterface.list(
+        includeLinkLocal: false,
+        type: InternetAddressType.IPv4,
+      );
+      NetworkInterface? fallback;
+      for (final iface in interfaces) {
+        if (isCellularInterfaceName(iface.name)) continue;
+        final hasPrivate = iface.addresses.any(
+          (a) =>
+              !a.isLoopback &&
+              isPrivateLanAddress(a) &&
+              !isCarrierGradeNat(a),
+        );
+        if (!hasPrivate) continue;
+        if (_isLanInterfaceName(iface.name)) return iface;
+        fallback ??= iface;
+      }
+      return fallback;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static bool _isLanInterfaceName(String name) {
+    final n = name.toLowerCase();
+    return n.startsWith('wlan') ||
+        n.startsWith('wifi') ||
+        n.startsWith('swlan') ||
+        n.startsWith('ap') ||
+        n.startsWith('eth') ||
+        n.startsWith('en') ||
+        n.startsWith('bond') ||
+        n.contains('p2p');
+  }
+
+  /// True when a non-cellular interface currently has a private LAN address.
+  static Future<bool> hasNonCellularPrivateAddress() async {
     try {
       final interfaces = await NetworkInterface.list(
         includeLoopback: false,
@@ -91,6 +203,32 @@ abstract final class LocalNetwork {
       for (final iface in interfaces) {
         if (isCellularInterfaceName(iface.name)) continue;
         for (final addr in iface.addresses) {
+          if (isPrivateLanAddress(addr) && !isCarrierGradeNat(addr)) {
+            return true;
+          }
+        }
+      }
+    } catch (_) {
+      return false;
+    }
+    return false;
+  }
+
+  /// Rebuilds cached subnets from current non-cellular interfaces.
+  static Future<void> refreshActiveSubnets() async {
+    final subnets = <Subnet>{};
+    final privateAddresses = <InternetAddress>[];
+    try {
+      final interfaces = await NetworkInterface.list(
+        includeLoopback: false,
+        type: InternetAddressType.any,
+      );
+      for (final iface in interfaces) {
+        if (isCellularInterfaceName(iface.name)) continue;
+        for (final addr in iface.addresses) {
+          if (isPrivateLanAddress(addr) && !isCarrierGradeNat(addr)) {
+            privateAddresses.add(addr);
+          }
           final subnet = _subnetForInterfaceAddress(addr);
           if (subnet != null) subnets.add(subnet);
         }
@@ -99,20 +237,40 @@ abstract final class LocalNetwork {
       // Keep the previous cache when enumeration fails.
       return;
     }
+    _localPrivateAddresses = privateAddresses;
     _activeSubnets = subnets.toList();
   }
 
   /// Returns true when [addr] lies on a currently active local subnet.
   static bool isOnActiveSubnet(InternetAddress addr) {
-    if (addr.isLoopback || _activeSubnets.isEmpty) return false;
-    return _activeSubnets.any((subnet) => subnet.contains(addr));
+    if (addr.isLoopback) return false;
+    if (_activeSubnets.isNotEmpty) {
+      return _activeSubnets.any((subnet) => subnet.contains(addr));
+    }
+    // Subnet cache can lag on mobile (Wi‑Fi up before routes are enumerated).
+    if (!isPrivateLanAddress(addr) || isCarrierGradeNat(addr)) return false;
+    if (addr.type == InternetAddressType.IPv4) {
+      return _localPrivateAddresses.any(
+        (local) =>
+            local.type == InternetAddressType.IPv4 &&
+            _sameIpv4PrivateSegment(local, addr),
+      );
+    }
+    if (addr.type == InternetAddressType.IPv6) {
+      return _localPrivateAddresses.any(
+        (local) =>
+            local.type == InternetAddressType.IPv6 &&
+            _sameIpv6Prefix64(local, addr),
+      );
+    }
+    return false;
   }
 
-  /// Returns true when [host] is an IP literal on an active subnet.
-  static bool isOnActiveSubnetHost(String host) {
+  /// Returns true when [host] is an IP literal on the LAN.
+  static bool isLanReachableHost(String host) {
     final parsed = InternetAddress.tryParse(stripZoneId(host));
     if (parsed == null) return false;
-    return isOnActiveSubnet(parsed);
+    return isLanReachable(parsed);
   }
 
   /// Resolves [host] and returns true only when every address is on an active
@@ -120,12 +278,12 @@ abstract final class LocalNetwork {
   static Future<bool> resolvesToActiveSubnet(String host) async {
     await refreshActiveSubnets();
     final literal = InternetAddress.tryParse(stripZoneId(host));
-    if (literal != null) return isOnActiveSubnet(literal);
+    if (literal != null) return isLanReachable(literal);
 
     try {
       final results = await InternetAddress.lookup(host);
       if (results.isEmpty) return false;
-      return results.every(isOnActiveSubnet);
+      return results.every(isLanReachable);
     } catch (_) {
       return false;
     }
@@ -188,6 +346,7 @@ abstract final class LocalNetwork {
     final o = addr.rawAddress;
     if (o.length != 4) return 24;
     if (o[0] == 100 && o[1] >= 64 && o[1] <= 127) return 32;
+    if (o[0] == 10) return 16;
     return 24;
   }
 
@@ -209,5 +368,49 @@ abstract final class LocalNetwork {
   static bool _isUlaIpv6(InternetAddress addr) {
     final o = addr.rawAddress;
     return o.length == 16 && (o[0] & 0xfe) == 0xfc;
+  }
+
+  static bool _sameIpv4Prefix24(InternetAddress a, InternetAddress b) {
+    if (a.type != InternetAddressType.IPv4 || b.type != InternetAddressType.IPv4) {
+      return false;
+    }
+    final la = a.rawAddress;
+    final lb = b.rawAddress;
+    if (la.length != 4 || lb.length != 4) return false;
+    return la[0] == lb[0] && la[1] == lb[1] && la[2] == lb[2];
+  }
+
+  static int _ipv4PrivateSegmentPrefixBits(InternetAddress a, InternetAddress b) {
+    if (a.type != InternetAddressType.IPv4 || b.type != InternetAddressType.IPv4) {
+      return 24;
+    }
+    final la = a.rawAddress;
+    final lb = b.rawAddress;
+    if (la.length != 4 || lb.length != 4) return 24;
+    if (la[0] == 10 && lb[0] == 10) return 16;
+    return 24;
+  }
+
+  static bool _sameIpv4PrivateSegment(InternetAddress a, InternetAddress b) {
+    final bits = _ipv4PrivateSegmentPrefixBits(a, b);
+    if (bits == 16) {
+      final la = a.rawAddress;
+      final lb = b.rawAddress;
+      return la[0] == lb[0] && la[1] == lb[1];
+    }
+    return _sameIpv4Prefix24(a, b);
+  }
+
+  static bool _sameIpv6Prefix64(InternetAddress a, InternetAddress b) {
+    if (a.type != InternetAddressType.IPv6 || b.type != InternetAddressType.IPv6) {
+      return false;
+    }
+    final la = a.rawAddress;
+    final lb = b.rawAddress;
+    if (la.length != 16 || lb.length != 16) return false;
+    for (var i = 0; i < 8; i++) {
+      if (la[i] != lb[i]) return false;
+    }
+    return true;
   }
 }

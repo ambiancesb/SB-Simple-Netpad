@@ -20,7 +20,7 @@ class PeerHostResolver {
     if (peer.isManual) {
       final manualHost = peer.primaryHost;
       if (manualHost != null && manualHost.isNotEmpty) {
-        if (LocalNetwork.isOnActiveSubnetHost(manualHost)) {
+        if (LocalNetwork.isLanReachableHost(manualHost)) {
           return manualHost;
         }
         return _lookupHostname(manualHost);
@@ -50,7 +50,7 @@ class PeerHostResolver {
       final addr = InternetAddress.tryParse(host);
       if (addr == null) continue;
 
-      if (!LocalNetwork.isOnActiveSubnet(addr)) continue;
+      if (!LocalNetwork.isLanReachable(addr)) continue;
 
       if (addr.type == InternetAddressType.IPv4) {
         ipv4 = host;

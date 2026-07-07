@@ -6,6 +6,7 @@ import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
+import 'package:netpad/services/android_networking.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/local_server.dart';
@@ -67,6 +68,7 @@ Future<void> main() async {
     trustStore: trustStore,
   );
 
+  await AndroidNetworking.initialize(discovery);
   await discovery.start();
   pairing.startTrustedReconnectWatcher();
 

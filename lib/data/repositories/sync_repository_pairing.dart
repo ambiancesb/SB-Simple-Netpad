@@ -25,7 +25,7 @@ extension SyncRepositoryPairing on SyncRepository {
       );
     }
     final resolvedAddr = InternetAddress.tryParse(LocalNetwork.stripZoneId(host));
-    if (resolvedAddr == null || !LocalNetwork.isOnActiveSubnet(resolvedAddr)) {
+    if (resolvedAddr == null || !LocalNetwork.isLanReachable(resolvedAddr)) {
       throw StateError(
         'Refused to connect to ${peer.displayName}: '
         '$host is not on your active local subnet. '
@@ -69,6 +69,11 @@ extension SyncRepositoryPairing on SyncRepository {
     } catch (e) {
       httpClient.close(force: true);
       _discovery.markPeerDisconnected(peer.id);
+      if (kDebugMode) {
+        debugPrint(
+          'WSS connect failed to ${uri.toString()}: $e',
+        );
+      }
       if (pinMismatch) {
         throw StateError(
           'Certificate for ${peer.displayName} does not match the pinned one. '
@@ -276,16 +281,13 @@ extension SyncRepositoryPairing on SyncRepository {
       pinnedFingerprint: _trustStore.pinnedFingerprint(fromId),
       requestFingerprint: remoteCertFingerprint,
     )) {
-      _refuseInboundPairRequest(
-        connectionId: connectionId,
-        requestId: requestId,
-        fromId: fromId,
-        fromName: fromName,
-        reason: 'cert_mismatch',
-        logMessage:
-            'Refused auto-reconnect from $fromName: certificate mismatch',
+      _connectionLog.add(
+        'Trusted reconnect refused for $fromName: certificate mismatch '
+        '(pin may be stale — use Block then re-pair, or Revoke and connect manually)',
+        peerId: fromId,
+        peerName: fromName,
       );
-      return true;
+      return false;
     }
 
     if (!canAutoAcceptPairRequest(

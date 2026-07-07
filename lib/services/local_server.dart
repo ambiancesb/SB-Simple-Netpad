@@ -88,7 +88,7 @@ class LocalServer {
   bool _isLocalClient(HttpRequest request) {
     final remote = request.connectionInfo?.remoteAddress;
     if (remote == null) return true;
-    return LocalNetwork.isOnActiveSubnet(remote);
+    return LocalNetwork.isLanReachable(remote);
   }
 
   void _rejectInbound(HttpRequest request, String reason) {

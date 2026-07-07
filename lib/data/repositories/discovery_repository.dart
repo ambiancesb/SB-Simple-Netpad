@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/local_network.dart';
+import 'package:netpad/services/android_networking.dart';
 import 'package:netpad/services/linux_dbus_availability.dart';
 import 'package:netpad/services/linux_mdns_backend.dart';
 import 'package:netpad/services/local_server.dart';
@@ -37,8 +38,10 @@ class DiscoveryRepository extends ChangeNotifier {
   BonsoirDiscovery? _discovery;
   StreamSubscription<BonsoirDiscoveryEvent>? _discoverySub;
   Timer? _refreshTimer;
+  Timer? _retryDebounce;
   LinuxMdnsBackend? _linuxMdns;
   bool _useLinuxMdns = false;
+  String? _activeBonsoirSubnetSignature;
 
   final Map<String, Peer> _discovered = {};
   final Map<String, Peer> _connected = {};
@@ -77,12 +80,62 @@ class DiscoveryRepository extends ChangeNotifier {
     _networkMonitor.start(_onNetworkChanged);
     await _applyNetworkPolicy();
     notifyListeners();
+    if (Platform.isAndroid) {
+      unawaited(_retryAndroidNetworkingWhenReady());
+    }
+  }
+
+  /// Android often reports cellular before Wi‑Fi subnets are ready at cold start.
+  Future<void> _retryAndroidNetworkingWhenReady() async {
+    const waits = [2, 3, 5, 5, 5, 5, 5, 5];
+    for (final seconds in waits) {
+      await Future<void>.delayed(Duration(seconds: seconds));
+      if (!_canDiscoverPeers ||
+          _localServer.port == null ||
+          _networkingError != null) {
+        await _applyNetworkPolicy();
+        notifyListeners();
+      }
+      if (_canDiscoverPeers &&
+          _localServer.port != null &&
+          _networkingError == null) {
+        return;
+      }
+    }
   }
 
   /// Retries Bonsoir advertise/discover after a failure.
   Future<void> retryNetworking() async {
+    _retryDebounce?.cancel();
+    _retryDebounce = null;
     await _applyNetworkPolicy();
     notifyListeners();
+  }
+
+  /// Debounced retry for Android connectivity callbacks (avoids NSD churn).
+  void scheduleRetryNetworking() {
+    if (!Platform.isAndroid) {
+      unawaited(retryNetworking());
+      return;
+    }
+    _retryDebounce?.cancel();
+    _retryDebounce = Timer(const Duration(milliseconds: 1500), () {
+      unawaited(retryNetworking());
+    });
+  }
+
+  bool get _bonsoirIsActive =>
+      _broadcast != null && _discovery != null && _networkingError == null;
+
+  bool get _lanDiscoveryIsActive =>
+      (_bonsoirIsActive || _useLinuxMdns) && _networkingError == null;
+
+  static String _subnetSignature() {
+    final parts = LocalNetwork.activeSubnets
+        .map((s) => '${s.base.address}/${s.prefixLength}')
+        .toList()
+      ..sort();
+    return parts.join(',');
   }
 
   /// Starts, pauses, or restarts peer sync based on the active link type.
@@ -92,16 +145,46 @@ class DiscoveryRepository extends ChangeNotifier {
     _networkingPolicyNote = null;
 
     await LocalNetwork.refreshActiveSubnets();
+    final subnetSig = _subnetSignature();
     final linkStatus = await NetworkLinkService.evaluate();
+    final priorCanDiscover = _canDiscoverPeers;
     _canDiscoverPeers = linkStatus.canSync;
 
     if (!linkStatus.canSync) {
       _networkingPolicyNote = linkStatus.note;
+      _activeBonsoirSubnetSignature = null;
       await _pauseLanSync();
       return;
     }
 
-    final port = await _localServer.start();
+    int port;
+    try {
+      port = await _localServer.start();
+    } catch (e, st) {
+      _networkingError = 'Could not start listener: $e';
+      if (kDebugMode) {
+        debugPrint('Local server bind failed: $e\n$st');
+      }
+      return;
+    }
+
+    if (_lanDiscoveryIsActive &&
+        priorCanDiscover &&
+        subnetSig == _activeBonsoirSubnetSignature) {
+      _ensureRefreshTimer();
+      return;
+    }
+
+    if (Platform.isAndroid) {
+      await AndroidNetworking.acquireMulticastLock();
+      final started = await _startLinuxMdns(port, bindWifiInterface: true);
+      if (started) {
+        _activeBonsoirSubnetSignature = subnetSig;
+        _ensureRefreshTimer();
+        return;
+      }
+    }
+
     await _stopBonsoir();
     await _stopLinuxMdns();
 
@@ -144,6 +227,9 @@ class DiscoveryRepository extends ChangeNotifier {
 
     _useLinuxMdns = false;
     _networkingError = errors.isEmpty ? null : errors.join('\n');
+    if (errors.isEmpty) {
+      _activeBonsoirSubnetSignature = subnetSig;
+    }
     _ensureRefreshTimer();
   }
 
@@ -164,7 +250,10 @@ class DiscoveryRepository extends ChangeNotifier {
     );
   }
 
-  Future<bool> _startLinuxMdns(int port) async {
+  Future<bool> _startLinuxMdns(
+    int port, {
+    bool bindWifiInterface = false,
+  }) async {
     await _stopBonsoir();
     await _stopLinuxMdns();
     try {
@@ -177,12 +266,19 @@ class DiscoveryRepository extends ChangeNotifier {
         port: port,
         displayName: _displayName,
         roomId: _roomId,
+        bindWifiInterface: bindWifiInterface,
       );
       _useLinuxMdns = true;
-      _networkingNote =
-          'Peer discovery uses direct mDNS (D-Bus/Avahi unavailable on this system).';
+      if (!bindWifiInterface) {
+        _networkingNote =
+            'Peer discovery uses direct mDNS (D-Bus/Avahi unavailable on this system).';
+      }
       if (kDebugMode) {
-        debugPrint('Using direct mDNS backend on Linux');
+        debugPrint(
+          bindWifiInterface
+              ? 'Using direct mDNS backend on Android'
+              : 'Using direct mDNS backend on Linux',
+        );
       }
       return true;
     } catch (e, st) {
@@ -226,6 +322,10 @@ class DiscoveryRepository extends ChangeNotifier {
       debugPrint('Network change detected — restarting discovery/broadcast');
     }
     _discovered.removeWhere((id, _) => !_connected.containsKey(id));
+    if (Platform.isAndroid) {
+      scheduleRetryNetworking();
+      return;
+    }
     await _applyNetworkPolicy();
     notifyListeners();
   }
@@ -316,7 +416,10 @@ class DiscoveryRepository extends ChangeNotifier {
   }
 
   Future<void> _startDiscovery() async {
-    _discovery = BonsoirDiscovery(type: kServiceType, printLogs: kDebugMode);
+    _discovery = BonsoirDiscovery(
+      type: kServiceType,
+      printLogs: kDebugMode || Platform.isAndroid,
+    );
     await _discovery!.initialize();
     _discoverySub = _discovery!.eventStream!.listen(_onDiscoveryEvent);
     await _discovery!.start();
@@ -372,7 +475,7 @@ class DiscoveryRepository extends ChangeNotifier {
     if (peer.hostAddresses.isEmpty) return true;
     return peer.hostAddresses.any((raw) {
       final addr = InternetAddress.tryParse(LocalNetwork.stripZoneId(raw));
-      return addr != null && LocalNetwork.isOnActiveSubnet(addr);
+      return addr != null && LocalNetwork.isLanReachable(addr);
     });
   }
 
@@ -410,6 +513,16 @@ class DiscoveryRepository extends ChangeNotifier {
   void _upsertPeer(BonsoirService service) {
     final peer = Peer.fromBonsoirService(service);
     if (peer == null || peer.id == instanceId) return;
+
+    if (kDebugMode && peer.hostAddresses.isNotEmpty) {
+      final visible = _peerIsOnActiveSubnet(peer);
+      if (!visible) {
+        debugPrint(
+          'Filtered discovered peer ${peer.displayName} '
+          '(${peer.hostAddresses.join(", ")}) — not on active LAN segment',
+        );
+      }
+    }
 
     // Only surface peers advertising the same room. Peers without a room
     // attribute are treated as the default room for backward compatibility.
@@ -554,6 +667,7 @@ class DiscoveryRepository extends ChangeNotifier {
 
   Future<void> shutdown() async {
     _refreshTimer?.cancel();
+    _retryDebounce?.cancel();
     _networkMonitor.stop();
     await _stopBonsoir();
     await _stopLinuxMdns();

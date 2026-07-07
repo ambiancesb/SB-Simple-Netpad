@@ -1,8 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/services/local_address_service.dart';
-
-/// Shows this device's LAN address and listening port for manual sharing.
 class ThisDeviceBanner extends StatefulWidget {
   const ThisDeviceBanner({super.key, required this.port});
 
@@ -19,6 +19,14 @@ class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
   void initState() {
     super.initState();
     _load();
+  }
+
+  @override
+  void didUpdateWidget(covariant ThisDeviceBanner oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.port != widget.port) {
+      unawaited(_load());
+    }
   }
 
   Future<void> _load() async {

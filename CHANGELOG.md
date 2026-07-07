@@ -22,6 +22,8 @@ and this project currently tracks versions informally.
 ### Changed
 - **Threat model** — README documents enforced local-network, Wi‑Fi-first, Netpad-only, and trusted-peer auto-sync policies.
 - Wire protocol bumped to **v3** (`kProtocolVersion`); all messages encode `v: 3`. `pair_complete` includes `autoSyncToken`.
+- **Android LAN discovery** — Wi‑Fi is no longer mistaken for cellular-only when mobile data is also active; `ConnectivityManager` confirms Wi‑Fi/Ethernet before pausing sync; subnet checks fall back when interface enumeration lags; Android 13+ requests `NEARBY_WIFI_DEVICES`; multicast lock and connectivity callbacks restart discovery promptly after cold start.
+- **10.x LAN segment matching** — Devices on the same `10.x.x.x/16` (common on large Wi‑Fi with mDNS reflectors) can connect even when assigned different `/24` subnets; home `192.168.x.x` networks still require the same `/24`.
 
 ### Removed
 - Silent "revision conflict resolved" snackbar — live conflicts now always prompt on the deterministic device.
