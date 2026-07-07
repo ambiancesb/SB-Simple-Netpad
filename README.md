@@ -118,6 +118,8 @@ Phases 1–5 are complete. See [ROADMAP.md](ROADMAP.md) for Phase 6 and beyond.
 3. On the other device, compare the verification code and accept the **Connection request** dialog.
 4. After acceptance, both sides exchange a **document catalog** (every note’s id, title, and order), per-note snapshots, and then stream debounced updates.
 
+**Trusted reconnect (Phase 9):** the first pair still requires **Accept**. Later reconnects to that device can proceed automatically when the stored auto-sync token and certificate pin match. Manage trusted devices in the peers drawer (**Trusted devices** section): toggle auto-sync per peer or **Revoke** to require Accept again (keeps the cert pin). **Block** remains stronger — it unpins and refuses all future pairing.
+
 Rejected requests never receive document data.
 
 ## Sync behavior
@@ -198,7 +200,7 @@ Netpad enforces three rules at the transport layer:
 | Assumption | Implication |
 |------------|-------------|
 | Same local network | Discovery (mDNS) and sync require devices on the same subnet or otherwise reachable on a private LAN. Cross-internet sync is not supported unless you provide a private overlay (for example Tailscale) whose addresses fall in the allowed ranges. |
-| Mutual pairing | A device must tap **Accept** before any note data is exchanged. Unpaired connections cannot read or write notes. |
+| Mutual pairing | The **first** connection to a new peer requires tapping **Accept**. Trusted peers with a valid auto-sync token reconnect without the dialog. Unpaired connections cannot read or write notes. |
 | Untrusted LAN peers | Other devices on the network might try to pair or interfere. Controls below apply to **peers on your LAN**, not anonymous internet hosts. |
 
 ### What we protect against
@@ -208,7 +210,9 @@ Netpad enforces three rules at the transport layer:
 - **Unpaired access** — Rejected pairing requests never receive document data; post-pair messages require a session token.
 - **Non-Netpad clients** — Inbound WebSockets that never send a valid `pair_request` are closed automatically.
 - **Impersonation after first trust** — TLS (`wss://`) plus certificate pinning (TOFU): if a peer’s certificate fingerprint changes, the connection is refused.
-- **Blocked devices** — Blocklist persists; blocked peers are disconnected and cannot reconnect until unblocked.
+- **Blocked devices** — Blocklist persists; blocked peers are disconnected and cannot reconnect until unblocked. Revoking auto-sync only forgets the reconnect token; the cert pin remains.
+- **Trusted reconnect abuse** — Auto-sync requires a token issued at pair time plus a matching cert pin. Wrong token falls back to manual Accept; cert mismatch on a trusted reconnect is refused.
+- **Spoofed disconnect** — `peer_disconnect` is honored only when the payload names the sender’s own peer id (multi-peer hub hardening).
 - **Protocol mismatch** — Pairing requires matching protocol version; mismatched builds refuse the connection.
 - **Stale peers** — Heartbeat disconnects unresponsive links automatically.
 

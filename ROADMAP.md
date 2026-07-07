@@ -12,7 +12,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 | **6** | Done | Conflict UI, protocol version negotiation, heartbeat |
 | **7** | Done | UX polish: find/replace, settings, theme, share sheet |
 | **8** | Done | Code health, sync/relay tests, per-note sync toggle |
-| **9** | Planned | Trusted peers and auto-sync tokens (reconnect without re-pairing) |
+| **9** | Done | Trusted peers and auto-sync tokens (reconnect without re-pairing) |
 
 ---
 
@@ -117,7 +117,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 
 ---
 
-## Phase 9 — Trusted peers and auto-sync
+## Phase 9 — Trusted peers and auto-sync — Done
 
 **Goal:** Reconnect and sync with devices you have already paired, without tapping **Accept** every time — while staying LAN-only, peer-to-peer, and revocable. See [Threat model](README.md#threat-model) in the README.
 
@@ -137,13 +137,13 @@ Today, each new TCP link requires manual pairing even when the peer’s certific
 
 **Fallback:** wrong or missing token, cert mismatch, or blocked peer → normal Accept dialog or refusal (no weaker path).
 
-- [ ] **TrustStore: trusted peers** — Persist `peerId → { displayName, autoSyncToken, pairedAt }` in [lib/data/repositories/trust_store.dart](lib/data/repositories/trust_store.dart). Blocklist still wins over auto-sync.
-- [ ] **Issue token on Accept** — Generate a random token (32+ bytes) in [lib/data/repositories/sync_repository.dart](lib/data/repositories/sync_repository.dart) when pairing completes; store on both sides via `pair_complete` (protocol v3 bump).
-- [ ] **Auto-accept reconnect** — Inbound and outbound paths: if stored token + pin validate, skip the pairing dialog and complete pairing automatically. Optional: rotate token on each successful pair.
-- [ ] **Background reconnect** — When a trusted peer appears in discovery (or after network change), initiate connect without user action; show a lightweight “Reconnected to …” notice in the peers drawer / connection log.
-- [ ] **Trusted devices UI** — Settings or peers drawer: list trusted peers, per-peer auto-sync toggle, **Revoke** (forget token; require Accept again without necessarily unpinning), distinct from **Block**.
-- [ ] **`peer_disconnect` hardening** — Only honor disconnect when payload `peerId` matches the sender (closes LAN peer-abuse gap on multi-peer hubs).
-- [ ] **Automated verification** — `test/phase9_test.dart`: token persistence, auto-accept when token + pin match, fallback to manual pair when token wrong or revoked, blocklist overrides auto-sync.
+- [x] **TrustStore: trusted peers** — Persist `peerId → { displayName, autoSyncToken, pairedAt }` in [lib/data/repositories/trust_store.dart](lib/data/repositories/trust_store.dart). Blocklist still wins over auto-sync.
+- [x] **Issue token on Accept** — Generate a random token (32+ bytes) in [lib/data/repositories/sync_repository.dart](lib/data/repositories/sync_repository.dart) when pairing completes; store on both sides via `pair_complete` (protocol v3 bump).
+- [x] **Auto-accept reconnect** — Inbound and outbound paths: if stored token + pin validate, skip the pairing dialog and complete pairing automatically. Optional: rotate token on each successful pair.
+- [x] **Background reconnect** — When a trusted peer appears in discovery (or after network change), initiate connect without user action; show a lightweight “Reconnected to …” notice in the peers drawer / connection log.
+- [x] **Trusted devices UI** — Settings or peers drawer: list trusted peers, per-peer auto-sync toggle, **Revoke** (forget token; require Accept again without necessarily unpinning), distinct from **Block**.
+- [x] **`peer_disconnect` hardening** — Only honor disconnect when payload `peerId` matches the sender (closes LAN peer-abuse gap on multi-peer hubs).
+- [x] **Automated verification** — `test/phase9_test.dart`: token persistence, auto-accept when token + pin match, fallback to manual pair when token wrong or revoked, blocklist overrides auto-sync.
 
 ### Deferred (post–Phase 9)
 

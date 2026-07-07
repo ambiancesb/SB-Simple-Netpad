@@ -2,7 +2,7 @@
 const String kServiceType = '_sbnetpad._tcp';
 
 /// Protocol version sent in messages (bump when wire format changes).
-const int kProtocolVersion = 2;
+const int kProtocolVersion = 3;
 
 /// Debounce delay before broadcasting local edits.
 const Duration kDocDebounce = Duration(milliseconds: 300);
@@ -15,6 +15,9 @@ const Duration kHeartbeatInterval = Duration(seconds: 15);
 
 /// Disconnect a peer when no pong arrives within this window.
 const Duration kHeartbeatTimeout = Duration(seconds: 45);
+
+/// Debounce before background auto-reconnect attempts to trusted peers.
+const Duration kTrustedReconnectDebounce = Duration(seconds: 2);
 
 /// Monospace font bundled in assets.
 const String kEditorFontFamily = 'JetBrainsMono';

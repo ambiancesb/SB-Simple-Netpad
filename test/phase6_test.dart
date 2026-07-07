@@ -13,9 +13,9 @@ Future<NoteStorageService> _storage() async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Protocol v2', () {
-    test('kProtocolVersion is 2', () {
-      expect(kProtocolVersion, 2);
+  group('Protocol v3', () {
+    test('kProtocolVersion is 3', () {
+      expect(kProtocolVersion, 3);
     });
 
     test('messages encode wire version from constant', () {

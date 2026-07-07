@@ -25,6 +25,15 @@ class PeerConnection {
   /// successful pairing (TOFU).
   String? pendingCertFingerprint;
 
+  /// Sender cert fingerprint from an inbound [pair_request] (self-reported).
+  String? remoteCertFingerprint;
+
+  /// Auto-sync token from an inbound [pair_request] (for reconnect validation).
+  String? pendingAutoSyncToken;
+
+  /// Set when this outbound dial included a stored auto-sync token.
+  bool trustedOutboundReconnect = false;
+
   DateTime? lastPongAt;
   Timer? heartbeatTimer;
 }

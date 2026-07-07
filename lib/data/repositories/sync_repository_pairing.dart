@@ -81,12 +81,21 @@ extension SyncRepositoryPairing on SyncRepository {
     final connectionId = 'out_${peer.id}';
     _pendingOutboundRequestId[connectionId] = requestId;
 
+    final autoSyncToken = _trustStore.canAutoSync(peer.id)
+        ? _trustStore.autoSyncToken(peer.id)
+        : null;
+    final trustedReconnect = shouldSendAutoSyncToken(
+      canAutoSync: _trustStore.canAutoSync(peer.id),
+      autoSyncToken: autoSyncToken,
+    );
+
     final link = _linksByPeerId[peer.id] ??
         PeerConnection(peerId: peer.id, displayName: peer.displayName);
     link.outboundConnectionId = connectionId;
     link.outboundSocket = socket;
     link.outboundHttpClient = httpClient;
     link.pendingCertFingerprint = capturedFingerprint;
+    link.trustedOutboundReconnect = trustedReconnect;
     _linksByPeerId[peer.id] = link;
     _connectionToPeerId[connectionId] = peer.id;
 
@@ -106,12 +115,13 @@ extension SyncRepositoryPairing on SyncRepository {
       connectionId,
       ProtocolMessage(
         type: MessageTypes.pairRequest,
-        payload: {
-          'requestId': requestId,
-          'fromId': instanceId,
-          'fromName': _displayName,
-          'protocolVersion': kProtocolVersion,
-        },
+        payload: buildPairRequestPayload(
+          requestId: requestId,
+          fromId: instanceId,
+          fromName: _displayName,
+          certFingerprint: _tlsIdentity.fingerprint,
+          autoSyncToken: autoSyncToken,
+        ),
       ),
     );
     _startPairingTimeout(connectionId, peer.id, peer.displayName);
@@ -120,7 +130,9 @@ extension SyncRepositoryPairing on SyncRepository {
         ? null
         : PairingVerificationCode.generate(instanceId, peer.id);
     _connectionLog.add(
-      verificationCode == null
+      trustedReconnect
+          ? 'Reconnecting to ${peer.displayName} (trusted)'
+          : verificationCode == null
           ? 'Pairing request sent to ${peer.displayName}'
           : 'Pairing request sent to ${peer.displayName} (code $verificationCode)',
       peerId: peer.id,
@@ -136,65 +148,167 @@ extension SyncRepositoryPairing on SyncRepository {
     required bool accepted,
   }) {
     if (accepted) {
-      final token = const Uuid().v4();
-      final link = _linksByPeerId[fromId] ??
-          PeerConnection(peerId: fromId, displayName: fromName);
-      link.inboundConnectionId = connectionId;
-      link.sessionToken = token;
-      link.authenticated = true;
-      _linksByPeerId[fromId] = link;
-      _connectionToPeerId[connectionId] = fromId;
-      _cancelPairingTimeoutForPeer(fromId);
-
-      _sendOnConnection(
-        connectionId,
-        ProtocolMessage(
-          type: MessageTypes.pairResponse,
-          payload: {
-            'requestId': requestId,
-            'accepted': true,
-            'protocolVersion': kProtocolVersion,
-          },
-        ),
+      _completePairingAsAcceptor(
+        connectionId: connectionId,
+        requestId: requestId,
+        fromId: fromId,
+        fromName: fromName,
+        autoAccepted: false,
       );
-      _sendOnConnection(
-        connectionId,
-        ProtocolMessage(
-          type: MessageTypes.pairComplete,
-          payload: {'sessionToken': token},
-        ),
-      );
-
-      _discovery.markPeerConnected(
-        Peer(
-          id: fromId,
-          displayName: fromName,
-          port: _discovery.serverPort ?? 0,
-          connectionState: PeerConnectionState.connected,
-        ),
-      );
-      _connectionLog.add(
-        'Accepted pairing with $fromName',
-        peerId: fromId,
-        peerName: fromName,
-      );
-      _sendDocSnapshot(connectionId);
-      _startHeartbeat(fromId);
     } else {
-      _sendOnConnection(
-        connectionId,
-        ProtocolMessage(
-          type: MessageTypes.pairResponse,
-          payload: {'requestId': requestId, 'accepted': false},
-        ),
+      _refuseInboundPairRequest(
+        connectionId: connectionId,
+        requestId: requestId,
+        fromId: fromId,
+        fromName: fromName,
+        logMessage: 'Rejected pairing with $fromName',
       );
-      _connectionLog.add(
-        'Rejected pairing with $fromName',
-        peerId: fromId,
-        peerName: fromName,
-      );
-      unawaited(_server.closeConnection(connectionId));
     }
+  }
+
+  void _completePairingAsAcceptor({
+    required String connectionId,
+    required String requestId,
+    required String fromId,
+    required String fromName,
+    required bool autoAccepted,
+  }) {
+    final token = const Uuid().v4();
+    final autoSyncToken = generateAutoSyncToken();
+    final link = _linksByPeerId[fromId] ??
+        PeerConnection(peerId: fromId, displayName: fromName);
+    link.inboundConnectionId = connectionId;
+    link.sessionToken = token;
+    link.authenticated = true;
+    _linksByPeerId[fromId] = link;
+    _connectionToPeerId[connectionId] = fromId;
+    _cancelPairingTimeoutForPeer(fromId);
+
+    _sendOnConnection(
+      connectionId,
+      ProtocolMessage(
+        type: MessageTypes.pairResponse,
+        payload: {
+          'requestId': requestId,
+          'accepted': true,
+          'protocolVersion': kProtocolVersion,
+        },
+      ),
+    );
+    _sendOnConnection(
+      connectionId,
+      ProtocolMessage(
+        type: MessageTypes.pairComplete,
+        payload: {
+          'sessionToken': token,
+          'autoSyncToken': autoSyncToken,
+        },
+      ),
+    );
+
+    _pinRemotePeerIfNeeded(fromId, fromName, link.remoteCertFingerprint);
+    unawaited(
+      _trustStore.setTrustedPeer(
+        peerId: fromId,
+        displayName: fromName,
+        autoSyncToken: autoSyncToken,
+      ),
+    );
+
+    _discovery.markPeerConnected(
+      Peer(
+        id: fromId,
+        displayName: fromName,
+        port: _discovery.serverPort ?? 0,
+        connectionState: PeerConnectionState.connected,
+      ),
+    );
+    _connectionLog.add(
+      autoAccepted
+          ? 'Auto-reconnected to $fromName'
+          : 'Accepted pairing with $fromName',
+      peerId: fromId,
+      peerName: fromName,
+    );
+    _sendDocSnapshot(connectionId);
+    _startHeartbeat(fromId);
+    notifyPeersChanged();
+  }
+
+  void _refuseInboundPairRequest({
+    required String connectionId,
+    required String requestId,
+    required String fromId,
+    required String fromName,
+    required String logMessage,
+    String? reason,
+  }) {
+    _sendOnConnection(
+      connectionId,
+      ProtocolMessage(
+        type: MessageTypes.pairResponse,
+        payload: {
+          'requestId': requestId,
+          'accepted': false,
+          if (reason != null) 'reason': reason,
+        },
+      ),
+    );
+    _connectionLog.add(
+      logMessage,
+      peerId: fromId,
+      peerName: fromName,
+    );
+    unawaited(_server.closeConnection(connectionId));
+  }
+
+  bool _tryAutoAcceptPairRequest({
+    required String connectionId,
+    required String requestId,
+    required String fromId,
+    required String fromName,
+    required int peerProtocol,
+    required String? remoteCertFingerprint,
+    required String? pendingAutoSyncToken,
+  }) {
+    if (shouldRefuseTrustedReconnect(
+      requestToken: pendingAutoSyncToken,
+      pinnedFingerprint: _trustStore.pinnedFingerprint(fromId),
+      requestFingerprint: remoteCertFingerprint,
+    )) {
+      _refuseInboundPairRequest(
+        connectionId: connectionId,
+        requestId: requestId,
+        fromId: fromId,
+        fromName: fromName,
+        reason: 'cert_mismatch',
+        logMessage:
+            'Refused auto-reconnect from $fromName: certificate mismatch',
+      );
+      return true;
+    }
+
+    if (!canAutoAcceptPairRequest(
+      isBlocked: _trustStore.isBlocked(fromId),
+      peerProtocol: peerProtocol,
+      alreadyConnected: _linksByPeerId[fromId]?.authenticated == true,
+      canAutoSync: _trustStore.canAutoSync(fromId),
+      storedToken: _trustStore.autoSyncToken(fromId),
+      requestToken: pendingAutoSyncToken,
+      pinnedFingerprint: _trustStore.pinnedFingerprint(fromId),
+      requestFingerprint: remoteCertFingerprint,
+    )) {
+      return false;
+    }
+
+    _completePairingAsAcceptor(
+      connectionId: connectionId,
+      requestId: requestId,
+      fromId: fromId,
+      fromName: fromName,
+      autoAccepted: true,
+    );
+    return true;
   }
 
   void _startPairingTimeout(
@@ -355,6 +469,24 @@ extension SyncRepositoryPairing on SyncRepository {
           );
           _abandonOutbound(fromId);
         }
+        final inboundLink = _linksByPeerId[fromId] ??
+            PeerConnection(peerId: fromId, displayName: fromName);
+        inboundLink.remoteCertFingerprint =
+            message.payload['certFingerprint'] as String?;
+        inboundLink.pendingAutoSyncToken =
+            message.payload['autoSyncToken'] as String?;
+        _linksByPeerId[fromId] = inboundLink;
+        if (_tryAutoAcceptPairRequest(
+          connectionId: connectionId,
+          requestId: requestId,
+          fromId: fromId,
+          fromName: fromName,
+          peerProtocol: peerProtocol,
+          remoteCertFingerprint: inboundLink.remoteCertFingerprint,
+          pendingAutoSyncToken: inboundLink.pendingAutoSyncToken,
+        )) {
+          return;
+        }
         onIncomingPairRequest?.call(fromId, fromName, requestId, connectionId);
       case MessageTypes.pairResponse:
         final accepted = message.payload['accepted'] as bool? ?? false;
@@ -395,6 +527,7 @@ extension SyncRepositoryPairing on SyncRepository {
         _pendingOutboundRequestId.remove(connectionId);
       case MessageTypes.pairComplete:
         final token = message.payload['sessionToken'] as String? ?? '';
+        final autoSyncToken = message.payload['autoSyncToken'] as String? ?? '';
         final peerId = _connectionToPeerId[connectionId];
         if (peerId == null || token.isEmpty) return;
         _cancelPairingTimeout(connectionId);
@@ -420,23 +553,47 @@ extension SyncRepositoryPairing on SyncRepository {
         }
         // TOFU: pin the server cert we saw when we initiated this connection.
         if (isOutbound && link.pendingCertFingerprint != null) {
-          final fingerprint = link.pendingCertFingerprint!;
-          final isNew = !_trustStore.hasPin(peerId);
-          unawaited(_trustStore.pin(peerId, fingerprint));
-          _connectionLog.add(
-            '${isNew ? 'Pinned' : 'Verified'} ${link.displayName} security code '
-            '${shortFingerprint(fingerprint)}',
-            peerId: peerId,
-            peerName: link.displayName,
+          _pinRemotePeerIfNeeded(
+            peerId,
+            link.displayName,
+            link.pendingCertFingerprint,
           );
         }
+        if (autoSyncToken.isNotEmpty) {
+          unawaited(
+            _trustStore.setTrustedPeer(
+              peerId: peerId,
+              displayName: link.displayName,
+              autoSyncToken: autoSyncToken,
+            ),
+          );
+        }
+        final completeLabel = isOutbound && link.trustedOutboundReconnect
+            ? 'Auto-reconnected to ${link.displayName}'
+            : 'Pairing complete with ${link.displayName}';
         _connectionLog.add(
-          'Pairing complete with ${link.displayName}',
+          completeLabel,
           peerId: peerId,
           peerName: link.displayName,
         );
         _sendDocSnapshot(connectionId);
         _startHeartbeat(peerId);
     }
+  }
+
+  void _pinRemotePeerIfNeeded(
+    String peerId,
+    String peerName,
+    String? fingerprint,
+  ) {
+    if (fingerprint == null || fingerprint.isEmpty) return;
+    final isNew = !_trustStore.hasPin(peerId);
+    unawaited(_trustStore.pin(peerId, fingerprint));
+    _connectionLog.add(
+      '${isNew ? 'Pinned' : 'Verified'} $peerName security code '
+      '${shortFingerprint(fingerprint)}',
+      peerId: peerId,
+      peerName: peerName,
+    );
   }
 }

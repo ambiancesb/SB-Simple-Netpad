@@ -8,18 +8,20 @@ and this project currently tracks versions informally.
 ## [Unreleased]
 
 ### Added
+- **Trusted peers and auto-sync (Phase 9)** — After the first manual **Accept**, both devices store a persistent auto-sync token alongside the cert pin. Reconnects skip the pairing dialog when token and fingerprint match; trusted peers auto-reconnect when discovered on the LAN. **Trusted devices** section in the peers drawer: per-peer auto-sync toggle and **Revoke** (distinct from **Block**). Protocol bumped to **v3**.
+- **Phase 9 test suite** — [test/phase9_test.dart](test/phase9_test.dart) covers trusted-peer persistence, auto-accept validation, `peer_disconnect` sender checks, and pair-request payload rules.
 - **Local-network enforcement** — Inbound and outbound peer connections must fall on this device's active subnet(s), derived from live interface addresses and netmasks; peers on other private subnets or public IPs are refused. Discovered peers outside the active subnet are hidden.
 - **Wi‑Fi-first sync policy** — On cellular-only devices, peer sync is fully paused (no mDNS, no listen port, no scans). A banner explains that Wi‑Fi or a personal hotspot is required.
 - **Netpad-only inbound guard** — Inbound WebSockets that never send a valid `pair_request` are closed after 8 seconds.
 - **Per-note sync toggle** — Each note in the Notes drawer has a switch to mark it synced or local-only. Local-only notes stay on device: excluded from peer catalog/snapshots, edits are not broadcast, and inbound peer updates for that note are ignored. Visual “Local only” hint with a muted cloud-off icon.
 - **Phase 8 test suite** — [test/phase8_test.dart](test/phase8_test.dart) covers sync flags, outbound/inbound guards, multi-peer relay targets, and reconnect divergence convergence.
 - **Live edit conflict dialog** — When two peers edit the same note at the same revision, one device prompts with text previews to keep yours or use theirs (replaces silent tie-break snackbar).
-- **Protocol version negotiation** — Pair handshake carries `protocolVersion`; peers must match exactly (`v2`). Older builds are refused with a connection-log entry.
+- **Protocol version negotiation** — Pair handshake carries `protocolVersion`; peers must match exactly (`v3`). Older builds are refused with a connection-log entry.
 - **Heartbeat** — `ping`/`pong` on authenticated links every 15s; peers that stop responding for 45s are disconnected automatically.
 
 ### Changed
-- **Threat model** — README documents enforced local-network, Wi‑Fi-first, and Netpad-only policies.
-- Wire protocol bumped to **v2** (`kProtocolVersion`); all messages encode `v: 2`.
+- **Threat model** — README documents enforced local-network, Wi‑Fi-first, Netpad-only, and trusted-peer auto-sync policies.
+- Wire protocol bumped to **v3** (`kProtocolVersion`); all messages encode `v: 3`. `pair_complete` includes `autoSyncToken`.
 
 ### Removed
 - Silent "revision conflict resolved" snackbar — live conflicts now always prompt on the deterministic device.

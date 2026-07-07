@@ -2,7 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:netpad/core/auto_sync_token.dart';
+import 'package:netpad/core/auto_sync_validation.dart';
 import 'package:netpad/core/constants.dart';
+import 'package:netpad/core/peer_disconnect_validation.dart';
+import 'package:netpad/core/pair_request_payload.dart';
 import 'package:netpad/core/local_network.dart';
 import 'package:netpad/core/models/divergence_choice.dart';
 import 'package:netpad/core/pairing_negotiation.dart';
@@ -37,12 +41,14 @@ class SyncRepository extends ChangeNotifier {
     required WorkspaceRepository workspace,
     required ConnectionLogRepository connectionLog,
     required TrustStore trustStore,
+    required TlsIdentity tlsIdentity,
   }) : _displayName = displayName,
        _server = localServer,
        _discovery = discovery,
        _workspace = workspace,
        _connectionLog = connectionLog,
-       _trustStore = trustStore {
+       _trustStore = trustStore,
+       _tlsIdentity = tlsIdentity {
     _server.onMessage = _onInboundMessage;
     _server.onConnectionClosed = _onInboundClosed;
     _server.onConnectionOpened = _onInboundOpened;
@@ -57,6 +63,7 @@ class SyncRepository extends ChangeNotifier {
   final WorkspaceRepository _workspace;
   final ConnectionLogRepository _connectionLog;
   final TrustStore _trustStore;
+  final TlsIdentity _tlsIdentity;
 
   bool _divergencePromptActive = false;
   bool _liveConflictPromptActive = false;
@@ -108,6 +115,14 @@ class SyncRepository extends ChangeNotifier {
 
   void updateDisplayName(String name) {
     _displayName = name;
+  }
+
+  /// True when [peerId] is connected or a pairing handshake is in progress.
+  bool isPeerLinkBusy(String peerId) {
+    final link = _linksByPeerId[peerId];
+    if (link == null) return false;
+    if (link.authenticated) return true;
+    return link.outboundSocket != null || link.inboundConnectionId != null;
   }
 
   /// Notifies listeners; used by [SyncRepository] part modules.
@@ -281,10 +296,22 @@ class SyncRepository extends ChangeNotifier {
           );
           return;
         }
-        final remoteId = message.payload['peerId'] as String? ?? '';
-        if (remoteId.isNotEmpty) {
-          _handleDisconnectByPeerId(remoteId);
+        final senderPeerId = _connectionToPeerId[connectionId];
+        final payloadPeerId = message.payload['peerId'] as String? ?? '';
+        if (!shouldHonorPeerDisconnect(
+          senderPeerId: senderPeerId,
+          payloadPeerId: payloadPeerId,
+        )) {
+          _connectionLog.add(
+            'Rejected disconnect: peerId mismatch',
+            peerId: senderPeerId,
+            peerName: senderPeerId == null
+                ? null
+                : _linksByPeerId[senderPeerId]?.displayName,
+          );
+          return;
         }
+        _handleDisconnectByPeerId(payloadPeerId);
       case MessageTypes.presence:
         if (!_hasValidSessionToken(connectionId, message)) return;
         _handlePresence(message);

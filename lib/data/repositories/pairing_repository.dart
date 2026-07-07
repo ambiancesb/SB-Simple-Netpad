@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/pair_request.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
@@ -27,8 +30,70 @@ class PairingRepository extends ChangeNotifier {
   late final ConnectionLogRepository _connectionLog;
 
   final List<PairRequest> _pendingIncoming = [];
+  final Set<String> _reconnectInFlight = {};
+  Timer? _reconnectDebounce;
+  bool _watchingTrustedReconnect = false;
 
   List<PairRequest> get pendingIncoming => List.unmodifiable(_pendingIncoming);
+
+  /// Watches discovery and trust changes to auto-reconnect trusted peers.
+  void startTrustedReconnectWatcher() {
+    if (_watchingTrustedReconnect) return;
+    _watchingTrustedReconnect = true;
+    _discovery.addListener(_scheduleTrustedReconnectScan);
+    _trustStore.addListener(_scheduleTrustedReconnectScan);
+    _scheduleTrustedReconnectScan();
+  }
+
+  void stopTrustedReconnectWatcher() {
+    if (!_watchingTrustedReconnect) return;
+    _watchingTrustedReconnect = false;
+    _discovery.removeListener(_scheduleTrustedReconnectScan);
+    _trustStore.removeListener(_scheduleTrustedReconnectScan);
+    _reconnectDebounce?.cancel();
+    _reconnectDebounce = null;
+  }
+
+  void _scheduleTrustedReconnectScan() {
+    _reconnectDebounce?.cancel();
+    _reconnectDebounce = Timer(kTrustedReconnectDebounce, () {
+      unawaited(_attemptTrustedReconnects());
+    });
+  }
+
+  Future<void> _attemptTrustedReconnects() async {
+    if (!_discovery.canDiscoverPeers) return;
+
+    for (final peer in _discovery.discoveredPeers) {
+      if (!_trustStore.canAutoSync(peer.id)) continue;
+      if (peer.connectionState == PeerConnectionState.connected) continue;
+      if (peer.connectionState == PeerConnectionState.connecting ||
+          peer.connectionState == PeerConnectionState.pendingOutgoing) {
+        continue;
+      }
+      if (_sync.isPeerLinkBusy(peer.id)) continue;
+      if (_reconnectInFlight.contains(peer.id)) continue;
+      if (!peer.isManual &&
+          !peer.isConnectable &&
+          peer.resolveState != PeerResolveState.failed) {
+        continue;
+      }
+
+      _reconnectInFlight.add(peer.id);
+      try {
+        await _sync.connectAndRequestPair(peer);
+      } catch (e) {
+        _connectionLog.add(
+          'Auto-reconnect failed: $e',
+          peerId: peer.id,
+          peerName: peer.displayName,
+        );
+        _discovery.markPeerDisconnected(peer.id);
+      } finally {
+        _reconnectInFlight.remove(peer.id);
+      }
+    }
+  }
 
   Future<void> requestConnection(Peer peer) async {
     try {
@@ -82,6 +147,26 @@ class PairingRepository extends ChangeNotifier {
     _sync.disconnectPeer(peerId);
   }
 
+  /// Forgets the auto-sync token; the cert pin is kept.
+  Future<void> revokeTrustedPeer(String peerId) async {
+    final name = _trustStore.trustedPeer(peerId)?.displayName ?? peerId;
+    await _trustStore.revokeAutoSync(peerId);
+    _connectionLog.add(
+      'Revoked auto-sync for $name',
+      peerId: peerId,
+      peerName: name,
+    );
+    notifyListeners();
+  }
+
+  Future<void> setPeerAutoSyncEnabled(String peerId, bool enabled) async {
+    await _trustStore.setAutoSyncEnabled(peerId, enabled);
+    notifyListeners();
+    if (enabled) {
+      _scheduleTrustedReconnectScan();
+    }
+  }
+
   /// Drops any active connection, forgets the pinned cert, and refuses re-pair.
   Future<void> blockPeer(String peerId, String displayName) async {
     _sync.disconnectPeer(peerId);
@@ -114,8 +199,8 @@ class PairingRepository extends ChangeNotifier {
     _pendingIncoming.add(
       PairRequest(
         requestId: requestId,
-        fromId: fromId,
         fromName: fromName,
+        fromId: fromId,
         connectionId: connectionId,
         verificationCode: verificationCode,
       ),
@@ -138,5 +223,11 @@ class PairingRepository extends ChangeNotifier {
       _discovery.markPeerDisconnected(peerId);
     }
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    stopTrustedReconnectWatcher();
+    super.dispose();
   }
 }

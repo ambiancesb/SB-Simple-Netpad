@@ -20,6 +20,7 @@ void main() {
       const requestId = 'req-integration';
       const peerId = 'peer-integration';
       final sessionToken = const Uuid().v4();
+      final autoSyncToken = 'auto-sync-token-integration';
       final inbound = <ProtocolMessage>[];
       final outbound = <ProtocolMessage>[];
 
@@ -37,7 +38,10 @@ void main() {
         );
         final complete = ProtocolMessage(
           type: MessageTypes.pairComplete,
-          payload: {'sessionToken': sessionToken},
+          payload: {
+            'sessionToken': sessionToken,
+            'autoSyncToken': autoSyncToken,
+          },
         );
         outbound.addAll([response, complete]);
         server.send(connectionId, response);
@@ -63,6 +67,7 @@ void main() {
         MessageTypes.pairComplete,
       ]);
       expect(outbound.last.payload['sessionToken'], sessionToken);
+      expect(outbound.last.payload['autoSyncToken'], autoSyncToken);
 
       final ping = ProtocolMessage(
         type: MessageTypes.ping,

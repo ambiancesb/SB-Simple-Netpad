@@ -50,6 +50,7 @@ Future<void> main() async {
     workspace: workspace,
     connectionLog: connectionLog,
     trustStore: trustStore,
+    tlsIdentity: tlsIdentity,
   );
 
   workspace.onDocUpdate = sync.broadcastDocUpdate;
@@ -67,6 +68,7 @@ Future<void> main() async {
   );
 
   await discovery.start();
+  pairing.startTrustedReconnectWatcher();
 
   runApp(
     NetpadApp(

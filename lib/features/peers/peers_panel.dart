@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/models/peer_presence.dart';
+import 'package:netpad/core/models/trusted_peer.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
@@ -83,6 +84,11 @@ class PeersPanel extends StatelessWidget {
           ),
         ),
         const Divider(height: 24),
+        _TrustedSection(
+          trusted: trust.trustedPeers,
+          discovery: discovery,
+        ),
+        const Divider(height: 24),
         _sectionHeader(context, 'Nearby'),
         if (nearby.isEmpty)
           _EmptyHint(
@@ -96,10 +102,16 @@ class PeersPanel extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _ConnectButton(
-                  peer: peer,
-                  onConnect: () => _connect(context, peer),
-                ),
+                if (trust.canAutoSync(peer.id))
+                  const Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: Text('Auto-sync', style: TextStyle(fontSize: 12)),
+                  )
+                else
+                  _ConnectButton(
+                    peer: peer,
+                    onConnect: () => _connect(context, peer),
+                  ),
                 _BlockButton(peer: peer),
               ],
             ),
@@ -223,6 +235,14 @@ String _peerSubtitle(Peer peer) {
   return 'No address yet';
 }
 
+String _formatPairedAt(DateTime pairedAt) {
+  final local = pairedAt.toLocal();
+  final y = local.year;
+  final m = local.month.toString().padLeft(2, '0');
+  final d = local.day.toString().padLeft(2, '0');
+  return '$y-$m-$d';
+}
+
 class _PeerTile extends StatelessWidget {
   const _PeerTile({
     required this.peer,
@@ -303,6 +323,111 @@ class _BlockButton extends StatelessWidget {
         }
       },
     );
+  }
+}
+
+class _TrustedSection extends StatelessWidget {
+  const _TrustedSection({
+    required this.trusted,
+    required this.discovery,
+  });
+
+  final Map<String, TrustedPeer> trusted;
+  final DiscoveryRepository discovery;
+
+  @override
+  Widget build(BuildContext context) {
+    final pairing = context.read<PairingRepository>();
+    final entries = trusted.entries.toList()
+      ..sort((a, b) => a.value.displayName.compareTo(b.value.displayName));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Text(
+            'Trusted devices',
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+        if (entries.isEmpty)
+          const _EmptyHint('No trusted devices — pair once to enable auto-sync'),
+        ...entries.map((entry) {
+          final peerId = entry.key;
+          final record = entry.value;
+          final livePeer = discovery.peerById(peerId);
+          final connected =
+              livePeer?.connectionState == PeerConnectionState.connected;
+          final status = connected
+              ? 'Connected'
+              : record.autoSyncEnabled
+              ? 'Auto-sync on'
+              : 'Manual connect only';
+          final subtitle = 'Paired ${_formatPairedAt(record.pairedAt)} · $status';
+
+          return ListTile(
+            dense: true,
+            leading: Icon(
+              record.autoSyncEnabled ? Icons.sync : Icons.sync_disabled,
+              size: 20,
+              color: record.autoSyncEnabled
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.outline,
+            ),
+            title: Text(record.displayName),
+            subtitle: Text(subtitle),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Switch(
+                  value: record.autoSyncEnabled,
+                  onChanged: (enabled) =>
+                      pairing.setPeerAutoSyncEnabled(peerId, enabled),
+                ),
+                TextButton(
+                  onPressed: () => _confirmRevoke(context, pairing, peerId, record),
+                  child: const Text('Revoke'),
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Future<void> _confirmRevoke(
+    BuildContext context,
+    PairingRepository pairing,
+    String peerId,
+    TrustedPeer record,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Revoke ${record.displayName}?'),
+        content: const Text(
+          'The next connection will require tapping Accept again. '
+          'The security pin is kept so certificate checks still apply.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Revoke'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await pairing.revokeTrustedPeer(peerId);
+    }
   }
 }
 
