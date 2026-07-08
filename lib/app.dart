@@ -26,8 +26,8 @@ import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/share_service.dart';
 import 'package:netpad/services/speech_input_service.dart';
 import 'package:netpad/services/tls_identity.dart';
+import 'package:netpad/theme/app_skin.dart';
 import 'package:provider/provider.dart';
-
 
 class NetpadApp extends StatelessWidget {
   const NetpadApp({
@@ -53,8 +53,6 @@ class NetpadApp extends StatelessWidget {
   final SyncRepository sync;
   final PairingRepository pairing;
 
-  static const _seedColor = Color(0xFF2563EB);
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -71,23 +69,12 @@ class NetpadApp extends StatelessWidget {
       ],
       child: Consumer<AppPreferences>(
         builder: (context, prefs, _) {
+          final skin = prefs.skin;
           return MaterialApp(
             title: 'SB Simple Netpad',
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: _seedColor,
-                brightness: Brightness.light,
-              ),
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: _seedColor,
-                brightness: Brightness.dark,
-              ),
-              useMaterial3: true,
-            ),
+            theme: skin.themeData(Brightness.light),
+            darkTheme: skin.themeData(Brightness.dark),
             themeMode: prefs.themeMode,
             home: const PairingListener(child: _HomeShell()),
           );

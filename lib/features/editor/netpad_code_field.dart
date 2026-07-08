@@ -141,12 +141,12 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
 
   TextStyle _layoutTextStyle(BuildContext context) {
     const rootKey = 'root';
-    final defaultText = Colors.grey.shade200;
+    final scheme = Theme.of(context).colorScheme;
     final styles = CodeTheme.of(context)?.styles;
 
     var textStyle = widget.textStyle ?? const TextStyle();
     return textStyle.copyWith(
-      color: textStyle.color ?? styles?[rootKey]?.color ?? defaultText,
+      color: textStyle.color ?? styles?[rootKey]?.color ?? scheme.onSurface,
       fontSize: textStyle.fontSize ?? 16.0,
     );
   }
@@ -224,12 +224,11 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
   @override
   Widget build(BuildContext context) {
     const rootKey = 'root';
-    final defaultBg = Colors.grey.shade900;
-    final defaultText = Colors.grey.shade200;
-
+    final scheme = Theme.of(context).colorScheme;
     final styles = CodeTheme.of(context)?.styles;
-    Color? backgroundCol =
-        widget.background ?? styles?[rootKey]?.backgroundColor ?? defaultBg;
+    Color? backgroundCol = widget.background ??
+        styles?[rootKey]?.backgroundColor ??
+        scheme.surface;
 
     if (widget.decoration != null) {
       backgroundCol = null;
@@ -240,7 +239,7 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
     var numberTextStyle =
         widget.lineNumberStyle.textStyle ?? const TextStyle();
     final numberColor =
-        (styles?[rootKey]?.color ?? defaultText).withValues(alpha: 0.7);
+        (styles?[rootKey]?.color ?? scheme.onSurface).withValues(alpha: 0.55);
 
     numberTextStyle = numberTextStyle.copyWith(
       color: numberTextStyle.color ?? numberColor,
@@ -250,7 +249,7 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
     );
 
     final cursorColor =
-        widget.cursorColor ?? styles?[rootKey]?.color ?? defaultText;
+        widget.cursorColor ?? styles?[rootKey]?.color ?? scheme.primary;
 
     TextField? lineNumberCol;
     Container? numberCol;

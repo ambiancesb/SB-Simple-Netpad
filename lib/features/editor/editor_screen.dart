@@ -7,6 +7,8 @@ import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/speech_input_service.dart';
+import 'package:netpad/theme/app_skin.dart';
+import 'package:netpad/theme/editor_colors.dart';
 import 'package:provider/provider.dart';
 
 class EditorScreen extends StatefulWidget {
@@ -96,7 +98,11 @@ class _EditorBodyState extends State<_EditorBody> {
     super.dispose();
   }
 
-  LineNumberStyle _lineNumberStyle(BuildContext context, double fontSize) {
+  LineNumberStyle _lineNumberStyle(
+    BuildContext context,
+    double fontSize,
+    EditorColors colors,
+  ) {
     return LineNumberStyle(
       width: 48,
       textAlign: TextAlign.right,
@@ -105,16 +111,17 @@ class _EditorBodyState extends State<_EditorBody> {
         fontFamily: kEditorFontFamily,
         fontSize: fontSize - 1,
         height: 1.4,
-        color: Theme.of(context).colorScheme.outline,
+        color: colors.lineNumber,
       ),
     );
   }
 
-  TextStyle _editorTextStyle(double fontSize) {
+  TextStyle _editorTextStyle(double fontSize, EditorColors colors) {
     return TextStyle(
       fontFamily: kEditorFontFamily,
       fontSize: fontSize,
       height: 1.4,
+      color: colors.foreground,
     );
   }
 
@@ -122,6 +129,8 @@ class _EditorBodyState extends State<_EditorBody> {
   Widget build(BuildContext context) {
     final document = widget.document;
     final prefs = widget.prefs;
+    final brightness = Theme.of(context).brightness;
+    final colors = prefs.skin.editorColors(brightness);
 
     return Column(
       children: [
@@ -143,8 +152,15 @@ class _EditorBodyState extends State<_EditorBody> {
             controller: document.controller,
             focusNode: _editorFocusNode,
             lineNumbers: true,
-            lineNumberStyle: _lineNumberStyle(context, prefs.fontSize),
-            textStyle: _editorTextStyle(prefs.fontSize),
+            lineNumberStyle: _lineNumberStyle(context, prefs.fontSize, colors),
+            textStyle: _editorTextStyle(prefs.fontSize, colors),
+            background: colors.background,
+            cursorColor: colors.cursor,
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: colors.cursor,
+              selectionColor: colors.selection,
+              selectionHandleColor: colors.cursor,
+            ),
             wrap: prefs.wordWrap,
             horizontalScroll: !prefs.wordWrap,
             expands: true,

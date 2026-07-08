@@ -5,6 +5,7 @@ import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/local_address_service.dart';
+import 'package:netpad/theme/app_skin.dart';
 import 'package:provider/provider.dart';
 
 /// Full-screen settings: device identity, networking, theme, and editor prefs.
@@ -136,6 +137,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(height: 32),
           Text('Appearance', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
+          Text('Mode', style: Theme.of(context).textTheme.bodyMedium),
+          const SizedBox(height: 8),
           SegmentedButton<ThemeMode>(
             segments: const [
               ButtonSegment(
@@ -158,6 +161,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onSelectionChanged: (selection) {
               prefs.setThemeMode(selection.first);
             },
+          ),
+          const SizedBox(height: 16),
+          Text('Skin', style: Theme.of(context).textTheme.bodyMedium),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              for (final skin in AppSkin.values)
+                _SkinChoiceChip(
+                  skin: skin,
+                  selected: prefs.skin == skin,
+                  onSelected: () => prefs.setSkin(skin),
+                ),
+            ],
           ),
           const Divider(height: 32),
           Text('Editor', style: Theme.of(context).textTheme.titleMedium),
@@ -189,6 +207,68 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SkinChoiceChip extends StatelessWidget {
+  const _SkinChoiceChip({
+    required this.skin,
+    required this.selected,
+    required this.onSelected,
+  });
+
+  final AppSkin skin;
+  final bool selected;
+  final VoidCallback onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = skin.editorColors(Theme.of(context).brightness);
+    return Material(
+      color: colors.background,
+      elevation: selected ? 3 : 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: selected ? skin.seedColor : skin.seedColor.withValues(alpha: 0.35),
+          width: selected ? 2.5 : 1.25,
+        ),
+      ),
+      child: InkWell(
+        onTap: onSelected,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  color: skin.seedColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: colors.foreground.withValues(alpha: 0.25),
+                  ),
+                ),
+                child: selected
+                    ? const Icon(Icons.check, size: 14, color: Colors.white)
+                    : null,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                skin.label,
+                style: TextStyle(
+                  color: colors.foreground,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
