@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bonsoir/bonsoir.dart';
+import 'package:netpad/core/peer_endpoint.dart';
 
 /// Maps [BonsoirService.host] (bonsoir 6.x) to [Peer] endpoint fields.
 extension BonsoirServiceEndpoints on BonsoirService {
@@ -8,8 +9,9 @@ extension BonsoirServiceEndpoints on BonsoirService {
     final h = host;
     if (h == null || h.isEmpty) return const [];
     final stripped = h.contains('%') ? h.substring(0, h.indexOf('%')) : h;
-    if (InternetAddress.tryParse(stripped) != null) return [h];
-    return const [];
+    if (InternetAddress.tryParse(stripped) == null) return const [];
+    if (PeerEndpoint.isLoopbackHost(stripped)) return const [];
+    return [h];
   }
 
   String? get resolvedHostname {
@@ -17,7 +19,7 @@ extension BonsoirServiceEndpoints on BonsoirService {
     if (h == null || h.isEmpty) return null;
     final stripped = h.contains('%') ? h.substring(0, h.indexOf('%')) : h;
     if (InternetAddress.tryParse(stripped) != null) return null;
-    return h;
+    return PeerEndpoint.usableHostname(h);
   }
 
   bool get hasResolvedEndpoint =>
@@ -112,9 +114,12 @@ class Peer {
         : ((portFromTxt != null && portFromTxt > 0) ? portFromTxt : null);
     if (port == null) return null;
 
-    final hosts = service.resolvedHostAddresses;
-    final hostname = service.resolvedHostname;
-    final hasEndpoint = service.hasResolvedEndpoint;
+    final hosts = PeerEndpoint.usableAddresses(
+      service.resolvedHostAddresses,
+      txtIp: service.attributes['ip'],
+    );
+    final hostname = PeerEndpoint.usableHostname(service.resolvedHostname);
+    final hasEndpoint = hosts.isNotEmpty || (hostname != null && hostname.isNotEmpty);
 
     return Peer(
       id: id,

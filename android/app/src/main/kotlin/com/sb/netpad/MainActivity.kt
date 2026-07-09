@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.net.Inet4Address
 
 class MainActivity : FlutterActivity() {
     private var multicastLock: WifiManager.MulticastLock? = null
@@ -31,6 +32,9 @@ class MainActivity : FlutterActivity() {
                 }
                 "hasLanTransport" -> {
                     result.success(hasLanTransport())
+                }
+                "getLanIpv4" -> {
+                    result.success(getLanIpv4())
                 }
                 else -> result.notImplemented()
             }
@@ -102,6 +106,37 @@ class MainActivity : FlutterActivity() {
                 return true
             }
         }
+        return false
+    }
+
+    private fun getLanIpv4(): String? {
+        val cm = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE)
+            as? ConnectivityManager ?: return null
+        for (network in cm.allNetworks) {
+            val caps = cm.getNetworkCapabilities(network) ?: continue
+            val isLan = caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+            if (!isLan) continue
+            val props = cm.getLinkProperties(network) ?: continue
+            for (link in props.linkAddresses) {
+                val host = link.address
+                if (host !is Inet4Address || host.isLoopbackAddress) continue
+                val ip = host.hostAddress ?: continue
+                if (isPrivateLanIpv4(ip)) return ip
+            }
+        }
+        return null
+    }
+
+    private fun isPrivateLanIpv4(ip: String): Boolean {
+        val parts = ip.split('.')
+        if (parts.size != 4) return false
+        val octets = parts.mapNotNull { it.toIntOrNull() }
+        if (octets.size != 4) return false
+        val (a, b, _, _) = octets
+        if (a == 10) return true
+        if (a == 172 && b in 16..31) return true
+        if (a == 192 && b == 168) return true
         return false
     }
 

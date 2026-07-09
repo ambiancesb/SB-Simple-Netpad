@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/services/local_address_service.dart';
+import 'package:provider/provider.dart';
+
 class ThisDeviceBanner extends StatefulWidget {
   const ThisDeviceBanner({super.key, required this.port});
 
@@ -14,6 +17,7 @@ class ThisDeviceBanner extends StatefulWidget {
 
 class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
   String? _lanIp;
+  int? _lastRefreshKey;
 
   @override
   void initState() {
@@ -48,6 +52,18 @@ class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
 
   @override
   Widget build(BuildContext context) {
+    final discovery = context.watch<DiscoveryRepository>();
+    final refreshKey = Object.hash(
+      widget.port,
+      discovery.canDiscoverPeers,
+      discovery.networkingError,
+      discovery.networkingPolicyNote,
+    );
+    if (_lastRefreshKey != refreshKey) {
+      _lastRefreshKey = refreshKey;
+      unawaited(_load());
+    }
+
     final port = widget.port;
     final address = _lanIp != null && port != null ? '$_lanIp:$port' : '…';
 

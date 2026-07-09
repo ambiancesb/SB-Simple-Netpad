@@ -9,6 +9,7 @@ import 'package:netpad/core/local_network.dart';
 import 'package:netpad/services/android_networking.dart';
 import 'package:netpad/services/linux_dbus_availability.dart';
 import 'package:netpad/services/linux_mdns_backend.dart';
+import 'package:netpad/services/local_address_service.dart';
 import 'package:netpad/services/local_server.dart';
 import 'package:netpad/services/network_link_service.dart';
 import 'package:netpad/services/network_monitor.dart';
@@ -332,16 +333,20 @@ class DiscoveryRepository extends ChangeNotifier {
 
   Future<void> _startBroadcast(int port) async {
     final shortId = instanceId.replaceAll('-', '').substring(0, 8);
+    final lanIp = await LocalAddressService.getLanIpv4();
+    final attributes = <String, String>{
+      'id': instanceId,
+      'name': _displayName,
+      'port': port.toString(),
+      'room': _roomId,
+    };
+    if (lanIp != null) attributes['ip'] = lanIp;
+
     final service = BonsoirService(
       name: 'SBNetpad-$shortId',
       type: kServiceType,
       port: port,
-      attributes: {
-        'id': instanceId,
-        'name': _displayName,
-        'port': port.toString(),
-        'room': _roomId,
-      },
+      attributes: attributes,
     );
     _broadcast = BonsoirBroadcast(service: service);
     await _broadcast!.initialize();

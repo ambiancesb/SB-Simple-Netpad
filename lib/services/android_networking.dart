@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:netpad/core/local_network.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 
 /// Android-specific hooks: multicast lock and permission-change retries.
@@ -41,6 +42,18 @@ class AndroidNetworking {
       return value ?? false;
     } catch (_) {
       return false;
+    }
+  }
+
+  /// Best-effort Wi‑Fi/Ethernet IPv4 from Android link properties.
+  static Future<String?> getLanIpv4() async {
+    if (!Platform.isAndroid) return null;
+    try {
+      final value = await _channel.invokeMethod<String>('getLanIpv4');
+      if (value == null || value.isEmpty) return null;
+      return value;
+    } catch (_) {
+      return null;
     }
   }
 }

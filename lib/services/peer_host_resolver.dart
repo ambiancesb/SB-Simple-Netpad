@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:netpad/core/local_network.dart';
 import 'package:netpad/core/models/peer.dart';
+import 'package:netpad/core/peer_endpoint.dart';
 
 /// Resolves a connectable host for LAN WebSocket URLs (Linux/Avahi friendly).
 class PeerHostResolver {
@@ -20,6 +21,7 @@ class PeerHostResolver {
     if (peer.isManual) {
       final manualHost = peer.primaryHost;
       if (manualHost != null && manualHost.isNotEmpty) {
+        if (PeerEndpoint.isLoopbackHost(manualHost)) return null;
         if (LocalNetwork.isLanReachableHost(manualHost)) {
           return manualHost;
         }
@@ -47,6 +49,7 @@ class PeerHostResolver {
 
     for (final raw in addresses) {
       final host = LocalNetwork.stripZoneId(raw);
+      if (PeerEndpoint.isLoopbackHost(host)) continue;
       final addr = InternetAddress.tryParse(host);
       if (addr == null) continue;
 

@@ -6,6 +6,8 @@ import 'package:mdns_dart/mdns_dart.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/local_network.dart';
 import 'package:netpad/core/models/peer.dart';
+import 'package:netpad/core/peer_endpoint.dart';
+import 'package:netpad/services/local_address_service.dart';
 
 /// Maps an mDNS [ServiceEntry] to a [Peer] using our TXT attributes.
 Peer? peerFromMdnsEntry(ServiceEntry entry) {
@@ -20,7 +22,10 @@ Peer? peerFromMdnsEntry(ServiceEntry entry) {
       : ((portFromTxt != null && portFromTxt > 0) ? portFromTxt : 0);
   if (port <= 0) return null;
 
-  final hosts = entry.allAddresses.map((a) => a.address).toList();
+  final hosts = PeerEndpoint.usableAddresses(
+    entry.allAddresses.map((a) => a.address),
+    txtIp: attrs['ip'],
+  );
   var hostname = entry.host.isNotEmpty ? entry.host : null;
   if (hostname != null) {
     if (hostname.endsWith('.')) {
@@ -30,6 +35,7 @@ Peer? peerFromMdnsEntry(ServiceEntry entry) {
       hostname = hostname.substring(0, hostname.length - '.local'.length);
     }
   }
+  hostname = PeerEndpoint.usableHostname(hostname);
   final hasEndpoint =
       hosts.isNotEmpty || (hostname != null && hostname.isNotEmpty);
 
@@ -154,16 +160,28 @@ class LinuxMdnsBackend {
 
   Future<void> _startBroadcast(int port) async {
     final shortId = instanceId.replaceAll('-', '').substring(0, 8);
+    final advertiseHost = 'SBNetpad-$shortId.local';
+    final ips = await _advertiseAddresses();
+    final ipv4 = ips
+        .where((a) => a.type == InternetAddressType.IPv4)
+        .map((a) => a.address)
+        .firstOrNull;
+
+    final txt = <String, String>{
+      'id': instanceId,
+      'name': _displayName,
+      'port': port.toString(),
+      'room': _roomId,
+    };
+    if (ipv4 != null) txt['ip'] = ipv4;
+
     final service = await MDNSService.create(
       instance: 'SBNetpad-$shortId',
       service: kServiceType,
       port: port,
-      txt: MDNSService.createTXTRecords({
-        'id': instanceId,
-        'name': _displayName,
-        'port': port.toString(),
-        'room': _roomId,
-      }),
+      hostName: advertiseHost,
+      ips: ips,
+      txt: MDNSService.createTXTRecords(txt),
     );
     _server = MDNSServer(
       MDNSServerConfig(
@@ -175,5 +193,28 @@ class LinuxMdnsBackend {
       ),
     );
     await _server!.start();
+  }
+
+  Future<List<InternetAddress>> _advertiseAddresses() async {
+    final addresses = <InternetAddress>[];
+    final iface = _networkInterface ?? await LocalNetwork.preferredLanInterface();
+    if (iface != null) {
+      for (final addr in iface.addresses) {
+        if (addr.isLoopback) continue;
+        if (!LocalNetwork.isPrivateLanAddress(addr)) continue;
+        if (LocalNetwork.isCarrierGradeNat(addr)) continue;
+        if (addr.type == InternetAddressType.IPv4) {
+          addresses.add(addr);
+        }
+      }
+    }
+    if (addresses.isEmpty) {
+      final literal = await LocalAddressService.getLanIpv4();
+      final parsed = literal == null ? null : InternetAddress.tryParse(literal);
+      if (parsed != null && !parsed.isLoopback) {
+        addresses.add(parsed);
+      }
+    }
+    return addresses;
   }
 }
