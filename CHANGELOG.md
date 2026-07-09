@@ -11,6 +11,7 @@ and this project currently tracks versions informally.
 - Project status is now **beta** — all roadmap phases through Phase 9 are complete.
 
 ### Added
+- **Windows beta installer** — `scripts/build-windows-installer.ps1` builds a release bundle and packages `dist/SB-Simple-Netpad-<version>-beta-windows-x64.zip` (extract and run `Setup.cmd`). Optional single-file `.exe` when [Inno Setup 6+](https://jrsoftware.org/isinfo.php) is installed on the build machine.
 - **Trusted peers and auto-sync (Phase 9)** — After the first manual **Accept**, both devices store a persistent auto-sync token alongside the cert pin. Reconnects skip the pairing dialog when token and fingerprint match; trusted peers auto-reconnect when discovered on the LAN. **Trusted devices** section in the peers drawer: per-peer auto-sync toggle and **Revoke** (distinct from **Block**). Protocol bumped to **v3**.
 - **Phase 9 test suite** — [test/phase9_test.dart](test/phase9_test.dart) covers trusted-peer persistence, auto-accept validation, `peer_disconnect` sender checks, and pair-request payload rules.
 - **Local-network enforcement** — Inbound and outbound peer connections must fall on this device's active subnet(s), derived from live interface addresses and netmasks; peers on other private subnets or public IPs are refused. Discovered peers outside the active subnet are hidden.

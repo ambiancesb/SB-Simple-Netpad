@@ -73,6 +73,23 @@ flutter pub get
 flutter run -d linux    # or windows, macos, android, ios
 ```
 
+## Windows beta installer
+
+To build a beta installer for testers (64-bit Windows 10+):
+
+```powershell
+.\scripts\build-windows-installer.ps1
+```
+
+This runs `flutter build windows --release` and writes artifacts to `dist/`:
+
+| Output | Description |
+|--------|-------------|
+| `SB-Simple-Netpad-<version>-beta-windows-x64.zip` | Portable package — extract and run `Setup.cmd` |
+| `SB-Simple-Netpad-<version>-beta-windows-x64-setup.exe` | Single-file installer (requires [Inno Setup 6+](https://jrsoftware.org/isinfo.php) on the build machine) |
+
+The installer places the app under `%LOCALAPPDATA%\Programs\SB Simple Netpad`, adds a Start Menu shortcut, and registers an uninstall entry. Testers should allow Windows Firewall access on first launch so LAN peers can connect.
+
 Use two or more devices on the same LAN (physical devices recommended for Android).
 
 ## Phase 1 features
