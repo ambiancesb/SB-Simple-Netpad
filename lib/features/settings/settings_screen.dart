@@ -80,6 +80,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Future<void> _showLegalDialog({
+    required String title,
+    required List<String> paragraphs,
+  }) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) {
+        final textTheme = Theme.of(context).textTheme;
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < paragraphs.length; i++) ...[
+                  Text(paragraphs[i], style: textTheme.bodyMedium),
+                  if (i < paragraphs.length - 1) const SizedBox(height: 12),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final prefs = context.watch<AppPreferences>();
@@ -183,7 +216,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: const Text('Word wrap'),
-            subtitle: const Text('Wrap long lines instead of horizontal scroll'),
+            subtitle: const Text(
+              'Wrap long lines instead of horizontal scroll',
+            ),
             value: prefs.wordWrap,
             onChanged: prefs.setWordWrap,
           ),
@@ -199,6 +234,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
               value: prefs.fontSize,
               label: '${prefs.fontSize.round()}',
               onChanged: (value) => prefs.setFontSize(value),
+            ),
+          ),
+          const Divider(height: 32),
+          Text('Legal', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('License status'),
+            subtitle: const Text('All rights reserved before version 1.0'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _showLegalDialog(
+              title: 'License status',
+              paragraphs: const [
+                'SB Simple Netpad is currently distributed under an All Rights Reserved license.',
+                'No use, copying, modification, redistribution, sublicensing, or commercial use is allowed without prior written permission from the copyright holder.',
+                'At or after version 1.0, the project may be split into separate free and paid editions with updated license terms.',
+              ],
+            ),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Disclaimer and liability'),
+            subtitle: const Text('Use at your own risk'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _showLegalDialog(
+              title: 'Disclaimer and liability',
+              paragraphs: const [
+                'This software is provided "as is", without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement.',
+                'You are solely responsible for how you use this app and for compliance with all applicable laws, regulations, policies, and agreements.',
+                'The copyright holder is not liable for any claims, damages, losses, data loss, business interruption, or other liability arising from use or misuse of this software.',
+              ],
+            ),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('No legal advice'),
+            subtitle: const Text('Informational software only'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _showLegalDialog(
+              title: 'No legal advice',
+              paragraphs: const [
+                'This app and its documentation do not provide legal, regulatory, or professional advice.',
+                'If you need legal guidance for your use case, consult a qualified professional.',
+              ],
             ),
           ),
           const SizedBox(height: 24),
@@ -232,7 +311,9 @@ class _SkinChoiceChip extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: selected ? skin.seedColor : skin.seedColor.withValues(alpha: 0.35),
+          color: selected
+              ? skin.seedColor
+              : skin.seedColor.withValues(alpha: 0.35),
           width: selected ? 2.5 : 1.25,
         ),
       ),

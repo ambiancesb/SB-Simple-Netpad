@@ -2,6 +2,8 @@
 
 A cross-platform LAN notepad built with Flutter. Instances on the same subnet discover each other, require mutual approval before connecting, and share note text with multi-peer relay sync.
 
+**Status:** Beta — phases 1–9 of the roadmap are complete and the app is suitable for daily LAN use. Protocol and storage formats may still change before 1.0.
+
 **Platforms:** Android, iOS, Windows, macOS, Linux (not web).
 
 ## Features

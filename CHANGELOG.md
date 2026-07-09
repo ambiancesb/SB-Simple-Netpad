@@ -7,6 +7,9 @@ and this project currently tracks versions informally.
 
 ## [Unreleased]
 
+### Changed
+- Project status is now **beta** — all roadmap phases through Phase 9 are complete.
+
 ### Added
 - **Trusted peers and auto-sync (Phase 9)** — After the first manual **Accept**, both devices store a persistent auto-sync token alongside the cert pin. Reconnects skip the pairing dialog when token and fingerprint match; trusted peers auto-reconnect when discovered on the LAN. **Trusted devices** section in the peers drawer: per-peer auto-sync toggle and **Revoke** (distinct from **Block**). Protocol bumped to **v3**.
 - **Phase 9 test suite** — [test/phase9_test.dart](test/phase9_test.dart) covers trusted-peer persistence, auto-accept validation, `peer_disconnect` sender checks, and pair-request payload rules.

@@ -2,6 +2,8 @@
 
 Pragmatic phases from MVP toward a daily-use LAN notepad.
 
+**Status:** Beta — phases 1–9 below are complete. Further work targets polish, hardening, and a 1.0 release.
+
 | Phase | Status | Focus |
 |-------|--------|--------|
 | **1** | Done | Manual IP connect, persist note to disk, rebroadcast on device rename |
