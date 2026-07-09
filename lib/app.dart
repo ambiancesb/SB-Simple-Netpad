@@ -295,6 +295,15 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       onSettings: () => Navigator.of(context).push(
         MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
       ),
+      onCut: () => Actions.invoke(
+        context,
+        const CopySelectionTextIntent.cut(SelectionChangedCause.keyboard),
+      ),
+      onCopy: () => Actions.invoke(context, CopySelectionTextIntent.copy),
+      onPaste: () => Actions.invoke(
+        context,
+        const PasteTextIntent(SelectionChangedCause.keyboard),
+      ),
       onFind: () => _toggleFind(),
       onFindReplace: () => _toggleFind(replace: true),
       onToggleWordWrap: () => prefs.setWordWrap(!prefs.wordWrap),

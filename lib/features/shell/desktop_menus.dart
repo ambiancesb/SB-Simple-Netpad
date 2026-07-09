@@ -27,6 +27,9 @@ class DesktopMenuActions {
     required this.onShare,
     required this.onHistory,
     required this.onSettings,
+    required this.onCut,
+    required this.onCopy,
+    required this.onPaste,
     required this.onFind,
     required this.onFindReplace,
     required this.onToggleWordWrap,
@@ -43,6 +46,9 @@ class DesktopMenuActions {
   final VoidCallback onShare;
   final VoidCallback onHistory;
   final VoidCallback onSettings;
+  final VoidCallback onCut;
+  final VoidCallback onCopy;
+  final VoidCallback onPaste;
   final VoidCallback onFind;
   final VoidCallback onFindReplace;
   final VoidCallback onToggleWordWrap;
@@ -130,6 +136,25 @@ List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
     PlatformMenu(
       label: 'Edit',
       menus: [
+        PlatformMenuItemGroup(
+          members: [
+            PlatformMenuItem(
+              label: 'Cut',
+              shortcut: _menuShortcut(LogicalKeyboardKey.keyX),
+              onSelected: actions.onCut,
+            ),
+            PlatformMenuItem(
+              label: 'Copy',
+              shortcut: _menuShortcut(LogicalKeyboardKey.keyC),
+              onSelected: actions.onCopy,
+            ),
+            PlatformMenuItem(
+              label: 'Paste',
+              shortcut: _menuShortcut(LogicalKeyboardKey.keyV),
+              onSelected: actions.onPaste,
+            ),
+          ],
+        ),
         PlatformMenuItemGroup(
           members: [
             PlatformMenuItem(
@@ -228,6 +253,21 @@ class DesktopMaterialMenuBar extends StatelessWidget {
           ),
           SubmenuButton(
             menuChildren: [
+              MenuItemButton(
+                onPressed: actions.onCut,
+                shortcut: _menuShortcut(LogicalKeyboardKey.keyX),
+                child: const Text('Cut'),
+              ),
+              MenuItemButton(
+                onPressed: actions.onCopy,
+                shortcut: _menuShortcut(LogicalKeyboardKey.keyC),
+                child: const Text('Copy'),
+              ),
+              MenuItemButton(
+                onPressed: actions.onPaste,
+                shortcut: _menuShortcut(LogicalKeyboardKey.keyV),
+                child: const Text('Paste'),
+              ),
               MenuItemButton(
                 onPressed: actions.onFind,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyF),

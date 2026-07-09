@@ -24,6 +24,7 @@ class DocumentRepository extends ChangeNotifier {
        _title = title,
        _revision = revision,
        _history = List.of(history) {
+    _lastKnownText = text;
     controller.text = text;
     controller.addListener(_onControllerChanged);
   }
@@ -53,6 +54,7 @@ class DocumentRepository extends ChangeNotifier {
   Timer? _saveDebounce;
   Timer? _presenceDebounce;
   bool _applyingRemote = false;
+  late String _lastKnownText;
   int? _lastLine;
   int? _lastColumn;
 
@@ -154,7 +156,22 @@ class DocumentRepository extends ChangeNotifier {
   }
 
   void _onControllerChanged() {
-    if (_applyingRemote) return;
+    final currentText = controller.text;
+    if (_applyingRemote) {
+      _lastKnownText = currentText;
+      _notifyCursorMoved();
+      return;
+    }
+
+    if (currentText != _lastKnownText) {
+      _lastKnownText = currentText;
+      onLocalEdit();
+    }
+
+    _notifyCursorMoved();
+  }
+
+  void _notifyCursorMoved() {
     final callback = onCursorMoved;
     if (callback == null) return;
     _presenceDebounce?.cancel();

@@ -115,11 +115,13 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
     }
     if (event.logicalKey == LogicalKeyboardKey.tab) {
       final sel = widget.controller.selection;
-      widget.controller.text = widget.controller.text.replaceRange(
+      final updated = widget.controller.text.replaceRange(
         sel.start,
         sel.end,
         '\t',
       );
+      widget.controller.text = updated;
+      widget.onChanged?.call(updated);
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;

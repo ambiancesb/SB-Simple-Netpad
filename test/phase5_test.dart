@@ -171,6 +171,45 @@ void main() {
       expect(doc.controller.selection.baseOffset, 11);
     });
 
+    test('direct controller text change triggers local edit broadcast', () async {
+      final storage = await _storage();
+      var broadcastText = '';
+      final doc = DocumentRepository(
+        instanceId: 'aaa',
+        id: 'doc1',
+        title: 'Note',
+        text: 'hello',
+        revision: 1,
+        storage: storage,
+        onLocalEditReady: (_, _, text, _) => broadcastText = text,
+      );
+
+      doc.controller.text = 'hello pasted';
+      await Future<void>.delayed(kDocDebounce + const Duration(milliseconds: 50));
+
+      expect(broadcastText, 'hello pasted');
+    });
+
+    test('remote apply does not trigger local edit broadcast', () async {
+      final storage = await _storage();
+      var broadcastCount = 0;
+      final doc = DocumentRepository(
+        instanceId: 'aaa',
+        id: 'doc1',
+        title: 'Note',
+        text: 'hello',
+        revision: 1,
+        storage: storage,
+        onLocalEditReady: (_, _, _, _) => broadcastCount++,
+      );
+
+      doc.applyRemote(revision: 2, text: 'from peer', originId: 'bbb');
+      await Future<void>.delayed(kDocDebounce + const Duration(milliseconds: 50));
+
+      expect(doc.text, 'from peer');
+      expect(broadcastCount, 0);
+    });
+
     test('skips snapshots when note text exceeds per-entry cap', () async {
       final storage = await _storage();
       final large = 'x' * (kMaxHistorySnapshotChars + 1);
