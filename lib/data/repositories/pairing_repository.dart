@@ -53,7 +53,7 @@ class PairingRepository extends ChangeNotifier {
     required bool autoSyncEnabled,
   }) {
     if (connected) return 'Connected';
-    if (!autoSyncEnabled) return 'Manual connect only';
+    if (!autoSyncEnabled) return 'Manual only';
     if (_reconnectInFlight.contains(peerId)) return 'Reconnecting…';
     final backoff = _reconnectBackoffUntil[peerId];
     if (backoff != null && backoff.isAfter(DateTime.now())) {
@@ -61,12 +61,12 @@ class PairingRepository extends ChangeNotifier {
       return 'Retry in ${seconds}s';
     }
     final livePeer = _discovery.peerById(peerId);
-    if (livePeer == null) return 'Waiting for peer on network';
+    if (livePeer == null) return 'Not on network';
     if (livePeer.connectionState == PeerConnectionState.connecting ||
         livePeer.connectionState == PeerConnectionState.pendingOutgoing) {
       return 'Connecting…';
     }
-    return 'Waiting to reconnect';
+    return 'Auto-reconnect';
   }
 
   /// Watches discovery and trust changes to auto-reconnect trusted peers.

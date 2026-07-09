@@ -75,10 +75,10 @@ class PeersPanel extends StatelessWidget {
         _sectionHeader(context, 'Connected'),
         if (connected.isEmpty) const _EmptyHint('No active connections'),
         ...connected.map(
-          (peer) => _PeerTile(
+          (peer) => _PeerRow(
             peer: peer,
             presence: sync.presence[peer.id],
-            trailing: Row(
+            actions: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 PeerSecurityIcon(peerId: peer.id),
@@ -108,23 +108,12 @@ class PeersPanel extends StatelessWidget {
                 : 'Peer discovery is paused until you join a local network',
           ),
         ...nearby.map(
-          (peer) => _PeerTile(
+          (peer) => _PeerRow(
             peer: peer,
-            trailing: Row(
+            actions: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (trust.canAutoSync(peer.id)) ...[
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Text(
-                      pairing.trustedReconnectStatus(
-                        peerId: peer.id,
-                        connected: false,
-                        autoSyncEnabled: true,
-                      ),
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  ),
                   if (!pairing.isReconnectInFlight(peer.id))
                     TextButton(
                       onPressed: () => _connect(context, peer),
@@ -138,6 +127,13 @@ class PeersPanel extends StatelessWidget {
                 _BlockButton(peer: peer),
               ],
             ),
+            status: trust.canAutoSync(peer.id)
+                ? pairing.trustedReconnectStatus(
+                    peerId: peer.id,
+                    connected: false,
+                    autoSyncEnabled: true,
+                  )
+                : null,
           ),
         ),
         const Divider(height: 24),
@@ -267,16 +263,18 @@ String _formatPairedAt(DateTime pairedAt) {
   return '$y-$m-$d';
 }
 
-class _PeerTile extends StatelessWidget {
-  const _PeerTile({
+class _PeerRow extends StatelessWidget {
+  const _PeerRow({
     required this.peer,
-    required this.trailing,
+    required this.actions,
     this.presence,
+    this.status,
   });
 
   final Peer peer;
-  final Widget trailing;
+  final Widget actions;
   final PeerPresence? presence;
+  final String? status;
 
   @override
   Widget build(BuildContext context) {
@@ -300,12 +298,112 @@ class _PeerTile extends StatelessWidget {
         ? subtitle
         : '$subtitle • $securityLabel';
 
-    return ListTile(
-      dense: true,
-      leading: Icon(Icons.circle, size: 10, color: color),
-      title: Text(peer.displayName),
-      subtitle: Text(fullSubtitle),
-      trailing: trailing,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Icon(Icons.circle, size: 10, color: color),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(peer.displayName),
+                    Text(
+                      fullSubtitle,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    if (status != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        status!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Align(alignment: Alignment.centerRight, child: actions),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrustedDeviceRow extends StatelessWidget {
+  const _TrustedDeviceRow({
+    required this.displayName,
+    required this.subtitle,
+    required this.autoSyncEnabled,
+    required this.onAutoSyncChanged,
+    required this.onRevoke,
+  });
+
+  final String displayName;
+  final String subtitle;
+  final bool autoSyncEnabled;
+  final ValueChanged<bool> onAutoSyncChanged;
+  final VoidCallback onRevoke;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                autoSyncEnabled ? Icons.sync : Icons.sync_disabled,
+                size: 20,
+                color: autoSyncEnabled
+                    ? colorScheme.primary
+                    : colorScheme.outline,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(displayName),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text('Auto-sync', style: Theme.of(context).textTheme.bodySmall),
+              Switch(
+                value: autoSyncEnabled,
+                onChanged: onAutoSyncChanged,
+              ),
+              TextButton(onPressed: onRevoke, child: const Text('Revoke')),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -393,31 +491,13 @@ class _TrustedSection extends StatelessWidget {
           );
           final subtitle = 'Paired ${_formatPairedAt(record.pairedAt)} · $status';
 
-          return ListTile(
-            dense: true,
-            leading: Icon(
-              record.autoSyncEnabled ? Icons.sync : Icons.sync_disabled,
-              size: 20,
-              color: record.autoSyncEnabled
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.outline,
-            ),
-            title: Text(record.displayName),
-            subtitle: Text(subtitle),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Switch(
-                  value: record.autoSyncEnabled,
-                  onChanged: (enabled) =>
-                      pairing.setPeerAutoSyncEnabled(peerId, enabled),
-                ),
-                TextButton(
-                  onPressed: () => _confirmRevoke(context, pairing, peerId, record),
-                  child: const Text('Revoke'),
-                ),
-              ],
-            ),
+          return _TrustedDeviceRow(
+            displayName: record.displayName,
+            subtitle: subtitle,
+            autoSyncEnabled: record.autoSyncEnabled,
+            onAutoSyncChanged: (enabled) =>
+                pairing.setPeerAutoSyncEnabled(peerId, enabled),
+            onRevoke: () => _confirmRevoke(context, pairing, peerId, record),
           );
         }),
       ],

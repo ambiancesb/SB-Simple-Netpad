@@ -356,7 +356,10 @@ class DiscoveryRepository extends ChangeNotifier {
       return;
     }
     final port = _localServer.port;
-    if (port == null) return;
+    if (port == null) {
+      notifyListeners();
+      return;
+    }
     if (_useLinuxMdns) {
       await _linuxMdns?.updateAdvertisement(
         port,

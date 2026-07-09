@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
@@ -65,6 +67,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     if (!mounted) return;
+    _nameController.removeListener(_markDirty);
+    _roomController.removeListener(_markDirty);
+    _nameController.text = name;
+    _roomController.text = room;
+    _nameController.addListener(_markDirty);
+    _roomController.addListener(_markDirty);
     setState(() => _dirty = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Settings saved · "$name" · room "$room"')),
@@ -120,175 +128,218 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final port = discovery.serverPort;
     final address = _lanIp != null && port != null ? '$_lanIp:$port' : '…';
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        actions: [
-          TextButton(
-            onPressed: _dirty ? _save : null,
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text('Device', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Device name',
-              hintText: 'Name shown to other devices',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _roomController,
-            decoration: const InputDecoration(
-              labelText: 'Session / room',
-              hintText: 'Only peers in the same room are discovered',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Listening port'),
-            subtitle: Text(
-              port == null
-                  ? 'Starting server…'
-                  : '$address (share this with manual connect)',
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.copy),
-              tooltip: 'Copy address',
-              onPressed: port == null ? null : () => _copyAddress(port),
-            ),
-          ),
-          const Divider(height: 32),
-          Text('Appearance', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
-          Text('Mode', style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 8),
-          SegmentedButton<ThemeMode>(
-            segments: const [
-              ButtonSegment(
-                value: ThemeMode.system,
-                label: Text('System'),
-                icon: Icon(Icons.brightness_auto, size: 18),
-              ),
-              ButtonSegment(
-                value: ThemeMode.light,
-                label: Text('Light'),
-                icon: Icon(Icons.light_mode, size: 18),
-              ),
-              ButtonSegment(
-                value: ThemeMode.dark,
-                label: Text('Dark'),
-                icon: Icon(Icons.dark_mode, size: 18),
-              ),
-            ],
-            selected: {prefs.themeMode},
-            onSelectionChanged: (selection) {
-              prefs.setThemeMode(selection.first);
+    return Shortcuts(
+      shortcuts: {
+        const SingleActivator(LogicalKeyboardKey.keyS, control: true):
+            const _SaveSettingsIntent(),
+        const SingleActivator(LogicalKeyboardKey.keyS, meta: true):
+            const _SaveSettingsIntent(),
+      },
+      child: Actions(
+        actions: {
+          _SaveSettingsIntent: CallbackAction<_SaveSettingsIntent>(
+            onInvoke: (_) {
+              if (_dirty) unawaited(_save());
+              return null;
             },
           ),
-          const SizedBox(height: 16),
-          Text('Skin', style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              for (final skin in AppSkin.values)
-                _SkinChoiceChip(
-                  skin: skin,
-                  selected: prefs.skin == skin,
-                  onSelected: () => prefs.setSkin(skin),
+        },
+        child: Focus(
+          autofocus: true,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Settings'),
+              actions: [
+                if (_dirty)
+                  FilledButton(
+                    onPressed: _save,
+                    child: const Text('Save'),
+                  )
+                else
+                  TextButton(
+                    onPressed: null,
+                    child: const Text('Save'),
+                  ),
+                const SizedBox(width: 8),
+              ],
+            ),
+            body: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                Text('Device', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 4),
+                Text(
+                  'Device name and room require Save (Ctrl+S). '
+                  'Appearance and editor preferences save immediately.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
-            ],
-          ),
-          const Divider(height: 32),
-          Text('Editor', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Word wrap'),
-            subtitle: const Text(
-              'Wrap long lines instead of horizontal scroll',
-            ),
-            value: prefs.wordWrap,
-            onChanged: prefs.setWordWrap,
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text('Font size (${prefs.fontSize.round()} pt)'),
-            subtitle: Slider(
-              min: AppPreferences.minFontSize,
-              max: AppPreferences.maxFontSize,
-              divisions:
-                  (AppPreferences.maxFontSize - AppPreferences.minFontSize)
-                      .round(),
-              value: prefs.fontSize,
-              label: '${prefs.fontSize.round()}',
-              onChanged: (value) => prefs.setFontSize(value),
-            ),
-          ),
-          const Divider(height: 32),
-          Text('Legal', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('License status'),
-            subtitle: const Text('All rights reserved before version 1.0'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLegalDialog(
-              title: 'License status',
-              paragraphs: const [
-                'SB Simple Netpad is currently distributed under an All Rights Reserved license.',
-                'No use, copying, modification, redistribution, sublicensing, or commercial use is allowed without prior written permission from the copyright holder.',
-                'At or after version 1.0, the project may be split into separate free and paid editions with updated license terms.',
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Device name',
+                    hintText: 'Name shown to other devices',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _roomController,
+                  decoration: const InputDecoration(
+                    labelText: 'Session / room',
+                    hintText: 'Only peers in the same room are discovered',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Listening port'),
+                  subtitle: Text(
+                    port == null
+                        ? 'Starting server…'
+                        : '$address (share this with manual connect)',
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.copy),
+                    tooltip: 'Copy address',
+                    onPressed: port == null ? null : () => _copyAddress(port),
+                  ),
+                ),
+                const Divider(height: 32),
+                Text(
+                  'Appearance',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Text('Mode', style: Theme.of(context).textTheme.bodyMedium),
+                const SizedBox(height: 8),
+                SegmentedButton<ThemeMode>(
+                  segments: const [
+                    ButtonSegment(
+                      value: ThemeMode.system,
+                      label: Text('System'),
+                      icon: Icon(Icons.brightness_auto, size: 18),
+                    ),
+                    ButtonSegment(
+                      value: ThemeMode.light,
+                      label: Text('Light'),
+                      icon: Icon(Icons.light_mode, size: 18),
+                    ),
+                    ButtonSegment(
+                      value: ThemeMode.dark,
+                      label: Text('Dark'),
+                      icon: Icon(Icons.dark_mode, size: 18),
+                    ),
+                  ],
+                  selected: {prefs.themeMode},
+                  onSelectionChanged: (selection) {
+                    prefs.setThemeMode(selection.first);
+                  },
+                ),
+                const SizedBox(height: 16),
+                Text('Skin', style: Theme.of(context).textTheme.bodyMedium),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    for (final skin in AppSkin.values)
+                      _SkinChoiceChip(
+                        skin: skin,
+                        selected: prefs.skin == skin,
+                        onSelected: () => prefs.setSkin(skin),
+                      ),
+                  ],
+                ),
+                const Divider(height: 32),
+                Text('Editor', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Word wrap'),
+                  subtitle: const Text(
+                    'Wrap long lines instead of horizontal scroll',
+                  ),
+                  value: prefs.wordWrap,
+                  onChanged: prefs.setWordWrap,
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text('Font size (${prefs.fontSize.round()} pt)'),
+                  subtitle: Slider(
+                    min: AppPreferences.minFontSize,
+                    max: AppPreferences.maxFontSize,
+                    divisions:
+                        (AppPreferences.maxFontSize - AppPreferences.minFontSize)
+                            .round(),
+                    value: prefs.fontSize,
+                    label: '${prefs.fontSize.round()}',
+                    onChanged: (value) => prefs.setFontSize(value),
+                  ),
+                ),
+                const Divider(height: 32),
+                Text('Legal', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('License status'),
+                  subtitle: const Text('All rights reserved before version 1.0'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showLegalDialog(
+                    title: 'License status',
+                    paragraphs: const [
+                      'SB Simple Netpad is currently distributed under an All Rights Reserved license.',
+                      'No use, copying, modification, redistribution, sublicensing, or commercial use is allowed without prior written permission from the copyright holder.',
+                      'At or after version 1.0, the project may be split into separate free and paid editions with updated license terms.',
+                    ],
+                  ),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Disclaimer and liability'),
+                  subtitle: const Text('Use at your own risk'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showLegalDialog(
+                    title: 'Disclaimer and liability',
+                    paragraphs: const [
+                      'This software is provided "as is", without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement.',
+                      'You are solely responsible for how you use this app and for compliance with all applicable laws, regulations, policies, and agreements.',
+                      'The copyright holder is not liable for any claims, damages, losses, data loss, business interruption, or other liability arising from use or misuse of this software.',
+                    ],
+                  ),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('No legal advice'),
+                  subtitle: const Text('Informational software only'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showLegalDialog(
+                    title: 'No legal advice',
+                    paragraphs: const [
+                      'This app and its documentation do not provide legal, regulatory, or professional advice.',
+                      'If you need legal guidance for your use case, consult a qualified professional.',
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  '© 2026 Spencer Beaumier',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ],
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Disclaimer and liability'),
-            subtitle: const Text('Use at your own risk'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLegalDialog(
-              title: 'Disclaimer and liability',
-              paragraphs: const [
-                'This software is provided "as is", without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement.',
-                'You are solely responsible for how you use this app and for compliance with all applicable laws, regulations, policies, and agreements.',
-                'The copyright holder is not liable for any claims, damages, losses, data loss, business interruption, or other liability arising from use or misuse of this software.',
-              ],
-            ),
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('No legal advice'),
-            subtitle: const Text('Informational software only'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLegalDialog(
-              title: 'No legal advice',
-              paragraphs: const [
-                'This app and its documentation do not provide legal, regulatory, or professional advice.',
-                'If you need legal guidance for your use case, consult a qualified professional.',
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            '© 2026 Spencer Beaumier',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
+        ),
       ),
     );
   }
+}
+
+class _SaveSettingsIntent extends Intent {
+  const _SaveSettingsIntent();
 }
 
 class _SkinChoiceChip extends StatelessWidget {
