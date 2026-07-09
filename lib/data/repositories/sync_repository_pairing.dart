@@ -88,13 +88,9 @@ extension SyncRepositoryPairing on SyncRepository {
     if (activeLink?.authenticated == true) {
       httpClient.close(force: true);
       unawaited(socket.close());
-      _discovery.markPeerConnected(
-        _discovery.peerById(peer.id) ??
-            Peer(
-              id: peer.id,
-              displayName: peer.displayName,
-              port: peer.port,
-            ),
+      markPeerConnectedFromLink(
+        peer.id,
+        displayName: peer.displayName,
       );
       return;
     }
@@ -117,6 +113,8 @@ extension SyncRepositoryPairing on SyncRepository {
     link.outboundHttpClient = httpClient;
     link.pendingCertFingerprint = capturedFingerprint;
     link.trustedOutboundReconnect = trustedReconnect;
+    link.remoteHost = host;
+    link.remotePort = refreshed.port;
     _linksByPeerId[peer.id] = link;
     _connectionToPeerId[connectionId] = peer.id;
 
@@ -237,13 +235,10 @@ extension SyncRepositoryPairing on SyncRepository {
       ),
     );
 
-    _discovery.markPeerConnected(
-      Peer(
-        id: fromId,
-        displayName: fromName,
-        port: _discovery.serverPort ?? 0,
-        connectionState: PeerConnectionState.connected,
-      ),
+    markPeerConnectedFromLink(
+      fromId,
+      displayName: fromName,
+      inboundConnectionId: connectionId,
     );
     _connectionLog.add(
       autoAccepted
@@ -544,10 +539,7 @@ extension SyncRepositoryPairing on SyncRepository {
           } else if (reason == 'already_connected' &&
               _linksByPeerId[peerId]?.authenticated == true) {
             _cleanupConnection(connectionId);
-            final peer = _discovery.peerById(peerId);
-            if (peer != null) {
-              _discovery.markPeerConnected(peer);
-            }
+            markPeerConnectedFromLink(peerId);
             onPairRequestResolved?.call(peerId, true);
           } else {
             _connectionLog.add(
@@ -583,10 +575,7 @@ extension SyncRepositoryPairing on SyncRepository {
         }
         _linksByPeerId[peerId] = link;
 
-        final peer = _discovery.peerById(peerId);
-        if (peer != null) {
-          _discovery.markPeerConnected(peer);
-        }
+        markPeerConnectedFromLink(peerId);
         // TOFU: pin the server cert we saw when we initiated this connection.
         if (isOutbound && link.pendingCertFingerprint != null) {
           _pinRemotePeerIfNeeded(

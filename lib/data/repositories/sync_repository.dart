@@ -133,12 +133,33 @@ class SyncRepository extends ChangeNotifier {
   void reconcileDiscoveryConnectionState() {
     for (final entry in _linksByPeerId.entries) {
       if (!entry.value.authenticated) continue;
-      final peer = _discovery.peerById(entry.key);
-      if (peer != null &&
-          peer.connectionState != PeerConnectionState.connected) {
-        _discovery.markPeerConnected(peer);
-      }
+      markPeerConnectedFromLink(entry.key);
     }
+  }
+
+  /// Preserves nearby peer addresses when a session becomes connected.
+  void markPeerConnectedFromLink(
+    String peerId, {
+    String? displayName,
+    String? inboundConnectionId,
+  }) {
+    final link = _linksByPeerId[peerId];
+    final inboundId = inboundConnectionId ?? link?.inboundConnectionId;
+    final inboundRemote = inboundId != null
+        ? _server.remoteAddressFor(inboundId)
+        : null;
+    final peer =
+        _discovery.peerById(peerId) ??
+        Peer(
+          id: peerId,
+          displayName: displayName ?? link?.displayName ?? peerId,
+          port: link?.remotePort ?? 0,
+        );
+    _discovery.markPeerConnected(
+      peer,
+      remoteHost: link?.remoteHost ?? inboundRemote?.address,
+      remotePort: link?.remotePort,
+    );
   }
 
   /// Notifies listeners; used by [SyncRepository] part modules.

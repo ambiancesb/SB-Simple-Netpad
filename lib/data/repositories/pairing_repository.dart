@@ -342,10 +342,7 @@ class PairingRepository extends ChangeNotifier {
   void _onPairRequestResolved(String peerId, bool accepted) {
     if (accepted) {
       _clearReconnectFailure(peerId);
-      final peer = _discovery.peerById(peerId);
-      if (peer != null) {
-        _discovery.markPeerConnected(peer);
-      }
+      _sync.markPeerConnectedFromLink(peerId);
     } else if (!_sync.isPeerAuthenticated(peerId)) {
       _discovery.markPeerDisconnected(peerId);
     }

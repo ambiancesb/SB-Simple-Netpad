@@ -25,6 +25,12 @@ class PeerConnection {
   /// successful pairing (TOFU).
   String? pendingCertFingerprint;
 
+  /// Resolved LAN host used for the outbound WSS dial (for peer display).
+  String? remoteHost;
+
+  /// Advertised listening port on the remote peer (for peer display).
+  int? remotePort;
+
   /// Sender cert fingerprint from an inbound [pair_request] (self-reported).
   String? remoteCertFingerprint;
 

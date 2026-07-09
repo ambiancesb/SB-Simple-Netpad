@@ -100,6 +100,34 @@ class Peer {
     );
   }
 
+  /// Keeps known LAN endpoints when discovery sends a partial update.
+  static Peer mergeDiscovery(Peer incoming, Peer? existing) {
+    final hosts = PeerEndpoint.usableAddresses([
+      ...incoming.hostAddresses,
+      if (existing != null) ...existing.hostAddresses,
+    ]);
+    final hostname =
+        PeerEndpoint.usableHostname(incoming.hostname) ??
+        (existing != null
+            ? PeerEndpoint.usableHostname(existing.hostname)
+            : null);
+    final port = incoming.port > 0
+        ? incoming.port
+        : (existing?.port ?? incoming.port);
+    final hasEndpoint =
+        hosts.isNotEmpty || (hostname != null && hostname.isNotEmpty);
+
+    return incoming.copyWith(
+      hostAddresses: hosts,
+      hostname: hostname,
+      port: port,
+      bonsoirName: incoming.bonsoirName ?? existing?.bonsoirName,
+      resolveState: hasEndpoint
+          ? PeerResolveState.resolved
+          : (existing?.resolveState ?? incoming.resolveState),
+    );
+  }
+
   static Peer? fromBonsoirService(
     BonsoirService service, {
     PeerResolveState resolveState = PeerResolveState.resolved,

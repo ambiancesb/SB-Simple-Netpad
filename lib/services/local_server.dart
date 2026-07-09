@@ -23,6 +23,7 @@ class LocalServer {
 
   HttpServer? _server;
   final Map<String, WebSocket> _sockets = {};
+  final Map<String, InternetAddress> _remoteAddresses = {};
   int _connCounter = 0;
 
   MessageHandler? onMessage;
@@ -31,6 +32,9 @@ class LocalServer {
   InboundRejectedHandler? onInboundRejected;
 
   int? get port => _server?.port;
+
+  InternetAddress? remoteAddressFor(String connectionId) =>
+      _remoteAddresses[connectionId];
 
   Future<int> start() async {
     if (_server != null) return _server!.port;
@@ -81,6 +85,7 @@ class LocalServer {
   Iterable<String> get connectionIds => _sockets.keys;
 
   Future<void> closeConnection(String connectionId) async {
+    _remoteAddresses.remove(connectionId);
     final socket = _sockets.remove(connectionId);
     await socket?.close();
   }
@@ -121,6 +126,10 @@ class LocalServer {
       final socket = await WebSocketTransformer.upgrade(request);
       final connectionId = 'in_${++_connCounter}';
       _sockets[connectionId] = socket;
+      final remote = request.connectionInfo?.remoteAddress;
+      if (remote != null) {
+        _remoteAddresses[connectionId] = remote;
+      }
 
       onConnectionOpened?.call(connectionId);
 
@@ -134,10 +143,12 @@ class LocalServer {
         },
         onDone: () {
           _sockets.remove(connectionId);
+          _remoteAddresses.remove(connectionId);
           onConnectionClosed?.call(connectionId);
         },
         onError: (_) {
           _sockets.remove(connectionId);
+          _remoteAddresses.remove(connectionId);
           onConnectionClosed?.call(connectionId);
         },
         cancelOnError: true,

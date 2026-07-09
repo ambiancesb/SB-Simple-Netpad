@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/local_network.dart';
+import 'package:netpad/core/peer_endpoint.dart';
 import 'package:netpad/services/android_networking.dart';
 import 'package:netpad/services/linux_dbus_availability.dart';
 import 'package:netpad/services/linux_mdns_backend.dart';
@@ -498,15 +499,10 @@ class DiscoveryRepository extends ChangeNotifier {
     }
 
     final existing = _discovered[peer.id];
-    _discovered[peer.id] = peer.copyWith(
+    _discovered[peer.id] = Peer.mergeDiscovery(peer, existing).copyWith(
       connectionState: _connected.containsKey(peer.id)
           ? PeerConnectionState.connected
           : (existing?.connectionState ?? PeerConnectionState.discovered),
-      resolveState:
-          peer.hostAddresses.isNotEmpty ||
-              (peer.hostname != null && peer.hostname!.isNotEmpty)
-          ? PeerResolveState.resolved
-          : (existing?.resolveState ?? PeerResolveState.resolving),
     );
     notifyListeners();
   }
@@ -552,15 +548,10 @@ class DiscoveryRepository extends ChangeNotifier {
     }
 
     final existing = _discovered[peer.id];
-    _discovered[peer.id] = peer.copyWith(
+    _discovered[peer.id] = Peer.mergeDiscovery(peer, existing).copyWith(
       connectionState: _connected.containsKey(peer.id)
           ? PeerConnectionState.connected
           : (existing?.connectionState ?? PeerConnectionState.discovered),
-      resolveState:
-          peer.hostAddresses.isNotEmpty ||
-              (peer.hostname != null && peer.hostname!.isNotEmpty)
-          ? PeerResolveState.resolved
-          : (existing?.resolveState ?? PeerResolveState.resolving),
     );
     notifyListeners();
   }
@@ -647,8 +638,26 @@ class DiscoveryRepository extends ChangeNotifier {
     return _discovered[peerId] ?? _connected[peerId];
   }
 
-  void markPeerConnected(Peer peer) {
-    _connected[peer.id] = peer.copyWith(
+  void markPeerConnected(
+    Peer peer, {
+    String? remoteHost,
+    int? remotePort,
+  }) {
+    final existing = _connected[peer.id] ?? _discovered[peer.id];
+    var merged = Peer.mergeDiscovery(peer, existing);
+    if (remoteHost != null && remoteHost.isNotEmpty) {
+      final hosts = PeerEndpoint.usableAddresses(
+        merged.hostAddresses,
+        txtIp: remoteHost,
+      );
+      merged = merged.copyWith(
+        hostAddresses: hosts,
+        port: remotePort != null && remotePort > 0 ? remotePort : merged.port,
+      );
+    } else if (remotePort != null && remotePort > 0 && merged.port <= 0) {
+      merged = merged.copyWith(port: remotePort);
+    }
+    _connected[peer.id] = merged.copyWith(
       connectionState: PeerConnectionState.connected,
       resolveState: PeerResolveState.resolved,
     );
