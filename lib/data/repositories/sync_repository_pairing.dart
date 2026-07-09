@@ -298,13 +298,17 @@ extension SyncRepositoryPairing on SyncRepository {
       pinnedFingerprint: _trustStore.pinnedFingerprint(fromId),
       requestFingerprint: remoteCertFingerprint,
     )) {
-      _connectionLog.add(
-        'Trusted reconnect refused for $fromName: certificate mismatch '
-        '(pin may be stale — use Block then re-pair, or Revoke and connect manually)',
-        peerId: fromId,
-        peerName: fromName,
+      _refuseInboundPairRequest(
+        connectionId: connectionId,
+        requestId: requestId,
+        fromId: fromId,
+        fromName: fromName,
+        logMessage:
+            'Trusted reconnect refused for $fromName: certificate mismatch '
+            '(pin may be stale — use Block then re-pair, or Revoke and connect manually)',
+        reason: 'cert_mismatch',
       );
-      return false;
+      return true;
     }
 
     if (!canAutoAcceptPairRequest(

@@ -627,8 +627,14 @@ class DiscoveryRepository extends ChangeNotifier {
         .where((s) => s.name == peer!.bonsoirName)
         .firstOrNull;
     if (service != null) {
-      _requestResolve(service);
-      await Future<void>.delayed(const Duration(milliseconds: 800));
+      final alreadyConnectable =
+          peer != null &&
+          peer.resolveState == PeerResolveState.resolved &&
+          peer.isConnectable;
+      if (!alreadyConnectable) {
+        _requestResolve(service);
+        await Future<void>.delayed(const Duration(milliseconds: 800));
+      }
     }
     return _discovered[peerId] ?? _connected[peerId];
   }

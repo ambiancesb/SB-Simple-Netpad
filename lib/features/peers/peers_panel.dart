@@ -23,7 +23,7 @@ class PeersPanel extends StatelessWidget {
     final connectionLog = context.watch<ConnectionLogRepository>();
     final sync = context.watch<SyncRepository>();
     final trust = context.watch<TrustStore>();
-    final pairing = context.read<PairingRepository>();
+    final pairing = context.watch<PairingRepository>();
 
     final connected = discovery.connectedPeers
         .where((p) => !trust.isBlocked(p.id))
@@ -96,6 +96,7 @@ class PeersPanel extends StatelessWidget {
         _TrustedSection(
           trusted: trust.trustedPeers,
           discovery: discovery,
+          pairing: pairing,
         ),
         const Divider(height: 24),
         _sectionHeader(context, 'Nearby'),
@@ -112,12 +113,24 @@ class PeersPanel extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (trust.canAutoSync(peer.id))
-                  const Padding(
-                    padding: EdgeInsets.only(right: 8),
-                    child: Text('Auto-sync', style: TextStyle(fontSize: 12)),
-                  )
-                else
+                if (trust.canAutoSync(peer.id)) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Text(
+                      pairing.trustedReconnectStatus(
+                        peerId: peer.id,
+                        connected: false,
+                        autoSyncEnabled: true,
+                      ),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+                  if (!pairing.isReconnectInFlight(peer.id))
+                    TextButton(
+                      onPressed: () => _connect(context, peer),
+                      child: const Text('Connect now'),
+                    ),
+                ] else
                   _ConnectButton(
                     peer: peer,
                     onConnect: () => _connect(context, peer),
@@ -341,14 +354,15 @@ class _TrustedSection extends StatelessWidget {
   const _TrustedSection({
     required this.trusted,
     required this.discovery,
+    required this.pairing,
   });
 
   final Map<String, TrustedPeer> trusted;
   final DiscoveryRepository discovery;
+  final PairingRepository pairing;
 
   @override
   Widget build(BuildContext context) {
-    final pairing = context.read<PairingRepository>();
     final entries = trusted.entries.toList()
       ..sort((a, b) => a.value.displayName.compareTo(b.value.displayName));
 
@@ -372,11 +386,11 @@ class _TrustedSection extends StatelessWidget {
           final livePeer = discovery.peerById(peerId);
           final connected =
               livePeer?.connectionState == PeerConnectionState.connected;
-          final status = connected
-              ? 'Connected'
-              : record.autoSyncEnabled
-              ? 'Auto-sync on'
-              : 'Manual connect only';
+          final status = pairing.trustedReconnectStatus(
+            peerId: peerId,
+            connected: connected,
+            autoSyncEnabled: record.autoSyncEnabled,
+          );
           final subtitle = 'Paired ${_formatPairedAt(record.pairedAt)} · $status';
 
           return ListTile(

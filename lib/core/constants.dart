@@ -17,7 +17,7 @@ const Duration kHeartbeatInterval = Duration(seconds: 15);
 const Duration kHeartbeatTimeout = Duration(seconds: 45);
 
 /// Debounce before background auto-reconnect attempts to trusted peers.
-const Duration kTrustedReconnectDebounce = Duration(seconds: 2);
+const Duration kTrustedReconnectDebounce = Duration(milliseconds: 500);
 
 /// Monospace font bundled in assets.
 const String kEditorFontFamily = 'JetBrainsMono';
