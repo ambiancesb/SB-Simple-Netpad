@@ -20,4 +20,8 @@ abstract final class AppInfo {
   static const status = 'Beta — suitable for daily LAN use.';
 
   static const copyright = '© 2026 Spencer Beaumier';
+
+  /// Public privacy policy hosted on GitHub Pages.
+  static const privacyPolicyUrl =
+      'https://ambiancesb.github.io/SB-Simple-Netpad/privacy.html';
 }

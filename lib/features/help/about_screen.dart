@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/core/app_info.dart';
 import 'package:netpad/features/help/help_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Opens the About screen.
 Future<void> showAboutScreen(BuildContext context) {
   return Navigator.of(context).push(
     MaterialPageRoute<void>(builder: (_) => const AboutScreen()),
   );
+}
+
+Future<void> _openPrivacyPolicy(BuildContext context) async {
+  final uri = Uri.parse(AppInfo.privacyPolicyUrl);
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
+      context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Could not open privacy policy')),
+    );
+  }
 }
 
 /// Application name, version, and summary.
@@ -77,6 +88,12 @@ class AboutScreen extends StatelessWidget {
             style: textTheme.bodyMedium,
           ),
           const SizedBox(height: 24),
+          OutlinedButton.icon(
+            onPressed: () => _openPrivacyPolicy(context),
+            icon: const Icon(Icons.open_in_new, size: 18),
+            label: const Text('Privacy Policy'),
+          ),
+          const SizedBox(height: 12),
           FilledButton.tonalIcon(
             onPressed: () {
               Navigator.of(context).pushReplacement(
