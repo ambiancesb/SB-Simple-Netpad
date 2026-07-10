@@ -25,6 +25,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Help'), findsOneWidget);
     expect(find.text('Word wrap'), findsOneWidget);
 
     await tester.tap(find.text('Settings'));

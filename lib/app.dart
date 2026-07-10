@@ -17,6 +17,7 @@ import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
 import 'package:netpad/features/peers/peers_drawer.dart';
 import 'package:netpad/features/shell/desktop_side_panel.dart';
+import 'package:netpad/features/help/help_screen.dart';
 import 'package:netpad/features/settings/settings_screen.dart';
 import 'package:netpad/features/shell/desktop_menus.dart';
 import 'package:netpad/features/shell/mobile_overflow_menu.dart';
@@ -295,6 +296,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       onSettings: () => Navigator.of(context).push(
         MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
       ),
+      onHelp: () => showHelpScreen(context),
       onCut: () => Actions.invoke(
         context,
         const CopySelectionTextIntent.cut(SelectionChangedCause.keyboard),
@@ -494,6 +496,9 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
         await Navigator.of(context).push(
           MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
         );
+      case MobileAppMenuAction.help:
+        if (!context.mounted) return;
+        await showHelpScreen(context);
     }
   }
 

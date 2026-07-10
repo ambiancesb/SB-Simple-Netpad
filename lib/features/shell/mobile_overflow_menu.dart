@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
-enum MobileAppMenuAction { wordWrap, save, open, share, history, settings }
+enum MobileAppMenuAction {
+  wordWrap,
+  save,
+  open,
+  share,
+  history,
+  settings,
+  help,
+}
 
 /// Compact overflow menu for mobile app bars (File, editor, and settings).
 class MobileOverflowMenuButton extends StatelessWidget {
@@ -66,6 +74,13 @@ class MobileOverflowMenuButton extends StatelessWidget {
           child: _MobileMenuLabel(
             icon: Icons.settings,
             label: 'Settings',
+          ),
+        ),
+        const PopupMenuItem(
+          value: MobileAppMenuAction.help,
+          child: _MobileMenuLabel(
+            icon: Icons.help_outline,
+            label: 'Help',
           ),
         ),
       ],
