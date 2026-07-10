@@ -28,6 +28,7 @@ class DesktopMenuActions {
     required this.onHistory,
     required this.onSettings,
     required this.onHelp,
+    required this.onAbout,
     required this.onCut,
     required this.onCopy,
     required this.onPaste,
@@ -48,6 +49,7 @@ class DesktopMenuActions {
   final VoidCallback onHistory;
   final VoidCallback onSettings;
   final VoidCallback onHelp;
+  final VoidCallback onAbout;
   final VoidCallback onCut;
   final VoidCallback onCopy;
   final VoidCallback onPaste;
@@ -203,6 +205,10 @@ List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
           label: 'SB Simple Netpad Help',
           onSelected: actions.onHelp,
         ),
+        PlatformMenuItem(
+          label: 'About SB Simple Netpad',
+          onSelected: actions.onAbout,
+        ),
       ],
     ),
   ];
@@ -325,6 +331,10 @@ class DesktopMaterialMenuBar extends StatelessWidget {
               MenuItemButton(
                 onPressed: actions.onHelp,
                 child: const Text('SB Simple Netpad Help'),
+              ),
+              MenuItemButton(
+                onPressed: actions.onAbout,
+                child: const Text('About SB Simple Netpad'),
               ),
             ],
             child: const Text('Help'),

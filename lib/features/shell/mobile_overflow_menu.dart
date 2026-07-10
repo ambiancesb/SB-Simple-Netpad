@@ -8,6 +8,7 @@ enum MobileAppMenuAction {
   history,
   settings,
   help,
+  about,
 }
 
 /// Compact overflow menu for mobile app bars (File, editor, and settings).
@@ -81,6 +82,13 @@ class MobileOverflowMenuButton extends StatelessWidget {
           child: _MobileMenuLabel(
             icon: Icons.help_outline,
             label: 'Help',
+          ),
+        ),
+        const PopupMenuItem(
+          value: MobileAppMenuAction.about,
+          child: _MobileMenuLabel(
+            icon: Icons.info_outline,
+            label: 'About SB Simple Netpad',
           ),
         ),
       ],

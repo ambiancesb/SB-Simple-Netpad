@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:netpad/core/app_info.dart';
+import 'package:netpad/features/help/about_screen.dart';
 import 'package:netpad/features/shell/desktop_menus.dart';
 
 /// Opens the in-app help guide.
@@ -23,7 +25,7 @@ class HelpScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           Text(
-            'SB Simple Netpad',
+            AppInfo.name,
             style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
@@ -32,7 +34,16 @@ class HelpScreen extends StatelessWidget {
             'discover each other, pair once, then sync notes in real time.',
             style: textTheme.bodyMedium,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.info_outline),
+            title: const Text('About SB Simple Netpad'),
+            subtitle: Text('Version ${AppInfo.versionLabel}'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => showAboutScreen(context),
+          ),
+          const Divider(height: 24),
           _section(
             context,
             title: 'Getting started',
@@ -120,7 +131,7 @@ class HelpScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            '© 2026 Spencer Beaumier',
+            AppInfo.copyright,
             style: textTheme.bodySmall,
           ),
         ],
