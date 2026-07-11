@@ -14,7 +14,7 @@
 namespace {
 
 constexpr wchar_t kProProductId[] = L"netpad_pro";
-constexpr char kChannelName[] = "com.sb.netpad/windows_store";
+constexpr char kChannelName[] = "com.spencerbeaumier.sbnetpad/windows_store";
 
 using flutter::EncodableValue;
 using flutter::MethodCall;

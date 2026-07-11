@@ -57,7 +57,7 @@ project(runner LANGUAGES CXX)
 set(BINARY_NAME "netpad")
 # The unique GTK application identifier for this application. See:
 # https://wiki.gnome.org/HowDoI/ChooseApplicationID
-set(APPLICATION_ID "com.sb.netpad")
+set(APPLICATION_ID "com.spencerbeaumier.sbnetpad")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
@@ -171,7 +171,7 @@ install(CODE "
 install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
   DESTINATION "${INSTALL_BUNDLE_DATA_DIR}" COMPONENT Runtime)
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/com.sb.netpad.desktop"
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/com.spencerbeaumier.sbnetpad.desktop"
   DESTINATION "${INSTALL_BUNDLE_DATA_DIR}" COMPONENT Runtime)
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/icons/hicolor"

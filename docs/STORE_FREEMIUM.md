@@ -2,6 +2,8 @@
 
 One Flutter binary unlocks **Netpad Pro** (`pro` entitlement) via a one-time product id `netpad_pro`.
 
+App package / bundle id (all store platforms): **`com.spencerbeaumier.sbnetpad`**
+
 Free tier caps (enforced in app):
 
 | Cap | Free | Pro |

@@ -2,7 +2,7 @@
 Name=SB Simple Netpad
 Comment=LAN notepad with peer discovery and shared editing
 Exec=netpad
-Icon=com.sb.netpad
+Icon=com.spencerbeaumier.sbnetpad
 Terminal=false
 Type=Application
 Categories=Office;TextEditor;Network;

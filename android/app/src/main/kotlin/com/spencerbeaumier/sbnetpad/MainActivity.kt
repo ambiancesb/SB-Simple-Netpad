@@ -1,4 +1,4 @@
-package com.sb.netpad
+package com.spencerbeaumier.sbnetpad
 
 import android.Manifest
 import android.content.Context
@@ -167,7 +167,7 @@ class MainActivity : FlutterActivity() {
     }
 
     companion object {
-        private const val CHANNEL = "com.sb.netpad/networking"
+        private const val CHANNEL = "com.spencerbeaumier.sbnetpad/networking"
         private const val NEARBY_WIFI_PERMISSION_REQUEST = 1001
     }
 }

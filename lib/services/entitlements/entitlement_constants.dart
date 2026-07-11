@@ -16,5 +16,5 @@ abstract final class EntitlementConstants {
   static const freePeerLimit = 3;
 
   /// Method channel for Microsoft Store durable purchases.
-  static const windowsStoreChannel = 'com.sb.netpad/windows_store';
+  static const windowsStoreChannel = 'com.spencerbeaumier.sbnetpad/windows_store';
 }

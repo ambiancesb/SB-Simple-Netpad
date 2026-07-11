@@ -194,6 +194,8 @@ class NoteStorageService {
     final candidates = <String>[
       if (Platform.isLinux) '$home/.local/share/netpad',
       if (Platform.isMacOS) '$home/Library/Application Support/com.sb.netpad',
+      if (Platform.isMacOS)
+        '$home/Library/Application Support/com.spencerbeaumier.sbnetpad',
       if (Platform.isWindows)
         '${Platform.environment['APPDATA'] ?? '$home\\AppData\\Roaming'}\\netpad',
     ];

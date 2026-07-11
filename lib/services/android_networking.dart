@@ -8,7 +8,7 @@ import 'package:netpad/data/repositories/discovery_repository.dart';
 class AndroidNetworking {
   AndroidNetworking._();
 
-  static const _channel = MethodChannel('com.sb.netpad/networking');
+  static const _channel = MethodChannel('com.spencerbeaumier.sbnetpad/networking');
 
   static Future<void> initialize(DiscoveryRepository discovery) async {
     if (!Platform.isAndroid) return;
