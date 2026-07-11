@@ -8,9 +8,11 @@ import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
+import 'package:netpad/features/entitlements/pro_gate.dart';
 import 'package:netpad/features/peers/manual_connect_dialog.dart';
 import 'package:netpad/features/peers/session_security_banner.dart';
 import 'package:netpad/features/peers/this_device_banner.dart';
+import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 
@@ -461,6 +463,7 @@ class _TrustedSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final entitlements = context.watch<EntitlementService>();
     final entries = trusted.entries.toList()
       ..sort((a, b) => a.value.displayName.compareTo(b.value.displayName));
 
@@ -484,6 +487,8 @@ class _TrustedSection extends StatelessWidget {
           final livePeer = discovery.peerById(peerId);
           final connected =
               livePeer?.connectionState == PeerConnectionState.connected;
+          final autoSyncOn =
+              entitlements.isPro && record.autoSyncEnabled;
           final status = pairing.trustedReconnectStatus(
             peerId: peerId,
             connected: connected,
@@ -494,9 +499,14 @@ class _TrustedSection extends StatelessWidget {
           return _TrustedDeviceRow(
             displayName: record.displayName,
             subtitle: subtitle,
-            autoSyncEnabled: record.autoSyncEnabled,
-            onAutoSyncChanged: (enabled) =>
-                pairing.setPeerAutoSyncEnabled(peerId, enabled),
+            autoSyncEnabled: autoSyncOn,
+            onAutoSyncChanged: (enabled) async {
+              if (enabled) {
+                final allowed = await ProGate.trustedAutoSyncAllowed(context);
+                if (!allowed || !context.mounted) return;
+              }
+              await pairing.setPeerAutoSyncEnabled(peerId, enabled);
+            },
             onRevoke: () => _confirmRevoke(context, pairing, peerId, record),
           );
         }),

@@ -98,11 +98,11 @@ extension SyncRepositoryPairing on SyncRepository {
     final connectionId = 'out_${peer.id}';
     _pendingOutboundRequestId[connectionId] = requestId;
 
-    final autoSyncToken = _trustStore.canAutoSync(peer.id)
-        ? _trustStore.autoSyncToken(peer.id)
-        : null;
+    final canAutoSync = _isPro() && _trustStore.canAutoSync(peer.id);
+    final autoSyncToken =
+        canAutoSync ? _trustStore.autoSyncToken(peer.id) : null;
     final trustedReconnect = shouldSendAutoSyncToken(
-      canAutoSync: _trustStore.canAutoSync(peer.id),
+      canAutoSync: canAutoSync,
       autoSyncToken: autoSyncToken,
     );
 
@@ -310,7 +310,7 @@ extension SyncRepositoryPairing on SyncRepository {
       isBlocked: _trustStore.isBlocked(fromId),
       peerProtocol: peerProtocol,
       alreadyConnected: _linksByPeerId[fromId]?.authenticated == true,
-      canAutoSync: _trustStore.canAutoSync(fromId),
+      canAutoSync: _isPro() && _trustStore.canAutoSync(fromId),
       storedToken: _trustStore.autoSyncToken(fromId),
       requestToken: pendingAutoSyncToken,
       pinnedFingerprint: _trustStore.pinnedFingerprint(fromId),

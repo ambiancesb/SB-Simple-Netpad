@@ -23,6 +23,7 @@ software.
 
 This project is not currently offered under an open-source license.
 
-The copyright holder may update licensing terms at any time. The current intent
-is to evaluate a licensing split at or after version 1.0, including separate
-free and paid editions.
+The copyright holder may update licensing terms at any time. The distributed
+app uses a freemium model: core editing and LAN sync remain available without
+payment. Netpad Pro is a one-time in-app purchase offered through the Apple App
+Store, Google Play, and Microsoft Store.

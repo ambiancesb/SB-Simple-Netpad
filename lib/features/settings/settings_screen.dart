@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
+import 'package:netpad/features/entitlements/paywall_sheet.dart';
+import 'package:netpad/features/entitlements/pro_gate.dart';
 import 'package:netpad/services/app_preferences.dart';
+import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/local_address_service.dart';
 import 'package:netpad/theme/app_skin.dart';
@@ -124,6 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final prefs = context.watch<AppPreferences>();
+    final entitlements = context.watch<EntitlementService>();
     final discovery = context.watch<DiscoveryRepository>();
     final port = discovery.serverPort;
     final address = _lanIp != null && port != null ? '$_lanIp:$port' : '…';
@@ -250,10 +254,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _SkinChoiceChip(
                         skin: skin,
                         selected: prefs.skin == skin,
-                        onSelected: () => prefs.setSkin(skin),
+                        locked: !entitlements.isPro &&
+                            skin != AppSkin.defaultBlue,
+                        onSelected: () async {
+                          final allowed =
+                              await ProGate.skinAllowed(context, skin);
+                          if (!allowed || !context.mounted) return;
+                          await prefs.setSkin(skin);
+                        },
                       ),
                   ],
                 ),
+                const Divider(height: 32),
+                Text('Netpad Pro', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(entitlements.isPro ? 'Pro unlocked' : 'Free'),
+                  subtitle: Text(
+                    entitlements.isPro
+                        ? 'Unlimited notes, skins, history, auto-sync, and voice'
+                        : entitlements.purchasesSupported
+                        ? 'One-time unlock via your app store'
+                        : 'Purchases unavailable on this platform',
+                  ),
+                  trailing: entitlements.isPro
+                      ? Icon(
+                          Icons.verified,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
+                      : entitlements.purchasesSupported
+                      ? const Icon(Icons.chevron_right)
+                      : null,
+                  onTap: entitlements.isPro || !entitlements.purchasesSupported
+                      ? null
+                      : () => showPaywallSheet(context),
+                ),
+                if (!entitlements.isPro && entitlements.purchasesSupported)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      onPressed: () async {
+                        final ok = await entitlements.restorePurchases();
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              ok
+                                  ? 'Pro restored'
+                                  : 'No previous Pro purchase found',
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text('Restore purchases'),
+                    ),
+                  ),
                 const Divider(height: 32),
                 Text('Editor', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
@@ -286,14 +342,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: const Text('License status'),
-                  subtitle: const Text('All rights reserved before version 1.0'),
+                  subtitle: Text(
+                    entitlements.isPro
+                        ? 'Pro · All rights reserved'
+                        : 'Free · All rights reserved',
+                  ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showLegalDialog(
                     title: 'License status',
                     paragraphs: const [
-                      'SB Simple Netpad is currently distributed under an All Rights Reserved license.',
+                      'SB Simple Netpad is distributed under an All Rights Reserved license.',
                       'No use, copying, modification, redistribution, sublicensing, or commercial use is allowed without prior written permission from the copyright holder.',
-                      'At or after version 1.0, the project may be split into separate free and paid editions with updated license terms.',
+                      'The app uses a freemium model: core editing and LAN sync are free. Netpad Pro is a one-time in-app purchase through the Apple App Store, Google Play, or Microsoft Store.',
                     ],
                   ),
                 ),
@@ -347,10 +407,12 @@ class _SkinChoiceChip extends StatelessWidget {
     required this.skin,
     required this.selected,
     required this.onSelected,
+    this.locked = false,
   });
 
   final AppSkin skin;
   final bool selected;
+  final bool locked;
   final VoidCallback onSelected;
 
   @override
@@ -388,11 +450,13 @@ class _SkinChoiceChip extends StatelessWidget {
                 ),
                 child: selected
                     ? const Icon(Icons.check, size: 14, color: Colors.white)
+                    : locked
+                    ? const Icon(Icons.lock, size: 12, color: Colors.white)
                     : null,
               ),
               const SizedBox(width: 8),
               Text(
-                skin.label,
+                locked ? '${skin.label} · Pro' : skin.label,
                 style: TextStyle(
                   color: colors.foreground,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w500,

@@ -12,6 +12,7 @@ import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/features/editor/editor_screen.dart';
 import 'package:netpad/features/editor/mobile_voice_input_button.dart';
+import 'package:netpad/features/entitlements/pro_gate.dart';
 import 'package:netpad/features/notes/notes_drawer.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
@@ -23,6 +24,8 @@ import 'package:netpad/features/settings/settings_screen.dart';
 import 'package:netpad/features/shell/desktop_menus.dart';
 import 'package:netpad/features/shell/mobile_overflow_menu.dart';
 import 'package:netpad/services/app_preferences.dart';
+import 'package:netpad/services/entitlements/entitlement_service.dart';
+import 'package:netpad/services/entitlements/pro_features.dart';
 import 'package:netpad/services/file_service.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/share_service.dart';
@@ -36,6 +39,7 @@ class NetpadApp extends StatelessWidget {
     super.key,
     required this.config,
     required this.preferences,
+    required this.entitlements,
     required this.tlsIdentity,
     required this.trustStore,
     required this.connectionLog,
@@ -47,6 +51,7 @@ class NetpadApp extends StatelessWidget {
 
   final InstanceConfig config;
   final AppPreferences preferences;
+  final EntitlementService entitlements;
   final TlsIdentity tlsIdentity;
   final TrustStore trustStore;
   final ConnectionLogRepository connectionLog;
@@ -61,6 +66,7 @@ class NetpadApp extends StatelessWidget {
       providers: [
         Provider.value(value: config),
         ChangeNotifierProvider.value(value: preferences),
+        ChangeNotifierProvider.value(value: entitlements),
         Provider.value(value: tlsIdentity),
         ChangeNotifierProvider.value(value: trustStore),
         ChangeNotifierProvider.value(value: connectionLog),
@@ -69,9 +75,9 @@ class NetpadApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: sync),
         ChangeNotifierProvider.value(value: pairing),
       ],
-      child: Consumer<AppPreferences>(
-        builder: (context, prefs, _) {
-          final skin = prefs.skin;
+      child: Consumer2<AppPreferences, EntitlementService>(
+        builder: (context, prefs, ents, _) {
+          final skin = ProFeatures.effectiveSkin(prefs.skin, ents);
           return MaterialApp(
             title: 'SB Simple Netpad',
             debugShowCheckedModeBanner: false,
@@ -135,6 +141,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
 
   Future<void> _toggleVoiceInput() async {
     if (!_speechInput.isListening) {
+      final allowed = await ProGate.voiceInputAllowed(context);
+      if (!allowed || !mounted) return;
       FocusManager.instance.primaryFocus?.unfocus();
     }
     final started = await _speechInput.toggleListening();
@@ -291,6 +299,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       onOpen: () => _openNote(context),
       onShare: () => _shareNote(context),
       onHistory: () async {
+        final allowed = await ProGate.versionHistoryAllowed(context);
+        if (!allowed || !mounted) return;
         final doc = context.read<WorkspaceRepository>().active;
         if (doc != null) await showVersionHistory(context, doc);
       },
@@ -491,6 +501,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       case MobileAppMenuAction.share:
         await _shareNote(context);
       case MobileAppMenuAction.history:
+        final allowed = await ProGate.versionHistoryAllowed(context);
+        if (!allowed || !context.mounted) return;
         final doc = context.read<WorkspaceRepository>().active;
         if (doc != null) await showVersionHistory(context, doc);
       case MobileAppMenuAction.settings:
@@ -617,6 +629,12 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     try {
       final loaded = await _fileService.openText();
       if (loaded == null || !context.mounted) return;
+
+      final allowed = await ProGate.createNoteAllowed(
+        context,
+        currentNoteCount: workspace.documents.length,
+      );
+      if (!allowed || !context.mounted) return;
 
       final doc = workspace.createNote(title: _titleFromFile(loaded.name));
       doc.replaceLocal(loaded.text, snapshotLabel: 'Imported file');

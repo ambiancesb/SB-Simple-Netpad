@@ -8,6 +8,7 @@ import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/services/android_networking.dart';
 import 'package:netpad/services/app_preferences.dart';
+import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/local_server.dart';
 import 'package:netpad/services/note_storage_service.dart';
@@ -21,6 +22,8 @@ Future<void> main() async {
   final config = InstanceConfig(prefs);
   final preferences = AppPreferences(prefs);
   await preferences.load();
+  final entitlements = EntitlementService(prefs: prefs);
+  await entitlements.initialize();
   final instanceId = config.instanceId;
   final displayName = config.displayName;
 
@@ -52,6 +55,7 @@ Future<void> main() async {
     connectionLog: connectionLog,
     trustStore: trustStore,
     tlsIdentity: tlsIdentity,
+    isPro: () => entitlements.isPro,
   );
 
   workspace.onDocUpdate = sync.broadcastDocUpdate;
@@ -66,6 +70,7 @@ Future<void> main() async {
     discovery: discovery,
     connectionLog: connectionLog,
     trustStore: trustStore,
+    isPro: () => entitlements.isPro,
   );
 
   await AndroidNetworking.initialize(discovery);
@@ -76,6 +81,7 @@ Future<void> main() async {
     NetpadApp(
       config: config,
       preferences: preferences,
+      entitlements: entitlements,
       tlsIdentity: tlsIdentity,
       trustStore: trustStore,
       connectionLog: connectionLog,

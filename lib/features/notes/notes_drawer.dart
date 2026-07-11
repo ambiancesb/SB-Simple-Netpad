@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
+import 'package:netpad/features/entitlements/pro_gate.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +48,28 @@ class _NotesPanelState extends State<NotesPanel> {
     if (widget.dismissOnSelect) Navigator.maybePop(context);
   }
 
+  Future<void> _createNote(
+    BuildContext context,
+    WorkspaceRepository workspace,
+  ) async {
+    final allowed = await ProGate.createNoteAllowed(
+      context,
+      currentNoteCount: workspace.documents.length,
+    );
+    if (!allowed || !context.mounted) return;
+    workspace.createNote();
+    _maybeDismiss();
+  }
+
+  Future<void> _openHistory(
+    BuildContext context,
+    DocumentRepository doc,
+  ) async {
+    final allowed = await ProGate.versionHistoryAllowed(context);
+    if (!allowed || !context.mounted) return;
+    await showVersionHistory(context, doc);
+  }
+
   @override
   Widget build(BuildContext context) {
     final workspace = context.watch<WorkspaceRepository>();
@@ -70,10 +93,7 @@ class _NotesPanelState extends State<NotesPanel> {
                 IconButton.filledTonal(
                   icon: const Icon(Icons.add),
                   tooltip: 'New note',
-                  onPressed: () {
-                    workspace.createNote();
-                    _maybeDismiss();
-                  },
+                  onPressed: () => _createNote(context, workspace),
                 ),
               ],
             ),
@@ -87,7 +107,7 @@ class _NotesPanelState extends State<NotesPanel> {
                 icon: const Icon(Icons.add, size: 20),
                 tooltip: 'New note',
                 visualDensity: VisualDensity.compact,
-                onPressed: () => workspace.createNote(),
+                onPressed: () => _createNote(context, workspace),
               ),
             ),
           ),
@@ -215,7 +235,7 @@ class _NotesPanelState extends State<NotesPanel> {
           },
           onRename: () => _rename(context, workspace, hit.doc),
           onDelete: () => _delete(context, workspace, hit.doc),
-          onHistory: () => showVersionHistory(context, hit.doc),
+          onHistory: () => _openHistory(context, hit.doc),
         );
       },
     );
@@ -257,7 +277,7 @@ class _NotesPanelState extends State<NotesPanel> {
           },
           onRename: () => _rename(context, workspace, doc),
           onDelete: () => _delete(context, workspace, doc),
-          onHistory: () => showVersionHistory(context, doc),
+          onHistory: () => _openHistory(context, doc),
         );
       },
     );

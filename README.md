@@ -255,4 +255,6 @@ Project history is tracked in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## License
 
-All rights reserved for now. See [`LICENSE`](LICENSE).
+All rights reserved. See [`LICENSE`](LICENSE).
+
+The shipped app is freemium: core editing and LAN sync are free; **Netpad Pro** is a one-time in-app purchase via the Apple App Store, Google Play, or Microsoft Store (RevenueCat on Apple/Google; Microsoft Store durable add-on on Windows). Linux builds stay on the free tier. Store console setup notes are in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md).

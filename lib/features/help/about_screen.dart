@@ -82,9 +82,9 @@ class AboutScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'All rights reserved before version 1.0. No use, copying, or '
-            'redistribution without prior written permission from the copyright '
-            'holder.',
+            'All rights reserved. Core editing and LAN sync are free. Netpad Pro '
+            'is a one-time unlock via the App Store, Google Play, or Microsoft '
+            'Store.',
             style: textTheme.bodyMedium,
           ),
           const SizedBox(height: 24),
