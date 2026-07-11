@@ -3,10 +3,76 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="0; url=privacy.html">
   <title>SB Simple Netpad</title>
+  <meta name="description" content="LAN notepad with peer discovery and shared editing. Sync plain-text notes across devices on the same Wi‑Fi.">
+  <link rel="stylesheet" href="site.css">
 </head>
 <body>
-  <p><a href="privacy.html">Privacy Policy</a> · <a href="eula.html">EULA</a></p>
+  <main>
+    <nav class="site" aria-label="Site">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="eula.html">EULA</a>
+      <a href="https://github.com/ambiancesb/SB-Simple-Netpad">GitHub</a>
+    </nav>
+
+    <h1>SB Simple Netpad</h1>
+    <p class="meta">LAN notepad · peer discovery · shared editing</p>
+    <p class="hero-lead">
+      Write plain-text notes on your phone or computer and keep them in sync with
+      other devices on the same Wi‑Fi. Peers discover each other on the local
+      network, pair once with mutual approval, then share notes over encrypted
+      sessions.
+    </p>
+    <p class="platforms">Android · iOS · Windows · macOS · Linux</p>
+
+    <h2>What it does</h2>
+    <ul>
+      <li>Plain-text editor with line numbers</li>
+      <li>Automatic discovery of nearby Netpad devices on your LAN</li>
+      <li>Mutual Accept before any sync starts</li>
+      <li>Multiple named notes, each syncing independently</li>
+      <li>Multi-peer relay so edits can reach devices through a hub</li>
+      <li>Rooms so separate groups can share one network without mixing</li>
+      <li>Local-only sync — no cloud account for your notes</li>
+    </ul>
+
+    <h2>Free and Pro</h2>
+    <div class="panel">
+      <p>
+        Core editing and LAN sync are free (up to 3 notes and 3 connected peers).
+        <strong>Netpad Pro</strong> is a one-time unlock for unlimited notes and
+        peers, extra skins, version history, trusted auto-sync, and voice
+        dictation — via the App Store, Google Play, or Microsoft Store.
+      </p>
+    </div>
+
+    <h2>Get the app</h2>
+    <p>
+      Store listings will use package id
+      <code>com.spencerbeaumier.sbnetpad</code>. Source and build instructions
+      live on GitHub.
+    </p>
+    <div class="cta-row">
+      <a class="primary" href="https://github.com/ambiancesb/SB-Simple-Netpad">View on GitHub</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="eula.html">EULA</a>
+    </div>
+
+    <h2>Security in brief</h2>
+    <ul>
+      <li>Sync uses TLS (<code>wss://</code>) with certificate pinning (TOFU)</li>
+      <li>Connections stay on your active local subnet</li>
+      <li>Block, revoke, and trust controls live in the Peers panel</li>
+    </ul>
+
+    <footer>
+      © 2026 Spencer Beaumier · SB Simple Netpad
+      <br>
+      <a href="privacy.html">Privacy</a>
+      <a href="eula.html">EULA</a>
+      <a href="https://github.com/ambiancesb/SB-Simple-Netpad">GitHub</a>
+    </footer>
+  </main>
 </body>
 </html>

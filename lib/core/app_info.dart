@@ -21,6 +21,9 @@ abstract final class AppInfo {
 
   static const copyright = '© 2026 Spencer Beaumier';
 
+  /// Public site hosted on GitHub Pages (`docs/`).
+  static const siteUrl = 'https://ambiancesb.github.io/SB-Simple-Netpad/';
+
   /// Public privacy policy hosted on GitHub Pages.
   static const privacyPolicyUrl =
       'https://ambiancesb.github.io/SB-Simple-Netpad/privacy.html';

@@ -253,6 +253,11 @@ Traffic is encrypted with TLS (`wss://`) and peers are certificate-pinned on fir
 
 Project history is tracked in [`CHANGELOG.md`](CHANGELOG.md).
 
+## Website
+
+Project site (GitHub Pages from `docs/`):
+[https://ambiancesb.github.io/SB-Simple-Netpad/](https://ambiancesb.github.io/SB-Simple-Netpad/)
+
 ## License
 
 SB Simple Netpad is proprietary software distributed under an

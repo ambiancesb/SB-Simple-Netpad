@@ -49,6 +49,17 @@ flutter run \
 
 CI / release builds should inject the same `--dart-define` values (or equivalent Flutter flavor / env wiring).
 
+### Android App Bundle
+
+```bash
+flutter build appbundle --release \
+  --dart-define=REVENUECAT_GOOGLE_API_KEY=goog_xxx
+```
+
+Output: `build/app/outputs/bundle/release/app-release.aab`
+
+Release signing uses `android/key.properties` + `android/upload-keystore.jks` (both gitignored). Back those up securely — losing the upload key blocks Play updates unless you use Play App Signing recovery.
+
 ### Store Console ↔ RevenueCat checklist
 
 **Apple (App Store Connect)**
@@ -98,9 +109,10 @@ The store build ships under an **End User License Agreement**, not an open-sourc
 
 | Artifact | Location |
 |----------|----------|
-| Repo copy | [`LICENSE`](../LICENSE) |
-| Hosted (GitHub Pages) | https://ambiancesb.github.io/SB-Simple-Netpad/eula.html |
-| Privacy (companion) | https://ambiancesb.github.io/SB-Simple-Netpad/privacy.html |
+| Site home | https://ambiancesb.github.io/SB-Simple-Netpad/ |
+| Repo EULA | [`LICENSE`](../LICENSE) |
+| Hosted EULA | https://ambiancesb.github.io/SB-Simple-Netpad/eula.html |
+| Privacy | https://ambiancesb.github.io/SB-Simple-Netpad/privacy.html |
 
 **Apple App Store Connect**
 
