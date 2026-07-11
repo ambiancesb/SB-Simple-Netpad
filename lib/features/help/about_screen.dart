@@ -20,6 +20,16 @@ Future<void> _openPrivacyPolicy(BuildContext context) async {
   }
 }
 
+Future<void> _openEula(BuildContext context) async {
+  final uri = Uri.parse(AppInfo.eulaUrl);
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
+      context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Could not open EULA')),
+    );
+  }
+}
+
 /// Application name, version, and summary.
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -77,17 +87,24 @@ class AboutScreen extends StatelessWidget {
           Text(AppInfo.status, style: textTheme.bodySmall),
           const Divider(height: 32),
           Text(
-            'License',
+            'End User License Agreement',
             style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
-            'All rights reserved. Core editing and LAN sync are free. Netpad Pro '
-            'is a one-time unlock via the App Store, Google Play, or Microsoft '
-            'Store.',
+            'SB Simple Netpad is licensed under an EULA, not an open-source '
+            'license. Core editing and LAN sync are free (up to 3 notes and '
+            '3 connected peers). Netpad Pro is a one-time unlock via the App '
+            'Store, Google Play, or Microsoft Store.',
             style: textTheme.bodyMedium,
           ),
           const SizedBox(height: 24),
+          OutlinedButton.icon(
+            onPressed: () => _openEula(context),
+            icon: const Icon(Icons.open_in_new, size: 18),
+            label: const Text('View EULA'),
+          ),
+          const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: () => _openPrivacyPolicy(context),
             icon: const Icon(Icons.open_in_new, size: 18),

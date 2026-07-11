@@ -14,6 +14,16 @@ abstract final class ProFeatures {
 
   static int get freeNoteLimit => EntitlementConstants.freeNoteLimit;
 
+  static bool canConnectPeer({
+    required EntitlementService entitlements,
+    required int currentConnectedCount,
+  }) {
+    if (entitlements.isPro) return true;
+    return currentConnectedCount < EntitlementConstants.freePeerLimit;
+  }
+
+  static int get freePeerLimit => EntitlementConstants.freePeerLimit;
+
   static bool isSkinAvailable(AppSkin skin, EntitlementService entitlements) {
     if (entitlements.isPro) return true;
     return skin == AppSkin.defaultBlue;

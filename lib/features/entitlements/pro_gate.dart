@@ -27,6 +27,25 @@ abstract final class ProGate {
     );
   }
 
+  static Future<bool> connectPeerAllowed(
+    BuildContext context, {
+    required int currentConnectedCount,
+  }) async {
+    final entitlements = context.read<EntitlementService>();
+    if (ProFeatures.canConnectPeer(
+      entitlements: entitlements,
+      currentConnectedCount: currentConnectedCount,
+    )) {
+      return true;
+    }
+    return showPaywallSheet(
+      context,
+      highlight:
+          'Free includes up to ${EntitlementConstants.freePeerLimit} connected '
+          'peers. Unlock Pro for unlimited peers.',
+    );
+  }
+
   static Future<bool> versionHistoryAllowed(BuildContext context) {
     final entitlements = context.read<EntitlementService>();
     if (ProFeatures.canUseVersionHistory(entitlements)) {

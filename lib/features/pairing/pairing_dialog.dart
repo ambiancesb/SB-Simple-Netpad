@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/core/models/pair_request.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
+import 'package:netpad/data/repositories/sync_repository.dart';
+import 'package:netpad/features/entitlements/pro_gate.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 
@@ -67,7 +69,13 @@ class PairingRequestDialog extends StatelessWidget {
           child: const Text('Reject'),
         ),
         FilledButton(
-          onPressed: () {
+          onPressed: () async {
+            final sync = context.read<SyncRepository>();
+            final allowed = await ProGate.connectPeerAllowed(
+              context,
+              currentConnectedCount: sync.authenticatedPeerCount,
+            );
+            if (!allowed || !context.mounted) return;
             pairing.acceptRequest(request);
             Navigator.of(context).pop();
           },

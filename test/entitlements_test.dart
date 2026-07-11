@@ -51,6 +51,32 @@ void main() {
       );
     });
 
+    test('free peer limit blocks at cap', () {
+      expect(EntitlementConstants.freeNoteLimit, 3);
+      expect(EntitlementConstants.freePeerLimit, 3);
+      expect(
+        ProFeatures.canConnectPeer(
+          entitlements: free,
+          currentConnectedCount: EntitlementConstants.freePeerLimit - 1,
+        ),
+        isTrue,
+      );
+      expect(
+        ProFeatures.canConnectPeer(
+          entitlements: free,
+          currentConnectedCount: EntitlementConstants.freePeerLimit,
+        ),
+        isFalse,
+      );
+      expect(
+        ProFeatures.canConnectPeer(
+          entitlements: pro,
+          currentConnectedCount: 100,
+        ),
+        isTrue,
+      );
+    });
+
     test('only default skin is free', () {
       expect(ProFeatures.isSkinAvailable(AppSkin.defaultBlue, free), isTrue);
       expect(ProFeatures.isSkinAvailable(AppSkin.ocean, free), isFalse);

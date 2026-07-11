@@ -5,11 +5,18 @@ extension SyncRepositoryPairing on SyncRepository {
     if (_trustStore.isBlocked(peer.id)) {
       throw StateError('${peer.displayName} is blocked. Unblock it to connect.');
     }
-    await LocalNetwork.refreshActiveSubnets();
     final existing = _linksByPeerId[peer.id];
     if (existing?.authenticated == true) {
       throw StateError('Already connected to ${peer.displayName}.');
     }
+    if (!_isPro() &&
+        authenticatedPeerCount >= EntitlementConstants.freePeerLimit) {
+      throw StateError(
+        'Free includes up to ${EntitlementConstants.freePeerLimit} connected '
+        'peers. Unlock Pro for unlimited peers.',
+      );
+    }
+    await LocalNetwork.refreshActiveSubnets();
     if (existing?.outboundSocket != null) {
       throw StateError('Already connecting to ${peer.displayName}.');
     }
@@ -167,6 +174,20 @@ extension SyncRepositoryPairing on SyncRepository {
     required bool accepted,
   }) {
     if (accepted) {
+      if (!_isPro() &&
+          authenticatedPeerCount >= EntitlementConstants.freePeerLimit) {
+        _refuseInboundPairRequest(
+          connectionId: connectionId,
+          requestId: requestId,
+          fromId: fromId,
+          fromName: fromName,
+          logMessage:
+              'Refused $fromName: free peer limit '
+              '(${EntitlementConstants.freePeerLimit}) reached',
+          reason: 'peer_limit',
+        );
+        return;
+      }
       _completePairingAsAcceptor(
         connectionId: connectionId,
         requestId: requestId,

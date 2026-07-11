@@ -273,7 +273,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: Text(entitlements.isPro ? 'Pro unlocked' : 'Free'),
                   subtitle: Text(
                     entitlements.isPro
-                        ? 'Unlimited notes, skins, history, auto-sync, and voice'
+                        ? 'Unlimited notes and peers, skins, history, auto-sync, and voice'
                         : entitlements.purchasesSupported
                         ? 'One-time unlock via your app store'
                         : 'Purchases unavailable on this platform',
@@ -341,19 +341,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 8),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('License status'),
+                  title: const Text('End User License Agreement'),
                   subtitle: Text(
-                    entitlements.isPro
-                        ? 'Pro · All rights reserved'
-                        : 'Free · All rights reserved',
+                    entitlements.isPro ? 'Pro · Licensed under EULA' : 'Free · Licensed under EULA',
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showLegalDialog(
-                    title: 'License status',
+                    title: 'End User License Agreement',
                     paragraphs: const [
-                      'SB Simple Netpad is distributed under an All Rights Reserved license.',
-                      'No use, copying, modification, redistribution, sublicensing, or commercial use is allowed without prior written permission from the copyright holder.',
-                      'The app uses a freemium model: core editing and LAN sync are free. Netpad Pro is a one-time in-app purchase through the Apple App Store, Google Play, or Microsoft Store.',
+                      'SB Simple Netpad is licensed under an End User License Agreement (EULA). The software is licensed, not sold.',
+                      'You may install and use the app on devices you own or control. You may not copy, modify, redistribute, or reverse engineer the software except as allowed by mandatory law.',
+                      'The app uses a freemium model: core editing and LAN sync are free (up to 3 notes and 3 connected peers). Netpad Pro is a one-time in-app purchase through the Apple App Store, Google Play, or Microsoft Store.',
+                      'The full EULA is at https://ambiancesb.github.io/SB-Simple-Netpad/eula.html',
                     ],
                   ),
                 ),

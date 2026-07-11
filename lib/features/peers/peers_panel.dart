@@ -191,6 +191,13 @@ class PeersPanel extends StatelessWidget {
       return;
     }
 
+    final sync = context.read<SyncRepository>();
+    final allowed = await ProGate.connectPeerAllowed(
+      context,
+      currentConnectedCount: sync.authenticatedPeerCount,
+    );
+    if (!allowed || !context.mounted) return;
+
     final pairing = context.read<PairingRepository>();
     try {
       await pairing.requestConnection(peer);

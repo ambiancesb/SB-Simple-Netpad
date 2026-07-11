@@ -10,7 +10,10 @@ abstract final class EntitlementConstants {
   static const defaultOfferingId = 'default';
 
   /// Free tier local note creation cap (synced peer notes may exceed this).
-  static const freeNoteLimit = 5;
+  static const freeNoteLimit = 3;
+
+  /// Free tier simultaneous authenticated peer connections.
+  static const freePeerLimit = 3;
 
   /// Method channel for Microsoft Store durable purchases.
   static const windowsStoreChannel = 'com.sb.netpad/windows_store';

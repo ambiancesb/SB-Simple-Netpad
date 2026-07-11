@@ -1,29 +1,132 @@
-All Rights Reserved
+END USER LICENSE AGREEMENT (EULA)
 
+SB Simple Netpad
 Copyright (c) 2026 Spencer Beaumier
 
-All rights are reserved.
+IMPORTANT — READ CAREFULLY. By installing, accessing, or using SB Simple Netpad
+(“Software”), you agree to be bound by this End User License Agreement
+(“Agreement”). If you do not agree, do not install or use the Software.
 
-No part of this software, including source code, documentation, and associated
-assets, may be used, copied, modified, merged, published, distributed,
-sublicensed, or sold without prior written permission from the copyright holder.
+1. License grant
 
-This software is provided "as is", without warranty of any kind, express or
-implied, including but not limited to merchantability, fitness for a particular
-purpose, and non-infringement.
+Subject to this Agreement, the copyright holder (“Licensor”) grants you a
+personal, limited, non-exclusive, non-transferable, revocable license to
+install and use the Software on devices you own or control, solely for your
+own lawful personal or internal business use.
 
-By using this software, you agree that you are solely responsible for your use
-of the software and for compliance with all applicable laws, regulations,
-policies, and agreements.
+2. Ownership
 
-In no event shall the copyright holder be liable for any claim, damages, or
-other liability, whether in an action of contract, tort, or otherwise, arising
-from, out of, or in connection with the software or the use or misuse of the
-software.
+The Software is licensed, not sold. Licensor retains all right, title, and
+interest in and to the Software, including all copyrights, trademarks, and
+other intellectual property. Except for the limited license above, no rights
+are granted by implication or otherwise.
 
-This project is not currently offered under an open-source license.
+3. Freemium features and purchases
 
-The copyright holder may update licensing terms at any time. The distributed
-app uses a freemium model: core editing and LAN sync remain available without
-payment. Netpad Pro is a one-time in-app purchase offered through the Apple App
-Store, Google Play, and Microsoft Store.
+The Software uses a freemium model. Core editing and local-network sync are
+available without payment, subject to usage limits published in the product
+(currently up to three local notes and three simultaneous connected peers).
+“Netpad Pro” is an optional one-time in-app unlock offered through the Apple
+App Store, Google Play, and/or Microsoft Store. Store purchases, billing,
+refunds, and account management are handled by the applicable store under
+that store’s terms. Linux builds may ship without in-app purchase support and
+remain on the free tier.
+
+4. Restrictions
+
+You may not, and may not permit others to:
+
+(a) copy, modify, adapt, translate, or create derivative works of the Software,
+    except as expressly allowed by applicable law that cannot be waived;
+(b) reverse engineer, decompile, or disassemble the Software, except to the
+    limited extent permitted by mandatory law;
+(c) rent, lease, lend, sell, sublicense, redistribute, or publicly host the
+    Software or any substantial portion of it;
+(d) remove or alter copyright, trademark, or proprietary notices;
+(e) use the Software to violate any law, or to harm, harass, or infringe the
+    rights of others;
+(f) circumvent technical measures, freemium limits, or purchase verification
+    except as provided by Licensor’s official unlock.
+
+5. Peer sync and your content
+
+Notes and sync traffic remain under your control on your devices and on peers
+you choose to pair with on a local network. You are solely responsible for the
+content you create, import, share, or sync, and for choosing which devices you
+trust. Licensor does not operate a cloud service for your notes.
+
+6. Third-party platforms and open-source components
+
+The Software may be distributed through Apple, Google, Microsoft, or other
+platforms. Those platforms are not parties to this Agreement and have no
+obligation to provide maintenance or support for the Software under this
+Agreement. The Software may include third-party open-source components that
+remain subject to their own licenses; nothing in this Agreement limits your
+rights under those licenses for those components alone.
+
+7. Updates
+
+Licensor may provide updates that modify, add, or remove features. Updates
+may be required for continued use or store compliance. Continued use after an
+update constitutes acceptance of the then-current Agreement if presented with
+the update.
+
+8. Disclaimer of warranties
+
+THE SOFTWARE IS PROVIDED “AS IS” AND “AS AVAILABLE”, WITHOUT WARRANTY OF ANY
+KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND
+NON-INFRINGEMENT. LICENSOR DOES NOT WARRANT THAT THE SOFTWARE WILL BE
+UNINTERRUPTED, ERROR-FREE, SECURE, OR FREE OF HARMFUL COMPONENTS, OR THAT
+DATA WILL NOT BE LOST.
+
+9. Limitation of liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, LICENSOR SHALL NOT BE LIABLE FOR ANY
+INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES,
+OR ANY LOSS OF DATA, PROFITS, OR BUSINESS, ARISING OUT OF OR RELATED TO THE
+SOFTWARE OR THIS AGREEMENT, WHETHER IN CONTRACT, TORT, OR OTHERWISE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. LICENSOR’S TOTAL LIABILITY FOR ANY
+CLAIM ARISING OUT OF THE SOFTWARE OR THIS AGREEMENT SHALL NOT EXCEED THE
+GREATER OF (A) THE AMOUNT YOU PAID LICENSOR FOR NETPAD PRO IN THE TWELVE (12)
+MONTHS BEFORE THE CLAIM OR (B) TEN U.S. DOLLARS (US $10). SOME JURISDICTIONS
+DO NOT ALLOW CERTAIN LIMITATIONS; IN THOSE CASES, LIABILITY IS LIMITED TO THE
+MAXIMUM EXTENT PERMITTED BY LAW.
+
+10. Termination
+
+This Agreement is effective until terminated. It terminates automatically if
+you breach it. You may terminate by uninstalling the Software and ceasing all
+use. Upon termination, the license ends and you must stop using the Software.
+Sections that by nature should survive (including ownership, disclaimer,
+limitation of liability, and governing law) survive termination.
+
+11. Privacy
+
+Use of the Software is also subject to the Privacy Policy published at:
+
+https://ambiancesb.github.io/SB-Simple-Netpad/privacy.html
+
+12. Changes to this Agreement
+
+Licensor may update this Agreement from time to time. The current version is
+published with the Software distribution and at:
+
+https://ambiancesb.github.io/SB-Simple-Netpad/eula.html
+
+Material changes may be highlighted in release notes or in-app notices. Your
+continued use after the effective date of a revised Agreement constitutes
+acceptance, except where prohibited by law.
+
+13. Contact
+
+Questions about this Agreement may be directed via the project repository:
+
+https://github.com/ambiancesb/SB-Simple-Netpad
+
+14. Entire agreement
+
+This Agreement constitutes the entire agreement between you and Licensor
+regarding the Software and supersedes prior conflicting statements about
+licensing for the distributed app, except for store terms that govern your
+relationship with Apple, Google, Microsoft, or other distributors.

@@ -105,6 +105,7 @@ class _PaywallSheetState extends State<_PaywallSheet> {
             ],
             const SizedBox(height: 16),
             const _Benefit(icon: Icons.note_add, label: 'Unlimited notes'),
+            const _Benefit(icon: Icons.hub, label: 'Unlimited connected peers'),
             const _Benefit(icon: Icons.palette, label: 'Extra color skins'),
             const _Benefit(icon: Icons.history, label: 'Version history'),
             const _Benefit(

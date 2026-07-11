@@ -19,6 +19,7 @@ import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
+import 'package:netpad/services/entitlements/entitlement_constants.dart';
 import 'package:netpad/services/local_server.dart';
 import 'package:netpad/services/pairing_verification_code.dart';
 import 'package:netpad/services/peer_host_resolver.dart';
@@ -131,6 +132,10 @@ class SyncRepository extends ChangeNotifier {
   /// True when [peerId] has a completed pairing session.
   bool isPeerAuthenticated(String peerId) =>
       _linksByPeerId[peerId]?.authenticated == true;
+
+  /// Count of peers with an authenticated sync session.
+  int get authenticatedPeerCount =>
+      _linksByPeerId.values.where((link) => link.authenticated).length;
 
   /// Aligns discovery UI state with authenticated links (e.g. after inbound accept).
   void reconcileDiscoveryConnectionState() {

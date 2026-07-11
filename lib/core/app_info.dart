@@ -24,4 +24,8 @@ abstract final class AppInfo {
   /// Public privacy policy hosted on GitHub Pages.
   static const privacyPolicyUrl =
       'https://ambiancesb.github.io/SB-Simple-Netpad/privacy.html';
+
+  /// Public End User License Agreement hosted on GitHub Pages.
+  static const eulaUrl =
+      'https://ambiancesb.github.io/SB-Simple-Netpad/eula.html';
 }
