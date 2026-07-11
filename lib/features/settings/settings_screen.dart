@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:netpad/core/app_info.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/features/entitlements/paywall_sheet.dart';
@@ -12,6 +13,7 @@ import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/local_address_service.dart';
 import 'package:netpad/theme/app_skin.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Full-screen settings: device identity, networking, theme, and editor prefs.
 class SettingsScreen extends StatefulWidget {
@@ -89,6 +91,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Address copied to clipboard')),
     );
+  }
+
+  Future<void> _openDocsPage(String url, String label) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
+        mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not open $label')),
+      );
+    }
   }
 
   Future<void> _showLegalDialog({
@@ -343,18 +355,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   contentPadding: EdgeInsets.zero,
                   title: const Text('End User License Agreement'),
                   subtitle: Text(
-                    entitlements.isPro ? 'Pro · Licensed under EULA' : 'Free · Licensed under EULA',
+                    entitlements.isPro
+                        ? 'Pro · Opens EULA on GitHub Pages'
+                        : 'Free · Opens EULA on GitHub Pages',
                   ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showLegalDialog(
-                    title: 'End User License Agreement',
-                    paragraphs: const [
-                      'SB Simple Netpad is licensed under an End User License Agreement (EULA). The software is licensed, not sold.',
-                      'You may install and use the app on devices you own or control. You may not copy, modify, redistribute, or reverse engineer the software except as allowed by mandatory law.',
-                      'The app uses a freemium model: core editing and LAN sync are free (up to 3 notes and 3 connected peers). Netpad Pro is a one-time in-app purchase through the Apple App Store, Google Play, or Microsoft Store.',
-                      'The full EULA is at https://ambiancesb.github.io/SB-Simple-Netpad/eula.html',
-                    ],
-                  ),
+                  trailing: const Icon(Icons.open_in_new),
+                  onTap: () => _openDocsPage(AppInfo.eulaUrl, 'EULA'),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Privacy Policy'),
+                  subtitle: const Text('Opens privacy page on GitHub Pages'),
+                  trailing: const Icon(Icons.open_in_new),
+                  onTap: () =>
+                      _openDocsPage(AppInfo.privacyPolicyUrl, 'privacy policy'),
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -385,7 +399,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  '© 2026 Spencer Beaumier',
+                  AppInfo.copyright,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],

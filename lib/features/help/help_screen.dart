@@ -2,12 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:netpad/core/app_info.dart';
 import 'package:netpad/features/help/about_screen.dart';
 import 'package:netpad/features/shell/desktop_menus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Opens the in-app help guide.
 Future<void> showHelpScreen(BuildContext context) {
   return Navigator.of(context).push(
     MaterialPageRoute<void>(builder: (_) => const HelpScreen()),
   );
+}
+
+Future<void> _openDocsPage(
+  BuildContext context,
+  String url,
+  String label,
+) async {
+  final uri = Uri.parse(url);
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
+      context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Could not open $label')),
+    );
+  }
 }
 
 /// Scrollable guide for using SB Simple Netpad on any platform.
@@ -42,6 +57,26 @@ class HelpScreen extends StatelessWidget {
             subtitle: Text('Version ${AppInfo.versionLabel}'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => showAboutScreen(context),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.gavel_outlined),
+            title: const Text('End User License Agreement'),
+            subtitle: const Text('Opens EULA on GitHub Pages'),
+            trailing: const Icon(Icons.open_in_new),
+            onTap: () => _openDocsPage(context, AppInfo.eulaUrl, 'EULA'),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.privacy_tip_outlined),
+            title: const Text('Privacy Policy'),
+            subtitle: const Text('Opens privacy page on GitHub Pages'),
+            trailing: const Icon(Icons.open_in_new),
+            onTap: () => _openDocsPage(
+              context,
+              AppInfo.privacyPolicyUrl,
+              'privacy policy',
+            ),
           ),
           const Divider(height: 24),
           _section(
