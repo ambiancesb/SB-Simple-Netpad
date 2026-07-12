@@ -136,14 +136,10 @@ class WorkspaceRepository extends ChangeNotifier {
       if (!_syncDisabledIds.remove(docId)) return;
       _inboundPendingFill.remove(docId);
       final doc = _docs[docId]!;
+      // Advertise the note first, then bump so the body update always beats
+      // the empty create shell (same-revision ties can drop content otherwise).
       onDocCreate?.call(doc.id, doc.title, doc.revision, instanceId);
-      onDocUpdate?.call(
-        doc.id,
-        doc.title,
-        doc.revision,
-        doc.text,
-        instanceId,
-      );
+      doc.bumpAndBroadcast(doc.revision);
       _broadcastOrder();
     } else if (!_syncDisabledIds.add(docId)) {
       return;

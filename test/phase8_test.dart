@@ -132,6 +132,61 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 200));
       expect(presenceCount, 0);
     });
+
+    test('enabling sync pushes create then content at a higher revision', () async {
+      final sender = WorkspaceRepository(
+        instanceId: 'aaa',
+        storage: await _storage(),
+      );
+      await sender.load();
+      final note = sender.createNote(title: 'Push me');
+      note.replaceLocal('hello from windows');
+      final createRev = note.revision;
+
+      int? createRevision;
+      int? updateRevision;
+      String? updateText;
+      sender.onDocCreate = (id, title, revision, originId) {
+        expect(id, note.id);
+        createRevision = revision;
+      };
+      sender.onDocUpdate = (id, title, revision, text, originId) {
+        expect(id, note.id);
+        updateRevision = revision;
+        updateText = text;
+      };
+
+      sender.setSyncEnabled(note.id, true);
+
+      expect(createRevision, createRev);
+      expect(updateRevision, createRev + 1);
+      expect(updateText, 'hello from windows');
+      expect(note.revision, createRev + 1);
+
+      // Peer with a lexicographically larger instance id would lose same-rev
+      // ties; content must still apply because the update revision is higher.
+      final peer = WorkspaceRepository(
+        instanceId: 'zzz',
+        storage: await _storage(),
+      );
+      await peer.load();
+      peer.receiveRemoteCreate(
+        docId: note.id,
+        title: 'Push me',
+        revision: createRevision!,
+        originId: 'aaa',
+      );
+      final applied = peer.receiveRemoteContent(
+        docId: note.id,
+        title: 'Push me',
+        revision: updateRevision!,
+        text: updateText!,
+        originId: 'aaa',
+      );
+
+      expect(applied, isTrue);
+      expect(peer.documentById(note.id)!.text, 'hello from windows');
+    });
   });
 
   group('inbound sync guards', () {
