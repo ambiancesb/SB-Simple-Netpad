@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:provider/provider.dart';
 
@@ -39,8 +40,8 @@ class _PaywallSheetState extends State<_PaywallSheet> {
       return;
     }
     final message = entitlements.lastError == null
-        ? 'Purchase was not completed.'
-        : 'Purchase failed.';
+        ? context.l10n.paywallPurchaseNotCompleted
+        : context.l10n.paywallPurchaseFailed;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
@@ -53,17 +54,18 @@ class _PaywallSheetState extends State<_PaywallSheet> {
     if (ok) {
       Navigator.of(context).pop(true);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pro restored')),
+        SnackBar(content: Text(context.l10n.paywallProRestored)),
       );
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('No previous Pro purchase found')),
+      SnackBar(content: Text(context.l10n.paywallNoPreviousPro)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final entitlements = context.watch<EntitlementService>();
     final theme = Theme.of(context);
     final price = entitlements.priceString;
@@ -82,14 +84,14 @@ class _PaywallSheetState extends State<_PaywallSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Unlock Netpad Pro',
+              l10n.paywallTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'One-time purchase. Core editing and LAN sync stay free.',
+              l10n.paywallSubtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -104,21 +106,16 @@ class _PaywallSheetState extends State<_PaywallSheet> {
               ),
             ],
             const SizedBox(height: 16),
-            const _Benefit(icon: Icons.note_add, label: 'Unlimited notes'),
-            const _Benefit(icon: Icons.hub, label: 'Unlimited connected peers'),
-            const _Benefit(icon: Icons.palette, label: 'Extra color skins'),
-            const _Benefit(icon: Icons.history, label: 'Version history'),
-            const _Benefit(
-              icon: Icons.sync,
-              label: 'Trusted peer auto-sync',
-            ),
-            const _Benefit(icon: Icons.mic, label: 'Voice dictation'),
+            _Benefit(icon: Icons.note_add, label: l10n.paywallBenefitUnlimitedNotes),
+            _Benefit(icon: Icons.hub, label: l10n.paywallBenefitUnlimitedPeers),
+            _Benefit(icon: Icons.palette, label: l10n.paywallBenefitSkins),
+            _Benefit(icon: Icons.history, label: l10n.paywallBenefitHistory),
+            _Benefit(icon: Icons.sync, label: l10n.paywallBenefitAutoSync),
+            _Benefit(icon: Icons.mic, label: l10n.paywallBenefitVoice),
             const SizedBox(height: 20),
             if (!supported)
               Text(
-                'In-app purchases are not available on this platform. '
-                'Install from the App Store, Google Play, or Microsoft Store '
-                'to unlock Pro.',
+                l10n.paywallPurchasesUnsupported,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -132,12 +129,16 @@ class _PaywallSheetState extends State<_PaywallSheet> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Text(price == null ? 'Buy Pro' : 'Buy Pro · $price'),
+                    : Text(
+                        price == null
+                            ? l10n.paywallBuyPro
+                            : l10n.paywallBuyProPrice(price),
+                      ),
               ),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: _busy ? null : _restore,
-                child: const Text('Restore purchases'),
+                child: Text(l10n.paywallRestorePurchases),
               ),
             ],
           ],

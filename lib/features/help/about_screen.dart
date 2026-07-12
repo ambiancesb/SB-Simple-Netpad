@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/core/app_info.dart';
 import 'package:netpad/features/help/help_screen.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
+import 'package:netpad/services/entitlements/entitlement_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Opens the About screen.
@@ -15,7 +17,7 @@ Future<void> _openPrivacyPolicy(BuildContext context) async {
   if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
       context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Could not open privacy policy')),
+      SnackBar(content: Text(context.l10n.aboutCouldNotOpenPrivacy)),
     );
   }
 }
@@ -25,7 +27,7 @@ Future<void> _openEula(BuildContext context) async {
   if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
       context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Could not open EULA')),
+      SnackBar(content: Text(context.l10n.aboutCouldNotOpenEula)),
     );
   }
 }
@@ -36,11 +38,12 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('About')),
+      appBar: AppBar(title: Text(l10n.aboutTitle)),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
@@ -62,14 +65,14 @@ class AboutScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Version ${AppInfo.versionLabel}',
+                  l10n.commonVersionLabel(AppInfo.versionLabel),
                   style: textTheme.bodyMedium?.copyWith(
                     color: colorScheme.outline,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  AppInfo.tagline,
+                  l10n.aboutTagline,
                   textAlign: TextAlign.center,
                   style: textTheme.bodyMedium,
                 ),
@@ -77,38 +80,38 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 28),
-          Text(AppInfo.description, style: textTheme.bodyMedium),
+          Text(l10n.aboutDescription, style: textTheme.bodyMedium),
           const SizedBox(height: 16),
           Text(
-            AppInfo.platforms,
+            l10n.aboutPlatforms,
             style: textTheme.bodySmall?.copyWith(color: colorScheme.outline),
           ),
           const SizedBox(height: 8),
-          Text(AppInfo.status, style: textTheme.bodySmall),
+          Text(l10n.aboutStatus, style: textTheme.bodySmall),
           const Divider(height: 32),
           Text(
-            'End User License Agreement',
+            l10n.aboutEulaHeading,
             style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
-            'SB Simple Netpad is licensed under an EULA, not an open-source '
-            'license. Core editing and LAN sync are free (up to 3 notes and '
-            '3 connected peers). Netpad Pro is a one-time unlock via the App '
-            'Store, Google Play, or Microsoft Store.',
+            l10n.aboutEulaBody(
+              EntitlementConstants.freeNoteLimit,
+              EntitlementConstants.freePeerLimit,
+            ),
             style: textTheme.bodyMedium,
           ),
           const SizedBox(height: 24),
           OutlinedButton.icon(
             onPressed: () => _openEula(context),
             icon: const Icon(Icons.open_in_new, size: 18),
-            label: const Text('View EULA'),
+            label: Text(l10n.aboutViewEula),
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: () => _openPrivacyPolicy(context),
             icon: const Icon(Icons.open_in_new, size: 18),
-            label: const Text('Privacy Policy'),
+            label: Text(l10n.aboutPrivacyPolicy),
           ),
           const SizedBox(height: 12),
           FilledButton.tonalIcon(
@@ -118,11 +121,11 @@ class AboutScreen extends StatelessWidget {
               );
             },
             icon: const Icon(Icons.help_outline),
-            label: const Text('How to use SB Simple Netpad'),
+            label: Text(l10n.aboutHowToUse),
           ),
           const SizedBox(height: 24),
           Text(
-            AppInfo.copyright,
+            l10n.aboutCopyright,
             style: textTheme.bodySmall,
           ),
         ],

@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 
 /// True on Windows, macOS, and Linux (not mobile).
 bool isDesktopMenuPlatform() {
@@ -71,10 +72,13 @@ MenuSerializableShortcut? _menuShortcut(LogicalKeyboardKey key) {
 }
 
 /// Native macOS menu bar (File, Edit, View).
-List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
+List<PlatformMenuItem> buildMacosMenus(
+  DesktopMenuActions actions,
+  AppLocalizations l10n,
+) {
   return [
     PlatformMenu(
-      label: 'SB Simple Netpad',
+      label: l10n.commonAppName,
       menus: [
         const PlatformProvidedMenuItem(
           type: PlatformProvidedMenuItemType.about,
@@ -82,7 +86,7 @@ List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
         PlatformMenuItemGroup(
           members: [
             PlatformMenuItem(
-              label: 'Settings…',
+              label: l10n.shellSettings,
               shortcut: _menuShortcut(LogicalKeyboardKey.comma),
               onSelected: actions.onSettings,
             ),
@@ -107,22 +111,22 @@ List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
       ],
     ),
     PlatformMenu(
-      label: 'File',
+      label: l10n.shellMenuFile,
       menus: [
         PlatformMenuItemGroup(
           members: [
             PlatformMenuItem(
-              label: 'Save to File…',
+              label: l10n.shellSaveToFile,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyS),
               onSelected: actions.onSave,
             ),
             PlatformMenuItem(
-              label: 'Open File as New Note…',
+              label: l10n.shellOpenFileAsNewNote,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyO),
               onSelected: actions.onOpen,
             ),
             PlatformMenuItem(
-              label: 'Share Note',
+              label: l10n.shellShareNote,
               onSelected: actions.onShare,
             ),
           ],
@@ -130,7 +134,7 @@ List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
         PlatformMenuItemGroup(
           members: [
             PlatformMenuItem(
-              label: 'Version History…',
+              label: l10n.shellVersionHistory,
               onSelected: actions.onHistory,
             ),
           ],
@@ -138,22 +142,22 @@ List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
       ],
     ),
     PlatformMenu(
-      label: 'Edit',
+      label: l10n.shellMenuEdit,
       menus: [
         PlatformMenuItemGroup(
           members: [
             PlatformMenuItem(
-              label: 'Cut',
+              label: l10n.shellCut,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyX),
               onSelected: actions.onCut,
             ),
             PlatformMenuItem(
-              label: 'Copy',
+              label: l10n.shellCopy,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyC),
               onSelected: actions.onCopy,
             ),
             PlatformMenuItem(
-              label: 'Paste',
+              label: l10n.shellPaste,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyV),
               onSelected: actions.onPaste,
             ),
@@ -162,12 +166,12 @@ List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
         PlatformMenuItemGroup(
           members: [
             PlatformMenuItem(
-              label: 'Find…',
+              label: l10n.shellFind,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyF),
               onSelected: actions.onFind,
             ),
             PlatformMenuItem(
-              label: 'Find and Replace…',
+              label: l10n.shellFindAndReplace,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyH),
               onSelected: actions.onFindReplace,
             ),
@@ -176,7 +180,7 @@ List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
         PlatformMenuItemGroup(
           members: [
             PlatformMenuItem(
-              label: actions.wordWrap ? 'Word Wrap ✓' : 'Word Wrap',
+              label: actions.wordWrap ? l10n.shellWordWrapChecked : l10n.shellWordWrap,
               onSelected: actions.onToggleWordWrap,
             ),
           ],
@@ -184,29 +188,33 @@ List<PlatformMenuItem> buildMacosMenus(DesktopMenuActions actions) {
       ],
     ),
     PlatformMenu(
-      label: 'View',
+      label: l10n.shellMenuView,
       menus: [
         PlatformMenuItem(
-          label: actions.notesPanelVisible ? 'Notes Panel ✓' : 'Notes Panel',
+          label: actions.notesPanelVisible
+              ? l10n.shellNotesPanelChecked
+              : l10n.shellNotesPanel,
           shortcut: _menuShortcut(LogicalKeyboardKey.keyN),
           onSelected: actions.onToggleNotes,
         ),
         PlatformMenuItem(
-          label: actions.peersPanelVisible ? 'Peers Panel ✓' : 'Peers Panel',
+          label: actions.peersPanelVisible
+              ? l10n.shellPeersPanelChecked
+              : l10n.shellPeersPanel,
           shortcut: _menuShortcut(LogicalKeyboardKey.keyP),
           onSelected: actions.onTogglePeers,
         ),
       ],
     ),
     PlatformMenu(
-      label: 'Help',
+      label: l10n.shellMenuHelp,
       menus: [
         PlatformMenuItem(
-          label: 'SB Simple Netpad Help',
+          label: l10n.shellHelpItem,
           onSelected: actions.onHelp,
         ),
         PlatformMenuItem(
-          label: 'About SB Simple Netpad',
+          label: l10n.shellAboutItem,
           onSelected: actions.onAbout,
         ),
       ],
@@ -225,6 +233,7 @@ class DesktopMaterialMenuBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
     return Material(
       color: colorScheme.surfaceContainerHighest,
@@ -241,69 +250,69 @@ class DesktopMaterialMenuBar extends StatelessWidget {
               MenuItemButton(
                 onPressed: actions.onSave,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyS),
-                child: const Text('Save to File…'),
+                child: Text(l10n.shellSaveToFile),
               ),
               MenuItemButton(
                 onPressed: actions.onOpen,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyO),
-                child: const Text('Open File as New Note…'),
+                child: Text(l10n.shellOpenFileAsNewNote),
               ),
               MenuItemButton(
                 onPressed: actions.onShare,
-                child: const Text('Share Note'),
+                child: Text(l10n.shellShareNote),
               ),
               MenuItemButton(
                 onPressed: actions.onHistory,
-                child: const Text('Version History…'),
+                child: Text(l10n.shellVersionHistory),
               ),
               MenuItemButton(
                 onPressed: actions.onSettings,
-                child: const Text('Settings…'),
+                child: Text(l10n.shellSettings),
               ),
               MenuItemButton(
                 onPressed: actions.onExit,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyQ),
-                child: const Text('Exit'),
+                child: Text(l10n.shellExit),
               ),
             ],
-            child: const Text('File'),
+            child: Text(l10n.shellMenuFile),
           ),
           SubmenuButton(
             menuChildren: [
               MenuItemButton(
                 onPressed: actions.onCut,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyX),
-                child: const Text('Cut'),
+                child: Text(l10n.shellCut),
               ),
               MenuItemButton(
                 onPressed: actions.onCopy,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyC),
-                child: const Text('Copy'),
+                child: Text(l10n.shellCopy),
               ),
               MenuItemButton(
                 onPressed: actions.onPaste,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyV),
-                child: const Text('Paste'),
+                child: Text(l10n.shellPaste),
               ),
               MenuItemButton(
                 onPressed: actions.onFind,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyF),
-                child: const Text('Find…'),
+                child: Text(l10n.shellFind),
               ),
               MenuItemButton(
                 onPressed: actions.onFindReplace,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyH),
-                child: const Text('Find and Replace…'),
+                child: Text(l10n.shellFindAndReplace),
               ),
               MenuItemButton(
                 onPressed: actions.onToggleWordWrap,
                 child: _CheckMenuLabel(
-                  label: 'Word Wrap',
+                  label: l10n.shellWordWrap,
                   checked: actions.wordWrap,
                 ),
               ),
             ],
-            child: const Text('Edit'),
+            child: Text(l10n.shellMenuEdit),
           ),
           SubmenuButton(
             menuChildren: [
@@ -311,7 +320,7 @@ class DesktopMaterialMenuBar extends StatelessWidget {
                 onPressed: actions.onToggleNotes,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyN),
                 child: _CheckMenuLabel(
-                  label: 'Notes Panel',
+                  label: l10n.shellNotesPanel,
                   checked: actions.notesPanelVisible,
                 ),
               ),
@@ -319,25 +328,25 @@ class DesktopMaterialMenuBar extends StatelessWidget {
                 onPressed: actions.onTogglePeers,
                 shortcut: _menuShortcut(LogicalKeyboardKey.keyP),
                 child: _CheckMenuLabel(
-                  label: 'Peers Panel',
+                  label: l10n.shellPeersPanel,
                   checked: actions.peersPanelVisible,
                 ),
               ),
             ],
-            child: const Text('View'),
+            child: Text(l10n.shellMenuView),
           ),
           SubmenuButton(
             menuChildren: [
               MenuItemButton(
                 onPressed: actions.onHelp,
-                child: const Text('SB Simple Netpad Help'),
+                child: Text(l10n.shellHelpItem),
               ),
               MenuItemButton(
                 onPressed: actions.onAbout,
-                child: const Text('About SB Simple Netpad'),
+                child: Text(l10n.shellAboutItem),
               ),
             ],
-            child: const Text('Help'),
+            child: Text(l10n.shellMenuHelp),
           ),
         ],
       ),
@@ -382,7 +391,7 @@ class DesktopMenuHost extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!useNativeSystemMenuBar()) return child;
     return PlatformMenuBar(
-      menus: buildMacosMenus(actions),
+      menus: buildMacosMenus(actions, context.l10n),
       child: child,
     );
   }

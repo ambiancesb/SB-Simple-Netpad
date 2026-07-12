@@ -7,6 +7,7 @@ import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/features/entitlements/paywall_sheet.dart';
 import 'package:netpad/features/entitlements/pro_gate.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/instance_config.dart';
@@ -80,7 +81,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _roomController.addListener(_markDirty);
     setState(() => _dirty = false);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Settings saved · "$name" · room "$room"')),
+      SnackBar(
+        content: Text(context.l10n.settingsSavedSnack(name, room)),
+      ),
     );
   }
 
@@ -89,7 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await Clipboard.setData(ClipboardData(text: '$_lanIp:$port'));
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Address copied to clipboard')),
+      SnackBar(content: Text(context.l10n.settingsAddressCopied)),
     );
   }
 
@@ -98,7 +101,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
         mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not open $label')),
+        SnackBar(
+          content: Text(context.l10n.commonCouldNotOpenLabel(label)),
+        ),
       );
     }
   }
@@ -128,7 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
+              child: Text(context.l10n.commonClose),
             ),
           ],
         );
@@ -138,6 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final prefs = context.watch<AppPreferences>();
     final entitlements = context.watch<EntitlementService>();
     final discovery = context.watch<DiscoveryRepository>();
@@ -164,17 +170,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
           autofocus: true,
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Settings'),
+              title: Text(l10n.settingsTitle),
               actions: [
                 if (_dirty)
                   FilledButton(
                     onPressed: _save,
-                    child: const Text('Save'),
+                    child: Text(l10n.commonSave),
                   )
                 else
                   TextButton(
                     onPressed: null,
-                    child: const Text('Save'),
+                    child: Text(l10n.commonSave),
                   ),
                 const SizedBox(width: 8),
               ],
@@ -182,11 +188,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             body: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text('Device', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  l10n.settingsDeviceSection,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 4),
                 Text(
-                  'Device name and room require Save (Ctrl+S). '
-                  'Appearance and editor preferences save immediately.',
+                  l10n.settingsDeviceHint,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.outline,
                   ),
@@ -194,60 +202,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Device name',
-                    hintText: 'Name shown to other devices',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.settingsDeviceName,
+                    hintText: l10n.settingsDeviceNameHint,
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: _roomController,
-                  decoration: const InputDecoration(
-                    labelText: 'Session / room',
-                    hintText: 'Only peers in the same room are discovered',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.settingsSessionRoom,
+                    hintText: l10n.settingsSessionRoomHint,
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 12),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Listening port'),
+                  title: Text(l10n.settingsListeningPort),
                   subtitle: Text(
                     port == null
-                        ? 'Starting server…'
-                        : '$address (share this with manual connect)',
+                        ? l10n.settingsStartingServer
+                        : l10n.settingsAddressShare(address),
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.copy),
-                    tooltip: 'Copy address',
+                    tooltip: l10n.settingsCopyAddress,
                     onPressed: port == null ? null : () => _copyAddress(port),
                   ),
                 ),
                 const Divider(height: 32),
                 Text(
-                  'Appearance',
+                  l10n.settingsAppearanceSection,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 8),
-                Text('Mode', style: Theme.of(context).textTheme.bodyMedium),
+                Text(l10n.settingsMode, style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 8),
                 SegmentedButton<ThemeMode>(
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: ThemeMode.system,
-                      label: Text('System'),
-                      icon: Icon(Icons.brightness_auto, size: 18),
+                      label: Text(l10n.settingsThemeSystem),
+                      icon: const Icon(Icons.brightness_auto, size: 18),
                     ),
                     ButtonSegment(
                       value: ThemeMode.light,
-                      label: Text('Light'),
-                      icon: Icon(Icons.light_mode, size: 18),
+                      label: Text(l10n.settingsThemeLight),
+                      icon: const Icon(Icons.light_mode, size: 18),
                     ),
                     ButtonSegment(
                       value: ThemeMode.dark,
-                      label: Text('Dark'),
-                      icon: Icon(Icons.dark_mode, size: 18),
+                      label: Text(l10n.settingsThemeDark),
+                      icon: const Icon(Icons.dark_mode, size: 18),
                     ),
                   ],
                   selected: {prefs.themeMode},
@@ -256,7 +264,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                Text('Skin', style: Theme.of(context).textTheme.bodyMedium),
+                Text(l10n.settingsSkin, style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 10,
@@ -278,17 +286,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
                 const Divider(height: 32),
-                Text('Netpad Pro', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  l10n.settingsProSection,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: Text(entitlements.isPro ? 'Pro unlocked' : 'Free'),
+                  title: Text(
+                    entitlements.isPro ? l10n.settingsProUnlocked : l10n.settingsFree,
+                  ),
                   subtitle: Text(
                     entitlements.isPro
-                        ? 'Unlimited notes and peers, skins, history, auto-sync, and voice'
+                        ? l10n.settingsProUnlockedSubtitle
                         : entitlements.purchasesSupported
-                        ? 'One-time unlock via your app store'
-                        : 'Purchases unavailable on this platform',
+                        ? l10n.settingsProBuySubtitle
+                        : l10n.settingsPurchasesUnavailable,
                   ),
                   trailing: entitlements.isPro
                       ? Icon(
@@ -313,30 +326,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           SnackBar(
                             content: Text(
                               ok
-                                  ? 'Pro restored'
-                                  : 'No previous Pro purchase found',
+                                  ? context.l10n.settingsProRestored
+                                  : context.l10n.settingsNoPreviousPro,
                             ),
                           ),
                         );
                       },
-                      child: const Text('Restore purchases'),
+                      child: Text(l10n.settingsRestorePurchases),
                     ),
                   ),
                 const Divider(height: 32),
-                Text('Editor', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  l10n.settingsEditorSection,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Word wrap'),
-                  subtitle: const Text(
-                    'Wrap long lines instead of horizontal scroll',
-                  ),
+                  title: Text(l10n.settingsWordWrap),
+                  subtitle: Text(l10n.settingsWordWrapSubtitle),
                   value: prefs.wordWrap,
                   onChanged: prefs.setWordWrap,
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: Text('Font size (${prefs.fontSize.round()} pt)'),
+                  title: Text(
+                    l10n.settingsFontSize(prefs.fontSize.round()),
+                  ),
                   subtitle: Slider(
                     min: AppPreferences.minFontSize,
                     max: AppPreferences.maxFontSize,
@@ -349,51 +365,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 const Divider(height: 32),
-                Text('Legal', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  l10n.settingsLegalSection,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('End User License Agreement'),
+                  title: Text(l10n.commonEndUserLicenseAgreement),
                   subtitle: Text(
                     entitlements.isPro
-                        ? 'Pro · Opens EULA on GitHub Pages'
-                        : 'Free · Opens EULA on GitHub Pages',
+                        ? l10n.settingsEulaSubtitlePro
+                        : l10n.settingsEulaSubtitleFree,
                   ),
                   trailing: const Icon(Icons.open_in_new),
-                  onTap: () => _openDocsPage(AppInfo.eulaUrl, 'EULA'),
+                  onTap: () => _openDocsPage(AppInfo.eulaUrl, l10n.commonEulaLabel),
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Privacy Policy'),
-                  subtitle: const Text('Opens privacy page on GitHub Pages'),
+                  title: Text(l10n.commonPrivacyPolicy),
+                  subtitle: Text(l10n.settingsPrivacySubtitle),
                   trailing: const Icon(Icons.open_in_new),
-                  onTap: () =>
-                      _openDocsPage(AppInfo.privacyPolicyUrl, 'privacy policy'),
+                  onTap: () => _openDocsPage(
+                    AppInfo.privacyPolicyUrl,
+                    l10n.commonPrivacyPolicyLabel,
+                  ),
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Disclaimer and liability'),
-                  subtitle: const Text('Use at your own risk'),
+                  title: Text(l10n.settingsDisclaimerTitle),
+                  subtitle: Text(l10n.settingsDisclaimerSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showLegalDialog(
-                    title: 'Disclaimer and liability',
-                    paragraphs: const [
-                      'This software is provided "as is", without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement.',
-                      'You are solely responsible for how you use this app and for compliance with all applicable laws, regulations, policies, and agreements.',
-                      'The copyright holder is not liable for any claims, damages, losses, data loss, business interruption, or other liability arising from use or misuse of this software.',
+                    title: l10n.settingsDisclaimerTitle,
+                    paragraphs: [
+                      l10n.settingsDisclaimerP1,
+                      l10n.settingsDisclaimerP2,
+                      l10n.settingsDisclaimerP3,
                     ],
                   ),
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('No legal advice'),
-                  subtitle: const Text('Informational software only'),
+                  title: Text(l10n.settingsNoLegalAdviceTitle),
+                  subtitle: Text(l10n.settingsNoLegalAdviceSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showLegalDialog(
-                    title: 'No legal advice',
-                    paragraphs: const [
-                      'This app and its documentation do not provide legal, regulatory, or professional advice.',
-                      'If you need legal guidance for your use case, consult a qualified professional.',
+                    title: l10n.settingsNoLegalAdviceTitle,
+                    paragraphs: [
+                      l10n.settingsNoLegalAdviceP1,
+                      l10n.settingsNoLegalAdviceP2,
                     ],
                   ),
                 ),
@@ -430,6 +451,14 @@ class _SkinChoiceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final skinName = switch (skin) {
+      AppSkin.defaultBlue => l10n.settingsSkinDefault,
+      AppSkin.ocean => l10n.settingsSkinOcean,
+      AppSkin.forest => l10n.settingsSkinForest,
+      AppSkin.sunset => l10n.settingsSkinSunset,
+      AppSkin.slate => l10n.settingsSkinSlate,
+    };
     final colors = skin.editorColors(Theme.of(context).brightness);
     return Material(
       color: colors.background,
@@ -469,7 +498,7 @@ class _SkinChoiceChip extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                locked ? '${skin.label} · Pro' : skin.label,
+                locked ? l10n.settingsSkinProLabel(skinName) : skinName,
                 style: TextStyle(
                   color: colors.foreground,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w500,

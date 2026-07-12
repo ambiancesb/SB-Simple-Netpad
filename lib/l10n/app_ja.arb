@@ -1,0 +1,645 @@
+{
+  "@@locale": "ja",
+  "commonAppName": "SB Simple Netpad",
+  "commonProName": "Netpad Pro",
+  "commonCancel": "キャンセル",
+  "commonClose": "閉じる",
+  "commonSave": "保存",
+  "commonDelete": "削除",
+  "commonConnect": "接続",
+  "commonHelp": "ヘルプ",
+  "commonSettings": "設定",
+  "commonMore": "もっと見る",
+  "commonCopy": "コピー",
+  "commonClear": "クリア",
+  "commonAccept": "承認",
+  "commonReject": "拒否",
+  "commonBlock": "ブロック",
+  "commonUnblock": "ブロック解除",
+  "commonRevoke": "取り消し",
+  "commonRestore": "復元",
+  "commonRetry": "再試行",
+  "commonCouldNotOpenLabel": "{label} を開けませんでした",
+  "@commonCouldNotOpenLabel": {
+    "placeholders": {
+      "label": {"type": "String"}
+    }
+  },
+  "commonEulaLabel": "EULA",
+  "commonPrivacyPolicyLabel": "プライバシーポリシー",
+  "commonEndUserLicenseAgreement": "エンドユーザーライセンス契約",
+  "commonPrivacyPolicy": "プライバシーポリシー",
+  "commonVersionLabel": "バージョン {version}",
+  "@commonVersionLabel": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+
+  "shellMenuFile": "ファイル",
+  "shellMenuEdit": "編集",
+  "shellMenuView": "表示",
+  "shellMenuHelp": "ヘルプ",
+  "shellSaveToFile": "ファイルに保存…",
+  "shellOpenFileAsNewNote": "ファイルを新しいメモとして開く…",
+  "shellShareNote": "メモを共有",
+  "shellVersionHistory": "バージョン履歴…",
+  "shellSettings": "設定…",
+  "shellExit": "終了",
+  "shellCut": "切り取り",
+  "shellCopy": "コピー",
+  "shellPaste": "貼り付け",
+  "shellFind": "検索…",
+  "shellFindAndReplace": "検索と置換…",
+  "shellWordWrap": "折り返し",
+  "shellWordWrapChecked": "折り返し ✓",
+  "shellNotesPanel": "メモパネル",
+  "shellNotesPanelChecked": "メモパネル ✓",
+  "shellPeersPanel": "ピアパネル",
+  "shellPeersPanelChecked": "ピアパネル ✓",
+  "shellHelpItem": "SB Simple Netpad ヘルプ",
+  "shellAboutItem": "SB Simple Netpad について",
+  "shellHideNotesPanel": "メモパネルを非表示",
+  "shellShowNotesPanel": "メモパネルを表示 (Ctrl+N)",
+  "shellHidePeersPanel": "ピアパネルを非表示",
+  "shellShowPeersPanel": "ピアパネルを表示 (Ctrl+P)",
+  "shellPeersTooltipConnected": "{count} 件の暗号化されたピアセッション · ピアパネルを{action} (Ctrl+P)",
+  "@shellPeersTooltipConnected": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "action": {"type": "String"}
+    }
+  },
+  "shellPeersTooltipActionHide": "非表示",
+  "shellPeersTooltipActionShow": "表示",
+  "shellFindInNote": "メモ内を検索 (Ctrl+F)",
+  "shellSecurityChipConnected": "WSS/TLS で暗号化された {count} 件のピアセッション · タップしてピアを確認",
+  "@shellSecurityChipConnected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "shellSecurityChipNone": "アクティブなピアセッションなし · タップしてピアを確認",
+  "shellMobileWordWrap": "折り返し",
+  "shellMobileSaveToFile": "ファイルに保存…",
+  "shellMobileOpenFileAsNewNote": "ファイルを新しいメモとして開く…",
+  "shellMobileShareNote": "メモを共有",
+  "shellMobileVersionHistory": "バージョン履歴…",
+  "shellMobileSettings": "設定",
+  "shellMobileHelp": "ヘルプ",
+  "shellMobileAbout": "SB Simple Netpad について",
+  "shellListeningSnack": "聴取中… もう一度マイクをタップして停止",
+
+  "notesTitle": "メモ",
+  "notesNewNote": "新しいメモ",
+  "notesSearchHint": "すべてのメモを検索",
+  "notesRenameTitle": "メモの名前を変更",
+  "notesTitleLabel": "タイトル",
+  "notesDeleteTitle": "\"{title}\" を削除しますか？",
+  "@notesDeleteTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "notesDeleteSyncedBody": "これにより、あなたとすべての接続されたピアからメモが削除されます。",
+  "notesDeleteLocalBody": "これにより、このデバイスからのみメモが削除されます。",
+  "notesNoMatches": "一致なし",
+  "notesNoNotes": "メモなし",
+  "notesRename": "名前を変更",
+  "notesVersionHistory": "バージョン履歴",
+  "notesDelete": "削除",
+  "notesSyncWithPeers": "ピアと同期",
+  "notesLocalOnly": "ローカルのみ",
+  "notesEmptyNote": "空のメモ",
+  "notesMatchCount": "{count} 件の一致",
+  "@notesMatchCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "notesLocalOnlyWithMatches": "ローカルのみ · {matchLine}",
+  "@notesLocalOnlyWithMatches": {
+    "placeholders": {
+      "matchLine": {"type": "String"}
+    }
+  },
+  "notesSearchSnippetMatches": "{snippet}  ·  {count} 件の一致",
+  "@notesSearchSnippetMatches": {
+    "placeholders": {
+      "snippet": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "notesNoNoteSelected": "メモが選択されていません",
+
+  "historyTitle": "バージョン履歴 · \"{title}\"",
+  "@historyTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "historyEmpty": "まだ保存されたバージョンはありません。リモートの編集がテキストを置き換える前に、スナップショットが自動的に保持されます。",
+  "historyEntrySubtitle": "{label} · {time} · {chars} 文字",
+  "@historyEntrySubtitle": {
+    "placeholders": {
+      "label": {"type": "String"},
+      "time": {"type": "String"},
+      "chars": {"type": "int"}
+    }
+  },
+  "historyRestore": "復元",
+  "historyRestoredSnack": "バージョンを復元しました",
+  "historyBeforeRemoteUpdate": "リモート更新前",
+  "historySnapshot": "スナップショット",
+  "historyImportedFile": "インポートされたファイル",
+
+  "editorFindHint": "検索",
+  "editorReplaceHint": "置換後の文字列",
+  "editorMatchCounter": "{current}/{total}",
+  "@editorMatchCounter": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "editorMatchNone": "0/0",
+  "editorPrevious": "前へ",
+  "editorNext": "次へ",
+  "editorShowReplace": "置換を表示 (Ctrl+H)",
+  "editorHideReplace": "置換を非表示 (Ctrl+H)",
+  "editorClose": "閉じる",
+  "editorReplace": "置換",
+  "editorReplaceAll": "すべて",
+  "editorListening": "聴取中…",
+  "editorDictate": "ディクテーション",
+  "editorStopDictation": "ディクテーションを停止",
+
+  "peersConnectByIp": "IPで接続",
+  "peersConnected": "接続済み",
+  "peersNearby": "近くのデバイス",
+  "peersTrustedDevices": "信頼済みデバイス",
+  "peersBlocked": "ブロック済み",
+  "peersConnectionLog": "接続ログ",
+  "peersNoActiveConnections": "アクティブな接続なし",
+  "peersNoTrustedDevices": "信頼済みデバイスなし — 一度ペアリングして自動同期を有効化",
+  "peersNoBlockedDevices": "ブロックされたデバイスなし",
+  "peersNoConnectionEvents": "まだ接続イベントなし",
+  "peersNoDiscoveredPeers": "ピアが見つかりません — Linuxはこのデバイスと同じWi‑Fiサブネット上にある必要があります（上記のアドレスを確認）、またはIPで接続を使用してください",
+  "peersDiscoveryPaused": "ローカルネットワークに参加するまでピア探索は一時停止中です",
+  "peersDisconnect": "切断",
+  "peersConnectNow": "今すぐ接続",
+  "peersConnect": "接続",
+  "peersResolving": "解決中…",
+  "peersBlockTooltip": "ブロック",
+  "peersBlockTitle": "{peer} をブロックしますか？",
+  "@peersBlockTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersBlockBody": "これによりデバイスが切断され、固定された証明書が削除され、ブロック解除するまで今後の接続要求が拒否されます。",
+  "peersRevokeTitle": "{peer} を取り消しますか？",
+  "@peersRevokeTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersRevokeBody": "次の接続では再度「承認」をタップする必要があります。セキュリティPINは保持されるため、証明書の確認は引き続き適用されます。",
+  "peersAutoSync": "自動同期",
+  "peersCopiedOneLogEntry": "ログエントリを1件コピーしました",
+  "peersCopiedLogEntries": "ログエントリを {count} 件コピーしました",
+  "@peersCopiedLogEntries": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "peersLogRevision": "{time} • リビジョン {revision}",
+  "@peersLogRevision": {
+    "placeholders": {
+      "time": {"type": "String"},
+      "revision": {"type": "String"}
+    }
+  },
+  "peersStillResolving": "{peer} を解決中…",
+  "@peersStillResolving": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersResolveFailedSnack": "{peer} を解決できませんでした。Avahi と同じサブネットを確認するか、IPで接続を使用してください。",
+  "@peersResolveFailedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersPairingRequestSent": "{peer} にペアリングリクエストを送信しました",
+  "@peersPairingRequestSent": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersCouldNotConnect": "接続できませんでした: {message}",
+  "@peersCouldNotConnect": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "peersManualHostPort": "{host}:{port} (手動)",
+  "@peersManualHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersManual": "手動",
+  "peersResolveFailedSubtitle": "解決失敗 — IPで接続を試してください",
+  "peersResolvingAddress": "アドレスを解決中…",
+  "peersHostPort": "{host}:{port}",
+  "@peersHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersNoAddressYet": "まだアドレスなし",
+  "peersEncryptedPinned": "暗号化済み · 固定 {code}",
+  "@peersEncryptedPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersEncryptedWss": "暗号化済み (WSS/TLS)",
+  "peersSubtitleWithPresence": "{subtitle} • {presence}",
+  "@peersSubtitleWithPresence": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "presence": {"type": "String"}
+    }
+  },
+  "peersSubtitleWithSecurity": "{subtitle} • {security}",
+  "@peersSubtitleWithSecurity": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "security": {"type": "String"}
+    }
+  },
+  "peersPairedStatus": "{date} にペアリング済み · {status}",
+  "@peersPairedStatus": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "status": {"type": "String"}
+    }
+  },
+  "peersStatusConnected": "接続済み",
+  "peersStatusManualOnly": "手動のみ",
+  "peersStatusReconnecting": "再接続中…",
+  "peersStatusRetryIn": "{seconds}秒後に再試行",
+  "@peersStatusRetryIn": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "peersStatusNotOnNetwork": "ネットワーク未接続",
+  "peersStatusConnecting": "接続中…",
+  "peersStatusAutoReconnect": "自動再接続",
+  "peersPresenceLineCol": "{line}行目、{column}列目",
+  "@peersPresenceLineCol": {
+    "placeholders": {
+      "line": {"type": "int"},
+      "column": {"type": "int"}
+    }
+  },
+  "peersPresenceInNote": "\"{title}\" · {position}",
+  "@peersPresenceInNote": {
+    "placeholders": {
+      "title": {"type": "String"},
+      "position": {"type": "String"}
+    }
+  },
+  "peersRoomLabel": "ルーム \"{room}\"",
+  "@peersRoomLabel": {
+    "placeholders": {
+      "room": {"type": "String"}
+    }
+  },
+
+  "discoveryThisDevice": "このデバイス",
+  "discoveryCopyAddress": "アドレスをコピー",
+  "discoveryCopiedAddress": "{address} をコピーしました",
+  "@discoveryCopiedAddress": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "discoveryLocalNetworkRequired": "ローカルネットワークが必要",
+  "discoveryNotListeningTitle": "待機していません",
+  "discoveryNotListeningBody": "このデバイスはまだピアを待機していません。Wi‑Fi接続後に数秒待つか、ネットワークエラーバナーで再試行をタップしてください。",
+  "discoveryModeTitle": "探索モード",
+  "discoveryUnavailableTitle": "ピア探索は利用できません",
+  "discoveryRetryTooltip": "探索を再試行",
+
+  "peersSecuredSessions": "セキュアなセッション",
+  "peersSecurityBannerIdle": "このデバイスは WSS/TLS でアドバタイズしています · コード {code}",
+  "@peersSecurityBannerIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityBannerActive": "{connectedCount} 件の暗号化されたセッション · {pinnedCount} 件の証明書を固定済み",
+  "@peersSecurityBannerActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityCompactIdle": "WSS/TLS · コード {code}",
+  "@peersSecurityCompactIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityCompactActive": "{connectedCount} 件暗号化 · {pinnedCount} 件固定",
+  "@peersSecurityCompactActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityTooltipPinned": "暗号化済み (WSS/TLS) · 固定 {code}",
+  "@peersSecurityTooltipPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityTooltipActive": "暗号化済み (WSS/TLS) · アクティブセッション",
+
+  "pairingConnectionRequest": "接続リクエスト",
+  "pairingAllowPeer": "{peer} がこのメモに接続して共有することを許可しますか？",
+  "@pairingAllowPeer": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingVerificationCode": "確認コード",
+  "pairingConfirmCode": "承認する前に、このコードが両方のデバイスで一致することを確認してください。",
+  "pairingThisDeviceSecurityCode": "このデバイスのセキュリティコード",
+  "pairingOtherDevicePins": "相手のデバイスは初回接続時にこれを固定します。",
+
+  "manualConnectTitle": "アドレスで接続",
+  "manualConnectBody": "同じサブネット上でピアが見つからない場合に使用します。アクティブなローカルネットワークセグメントのアドレスのみ許可されます。",
+  "manualConnectHostLabel": "ホストまたはIP",
+  "manualConnectHostHint": "192.168.1.42",
+  "manualConnectPortLabel": "ポート",
+  "manualConnectPortHint": "54321",
+  "manualConnectLabelOptional": "ラベル（任意）",
+  "manualConnectLabelHint": "リビングのPC",
+  "manualConnectInvalidHostPort": "有効なホストとポート（1〜65535）を入力してください",
+
+  "settingsTitle": "設定",
+  "settingsDeviceSection": "デバイス",
+  "settingsDeviceHint": "デバイス名とルームには保存 (Ctrl+S) が必要です。外観とエディタの設定はすぐに保存されます。",
+  "settingsDeviceName": "デバイス名",
+  "settingsDeviceNameHint": "他のデバイスに表示される名前",
+  "settingsSessionRoom": "セッション / ルーム",
+  "settingsSessionRoomHint": "同じルームのピアのみ探索されます",
+  "settingsListeningPort": "待機ポート",
+  "settingsStartingServer": "サーバーを起動中…",
+  "settingsAddressShare": "{address}（手動接続用に共有）",
+  "@settingsAddressShare": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "settingsCopyAddress": "アドレスをコピー",
+  "settingsAddressCopied": "アドレスをクリップボードにコピーしました",
+  "settingsSavedSnack": "設定を保存しました · \"{name}\" · ルーム \"{room}\"",
+  "@settingsSavedSnack": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "room": {"type": "String"}
+    }
+  },
+  "settingsAppearanceSection": "外観",
+  "settingsMode": "モード",
+  "settingsThemeSystem": "システム",
+  "settingsThemeLight": "ライト",
+  "settingsThemeDark": "ダーク",
+  "settingsSkin": "スキン",
+  "settingsSkinDefault": "デフォルト",
+  "settingsSkinOcean": "オーシャン",
+  "settingsSkinForest": "フォレスト",
+  "settingsSkinSunset": "サンセット",
+  "settingsSkinSlate": "スレート",
+  "settingsSkinProLabel": "{skin} · Pro",
+  "@settingsSkinProLabel": {
+    "placeholders": {
+      "skin": {"type": "String"}
+    }
+  },
+  "settingsProSection": "Netpad Pro",
+  "settingsProUnlocked": "Pro 解除済み",
+  "settingsFree": "無料",
+  "settingsProUnlockedSubtitle": "無制限のメモとピア、スキン、履歴、自動同期、音声",
+  "settingsProBuySubtitle": "アプリストアで一度だけ解除",
+  "settingsPurchasesUnavailable": "このプラットフォームでは購入できません",
+  "settingsRestorePurchases": "購入を復元",
+  "settingsProRestored": "Pro を復元しました",
+  "settingsNoPreviousPro": "以前の Pro 購入が見つかりません",
+  "settingsEditorSection": "エディタ",
+  "settingsWordWrap": "折り返し",
+  "settingsWordWrapSubtitle": "横スクロールの代わりに長い行を折り返す",
+  "settingsFontSize": "フォントサイズ（{size} pt）",
+  "@settingsFontSize": {
+    "placeholders": {
+      "size": {"type": "int"}
+    }
+  },
+  "settingsLegalSection": "法的情報",
+  "settingsEulaSubtitlePro": "Pro · GitHub Pages で EULA を開く",
+  "settingsEulaSubtitleFree": "無料 · GitHub Pages で EULA を開く",
+  "settingsPrivacySubtitle": "GitHub Pages でプライバシーページを開く",
+  "settingsDisclaimerTitle": "免責事項と責任",
+  "settingsDisclaimerSubtitle": "自己責任でご使用ください",
+  "settingsDisclaimerP1": "本ソフトウェアは、商品性、特定目的への適合性、非侵害性を含むいかなる種類の保証もなく「現状のまま」提供されます。",
+  "settingsDisclaimerP2": "このアプリの使用方法、および適用されるすべての法律、規制、ポリシー、契約の遵守については、お客様が単独で責任を負います。",
+  "settingsDisclaimerP3": "著作権者は、本ソフトウェアの使用または誤用から生じるいかなる請求、損害、損失、データ損失、業務中断、その他の責任についても一切責任を負いません。",
+  "settingsNoLegalAdviceTitle": "法的アドバイスなし",
+  "settingsNoLegalAdviceSubtitle": "情報提供のみのソフトウェア",
+  "settingsNoLegalAdviceP1": "このアプリとそのドキュメントは、法的、規制的、または専門的なアドバイスを提供するものではありません。",
+  "settingsNoLegalAdviceP2": "ご使用目的に法的なガイダンスが必要な場合は、資格のある専門家にご相談ください。",
+  "settingsCopyright": "© 2026 Spencer Beaumier",
+
+  "paywallTitle": "Netpad Pro を解除",
+  "paywallSubtitle": "一度の購入。基本的な編集とLAN同期は無料のまま。",
+  "paywallBenefitUnlimitedNotes": "無制限のメモ",
+  "paywallBenefitUnlimitedPeers": "無制限の接続ピア",
+  "paywallBenefitSkins": "追加カラースキン",
+  "paywallBenefitHistory": "バージョン履歴",
+  "paywallBenefitAutoSync": "信頼済みピアの自動同期",
+  "paywallBenefitVoice": "音声ディクテーション",
+  "paywallPurchasesUnsupported": "このプラットフォームではアプリ内購入はご利用いただけません。Pro を解除するには App Store、Google Play、または Microsoft Store からインストールしてください。",
+  "paywallBuyPro": "Pro を購入",
+  "paywallBuyProPrice": "Pro を購入 · {price}",
+  "@paywallBuyProPrice": {
+    "placeholders": {
+      "price": {"type": "String"}
+    }
+  },
+  "paywallRestorePurchases": "購入を復元",
+  "paywallPurchaseNotCompleted": "購入が完了しませんでした。",
+  "paywallPurchaseFailed": "購入に失敗しました。",
+  "paywallProRestored": "Pro を復元しました",
+  "paywallNoPreviousPro": "以前の Pro 購入が見つかりません",
+
+  "proHighlightNoteLimit": "無料版は最大 {limit} 件のメモが含まれます。無制限のメモには Pro を解除してください。",
+  "@proHighlightNoteLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightPeerLimit": "無料版は最大 {limit} 件の接続ピアが含まれます。無制限のピアには Pro を解除してください。",
+  "@proHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightVersionHistory": "バージョン履歴は Pro の機能です。",
+  "proHighlightVoice": "音声ディクテーションは Pro の機能です。",
+  "proHighlightAutoSync": "信頼済みピアの自動同期は Pro の機能です。",
+  "proHighlightSkins": "追加スキンは Pro に含まれています。",
+
+  "helpTitle": "ヘルプ",
+  "helpIntro": "プレーンテキストメモ用のLANメモ帳。同じWi‑Fi上のデバイスが互いを検出し、一度ペアリングして、リアルタイムでメモを同期します。",
+  "helpAboutTile": "SB Simple Netpad について",
+  "helpEulaSubtitle": "GitHub Pages で EULA を開く",
+  "helpPrivacySubtitle": "GitHub Pages でプライバシーページを開く",
+  "helpGettingStartedTitle": "はじめに",
+  "helpGettingStarted1": "同期したいデバイスと同じWi‑Fiネットワークに接続します。",
+  "helpGettingStarted2": "ピアパネル（鍵アイコンまたはピアドロワー）を開き、近くのデバイスが表示されるのを待ちます。",
+  "helpGettingStarted3": "このデバイスからアドレスをコピーし、探索が遅い場合は共有します。",
+  "helpGettingStarted4": "mDNS探索でピアが見つからない場合はIPで接続を使用します。",
+  "helpNotesTitle": "メモ",
+  "helpNotes1": "メニューアイコン（☰）またはメモパネルをタップしてメモを切り替えます。",
+  "helpNotes2": "メモリストからメモを作成、名前変更、並び替え、削除します。",
+  "helpNotes3": "各メモは独立して同期します — 必要に応じてメモごとに同期を切り替えます。",
+  "helpNotes4": "メモ内（検索）またはエディタからすべてのメモを検索します。",
+  "helpNotes5": "バージョン履歴は後で復元できるローカルスナップショットを保存します。",
+  "helpPeersTitle": "ピアとペアリング",
+  "helpPeers1": "近くのデバイスに同じルームで検出されたデバイスが一覧表示されます（設定を参照）。",
+  "helpPeers2": "ピアの「接続」をタップ — 相手のデバイスが「承認」をタップする必要があります。",
+  "helpPeers3": "承認する前にペアリングの確認コードを比較してください。",
+  "helpPeers4": "最初の「承認」後、信頼済みデバイスは自動的に再接続できます。",
+  "helpPeers5": "信頼済みデバイス: 自動同期を切り替えるか、「取り消し」で再度「承認」が必要になります。",
+  "helpPeers6": "ブロックするとデバイスが切断され、解除するまで今後のペアリングが拒否されます。",
+  "helpPeers7": "「接続済み」にはアドレスとカーソルの存在を含むアクティブセッションが表示されます。",
+  "helpFileSharingTitle": "ファイルと共有",
+  "helpFileSharing1Desktop": "ファイルメニュー: ファイルに保存、ファイルを新しいメモとして開く、メモを共有、バージョン履歴、設定、終了。",
+  "helpFileSharing1Mobile": "メニュー（⋮）: ファイルに保存、ファイルを新しいメモとして開く、共有、バージョン履歴、設定、このヘルプガイド。",
+  "helpFileSharing2": "ファイルに保存すると、アクティブなメモが .txt または .md としてエクスポートされます。",
+  "helpFileSharing3": "ファイルを開くと、テキストが他のメモと同様に同期する新しいメモにインポートされます。",
+  "helpFileSharing4": "共有はOSの共有シートを使用します。Linuxではクリップボードにフォールバックします。",
+  "helpSettingsTitle": "設定",
+  "helpSettings1": "デバイス名とルームには保存が必要です — 他のオプションはすぐに適用されます。",
+  "helpSettings2": "ルームIDでピアをグループ化: 同じルームのデバイスのみ探索されます。",
+  "helpSettings3": "外観とエディタの設定（テーマ、スキン、折り返し、フォント）は変更時に保存されます。",
+  "helpDesktopShortcutsTitle": "デスクトップショートカット",
+  "helpDesktopShortcuts1": "Ctrl/Cmd+S — ファイルに保存",
+  "helpDesktopShortcuts2": "Ctrl/Cmd+O — ファイルを新しいメモとして開く",
+  "helpDesktopShortcuts3": "Ctrl/Cmd+F — メモ内を検索",
+  "helpDesktopShortcuts4": "Ctrl/Cmd+H — 検索と置換",
+  "helpDesktopShortcuts5": "Ctrl/Cmd+N — メモパネルを切り替え",
+  "helpDesktopShortcuts6": "Ctrl/Cmd+P — ピアパネルを切り替え",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — 終了（Windows/Linux）",
+  "helpTroubleshootingTitle": "トラブルシューティング",
+  "helpTroubleshooting1": "ピアが見つからない場合: 同じWi‑FiサブネットとルームIDを確認し、IPで接続を試してください。",
+  "helpTroubleshooting2": "「ローカルネットワークが必要」のバナーは、Wi‑Fiが有効になるまで同期が一時停止していることを意味します。",
+  "helpTroubleshooting3": "初回起動時にファイアウォールでアプリを許可してください（デスクトップ）。",
+  "helpTroubleshooting4": "Linux: 探索が開始されない場合は dbus と avahi-daemon をインストールしてください。",
+  "helpTroubleshooting5": "Android: プロンプトが表示されたら、近くのWi‑Fi権限を付与してください。",
+
+  "aboutTitle": "について",
+  "aboutTagline": "ピア探索と共有編集機能を持つLANメモ帳。",
+  "aboutDescription": "スマートフォンやパソコンでプレーンテキストのメモを書き、同じWi‑Fi上の他のデバイスと同期します。ピアはローカルネットワークで互いを検出し、相互承認で一度ペアリングし、暗号化されたピアセッションで複数の名前付きメモを共有します。",
+  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutStatus": "ベータ版 — 日常的なLAN使用に適しています。",
+  "aboutEulaHeading": "エンドユーザーライセンス契約",
+  "aboutEulaBody": "SB Simple Netpad はオープンソースライセンスではなく EULA の下でライセンスされています。基本的な編集とLAN同期は無料です（最大 {noteLimit} 件のメモと {peerLimit} 件の接続ピア）。Netpad Pro は App Store、Google Play、または Microsoft Store を通じた一度きりの解除です。",
+  "@aboutEulaBody": {
+    "placeholders": {
+      "noteLimit": {"type": "int"},
+      "peerLimit": {"type": "int"}
+    }
+  },
+  "aboutViewEula": "EULA を表示",
+  "aboutPrivacyPolicy": "プライバシーポリシー",
+  "aboutHowToUse": "SB Simple Netpad の使い方",
+  "aboutCouldNotOpenPrivacy": "プライバシーポリシーを開けませんでした",
+  "aboutCouldNotOpenEula": "EULA を開けませんでした",
+  "aboutCopyright": "© 2026 Spencer Beaumier",
+
+  "conflictLiveTitle": "\"{title}\" で編集の競合が発生",
+  "@conflictLiveTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictLiveBody": "{peer} が同時に同じメモを編集しました（リビジョン {revision}）。\n\nあなたのバージョン:\n{localPreview}\n\n{peer}:\n{remotePreview}\n\nどちらのバージョンを両方のデバイスで保持しますか？",
+  "@conflictLiveBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "revision": {"type": "String"},
+      "localPreview": {"type": "String"},
+      "remotePreview": {"type": "String"}
+    }
+  },
+  "conflictDivergedTitle": "\"{title}\" が分岐しています",
+  "@conflictDivergedTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictDivergedBody": "あなたのコピーと {peer} の \"{title}\" のコピーが切断中に異なる変更が加えられました。\n\nあなたのバージョン: {localChars} 文字\n{peer}: {remoteChars} 文字\n\nどちらのバージョンを両方のデバイスで保持しますか？",
+  "@conflictDivergedBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "title": {"type": "String"},
+      "localChars": {"type": "int"},
+      "remoteChars": {"type": "int"}
+    }
+  },
+  "conflictUsePeers": "{peer} のバージョンを使用",
+  "@conflictUsePeers": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "conflictKeepMine": "自分のバージョンを保持",
+
+  "fileSavedTo": "{path} に保存しました",
+  "@fileSavedTo": {
+    "placeholders": {
+      "path": {"type": "String"}
+    }
+  },
+  "fileCouldNotSave": "保存できませんでした: {error}",
+  "@fileCouldNotSave": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileOpenedAsNewNote": "{name} を新しいメモとして開きました",
+  "@fileOpenedAsNewNote": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "fileCouldNotOpen": "開けませんでした: {error}",
+  "@fileCouldNotOpen": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileNothingToShare": "共有するものがありません — メモは空です",
+  "fileShareFallbackClipboard": "ここでは共有できません — クリップボードにコピーしました",
+  "fileDefaultNoteName": "netpad-note"
+}

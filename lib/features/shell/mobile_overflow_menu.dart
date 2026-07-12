@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 
 enum MobileAppMenuAction {
   wordWrap,
@@ -26,69 +27,70 @@ class MobileOverflowMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return PopupMenuButton<MobileAppMenuAction>(
       icon: const Icon(Icons.more_vert),
-      tooltip: 'More',
+      tooltip: l10n.commonMore,
       constraints: const BoxConstraints(minWidth: _menuWidth),
       onSelected: onSelected,
       itemBuilder: (context) => [
         CheckedPopupMenuItem(
           value: MobileAppMenuAction.wordWrap,
           checked: wordWrap,
-          child: const _MobileMenuLabel(
+          child: _MobileMenuLabel(
             icon: Icons.wrap_text,
-            label: 'Word wrap',
+            label: l10n.shellMobileWordWrap,
           ),
         ),
         const PopupMenuDivider(),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: MobileAppMenuAction.save,
           child: _MobileMenuLabel(
             icon: Icons.save_alt,
-            label: 'Save to file…',
+            label: l10n.shellMobileSaveToFile,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: MobileAppMenuAction.open,
           child: _MobileMenuLabel(
             icon: Icons.folder_open,
-            label: 'Open file as new note…',
+            label: l10n.shellMobileOpenFileAsNewNote,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: MobileAppMenuAction.share,
           child: _MobileMenuLabel(
             icon: Icons.ios_share,
-            label: 'Share note',
+            label: l10n.shellMobileShareNote,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: MobileAppMenuAction.history,
           child: _MobileMenuLabel(
             icon: Icons.history,
-            label: 'Version history…',
+            label: l10n.shellMobileVersionHistory,
           ),
         ),
         const PopupMenuDivider(),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: MobileAppMenuAction.settings,
           child: _MobileMenuLabel(
             icon: Icons.settings,
-            label: 'Settings',
+            label: l10n.shellMobileSettings,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: MobileAppMenuAction.help,
           child: _MobileMenuLabel(
             icon: Icons.help_outline,
-            label: 'Help',
+            label: l10n.shellMobileHelp,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: MobileAppMenuAction.about,
           child: _MobileMenuLabel(
             icon: Icons.info_outline,
-            label: 'About SB Simple Netpad',
+            label: l10n.shellMobileAbout,
           ),
         ),
       ],

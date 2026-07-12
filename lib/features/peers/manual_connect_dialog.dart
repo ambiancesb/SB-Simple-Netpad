@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 
 class ManualConnectResult {
   const ManualConnectResult({
@@ -46,7 +47,7 @@ class _ManualConnectDialogState extends State<_ManualConnectDialog> {
     final port = int.tryParse(_portController.text.trim());
     if (host.isEmpty || port == null || port < 1 || port > 65535) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a valid host and port (1–65535)')),
+        SnackBar(content: Text(context.l10n.manualConnectInvalidHostPort)),
       );
       return;
     }
@@ -64,22 +65,20 @@ class _ManualConnectDialogState extends State<_ManualConnectDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AlertDialog(
-      title: const Text('Connect by address'),
+      title: Text(l10n.manualConnectTitle),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Use when discovery cannot find peers on the same subnet. '
-              'Only addresses on your active local network segment are allowed.',
-            ),
+            Text(l10n.manualConnectBody),
             const SizedBox(height: 16),
             TextField(
               controller: _hostController,
-              decoration: const InputDecoration(
-                labelText: 'Host or IP',
-                hintText: '192.168.1.42',
+              decoration: InputDecoration(
+                labelText: l10n.manualConnectHostLabel,
+                hintText: l10n.manualConnectHostHint,
               ),
               autofocus: true,
               keyboardType: TextInputType.url,
@@ -88,9 +87,9 @@ class _ManualConnectDialogState extends State<_ManualConnectDialog> {
             const SizedBox(height: 8),
             TextField(
               controller: _portController,
-              decoration: const InputDecoration(
-                labelText: 'Port',
-                hintText: '54321',
+              decoration: InputDecoration(
+                labelText: l10n.manualConnectPortLabel,
+                hintText: l10n.manualConnectPortHint,
               ),
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -99,9 +98,9 @@ class _ManualConnectDialogState extends State<_ManualConnectDialog> {
             const SizedBox(height: 8),
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Label (optional)',
-                hintText: 'Living room PC',
+              decoration: InputDecoration(
+                labelText: l10n.manualConnectLabelOptional,
+                hintText: l10n.manualConnectLabelHint,
               ),
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _submit(),
@@ -112,9 +111,9 @@ class _ManualConnectDialogState extends State<_ManualConnectDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l10n.commonCancel),
         ),
-        FilledButton(onPressed: _submit, child: const Text('Connect')),
+        FilledButton(onPressed: _submit, child: Text(l10n.commonConnect)),
       ],
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:netpad/core/app_info.dart';
 import 'package:netpad/features/help/about_screen.dart';
 import 'package:netpad/features/shell/desktop_menus.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Opens the in-app help guide.
@@ -20,7 +21,7 @@ Future<void> _openDocsPage(
   if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
       context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Could not open $label')),
+      SnackBar(content: Text(context.l10n.commonCouldNotOpenLabel(label))),
     );
   }
 }
@@ -31,11 +32,12 @@ class HelpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final desktop = isDesktopMenuPlatform();
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Help')),
+      appBar: AppBar(title: Text(l10n.helpTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -45,123 +47,115 @@ class HelpScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'A LAN notepad for plain-text notes. Devices on the same Wi‑Fi '
-            'discover each other, pair once, then sync notes in real time.',
+            l10n.helpIntro,
             style: textTheme.bodyMedium,
           ),
           const SizedBox(height: 12),
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.info_outline),
-            title: const Text('About SB Simple Netpad'),
-            subtitle: Text('Version ${AppInfo.versionLabel}'),
+            title: Text(l10n.helpAboutTile),
+            subtitle: Text(l10n.commonVersionLabel(AppInfo.versionLabel)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => showAboutScreen(context),
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.gavel_outlined),
-            title: const Text('End User License Agreement'),
-            subtitle: const Text('Opens EULA on GitHub Pages'),
+            title: Text(l10n.commonEndUserLicenseAgreement),
+            subtitle: Text(l10n.helpEulaSubtitle),
             trailing: const Icon(Icons.open_in_new),
-            onTap: () => _openDocsPage(context, AppInfo.eulaUrl, 'EULA'),
+            onTap: () => _openDocsPage(context, AppInfo.eulaUrl, l10n.commonEulaLabel),
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.privacy_tip_outlined),
-            title: const Text('Privacy Policy'),
-            subtitle: const Text('Opens privacy page on GitHub Pages'),
+            title: Text(l10n.commonPrivacyPolicy),
+            subtitle: Text(l10n.helpPrivacySubtitle),
             trailing: const Icon(Icons.open_in_new),
             onTap: () => _openDocsPage(
               context,
               AppInfo.privacyPolicyUrl,
-              'privacy policy',
+              l10n.commonPrivacyPolicyLabel,
             ),
           ),
           const Divider(height: 24),
           _section(
             context,
-            title: 'Getting started',
-            bullets: const [
-              'Join the same Wi‑Fi network as the devices you want to sync with.',
-              'Open the Peers panel (lock icon or Peers drawer) and wait for '
-                  'nearby devices to appear.',
-              'Copy your address from This device and share it if discovery is slow.',
-              'Use Connect by IP when mDNS discovery does not find peers.',
-            ],
-          ),
-          _section(
-            context,
-            title: 'Notes',
-            bullets: const [
-              'Tap the menu icon (☰) or Notes panel to switch between notes.',
-              'Create, rename, reorder, and delete notes from the notes list.',
-              'Each note syncs independently — toggle sync per note when needed.',
-              'Search within a note (Find) or across all notes from the editor.',
-              'Version history saves local snapshots you can restore later.',
-            ],
-          ),
-          _section(
-            context,
-            title: 'Peers & pairing',
-            bullets: const [
-              'Nearby lists discovered devices in the same room (see Settings).',
-              'Tap Connect on a peer — the other device must tap Accept.',
-              'Compare the pairing verification code before accepting.',
-              'After the first Accept, trusted devices can auto-reconnect.',
-              'Trusted devices: toggle auto-sync or Revoke to require Accept again.',
-              'Block disconnects a device and refuses future pairing until unblocked.',
-              'Connected shows active sessions with address and cursor presence.',
-            ],
-          ),
-          _section(
-            context,
-            title: 'File & sharing',
+            title: l10n.helpGettingStartedTitle,
             bullets: [
-              if (desktop)
-                'File menu: Save to File, Open File as New Note, Share Note, '
-                    'Version History, Settings, Exit.'
-              else
-                'Overflow menu (⋮): save to file, open file as new note, share, '
-                    'version history, settings, and this help guide.',
-              'Save to file exports the active note as .txt or .md.',
-              'Open file imports text into a new note that syncs like any other.',
-              'Share uses the OS share sheet; Linux falls back to clipboard.',
+              l10n.helpGettingStarted1,
+              l10n.helpGettingStarted2,
+              l10n.helpGettingStarted3,
+              l10n.helpGettingStarted4,
             ],
           ),
           _section(
             context,
-            title: 'Settings',
-            bullets: const [
-              'Device name and room require Save — other options apply immediately.',
-              'Room ID groups peers: only devices in the same room are discovered.',
-              'Appearance and editor preferences (theme, skin, wrap, font) save '
-                  'as you change them.',
+            title: l10n.helpNotesTitle,
+            bullets: [
+              l10n.helpNotes1,
+              l10n.helpNotes2,
+              l10n.helpNotes3,
+              l10n.helpNotes4,
+              l10n.helpNotes5,
+            ],
+          ),
+          _section(
+            context,
+            title: l10n.helpPeersTitle,
+            bullets: [
+              l10n.helpPeers1,
+              l10n.helpPeers2,
+              l10n.helpPeers3,
+              l10n.helpPeers4,
+              l10n.helpPeers5,
+              l10n.helpPeers6,
+              l10n.helpPeers7,
+            ],
+          ),
+          _section(
+            context,
+            title: l10n.helpFileSharingTitle,
+            bullets: [
+              if (desktop) l10n.helpFileSharing1Desktop else l10n.helpFileSharing1Mobile,
+              l10n.helpFileSharing2,
+              l10n.helpFileSharing3,
+              l10n.helpFileSharing4,
+            ],
+          ),
+          _section(
+            context,
+            title: l10n.helpSettingsTitle,
+            bullets: [
+              l10n.helpSettings1,
+              l10n.helpSettings2,
+              l10n.helpSettings3,
             ],
           ),
           if (desktop)
             _section(
               context,
-              title: 'Desktop shortcuts',
-              bullets: const [
-                'Ctrl/Cmd+S — Save to file',
-                'Ctrl/Cmd+O — Open file as new note',
-                'Ctrl/Cmd+F — Find in note',
-                'Ctrl/Cmd+H — Find and replace',
-                'Ctrl/Cmd+N — Toggle notes panel',
-                'Ctrl/Cmd+P — Toggle peers panel',
-                'Ctrl/Cmd+Q — Exit (Windows/Linux)',
+              title: l10n.helpDesktopShortcutsTitle,
+              bullets: [
+                l10n.helpDesktopShortcuts1,
+                l10n.helpDesktopShortcuts2,
+                l10n.helpDesktopShortcuts3,
+                l10n.helpDesktopShortcuts4,
+                l10n.helpDesktopShortcuts5,
+                l10n.helpDesktopShortcuts6,
+                l10n.helpDesktopShortcuts7,
               ],
             ),
           _section(
             context,
-            title: 'Troubleshooting',
-            bullets: const [
-              'No peers? Confirm same Wi‑Fi subnet and room ID; try Connect by IP.',
-              'Local network required banner means sync is paused until Wi‑Fi is up.',
-              'Allow the app through your firewall on first launch (desktop).',
-              'Linux: install dbus and avahi-daemon if discovery never starts.',
-              'Android: grant nearby Wi‑Fi permission when prompted.',
+            title: l10n.helpTroubleshootingTitle,
+            bullets: [
+              l10n.helpTroubleshooting1,
+              l10n.helpTroubleshooting2,
+              l10n.helpTroubleshooting3,
+              l10n.helpTroubleshooting4,
+              l10n.helpTroubleshooting5,
             ],
           ),
           const SizedBox(height: 24),

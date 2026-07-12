@@ -23,6 +23,7 @@ import 'package:netpad/features/help/help_screen.dart';
 import 'package:netpad/features/settings/settings_screen.dart';
 import 'package:netpad/features/shell/desktop_menus.dart';
 import 'package:netpad/features/shell/mobile_overflow_menu.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/entitlements/pro_features.dart';
@@ -84,6 +85,8 @@ class NetpadApp extends StatelessWidget {
             theme: skin.themeData(Brightness.light),
             darkTheme: skin.themeData(Brightness.dark),
             themeMode: prefs.themeMode,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: const PairingListener(child: _HomeShell()),
           );
         },
@@ -146,22 +149,23 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       FocusManager.instance.primaryFocus?.unfocus();
     }
     final started = await _speechInput.toggleListening();
-    if (!mounted) return;
-    final messenger = ScaffoldMessenger.of(context);
-    if (_speechInput.lastError != null) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(_speechInput.lastError!)),
-      );
-      return;
-    }
-    if (started) {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text('Listening… tap the mic again to stop'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
+  if (!mounted) return;
+  final messenger = ScaffoldMessenger.of(context);
+  final l10n = context.l10n;
+  if (_speechInput.lastError != null) {
+    messenger.showSnackBar(
+      SnackBar(content: Text(_speechInput.lastError!)),
+    );
+    return;
+  }
+  if (started) {
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(l10n.shellListeningSnack),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
   }
 
   String _previewText(String text, {int maxLen = 200}) {
@@ -190,28 +194,30 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     String remoteText,
   ) async {
     if (!mounted) return DivergenceChoice.keepMine;
+    final l10n = context.l10n;
     final choice = await showDialog<DivergenceChoice>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: Text('Edit conflict in "$docTitle"'),
+        title: Text(l10n.conflictLiveTitle(docTitle)),
         content: SingleChildScrollView(
           child: Text(
-            '$peerName edited the same note at the same time (revision '
-            '$revision).\n\n'
-            'Yours:\n${_previewText(localText)}\n\n'
-            '$peerName:\n${_previewText(remoteText)}\n\n'
-            'Which version should both devices keep?',
+            l10n.conflictLiveBody(
+              peerName,
+              '$revision',
+              _previewText(localText),
+              _previewText(remoteText),
+            ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, DivergenceChoice.takeTheirs),
-            child: Text('Use $peerName\'s'),
+            child: Text(l10n.conflictUsePeers(peerName)),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, DivergenceChoice.keepMine),
-            child: const Text('Keep mine'),
+            child: Text(l10n.conflictKeepMine),
           ),
         ],
       ),
@@ -228,26 +234,28 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     String remoteText,
   ) async {
     if (!mounted) return DivergenceChoice.keepMine;
+    final l10n = context.l10n;
     final choice = await showDialog<DivergenceChoice>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: Text('"$docTitle" has diverged'),
+        title: Text(l10n.conflictDivergedTitle(docTitle)),
         content: Text(
-          'Your copy and $peerName\'s copy of "$docTitle" changed differently '
-          'while disconnected.\n\n'
-          'Yours: ${localText.length} characters\n'
-          '$peerName: ${remoteText.length} characters\n\n'
-          'Which version should both devices keep?',
+          l10n.conflictDivergedBody(
+            peerName,
+            docTitle,
+            localText.length,
+            remoteText.length,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, DivergenceChoice.takeTheirs),
-            child: Text('Use $peerName\'s'),
+            child: Text(l10n.conflictUsePeers(peerName)),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, DivergenceChoice.keepMine),
-            child: const Text('Keep mine'),
+            child: Text(l10n.conflictKeepMine),
           ),
         ],
       ),
@@ -366,6 +374,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     required bool wordWrap,
     required Widget body,
   }) {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       key: _scaffoldKey,
@@ -382,8 +391,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
                 color: _notesPanelVisible ? colorScheme.primary : null,
               ),
               tooltip: _notesPanelVisible
-                  ? 'Hide notes panel'
-                  : 'Show notes panel (Ctrl+N)',
+                  ? l10n.shellHideNotesPanel
+                  : l10n.shellShowNotesPanel,
               onPressed: _toggleNotes,
             ),
             IconButton(
@@ -401,18 +410,22 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
                 ),
               ),
               tooltip: connected > 0
-                  ? '$connected encrypted peer session${connected == 1 ? '' : 's'} · '
-                        '${_peersPanelVisible ? 'hide' : 'show'} peers panel (Ctrl+P)'
+                  ? l10n.shellPeersTooltipConnected(
+                      connected,
+                      _peersPanelVisible
+                          ? l10n.shellPeersTooltipActionHide
+                          : l10n.shellPeersTooltipActionShow,
+                    )
                   : _peersPanelVisible
-                  ? 'Hide peers panel'
-                  : 'Show peers panel (Ctrl+P)',
+                  ? l10n.shellHidePeersPanel
+                  : l10n.shellShowPeersPanel,
               onPressed: _togglePeers,
             ),
           ],
           if (!desktopMenus)
             IconButton(
               icon: Icon(_findVisible ? Icons.search_off : Icons.search),
-              tooltip: 'Find in note (Ctrl+F)',
+              tooltip: l10n.shellFindInNote,
               onPressed: () => _toggleFind(),
             ),
           if (!desktopMenus && SpeechInputService.isSupported)
@@ -424,9 +437,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
             padding: EdgeInsets.only(right: desktopMenus ? 8 : 4),
             child: Tooltip(
               message: connected > 0
-                  ? '$connected peer session${connected == 1 ? '' : 's'} '
-                        'encrypted with WSS/TLS · tap for peers'
-                  : 'No active peer sessions · tap for peers',
+                  ? l10n.shellSecurityChipConnected(connected)
+                  : l10n.shellSecurityChipNone,
               child: ActionChip(
                 visualDensity: VisualDensity.compact,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -464,7 +476,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       children: [
         if (_notesPanelVisible)
           DesktopSidePanel(
-            title: 'Notes',
+            title: context.l10n.notesTitle,
             width: 300,
             onClose: _toggleNotes,
             child: const NotesPanel(showTitle: false),
@@ -611,21 +623,23 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     final doc = context.read<WorkspaceRepository>().active;
     if (doc == null) return;
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     try {
       final path = await _fileService.saveText(
         doc.text,
         suggestedName: '${_safeName(doc.title)}.txt',
       );
       if (path == null) return;
-      messenger.showSnackBar(SnackBar(content: Text('Saved to $path')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.fileSavedTo(path))));
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Could not save: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.fileCouldNotSave('$e'))));
     }
   }
 
   Future<void> _openNote(BuildContext context) async {
     final workspace = context.read<WorkspaceRepository>();
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     try {
       final loaded = await _fileService.openText();
       if (loaded == null || !context.mounted) return;
@@ -639,10 +653,10 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       final doc = workspace.createNote(title: _titleFromFile(loaded.name));
       doc.replaceLocal(loaded.text, snapshotLabel: 'Imported file');
       messenger.showSnackBar(
-        SnackBar(content: Text('Opened ${loaded.name} as a new note')),
+        SnackBar(content: Text(l10n.fileOpenedAsNewNote(loaded.name))),
       );
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Could not open: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.fileCouldNotOpen('$e'))));
     }
   }
 
@@ -650,10 +664,11 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     final doc = context.read<WorkspaceRepository>().active;
     if (doc == null) return;
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     final text = doc.text;
     if (text.trim().isEmpty) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Nothing to share — the note is empty')),
+        SnackBar(content: Text(l10n.fileNothingToShare)),
       );
       return;
     }
@@ -666,9 +681,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     } catch (_) {
       await Clipboard.setData(ClipboardData(text: text));
       messenger.showSnackBar(
-        const SnackBar(
-          content: Text('Sharing not available here — copied to clipboard'),
-        ),
+        SnackBar(content: Text(l10n.fileShareFallbackClipboard)),
       );
     }
   }

@@ -1,0 +1,645 @@
+﻿{
+  "@@locale": "pt",
+  "commonAppName": "SB Simple Netpad",
+  "commonProName": "Netpad Pro",
+  "commonCancel": "Cancelar",
+  "commonClose": "Fechar",
+  "commonSave": "Salvar",
+  "commonDelete": "Excluir",
+  "commonConnect": "Conectar",
+  "commonHelp": "Ajuda",
+  "commonSettings": "ConfiguraÃ§Ãµes",
+  "commonMore": "Mais",
+  "commonCopy": "Copiar",
+  "commonClear": "Limpar",
+  "commonAccept": "Aceitar",
+  "commonReject": "Rejeitar",
+  "commonBlock": "Bloquear",
+  "commonUnblock": "Desbloquear",
+  "commonRevoke": "Revogar",
+  "commonRestore": "Restaurar",
+  "commonRetry": "Tentar novamente",
+  "commonCouldNotOpenLabel": "NÃ£o foi possÃ­vel abrir {label}",
+  "@commonCouldNotOpenLabel": {
+    "placeholders": {
+      "label": {"type": "String"}
+    }
+  },
+  "commonEulaLabel": "EULA",
+  "commonPrivacyPolicyLabel": "polÃ­tica de privacidade",
+  "commonEndUserLicenseAgreement": "Contrato de LicenÃ§a do UsuÃ¡rio Final",
+  "commonPrivacyPolicy": "PolÃ­tica de Privacidade",
+  "commonVersionLabel": "VersÃ£o {version}",
+  "@commonVersionLabel": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+
+  "shellMenuFile": "Arquivo",
+  "shellMenuEdit": "Editar",
+  "shellMenuView": "Exibir",
+  "shellMenuHelp": "Ajuda",
+  "shellSaveToFile": "Salvar em arquivoâ€¦",
+  "shellOpenFileAsNewNote": "Abrir arquivo como nova notaâ€¦",
+  "shellShareNote": "Compartilhar nota",
+  "shellVersionHistory": "HistÃ³rico de versÃµesâ€¦",
+  "shellSettings": "ConfiguraÃ§Ãµesâ€¦",
+  "shellExit": "Sair",
+  "shellCut": "Recortar",
+  "shellCopy": "Copiar",
+  "shellPaste": "Colar",
+  "shellFind": "Localizarâ€¦",
+  "shellFindAndReplace": "Localizar e substituirâ€¦",
+  "shellWordWrap": "Quebra de linha",
+  "shellWordWrapChecked": "Quebra de linha âœ“",
+  "shellNotesPanel": "Painel de notas",
+  "shellNotesPanelChecked": "Painel de notas âœ“",
+  "shellPeersPanel": "Painel de pares",
+  "shellPeersPanelChecked": "Painel de pares âœ“",
+  "shellHelpItem": "Ajuda do SB Simple Netpad",
+  "shellAboutItem": "Sobre o SB Simple Netpad",
+  "shellHideNotesPanel": "Ocultar painel de notas",
+  "shellShowNotesPanel": "Mostrar painel de notas (Ctrl+N)",
+  "shellHidePeersPanel": "Ocultar painel de pares",
+  "shellShowPeersPanel": "Mostrar painel de pares (Ctrl+P)",
+  "shellPeersTooltipConnected": "{count} sessÃµes de pares criptografadas Â· {action} painel de pares (Ctrl+P)",
+  "@shellPeersTooltipConnected": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "action": {"type": "String"}
+    }
+  },
+  "shellPeersTooltipActionHide": "ocultar",
+  "shellPeersTooltipActionShow": "mostrar",
+  "shellFindInNote": "Localizar na nota (Ctrl+F)",
+  "shellSecurityChipConnected": "{count} sessÃµes de pares criptografadas com WSS/TLS Â· toque para ver pares",
+  "@shellSecurityChipConnected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "shellSecurityChipNone": "Sem sessÃµes de pares ativas Â· toque para ver pares",
+  "shellMobileWordWrap": "Quebra de linha",
+  "shellMobileSaveToFile": "Salvar em arquivoâ€¦",
+  "shellMobileOpenFileAsNewNote": "Abrir arquivo como nova notaâ€¦",
+  "shellMobileShareNote": "Compartilhar nota",
+  "shellMobileVersionHistory": "HistÃ³rico de versÃµesâ€¦",
+  "shellMobileSettings": "ConfiguraÃ§Ãµes",
+  "shellMobileHelp": "Ajuda",
+  "shellMobileAbout": "Sobre o SB Simple Netpad",
+  "shellListeningSnack": "Ouvindoâ€¦ toque no microfone novamente para parar",
+
+  "notesTitle": "Notas",
+  "notesNewNote": "Nova nota",
+  "notesSearchHint": "Pesquisar em todas as notas",
+  "notesRenameTitle": "Renomear nota",
+  "notesTitleLabel": "TÃ­tulo",
+  "notesDeleteTitle": "Excluir \"{title}\"?",
+  "@notesDeleteTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "notesDeleteSyncedBody": "Isso remove a nota para vocÃª e todos os pares conectados.",
+  "notesDeleteLocalBody": "Isso remove a nota somente deste dispositivo.",
+  "notesNoMatches": "Nenhuma correspondÃªncia",
+  "notesNoNotes": "Nenhuma nota",
+  "notesRename": "Renomear",
+  "notesVersionHistory": "HistÃ³rico de versÃµes",
+  "notesDelete": "Excluir",
+  "notesSyncWithPeers": "Sincronizar com pares",
+  "notesLocalOnly": "Somente local",
+  "notesEmptyNote": "Nota vazia",
+  "notesMatchCount": "{count} correspondÃªncias",
+  "@notesMatchCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "notesLocalOnlyWithMatches": "Somente local Â· {matchLine}",
+  "@notesLocalOnlyWithMatches": {
+    "placeholders": {
+      "matchLine": {"type": "String"}
+    }
+  },
+  "notesSearchSnippetMatches": "{snippet}  Â·  {count} correspondÃªncias",
+  "@notesSearchSnippetMatches": {
+    "placeholders": {
+      "snippet": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "notesNoNoteSelected": "Nenhuma nota selecionada",
+
+  "historyTitle": "HistÃ³rico de versÃµes Â· \"{title}\"",
+  "@historyTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "historyEmpty": "Nenhuma versÃ£o salva ainda. InstantÃ¢neos sÃ£o mantidos automaticamente antes que ediÃ§Ãµes remotas substituam seu texto.",
+  "historyEntrySubtitle": "{label} Â· {time} Â· {chars} caracteres",
+  "@historyEntrySubtitle": {
+    "placeholders": {
+      "label": {"type": "String"},
+      "time": {"type": "String"},
+      "chars": {"type": "int"}
+    }
+  },
+  "historyRestore": "Restaurar",
+  "historyRestoredSnack": "VersÃ£o restaurada",
+  "historyBeforeRemoteUpdate": "Antes da atualizaÃ§Ã£o remota",
+  "historySnapshot": "InstantÃ¢neo",
+  "historyImportedFile": "Arquivo importado",
+
+  "editorFindHint": "Localizar",
+  "editorReplaceHint": "Substituir por",
+  "editorMatchCounter": "{current}/{total}",
+  "@editorMatchCounter": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "editorMatchNone": "0/0",
+  "editorPrevious": "Anterior",
+  "editorNext": "PrÃ³ximo",
+  "editorShowReplace": "Mostrar substituiÃ§Ã£o (Ctrl+H)",
+  "editorHideReplace": "Ocultar substituiÃ§Ã£o (Ctrl+H)",
+  "editorClose": "Fechar",
+  "editorReplace": "Substituir",
+  "editorReplaceAll": "Todos",
+  "editorListening": "Ouvindoâ€¦",
+  "editorDictate": "Ditar",
+  "editorStopDictation": "Parar ditado",
+
+  "peersConnectByIp": "Conectar por IP",
+  "peersConnected": "Conectado",
+  "peersNearby": "PrÃ³ximos",
+  "peersTrustedDevices": "Dispositivos confiÃ¡veis",
+  "peersBlocked": "Bloqueados",
+  "peersConnectionLog": "Registro de conexÃµes",
+  "peersNoActiveConnections": "Nenhuma conexÃ£o ativa",
+  "peersNoTrustedDevices": "Nenhum dispositivo confiÃ¡vel â€” emparelhe uma vez para habilitar sincronizaÃ§Ã£o automÃ¡tica",
+  "peersNoBlockedDevices": "Nenhum dispositivo bloqueado",
+  "peersNoConnectionEvents": "Nenhum evento de conexÃ£o ainda",
+  "peersNoDiscoveredPeers": "Nenhum par descoberto â€” o Linux deve estar na mesma sub-rede Wiâ€‘Fi que Este dispositivo (verifique o endereÃ§o acima), ou use Conectar por IP",
+  "peersDiscoveryPaused": "A descoberta de pares estÃ¡ pausada atÃ© que vocÃª entre em uma rede local",
+  "peersDisconnect": "Desconectar",
+  "peersConnectNow": "Conectar agora",
+  "peersConnect": "Conectar",
+  "peersResolving": "Resolvendoâ€¦",
+  "peersBlockTooltip": "Bloquear",
+  "peersBlockTitle": "Bloquear {peer}?",
+  "@peersBlockTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersBlockBody": "Isso desconecta o dispositivo, esquece seu certificado fixado e recusa futuras solicitaÃ§Ãµes de conexÃ£o atÃ© que vocÃª o desbloqueie.",
+  "peersRevokeTitle": "Revogar {peer}?",
+  "@peersRevokeTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersRevokeBody": "A prÃ³xima conexÃ£o exigirÃ¡ tocar em Aceitar novamente. O PIN de seguranÃ§a Ã© mantido para que as verificaÃ§Ãµes de certificado ainda se apliquem.",
+  "peersAutoSync": "SincronizaÃ§Ã£o automÃ¡tica",
+  "peersCopiedOneLogEntry": "1 entrada de registro copiada",
+  "peersCopiedLogEntries": "{count} entradas de registro copiadas",
+  "@peersCopiedLogEntries": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "peersLogRevision": "{time} â€¢ revisÃ£o {revision}",
+  "@peersLogRevision": {
+    "placeholders": {
+      "time": {"type": "String"},
+      "revision": {"type": "String"}
+    }
+  },
+  "peersStillResolving": "Ainda resolvendo {peer}â€¦",
+  "@peersStillResolving": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersResolveFailedSnack": "NÃ£o foi possÃ­vel resolver {peer}. Verifique o Avahi e a mesma sub-rede, ou use Conectar por IP.",
+  "@peersResolveFailedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersPairingRequestSent": "SolicitaÃ§Ã£o de emparelhamento enviada para {peer}",
+  "@peersPairingRequestSent": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersCouldNotConnect": "NÃ£o foi possÃ­vel conectar: {message}",
+  "@peersCouldNotConnect": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "peersManualHostPort": "{host}:{port} (manual)",
+  "@peersManualHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersManual": "Manual",
+  "peersResolveFailedSubtitle": "ResoluÃ§Ã£o falhou â€” tente Conectar por IP",
+  "peersResolvingAddress": "Resolvendo endereÃ§oâ€¦",
+  "peersHostPort": "{host}:{port}",
+  "@peersHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersNoAddressYet": "Nenhum endereÃ§o ainda",
+  "peersEncryptedPinned": "Criptografado Â· fixado {code}",
+  "@peersEncryptedPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersEncryptedWss": "Criptografado (WSS/TLS)",
+  "peersSubtitleWithPresence": "{subtitle} â€¢ {presence}",
+  "@peersSubtitleWithPresence": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "presence": {"type": "String"}
+    }
+  },
+  "peersSubtitleWithSecurity": "{subtitle} â€¢ {security}",
+  "@peersSubtitleWithSecurity": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "security": {"type": "String"}
+    }
+  },
+  "peersPairedStatus": "Emparelhado em {date} Â· {status}",
+  "@peersPairedStatus": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "status": {"type": "String"}
+    }
+  },
+  "peersStatusConnected": "Conectado",
+  "peersStatusManualOnly": "Somente manual",
+  "peersStatusReconnecting": "Reconectandoâ€¦",
+  "peersStatusRetryIn": "Tentar novamente em {seconds}s",
+  "@peersStatusRetryIn": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "peersStatusNotOnNetwork": "Fora da rede",
+  "peersStatusConnecting": "Conectandoâ€¦",
+  "peersStatusAutoReconnect": "ReconexÃ£o automÃ¡tica",
+  "peersPresenceLineCol": "linha {line}, col {column}",
+  "@peersPresenceLineCol": {
+    "placeholders": {
+      "line": {"type": "int"},
+      "column": {"type": "int"}
+    }
+  },
+  "peersPresenceInNote": "\"{title}\" Â· {position}",
+  "@peersPresenceInNote": {
+    "placeholders": {
+      "title": {"type": "String"},
+      "position": {"type": "String"}
+    }
+  },
+  "peersRoomLabel": "Sala \"{room}\"",
+  "@peersRoomLabel": {
+    "placeholders": {
+      "room": {"type": "String"}
+    }
+  },
+
+  "discoveryThisDevice": "Este dispositivo",
+  "discoveryCopyAddress": "Copiar endereÃ§o",
+  "discoveryCopiedAddress": "Copiado {address}",
+  "@discoveryCopiedAddress": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "discoveryLocalNetworkRequired": "Rede local necessÃ¡ria",
+  "discoveryNotListeningTitle": "NÃ£o estÃ¡ ouvindo",
+  "discoveryNotListeningBody": "Este dispositivo ainda nÃ£o estÃ¡ ouvindo por pares. Aguarde alguns segundos apÃ³s entrar no Wiâ€‘Fi, ou toque em Tentar novamente em um banner de erro de rede.",
+  "discoveryModeTitle": "Modo de descoberta",
+  "discoveryUnavailableTitle": "Descoberta de pares indisponÃ­vel",
+  "discoveryRetryTooltip": "Tentar descoberta novamente",
+
+  "peersSecuredSessions": "SessÃµes seguras",
+  "peersSecurityBannerIdle": "Este dispositivo anuncia via WSS/TLS Â· cÃ³digo {code}",
+  "@peersSecurityBannerIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityBannerActive": "{connectedCount} sessÃµes criptografadas Â· {pinnedCount} certificados fixados",
+  "@peersSecurityBannerActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityCompactIdle": "WSS/TLS Â· cÃ³digo {code}",
+  "@peersSecurityCompactIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityCompactActive": "{connectedCount} criptografadas Â· {pinnedCount} fixados",
+  "@peersSecurityCompactActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityTooltipPinned": "Criptografado (WSS/TLS) Â· fixado {code}",
+  "@peersSecurityTooltipPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityTooltipActive": "Criptografado (WSS/TLS) Â· sessÃ£o ativa",
+
+  "pairingConnectionRequest": "SolicitaÃ§Ã£o de conexÃ£o",
+  "pairingAllowPeer": "Permitir que {peer} se conecte e compartilhe esta nota?",
+  "@pairingAllowPeer": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingVerificationCode": "CÃ³digo de verificaÃ§Ã£o",
+  "pairingConfirmCode": "Confirme que este cÃ³digo corresponde em ambos os dispositivos antes de aceitar.",
+  "pairingThisDeviceSecurityCode": "CÃ³digo de seguranÃ§a deste dispositivo",
+  "pairingOtherDevicePins": "O outro dispositivo fixa isso na primeira conexÃ£o.",
+
+  "manualConnectTitle": "Conectar por endereÃ§o",
+  "manualConnectBody": "Use quando a descoberta nÃ£o encontrar pares na mesma sub-rede. Somente endereÃ§os no seu segmento de rede local ativo sÃ£o permitidos.",
+  "manualConnectHostLabel": "Host ou IP",
+  "manualConnectHostHint": "192.168.1.42",
+  "manualConnectPortLabel": "Porta",
+  "manualConnectPortHint": "54321",
+  "manualConnectLabelOptional": "RÃ³tulo (opcional)",
+  "manualConnectLabelHint": "PC da sala",
+  "manualConnectInvalidHostPort": "Digite um host e porta vÃ¡lidos (1â€“65535)",
+
+  "settingsTitle": "ConfiguraÃ§Ãµes",
+  "settingsDeviceSection": "Dispositivo",
+  "settingsDeviceHint": "O nome do dispositivo e a sala requerem Salvar (Ctrl+S). As preferÃªncias de aparÃªncia e editor sÃ£o salvas imediatamente.",
+  "settingsDeviceName": "Nome do dispositivo",
+  "settingsDeviceNameHint": "Nome exibido para outros dispositivos",
+  "settingsSessionRoom": "SessÃ£o / sala",
+  "settingsSessionRoomHint": "Somente pares na mesma sala sÃ£o descobertos",
+  "settingsListeningPort": "Porta de escuta",
+  "settingsStartingServer": "Iniciando servidorâ€¦",
+  "settingsAddressShare": "{address} (compartilhe para conexÃ£o manual)",
+  "@settingsAddressShare": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "settingsCopyAddress": "Copiar endereÃ§o",
+  "settingsAddressCopied": "EndereÃ§o copiado para a Ã¡rea de transferÃªncia",
+  "settingsSavedSnack": "ConfiguraÃ§Ãµes salvas Â· \"{name}\" Â· sala \"{room}\"",
+  "@settingsSavedSnack": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "room": {"type": "String"}
+    }
+  },
+  "settingsAppearanceSection": "AparÃªncia",
+  "settingsMode": "Modo",
+  "settingsThemeSystem": "Sistema",
+  "settingsThemeLight": "Claro",
+  "settingsThemeDark": "Escuro",
+  "settingsSkin": "Visual",
+  "settingsSkinDefault": "PadrÃ£o",
+  "settingsSkinOcean": "Oceano",
+  "settingsSkinForest": "Floresta",
+  "settingsSkinSunset": "PÃ´r do sol",
+  "settingsSkinSlate": "ArdÃ³sia",
+  "settingsSkinProLabel": "{skin} Â· Pro",
+  "@settingsSkinProLabel": {
+    "placeholders": {
+      "skin": {"type": "String"}
+    }
+  },
+  "settingsProSection": "Netpad Pro",
+  "settingsProUnlocked": "Pro desbloqueado",
+  "settingsFree": "GrÃ¡tis",
+  "settingsProUnlockedSubtitle": "Notas e pares ilimitados, visuais, histÃ³rico, sincronizaÃ§Ã£o automÃ¡tica e voz",
+  "settingsProBuySubtitle": "Desbloqueio Ãºnico pela sua loja de aplicativos",
+  "settingsPurchasesUnavailable": "Compras indisponÃ­veis nesta plataforma",
+  "settingsRestorePurchases": "Restaurar compras",
+  "settingsProRestored": "Pro restaurado",
+  "settingsNoPreviousPro": "Nenhuma compra anterior de Pro encontrada",
+  "settingsEditorSection": "Editor",
+  "settingsWordWrap": "Quebra de linha",
+  "settingsWordWrapSubtitle": "Quebrar linhas longas em vez de rolar horizontalmente",
+  "settingsFontSize": "Tamanho da fonte ({size} pt)",
+  "@settingsFontSize": {
+    "placeholders": {
+      "size": {"type": "int"}
+    }
+  },
+  "settingsLegalSection": "Legal",
+  "settingsEulaSubtitlePro": "Pro Â· Abre EULA no GitHub Pages",
+  "settingsEulaSubtitleFree": "GrÃ¡tis Â· Abre EULA no GitHub Pages",
+  "settingsPrivacySubtitle": "Abre pÃ¡gina de privacidade no GitHub Pages",
+  "settingsDisclaimerTitle": "IsenÃ§Ã£o de responsabilidade e responsabilidade civil",
+  "settingsDisclaimerSubtitle": "Use por sua prÃ³pria conta e risco",
+  "settingsDisclaimerP1": "Este software Ã© fornecido \"como estÃ¡\", sem garantias de qualquer tipo, expressas ou implÃ­citas, incluindo comercializaÃ§Ã£o, adequaÃ§Ã£o a uma finalidade especÃ­fica e nÃ£o violaÃ§Ã£o.",
+  "settingsDisclaimerP2": "VocÃª Ã© o Ãºnico responsÃ¡vel pela forma como usa este aplicativo e pelo cumprimento de todas as leis, regulamentos, polÃ­ticas e acordos aplicÃ¡veis.",
+  "settingsDisclaimerP3": "O titular do direito autoral nÃ£o Ã© responsÃ¡vel por quaisquer reclamaÃ§Ãµes, danos, perdas, perda de dados, interrupÃ§Ã£o de negÃ³cios ou outra responsabilidade decorrente do uso ou mau uso deste software.",
+  "settingsNoLegalAdviceTitle": "Sem aconselhamento jurÃ­dico",
+  "settingsNoLegalAdviceSubtitle": "Apenas software informativo",
+  "settingsNoLegalAdviceP1": "Este aplicativo e sua documentaÃ§Ã£o nÃ£o fornecem aconselhamento jurÃ­dico, regulatÃ³rio ou profissional.",
+  "settingsNoLegalAdviceP2": "Se vocÃª precisar de orientaÃ§Ã£o jurÃ­dica para seu caso de uso, consulte um profissional qualificado.",
+  "settingsCopyright": "Â© 2026 Spencer Beaumier",
+
+  "paywallTitle": "Desbloquear Netpad Pro",
+  "paywallSubtitle": "Compra Ãºnica. EdiÃ§Ã£o bÃ¡sica e sincronizaÃ§Ã£o LAN permanecem gratuitas.",
+  "paywallBenefitUnlimitedNotes": "Notas ilimitadas",
+  "paywallBenefitUnlimitedPeers": "Pares conectados ilimitados",
+  "paywallBenefitSkins": "Visuais de cores extras",
+  "paywallBenefitHistory": "HistÃ³rico de versÃµes",
+  "paywallBenefitAutoSync": "SincronizaÃ§Ã£o automÃ¡tica com pares confiÃ¡veis",
+  "paywallBenefitVoice": "Ditado por voz",
+  "paywallPurchasesUnsupported": "Compras no aplicativo nÃ£o estÃ£o disponÃ­veis nesta plataforma. Instale da App Store, Google Play ou Microsoft Store para desbloquear o Pro.",
+  "paywallBuyPro": "Comprar Pro",
+  "paywallBuyProPrice": "Comprar Pro Â· {price}",
+  "@paywallBuyProPrice": {
+    "placeholders": {
+      "price": {"type": "String"}
+    }
+  },
+  "paywallRestorePurchases": "Restaurar compras",
+  "paywallPurchaseNotCompleted": "A compra nÃ£o foi concluÃ­da.",
+  "paywallPurchaseFailed": "A compra falhou.",
+  "paywallProRestored": "Pro restaurado",
+  "paywallNoPreviousPro": "Nenhuma compra anterior de Pro encontrada",
+
+  "proHighlightNoteLimit": "A versÃ£o gratuita inclui atÃ© {limit} notas. Desbloqueie o Pro para notas ilimitadas.",
+  "@proHighlightNoteLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightPeerLimit": "A versÃ£o gratuita inclui atÃ© {limit} pares conectados. Desbloqueie o Pro para pares ilimitados.",
+  "@proHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightVersionHistory": "O histÃ³rico de versÃµes Ã© um recurso Pro.",
+  "proHighlightVoice": "O ditado por voz Ã© um recurso Pro.",
+  "proHighlightAutoSync": "A sincronizaÃ§Ã£o automÃ¡tica com pares confiÃ¡veis Ã© um recurso Pro.",
+  "proHighlightSkins": "Visuais extras estÃ£o incluÃ­dos no Pro.",
+
+  "helpTitle": "Ajuda",
+  "helpIntro": "Um bloco de notas LAN para notas em texto simples. Dispositivos na mesma rede Wiâ€‘Fi se descobrem, emparelham uma vez e sincronizam notas em tempo real.",
+  "helpAboutTile": "Sobre o SB Simple Netpad",
+  "helpEulaSubtitle": "Abre EULA no GitHub Pages",
+  "helpPrivacySubtitle": "Abre pÃ¡gina de privacidade no GitHub Pages",
+  "helpGettingStartedTitle": "Primeiros passos",
+  "helpGettingStarted1": "Entre na mesma rede Wiâ€‘Fi que os dispositivos com os quais deseja sincronizar.",
+  "helpGettingStarted2": "Abra o painel de pares (Ã­cone de cadeado ou gaveta de Pares) e aguarde os dispositivos prÃ³ximos aparecerem.",
+  "helpGettingStarted3": "Copie seu endereÃ§o de Este dispositivo e compartilhe se a descoberta estiver lenta.",
+  "helpGettingStarted4": "Use Conectar por IP quando a descoberta mDNS nÃ£o encontrar pares.",
+  "helpNotesTitle": "Notas",
+  "helpNotes1": "Toque no Ã­cone de menu (â˜°) ou no painel de notas para alternar entre notas.",
+  "helpNotes2": "Crie, renomeie, reordene e exclua notas na lista de notas.",
+  "helpNotes3": "Cada nota sincroniza de forma independente â€” alterne a sincronizaÃ§Ã£o por nota quando necessÃ¡rio.",
+  "helpNotes4": "Pesquise dentro de uma nota (Localizar) ou em todas as notas pelo editor.",
+  "helpNotes5": "O histÃ³rico de versÃµes salva instantÃ¢neos locais que vocÃª pode restaurar posteriormente.",
+  "helpPeersTitle": "Pares e emparelhamento",
+  "helpPeers1": "PrÃ³ximos lista os dispositivos descobertos na mesma sala (veja ConfiguraÃ§Ãµes).",
+  "helpPeers2": "Toque em Conectar em um par â€” o outro dispositivo deve tocar em Aceitar.",
+  "helpPeers3": "Compare o cÃ³digo de verificaÃ§Ã£o de emparelhamento antes de aceitar.",
+  "helpPeers4": "ApÃ³s o primeiro Aceitar, dispositivos confiÃ¡veis podem se reconectar automaticamente.",
+  "helpPeers5": "Dispositivos confiÃ¡veis: alterne sincronizaÃ§Ã£o automÃ¡tica ou Revogar para exigir Aceitar novamente.",
+  "helpPeers6": "Bloquear desconecta um dispositivo e recusa emparelhamentos futuros atÃ© ser desbloqueado.",
+  "helpPeers7": "Conectado mostra sessÃµes ativas com endereÃ§o e presenÃ§a do cursor.",
+  "helpFileSharingTitle": "Arquivos e compartilhamento",
+  "helpFileSharing1Desktop": "Menu Arquivo: Salvar em arquivo, Abrir arquivo como nova nota, Compartilhar nota, HistÃ³rico de versÃµes, ConfiguraÃ§Ãµes, Sair.",
+  "helpFileSharing1Mobile": "Menu (â‹®): salvar em arquivo, abrir arquivo como nova nota, compartilhar, histÃ³rico de versÃµes, configuraÃ§Ãµes e este guia de ajuda.",
+  "helpFileSharing2": "Salvar em arquivo exporta a nota ativa como .txt ou .md.",
+  "helpFileSharing3": "Abrir arquivo importa texto para uma nova nota que sincroniza como qualquer outra.",
+  "helpFileSharing4": "Compartilhar usa a planilha de compartilhamento do SO; Linux recorre Ã  Ã¡rea de transferÃªncia.",
+  "helpSettingsTitle": "ConfiguraÃ§Ãµes",
+  "helpSettings1": "O nome do dispositivo e a sala requerem Salvar â€” outras opÃ§Ãµes se aplicam imediatamente.",
+  "helpSettings2": "O ID da sala agrupa pares: somente dispositivos na mesma sala sÃ£o descobertos.",
+  "helpSettings3": "As preferÃªncias de aparÃªncia e editor (tema, visual, quebra, fonte) sÃ£o salvas ao alterÃ¡-las.",
+  "helpDesktopShortcutsTitle": "Atalhos de teclado",
+  "helpDesktopShortcuts1": "Ctrl/Cmd+S â€” Salvar em arquivo",
+  "helpDesktopShortcuts2": "Ctrl/Cmd+O â€” Abrir arquivo como nova nota",
+  "helpDesktopShortcuts3": "Ctrl/Cmd+F â€” Localizar na nota",
+  "helpDesktopShortcuts4": "Ctrl/Cmd+H â€” Localizar e substituir",
+  "helpDesktopShortcuts5": "Ctrl/Cmd+N â€” Alternar painel de notas",
+  "helpDesktopShortcuts6": "Ctrl/Cmd+P â€” Alternar painel de pares",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q â€” Sair (Windows/Linux)",
+  "helpTroubleshootingTitle": "SoluÃ§Ã£o de problemas",
+  "helpTroubleshooting1": "Sem pares? Confirme a mesma sub-rede Wiâ€‘Fi e ID de sala; tente Conectar por IP.",
+  "helpTroubleshooting2": "O banner rede local necessÃ¡ria significa que a sincronizaÃ§Ã£o estÃ¡ pausada atÃ© o Wiâ€‘Fi estar ativo.",
+  "helpTroubleshooting3": "Permita o aplicativo pelo seu firewall no primeiro lanÃ§amento (desktop).",
+  "helpTroubleshooting4": "Linux: instale dbus e avahi-daemon se a descoberta nunca iniciar.",
+  "helpTroubleshooting5": "Android: conceda permissÃ£o de Wiâ€‘Fi prÃ³ximo quando solicitado.",
+
+  "aboutTitle": "Sobre",
+  "aboutTagline": "Bloco de notas LAN com descoberta de pares e ediÃ§Ã£o compartilhada.",
+  "aboutDescription": "Escreva notas em texto simples no seu celular ou computador e mantenha-as sincronizadas com outros dispositivos na mesma rede Wiâ€‘Fi. Os pares se descobrem na rede local, emparelham uma vez com aprovaÃ§Ã£o mÃºtua e compartilham vÃ¡rias notas nomeadas com sessÃµes de pares criptografadas.",
+  "aboutPlatforms": "Android Â· iOS Â· Windows Â· macOS Â· Linux",
+  "aboutStatus": "Beta â€” adequado para uso LAN diÃ¡rio.",
+  "aboutEulaHeading": "Contrato de LicenÃ§a do UsuÃ¡rio Final",
+  "aboutEulaBody": "SB Simple Netpad Ã© licenciado sob um EULA, nÃ£o uma licenÃ§a de cÃ³digo aberto. A ediÃ§Ã£o bÃ¡sica e a sincronizaÃ§Ã£o LAN sÃ£o gratuitas (atÃ© {noteLimit} notas e {peerLimit} pares conectados). Netpad Pro Ã© um desbloqueio Ãºnico via App Store, Google Play ou Microsoft Store.",
+  "@aboutEulaBody": {
+    "placeholders": {
+      "noteLimit": {"type": "int"},
+      "peerLimit": {"type": "int"}
+    }
+  },
+  "aboutViewEula": "Ver EULA",
+  "aboutPrivacyPolicy": "PolÃ­tica de Privacidade",
+  "aboutHowToUse": "Como usar o SB Simple Netpad",
+  "aboutCouldNotOpenPrivacy": "NÃ£o foi possÃ­vel abrir a polÃ­tica de privacidade",
+  "aboutCouldNotOpenEula": "NÃ£o foi possÃ­vel abrir o EULA",
+  "aboutCopyright": "Â© 2026 Spencer Beaumier",
+
+  "conflictLiveTitle": "Conflito de ediÃ§Ã£o em \"{title}\"",
+  "@conflictLiveTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictLiveBody": "{peer} editou a mesma nota ao mesmo tempo (revisÃ£o {revision}).\n\nA sua:\n{localPreview}\n\n{peer}:\n{remotePreview}\n\nQual versÃ£o ambos os dispositivos devem manter?",
+  "@conflictLiveBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "revision": {"type": "String"},
+      "localPreview": {"type": "String"},
+      "remotePreview": {"type": "String"}
+    }
+  },
+  "conflictDivergedTitle": "\"{title}\" divergiu",
+  "@conflictDivergedTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictDivergedBody": "Sua cÃ³pia e a cÃ³pia de {peer} de \"{title}\" foram alteradas de forma diferente enquanto desconectadas.\n\nA sua: {localChars} caracteres\n{peer}: {remoteChars} caracteres\n\nQual versÃ£o ambos os dispositivos devem manter?",
+  "@conflictDivergedBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "title": {"type": "String"},
+      "localChars": {"type": "int"},
+      "remoteChars": {"type": "int"}
+    }
+  },
+  "conflictUsePeers": "Usar a de {peer}",
+  "@conflictUsePeers": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "conflictKeepMine": "Manter a minha",
+
+  "fileSavedTo": "Salvo em {path}",
+  "@fileSavedTo": {
+    "placeholders": {
+      "path": {"type": "String"}
+    }
+  },
+  "fileCouldNotSave": "NÃ£o foi possÃ­vel salvar: {error}",
+  "@fileCouldNotSave": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileOpenedAsNewNote": "{name} aberto como nova nota",
+  "@fileOpenedAsNewNote": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "fileCouldNotOpen": "NÃ£o foi possÃ­vel abrir: {error}",
+  "@fileCouldNotOpen": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileNothingToShare": "Nada para compartilhar â€” a nota estÃ¡ vazia",
+  "fileShareFallbackClipboard": "Compartilhamento nÃ£o disponÃ­vel aqui â€” copiado para a Ã¡rea de transferÃªncia",
+  "fileDefaultNoteName": "netpad-note"
+}

@@ -3,6 +3,7 @@ import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/features/entitlements/pro_gate.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:provider/provider.dart';
 
 /// Mobile slide-out drawer wrapping [NotesPanel].
@@ -72,6 +73,7 @@ class _NotesPanelState extends State<NotesPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final workspace = context.watch<WorkspaceRepository>();
     final hits = workspace.search(_query);
     final searching = _query.trim().isNotEmpty;
@@ -86,13 +88,13 @@ class _NotesPanelState extends State<NotesPanel> {
               children: [
                 Expanded(
                   child: Text(
-                    'Notes',
+                    l10n.notesTitle,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
                 IconButton.filledTonal(
                   icon: const Icon(Icons.add),
-                  tooltip: 'New note',
+                  tooltip: l10n.notesNewNote,
                   onPressed: () => _createNote(context, workspace),
                 ),
               ],
@@ -105,7 +107,7 @@ class _NotesPanelState extends State<NotesPanel> {
               alignment: Alignment.centerRight,
               child: IconButton.filledTonal(
                 icon: const Icon(Icons.add, size: 20),
-                tooltip: 'New note',
+                tooltip: l10n.notesNewNote,
                 visualDensity: VisualDensity.compact,
                 onPressed: () => _createNote(context, workspace),
               ),
@@ -118,7 +120,7 @@ class _NotesPanelState extends State<NotesPanel> {
             decoration: InputDecoration(
               isDense: true,
               prefixIcon: const Icon(Icons.search, size: 20),
-              hintText: 'Search all notes',
+              hintText: l10n.notesSearchHint,
               border: const OutlineInputBorder(),
               suffixIcon: searching
                   ? IconButton(
@@ -148,25 +150,26 @@ class _NotesPanelState extends State<NotesPanel> {
     WorkspaceRepository workspace,
     DocumentRepository doc,
   ) async {
+    final l10n = context.l10n;
     final controller = TextEditingController(text: doc.title);
     final result = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Rename note'),
+        title: Text(l10n.notesRenameTitle),
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(labelText: 'Title'),
+          decoration: InputDecoration(labelText: l10n.notesTitleLabel),
           onSubmitted: (value) => Navigator.pop(ctx, value),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, controller.text),
-            child: const Text('Save'),
+            child: Text(l10n.commonSave),
           ),
         ],
       ),
@@ -179,24 +182,23 @@ class _NotesPanelState extends State<NotesPanel> {
     WorkspaceRepository workspace,
     DocumentRepository doc,
   ) async {
+    final l10n = context.l10n;
     final synced = workspace.isSyncEnabled(doc.id);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Delete "${doc.title}"?'),
+        title: Text(l10n.notesDeleteTitle(doc.title)),
         content: Text(
-          synced
-              ? 'This removes the note for you and every connected peer.'
-              : 'This removes the note from this device only.',
+          synced ? l10n.notesDeleteSyncedBody : l10n.notesDeleteLocalBody,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: Text(l10n.notesDelete),
           ),
         ],
       ),
@@ -212,7 +214,7 @@ class _NotesPanelState extends State<NotesPanel> {
     if (hits.isEmpty) {
       return Center(
         child: Text(
-          'No matches',
+          context.l10n.notesNoMatches,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       );
@@ -249,7 +251,7 @@ class _NotesPanelState extends State<NotesPanel> {
     if (docs.isEmpty) {
       return Center(
         child: Text(
-          'No notes',
+          context.l10n.notesNoNotes,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       );
@@ -314,10 +316,29 @@ class _NoteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final doc = hit.doc;
     final theme = Theme.of(context);
     final muted = theme.colorScheme.outline;
-    final subtitle = _subtitle(doc.text);
+
+    // Compute subtitle with l10n
+    final String subtitleText;
+    if (!syncEnabled) {
+      if (searching) {
+        final matchLine = hit.snippet.isEmpty
+            ? l10n.notesMatchCount(hit.matchCount)
+            : l10n.notesSearchSnippetMatches(hit.snippet, hit.matchCount);
+        subtitleText = l10n.notesLocalOnlyWithMatches(matchLine);
+      } else {
+        subtitleText = l10n.notesLocalOnly;
+      }
+    } else if (searching) {
+      subtitleText = hit.snippet.isEmpty
+          ? l10n.notesMatchCount(hit.matchCount)
+          : l10n.notesSearchSnippetMatches(hit.snippet, hit.matchCount);
+    } else {
+      subtitleText = _firstLineOf(doc.text) ?? l10n.notesEmptyNote;
+    }
 
     return ListTile(
       selected: active,
@@ -340,7 +361,7 @@ class _NoteTile extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        subtitle,
+        subtitleText,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: !syncEnabled
@@ -352,7 +373,7 @@ class _NoteTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Tooltip(
-            message: syncEnabled ? 'Sync with peers' : 'Local only',
+            message: syncEnabled ? l10n.notesSyncWithPeers : l10n.notesLocalOnly,
             child: SizedBox(
               width: 36,
               height: 20,
@@ -387,13 +408,13 @@ class _NoteTile extends StatelessWidget {
                   onDelete();
               }
             },
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: _NoteMenu.rename, child: Text('Rename')),
+            itemBuilder: (context) => [
+              PopupMenuItem(value: _NoteMenu.rename, child: Text(l10n.notesRename)),
               PopupMenuItem(
                 value: _NoteMenu.history,
-                child: Text('Version history'),
+                child: Text(l10n.notesVersionHistory),
               ),
-              PopupMenuItem(value: _NoteMenu.delete, child: Text('Delete')),
+              PopupMenuItem(value: _NoteMenu.delete, child: Text(l10n.notesDelete)),
             ],
           ),
         ],
@@ -406,29 +427,11 @@ class _NoteTile extends StatelessWidget {
     return active ? Icons.edit_note : Icons.description_outlined;
   }
 
-  String _subtitle(String text) {
-    if (!syncEnabled) {
-      if (searching) {
-        final matchLine = hit.snippet.isEmpty
-            ? '${hit.matchCount} match(es)'
-            : '${hit.snippet}  ·  ${hit.matchCount} match(es)';
-        return 'Local only · $matchLine';
-      }
-      return 'Local only';
-    }
-    if (searching) {
-      return hit.snippet.isEmpty
-          ? '${hit.matchCount} match(es)'
-          : '${hit.snippet}  ·  ${hit.matchCount} match(es)';
-    }
-    return _firstLine(text);
-  }
-
-  String _firstLine(String text) {
+  String? _firstLineOf(String text) {
     for (final line in text.split('\n')) {
       final trimmed = line.trim();
       if (trimmed.isNotEmpty) return trimmed;
     }
-    return 'Empty note';
+    return null;
   }
 }

@@ -1,0 +1,645 @@
+{
+  "@@locale": "de",
+  "commonAppName": "SB Simple Netpad",
+  "commonProName": "Netpad Pro",
+  "commonCancel": "Abbrechen",
+  "commonClose": "Schließen",
+  "commonSave": "Speichern",
+  "commonDelete": "Löschen",
+  "commonConnect": "Verbinden",
+  "commonHelp": "Hilfe",
+  "commonSettings": "Einstellungen",
+  "commonMore": "Mehr",
+  "commonCopy": "Kopieren",
+  "commonClear": "Leeren",
+  "commonAccept": "Akzeptieren",
+  "commonReject": "Ablehnen",
+  "commonBlock": "Sperren",
+  "commonUnblock": "Entsperren",
+  "commonRevoke": "Widerrufen",
+  "commonRestore": "Wiederherstellen",
+  "commonRetry": "Wiederholen",
+  "commonCouldNotOpenLabel": "{label} konnte nicht geöffnet werden",
+  "@commonCouldNotOpenLabel": {
+    "placeholders": {
+      "label": {"type": "String"}
+    }
+  },
+  "commonEulaLabel": "EULA",
+  "commonPrivacyPolicyLabel": "Datenschutzrichtlinie",
+  "commonEndUserLicenseAgreement": "Endbenutzer-Lizenzvertrag",
+  "commonPrivacyPolicy": "Datenschutzrichtlinie",
+  "commonVersionLabel": "Version {version}",
+  "@commonVersionLabel": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+
+  "shellMenuFile": "Datei",
+  "shellMenuEdit": "Bearbeiten",
+  "shellMenuView": "Ansicht",
+  "shellMenuHelp": "Hilfe",
+  "shellSaveToFile": "In Datei speichern…",
+  "shellOpenFileAsNewNote": "Datei als neue Notiz öffnen…",
+  "shellShareNote": "Notiz teilen",
+  "shellVersionHistory": "Versionsverlauf…",
+  "shellSettings": "Einstellungen…",
+  "shellExit": "Beenden",
+  "shellCut": "Ausschneiden",
+  "shellCopy": "Kopieren",
+  "shellPaste": "Einfügen",
+  "shellFind": "Suchen…",
+  "shellFindAndReplace": "Suchen und Ersetzen…",
+  "shellWordWrap": "Zeilenumbruch",
+  "shellWordWrapChecked": "Zeilenumbruch ✓",
+  "shellNotesPanel": "Notizenbereich",
+  "shellNotesPanelChecked": "Notizenbereich ✓",
+  "shellPeersPanel": "Peer-Bereich",
+  "shellPeersPanelChecked": "Peer-Bereich ✓",
+  "shellHelpItem": "SB Simple Netpad Hilfe",
+  "shellAboutItem": "Über SB Simple Netpad",
+  "shellHideNotesPanel": "Notizenbereich ausblenden",
+  "shellShowNotesPanel": "Notizenbereich anzeigen (Ctrl+N)",
+  "shellHidePeersPanel": "Peer-Bereich ausblenden",
+  "shellShowPeersPanel": "Peer-Bereich anzeigen (Ctrl+P)",
+  "shellPeersTooltipConnected": "{count} verschlüsselte Peer-Sitzungen · Peer-Bereich {action} (Ctrl+P)",
+  "@shellPeersTooltipConnected": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "action": {"type": "String"}
+    }
+  },
+  "shellPeersTooltipActionHide": "ausblenden",
+  "shellPeersTooltipActionShow": "anzeigen",
+  "shellFindInNote": "In Notiz suchen (Ctrl+F)",
+  "shellSecurityChipConnected": "{count} Peer-Sitzungen mit WSS/TLS verschlüsselt · tippen für Peers",
+  "@shellSecurityChipConnected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "shellSecurityChipNone": "Keine aktiven Peer-Sitzungen · tippen für Peers",
+  "shellMobileWordWrap": "Zeilenumbruch",
+  "shellMobileSaveToFile": "In Datei speichern…",
+  "shellMobileOpenFileAsNewNote": "Datei als neue Notiz öffnen…",
+  "shellMobileShareNote": "Notiz teilen",
+  "shellMobileVersionHistory": "Versionsverlauf…",
+  "shellMobileSettings": "Einstellungen",
+  "shellMobileHelp": "Hilfe",
+  "shellMobileAbout": "Über SB Simple Netpad",
+  "shellListeningSnack": "Aufnahme läuft… tippe erneut auf das Mikrofon, um zu stoppen",
+
+  "notesTitle": "Notizen",
+  "notesNewNote": "Neue Notiz",
+  "notesSearchHint": "Alle Notizen durchsuchen",
+  "notesRenameTitle": "Notiz umbenennen",
+  "notesTitleLabel": "Titel",
+  "notesDeleteTitle": "\"{title}\" löschen?",
+  "@notesDeleteTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "notesDeleteSyncedBody": "Dadurch wird die Notiz für Sie und alle verbundenen Peers entfernt.",
+  "notesDeleteLocalBody": "Dadurch wird die Notiz nur von diesem Gerät entfernt.",
+  "notesNoMatches": "Keine Treffer",
+  "notesNoNotes": "Keine Notizen",
+  "notesRename": "Umbenennen",
+  "notesVersionHistory": "Versionsverlauf",
+  "notesDelete": "Löschen",
+  "notesSyncWithPeers": "Mit Peers synchronisieren",
+  "notesLocalOnly": "Nur lokal",
+  "notesEmptyNote": "Leere Notiz",
+  "notesMatchCount": "{count} Treffer",
+  "@notesMatchCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "notesLocalOnlyWithMatches": "Nur lokal · {matchLine}",
+  "@notesLocalOnlyWithMatches": {
+    "placeholders": {
+      "matchLine": {"type": "String"}
+    }
+  },
+  "notesSearchSnippetMatches": "{snippet}  ·  {count} Treffer",
+  "@notesSearchSnippetMatches": {
+    "placeholders": {
+      "snippet": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "notesNoNoteSelected": "Keine Notiz ausgewählt",
+
+  "historyTitle": "Versionsverlauf · \"{title}\"",
+  "@historyTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "historyEmpty": "Noch keine gespeicherten Versionen. Snapshots werden automatisch gespeichert, bevor Remote-Bearbeitungen Ihren Text ersetzen.",
+  "historyEntrySubtitle": "{label} · {time} · {chars} Zeichen",
+  "@historyEntrySubtitle": {
+    "placeholders": {
+      "label": {"type": "String"},
+      "time": {"type": "String"},
+      "chars": {"type": "int"}
+    }
+  },
+  "historyRestore": "Wiederherstellen",
+  "historyRestoredSnack": "Version wiederhergestellt",
+  "historyBeforeRemoteUpdate": "Vor Remote-Update",
+  "historySnapshot": "Snapshot",
+  "historyImportedFile": "Importierte Datei",
+
+  "editorFindHint": "Suchen",
+  "editorReplaceHint": "Ersetzen durch",
+  "editorMatchCounter": "{current}/{total}",
+  "@editorMatchCounter": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "editorMatchNone": "0/0",
+  "editorPrevious": "Vorheriger",
+  "editorNext": "Nächster",
+  "editorShowReplace": "Ersetzen anzeigen (Ctrl+H)",
+  "editorHideReplace": "Ersetzen ausblenden (Ctrl+H)",
+  "editorClose": "Schließen",
+  "editorReplace": "Ersetzen",
+  "editorReplaceAll": "Alle",
+  "editorListening": "Aufnahme läuft…",
+  "editorDictate": "Diktieren",
+  "editorStopDictation": "Diktat stoppen",
+
+  "peersConnectByIp": "Per IP verbinden",
+  "peersConnected": "Verbunden",
+  "peersNearby": "In der Nähe",
+  "peersTrustedDevices": "Vertrauenswürdige Geräte",
+  "peersBlocked": "Gesperrt",
+  "peersConnectionLog": "Verbindungsprotokoll",
+  "peersNoActiveConnections": "Keine aktiven Verbindungen",
+  "peersNoTrustedDevices": "Keine vertrauenswürdigen Geräte — einmal koppeln, um automatische Synchronisierung zu aktivieren",
+  "peersNoBlockedDevices": "Keine gesperrten Geräte",
+  "peersNoConnectionEvents": "Noch keine Verbindungsereignisse",
+  "peersNoDiscoveredPeers": "Keine Peers gefunden — Linux muss sich im gleichen Wi‑Fi-Subnetz wie Dieses Gerät befinden (Adresse oben prüfen), oder Per IP verbinden verwenden",
+  "peersDiscoveryPaused": "Peer-Erkennung ist pausiert, bis Sie einem lokalen Netzwerk beitreten",
+  "peersDisconnect": "Trennen",
+  "peersConnectNow": "Jetzt verbinden",
+  "peersConnect": "Verbinden",
+  "peersResolving": "Wird aufgelöst…",
+  "peersBlockTooltip": "Sperren",
+  "peersBlockTitle": "{peer} sperren?",
+  "@peersBlockTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersBlockBody": "Dadurch wird das Gerät getrennt, sein angeheftetes Zertifikat vergessen und zukünftige Verbindungsanfragen abgelehnt, bis Sie es entsperren.",
+  "peersRevokeTitle": "{peer} widerrufen?",
+  "@peersRevokeTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersRevokeBody": "Die nächste Verbindung erfordert erneutes Tippen auf Akzeptieren. Der Sicherheits-PIN bleibt erhalten, sodass Zertifikatsprüfungen weiterhin gelten.",
+  "peersAutoSync": "Automatische Synchronisierung",
+  "peersCopiedOneLogEntry": "1 Protokolleintrag kopiert",
+  "peersCopiedLogEntries": "{count} Protokolleinträge kopiert",
+  "@peersCopiedLogEntries": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "peersLogRevision": "{time} • Revision {revision}",
+  "@peersLogRevision": {
+    "placeholders": {
+      "time": {"type": "String"},
+      "revision": {"type": "String"}
+    }
+  },
+  "peersStillResolving": "{peer} wird noch aufgelöst…",
+  "@peersStillResolving": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersResolveFailedSnack": "{peer} konnte nicht aufgelöst werden. Avahi und gleiches Subnetz prüfen, oder Per IP verbinden verwenden.",
+  "@peersResolveFailedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersPairingRequestSent": "Kopplungsanfrage an {peer} gesendet",
+  "@peersPairingRequestSent": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersCouldNotConnect": "Verbindung fehlgeschlagen: {message}",
+  "@peersCouldNotConnect": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "peersManualHostPort": "{host}:{port} (manuell)",
+  "@peersManualHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersManual": "Manuell",
+  "peersResolveFailedSubtitle": "Auflösung fehlgeschlagen — Per IP verbinden versuchen",
+  "peersResolvingAddress": "Adresse wird aufgelöst…",
+  "peersHostPort": "{host}:{port}",
+  "@peersHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersNoAddressYet": "Noch keine Adresse",
+  "peersEncryptedPinned": "Verschlüsselt · angeheftet {code}",
+  "@peersEncryptedPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersEncryptedWss": "Verschlüsselt (WSS/TLS)",
+  "peersSubtitleWithPresence": "{subtitle} • {presence}",
+  "@peersSubtitleWithPresence": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "presence": {"type": "String"}
+    }
+  },
+  "peersSubtitleWithSecurity": "{subtitle} • {security}",
+  "@peersSubtitleWithSecurity": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "security": {"type": "String"}
+    }
+  },
+  "peersPairedStatus": "Gekoppelt {date} · {status}",
+  "@peersPairedStatus": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "status": {"type": "String"}
+    }
+  },
+  "peersStatusConnected": "Verbunden",
+  "peersStatusManualOnly": "Nur manuell",
+  "peersStatusReconnecting": "Verbindung wird wiederhergestellt…",
+  "peersStatusRetryIn": "Wiederholen in {seconds}s",
+  "@peersStatusRetryIn": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "peersStatusNotOnNetwork": "Nicht im Netzwerk",
+  "peersStatusConnecting": "Verbindung wird hergestellt…",
+  "peersStatusAutoReconnect": "Automatisch verbinden",
+  "peersPresenceLineCol": "Zeile {line}, Sp. {column}",
+  "@peersPresenceLineCol": {
+    "placeholders": {
+      "line": {"type": "int"},
+      "column": {"type": "int"}
+    }
+  },
+  "peersPresenceInNote": "\"{title}\" · {position}",
+  "@peersPresenceInNote": {
+    "placeholders": {
+      "title": {"type": "String"},
+      "position": {"type": "String"}
+    }
+  },
+  "peersRoomLabel": "Raum \"{room}\"",
+  "@peersRoomLabel": {
+    "placeholders": {
+      "room": {"type": "String"}
+    }
+  },
+
+  "discoveryThisDevice": "Dieses Gerät",
+  "discoveryCopyAddress": "Adresse kopieren",
+  "discoveryCopiedAddress": "Kopiert {address}",
+  "@discoveryCopiedAddress": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "discoveryLocalNetworkRequired": "Lokales Netzwerk erforderlich",
+  "discoveryNotListeningTitle": "Nicht aktiv",
+  "discoveryNotListeningBody": "Dieses Gerät lauscht noch nicht nach Peers. Warten Sie einige Sekunden nach dem Wi‑Fi-Beitritt, oder tippen Sie auf Wiederholen bei einem Netzwerkfehler-Banner.",
+  "discoveryModeTitle": "Erkennungsmodus",
+  "discoveryUnavailableTitle": "Peer-Erkennung nicht verfügbar",
+  "discoveryRetryTooltip": "Erkennung wiederholen",
+
+  "peersSecuredSessions": "Gesicherte Sitzungen",
+  "peersSecurityBannerIdle": "Dieses Gerät kündigt über WSS/TLS an · Code {code}",
+  "@peersSecurityBannerIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityBannerActive": "{connectedCount} verschlüsselte Sitzungen · {pinnedCount} Zertifikate angeheftet",
+  "@peersSecurityBannerActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityCompactIdle": "WSS/TLS · Code {code}",
+  "@peersSecurityCompactIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityCompactActive": "{connectedCount} verschlüsselt · {pinnedCount} angeheftet",
+  "@peersSecurityCompactActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityTooltipPinned": "Verschlüsselt (WSS/TLS) · angeheftet {code}",
+  "@peersSecurityTooltipPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityTooltipActive": "Verschlüsselt (WSS/TLS) · aktive Sitzung",
+
+  "pairingConnectionRequest": "Verbindungsanfrage",
+  "pairingAllowPeer": "{peer} erlauben, sich zu verbinden und diese Notiz zu teilen?",
+  "@pairingAllowPeer": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingVerificationCode": "Bestätigungscode",
+  "pairingConfirmCode": "Bestätigen Sie, dass dieser Code auf beiden Geräten übereinstimmt, bevor Sie akzeptieren.",
+  "pairingThisDeviceSecurityCode": "Sicherheitscode dieses Geräts",
+  "pairingOtherDevicePins": "Das andere Gerät heftet dies bei der ersten Verbindung an.",
+
+  "manualConnectTitle": "Per Adresse verbinden",
+  "manualConnectBody": "Verwenden Sie dies, wenn die Erkennung keine Peers im gleichen Subnetz findet. Nur Adressen in Ihrem aktiven lokalen Netzwerksegment sind zulässig.",
+  "manualConnectHostLabel": "Host oder IP",
+  "manualConnectHostHint": "192.168.1.42",
+  "manualConnectPortLabel": "Port",
+  "manualConnectPortHint": "54321",
+  "manualConnectLabelOptional": "Bezeichnung (optional)",
+  "manualConnectLabelHint": "Wohnzimmer-PC",
+  "manualConnectInvalidHostPort": "Gültigen Host und Port eingeben (1–65535)",
+
+  "settingsTitle": "Einstellungen",
+  "settingsDeviceSection": "Gerät",
+  "settingsDeviceHint": "Gerätename und Raum erfordern Speichern (Ctrl+S). Darstellungs- und Editoreinstellungen werden sofort gespeichert.",
+  "settingsDeviceName": "Gerätename",
+  "settingsDeviceNameHint": "Name, der anderen Geräten angezeigt wird",
+  "settingsSessionRoom": "Sitzung / Raum",
+  "settingsSessionRoomHint": "Nur Peers im gleichen Raum werden erkannt",
+  "settingsListeningPort": "Lauschport",
+  "settingsStartingServer": "Server wird gestartet…",
+  "settingsAddressShare": "{address} (für manuelle Verbindung teilen)",
+  "@settingsAddressShare": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "settingsCopyAddress": "Adresse kopieren",
+  "settingsAddressCopied": "Adresse in Zwischenablage kopiert",
+  "settingsSavedSnack": "Einstellungen gespeichert · \"{name}\" · Raum \"{room}\"",
+  "@settingsSavedSnack": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "room": {"type": "String"}
+    }
+  },
+  "settingsAppearanceSection": "Darstellung",
+  "settingsMode": "Modus",
+  "settingsThemeSystem": "System",
+  "settingsThemeLight": "Hell",
+  "settingsThemeDark": "Dunkel",
+  "settingsSkin": "Design",
+  "settingsSkinDefault": "Standard",
+  "settingsSkinOcean": "Ozean",
+  "settingsSkinForest": "Wald",
+  "settingsSkinSunset": "Sonnenuntergang",
+  "settingsSkinSlate": "Schiefer",
+  "settingsSkinProLabel": "{skin} · Pro",
+  "@settingsSkinProLabel": {
+    "placeholders": {
+      "skin": {"type": "String"}
+    }
+  },
+  "settingsProSection": "Netpad Pro",
+  "settingsProUnlocked": "Pro freigeschaltet",
+  "settingsFree": "Kostenlos",
+  "settingsProUnlockedSubtitle": "Unbegrenzte Notizen und Peers, Designs, Verlauf, automatische Synchronisierung und Sprache",
+  "settingsProBuySubtitle": "Einmalige Freischaltung über Ihren App-Store",
+  "settingsPurchasesUnavailable": "Käufe auf dieser Plattform nicht verfügbar",
+  "settingsRestorePurchases": "Käufe wiederherstellen",
+  "settingsProRestored": "Pro wiederhergestellt",
+  "settingsNoPreviousPro": "Kein früherer Pro-Kauf gefunden",
+  "settingsEditorSection": "Editor",
+  "settingsWordWrap": "Zeilenumbruch",
+  "settingsWordWrapSubtitle": "Lange Zeilen umbrechen statt horizontal scrollen",
+  "settingsFontSize": "Schriftgröße ({size} pt)",
+  "@settingsFontSize": {
+    "placeholders": {
+      "size": {"type": "int"}
+    }
+  },
+  "settingsLegalSection": "Rechtliches",
+  "settingsEulaSubtitlePro": "Pro · Öffnet EULA auf GitHub Pages",
+  "settingsEulaSubtitleFree": "Kostenlos · Öffnet EULA auf GitHub Pages",
+  "settingsPrivacySubtitle": "Öffnet Datenschutzseite auf GitHub Pages",
+  "settingsDisclaimerTitle": "Haftungsausschluss und Haftung",
+  "settingsDisclaimerSubtitle": "Verwendung auf eigenes Risiko",
+  "settingsDisclaimerP1": "Diese Software wird \"wie besehen\" ohne Garantien jeglicher Art bereitgestellt, weder ausdrücklich noch stillschweigend, einschließlich Marktgängigkeit, Eignung für einen bestimmten Zweck und Nichtverletzung.",
+  "settingsDisclaimerP2": "Sie sind allein verantwortlich für die Art und Weise, wie Sie diese App verwenden, und für die Einhaltung aller geltenden Gesetze, Vorschriften, Richtlinien und Vereinbarungen.",
+  "settingsDisclaimerP3": "Der Urheberrechtsinhaber haftet nicht für Ansprüche, Schäden, Verluste, Datenverlust, Betriebsunterbrechungen oder andere Haftung, die aus der Nutzung oder dem Missbrauch dieser Software entstehen.",
+  "settingsNoLegalAdviceTitle": "Kein Rechtsrat",
+  "settingsNoLegalAdviceSubtitle": "Nur informative Software",
+  "settingsNoLegalAdviceP1": "Diese App und ihre Dokumentation bieten keine rechtliche, regulatorische oder professionelle Beratung.",
+  "settingsNoLegalAdviceP2": "Wenn Sie rechtliche Beratung für Ihren Anwendungsfall benötigen, wenden Sie sich an einen qualifizierten Fachmann.",
+  "settingsCopyright": "© 2026 Spencer Beaumier",
+
+  "paywallTitle": "Netpad Pro freischalten",
+  "paywallSubtitle": "Einmaliger Kauf. Grundlegende Bearbeitung und LAN-Synchronisierung bleiben kostenlos.",
+  "paywallBenefitUnlimitedNotes": "Unbegrenzte Notizen",
+  "paywallBenefitUnlimitedPeers": "Unbegrenzte verbundene Peers",
+  "paywallBenefitSkins": "Zusätzliche Farbdesigns",
+  "paywallBenefitHistory": "Versionsverlauf",
+  "paywallBenefitAutoSync": "Automatische Synchronisierung vertrauenswürdiger Peers",
+  "paywallBenefitVoice": "Sprachdiktat",
+  "paywallPurchasesUnsupported": "In-App-Käufe sind auf dieser Plattform nicht verfügbar. Installieren Sie aus dem App Store, Google Play oder Microsoft Store, um Pro freizuschalten.",
+  "paywallBuyPro": "Pro kaufen",
+  "paywallBuyProPrice": "Pro kaufen · {price}",
+  "@paywallBuyProPrice": {
+    "placeholders": {
+      "price": {"type": "String"}
+    }
+  },
+  "paywallRestorePurchases": "Käufe wiederherstellen",
+  "paywallPurchaseNotCompleted": "Kauf wurde nicht abgeschlossen.",
+  "paywallPurchaseFailed": "Kauf fehlgeschlagen.",
+  "paywallProRestored": "Pro wiederhergestellt",
+  "paywallNoPreviousPro": "Kein früherer Pro-Kauf gefunden",
+
+  "proHighlightNoteLimit": "Die kostenlose Version enthält bis zu {limit} Notizen. Schalten Sie Pro für unbegrenzte Notizen frei.",
+  "@proHighlightNoteLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightPeerLimit": "Die kostenlose Version enthält bis zu {limit} verbundene Peers. Schalten Sie Pro für unbegrenzte Peers frei.",
+  "@proHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightVersionHistory": "Versionsverlauf ist eine Pro-Funktion.",
+  "proHighlightVoice": "Sprachdiktat ist eine Pro-Funktion.",
+  "proHighlightAutoSync": "Automatische Synchronisierung vertrauenswürdiger Peers ist eine Pro-Funktion.",
+  "proHighlightSkins": "Zusätzliche Designs sind in Pro enthalten.",
+
+  "helpTitle": "Hilfe",
+  "helpIntro": "Ein LAN-Notizblock für reine Textnotizen. Geräte im gleichen Wi‑Fi entdecken einander, koppeln einmalig und synchronisieren Notizen dann in Echtzeit.",
+  "helpAboutTile": "Über SB Simple Netpad",
+  "helpEulaSubtitle": "Öffnet EULA auf GitHub Pages",
+  "helpPrivacySubtitle": "Öffnet Datenschutzseite auf GitHub Pages",
+  "helpGettingStartedTitle": "Erste Schritte",
+  "helpGettingStarted1": "Verbinden Sie sich mit dem gleichen Wi‑Fi-Netzwerk wie die Geräte, mit denen Sie synchronisieren möchten.",
+  "helpGettingStarted2": "Öffnen Sie den Peer-Bereich (Schloss-Symbol oder Peers-Schublade) und warten Sie, bis Geräte in der Nähe erscheinen.",
+  "helpGettingStarted3": "Kopieren Sie Ihre Adresse von Dieses Gerät und teilen Sie sie, wenn die Erkennung langsam ist.",
+  "helpGettingStarted4": "Verwenden Sie Per IP verbinden, wenn die mDNS-Erkennung keine Peers findet.",
+  "helpNotesTitle": "Notizen",
+  "helpNotes1": "Tippen Sie auf das Menüsymbol (☰) oder den Notizenbereich, um zwischen Notizen zu wechseln.",
+  "helpNotes2": "Erstellen, umbenennen, neu anordnen und löschen Sie Notizen aus der Notizenliste.",
+  "helpNotes3": "Jede Notiz synchronisiert unabhängig — Synchronisierung pro Notiz bei Bedarf umschalten.",
+  "helpNotes4": "Suchen Sie innerhalb einer Notiz (Suchen) oder über alle Notizen im Editor.",
+  "helpNotes5": "Der Versionsverlauf speichert lokale Snapshots, die Sie später wiederherstellen können.",
+  "helpPeersTitle": "Peers und Kopplung",
+  "helpPeers1": "In der Nähe listet entdeckte Geräte im gleichen Raum auf (siehe Einstellungen).",
+  "helpPeers2": "Tippen Sie auf Verbinden bei einem Peer — das andere Gerät muss auf Akzeptieren tippen.",
+  "helpPeers3": "Vergleichen Sie den Kopplungsbestätigungscode vor dem Akzeptieren.",
+  "helpPeers4": "Nach dem ersten Akzeptieren können vertrauenswürdige Geräte automatisch neu verbinden.",
+  "helpPeers5": "Vertrauenswürdige Geräte: automatische Synchronisierung umschalten oder Widerrufen, um erneut Akzeptieren zu erfordern.",
+  "helpPeers6": "Sperren trennt ein Gerät und verweigert zukünftige Kopplung bis zum Entsperren.",
+  "helpPeers7": "Verbunden zeigt aktive Sitzungen mit Adresse und Cursor-Präsenz.",
+  "helpFileSharingTitle": "Dateien und Teilen",
+  "helpFileSharing1Desktop": "Dateimenü: In Datei speichern, Datei als neue Notiz öffnen, Notiz teilen, Versionsverlauf, Einstellungen, Beenden.",
+  "helpFileSharing1Mobile": "Überlaufmenü (⋮): In Datei speichern, Datei als neue Notiz öffnen, Teilen, Versionsverlauf, Einstellungen und dieser Hilfeleitfaden.",
+  "helpFileSharing2": "In Datei speichern exportiert die aktive Notiz als .txt oder .md.",
+  "helpFileSharing3": "Datei öffnen importiert Text in eine neue Notiz, die wie jede andere synchronisiert.",
+  "helpFileSharing4": "Teilen verwendet die OS-Teilen-Oberfläche; Linux weicht auf die Zwischenablage aus.",
+  "helpSettingsTitle": "Einstellungen",
+  "helpSettings1": "Gerätename und Raum erfordern Speichern — andere Optionen werden sofort angewendet.",
+  "helpSettings2": "Raum-ID gruppiert Peers: nur Geräte im gleichen Raum werden erkannt.",
+  "helpSettings3": "Darstellungs- und Editoreinstellungen (Design, Skin, Umbruch, Schrift) werden beim Ändern gespeichert.",
+  "helpDesktopShortcutsTitle": "Desktop-Tastenkürzel",
+  "helpDesktopShortcuts1": "Ctrl/Cmd+S — In Datei speichern",
+  "helpDesktopShortcuts2": "Ctrl/Cmd+O — Datei als neue Notiz öffnen",
+  "helpDesktopShortcuts3": "Ctrl/Cmd+F — In Notiz suchen",
+  "helpDesktopShortcuts4": "Ctrl/Cmd+H — Suchen und Ersetzen",
+  "helpDesktopShortcuts5": "Ctrl/Cmd+N — Notizenbereich umschalten",
+  "helpDesktopShortcuts6": "Ctrl/Cmd+P — Peer-Bereich umschalten",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Beenden (Windows/Linux)",
+  "helpTroubleshootingTitle": "Fehlerbehebung",
+  "helpTroubleshooting1": "Keine Peers? Gleiches Wi‑Fi-Subnetz und Raum-ID bestätigen; Per IP verbinden versuchen.",
+  "helpTroubleshooting2": "Das Banner lokales Netzwerk erforderlich bedeutet, dass die Synchronisierung pausiert, bis Wi‑Fi aktiv ist.",
+  "helpTroubleshooting3": "App beim ersten Start durch Ihre Firewall erlauben (Desktop).",
+  "helpTroubleshooting4": "Linux: dbus und avahi-daemon installieren, wenn die Erkennung nie startet.",
+  "helpTroubleshooting5": "Android: Wi‑Fi in der Nähe-Berechtigung erteilen, wenn aufgefordert.",
+
+  "aboutTitle": "Über",
+  "aboutTagline": "LAN-Notizblock mit Peer-Erkennung und gemeinsamem Bearbeiten.",
+  "aboutDescription": "Schreiben Sie reine Textnotizen auf Ihrem Telefon oder Computer und halten Sie sie mit anderen Geräten im gleichen Wi‑Fi synchronisiert. Peers entdecken einander im lokalen Netzwerk, koppeln einmalig mit gegenseitiger Genehmigung und teilen dann mehrere benannte Notizen mit verschlüsselten Peer-Sitzungen.",
+  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutStatus": "Beta — geeignet für den täglichen LAN-Einsatz.",
+  "aboutEulaHeading": "Endbenutzer-Lizenzvertrag",
+  "aboutEulaBody": "SB Simple Netpad ist unter einem EULA lizenziert, nicht unter einer Open-Source-Lizenz. Grundlegende Bearbeitung und LAN-Synchronisierung sind kostenlos (bis zu {noteLimit} Notizen und {peerLimit} verbundene Peers). Netpad Pro ist eine einmalige Freischaltung über App Store, Google Play oder Microsoft Store.",
+  "@aboutEulaBody": {
+    "placeholders": {
+      "noteLimit": {"type": "int"},
+      "peerLimit": {"type": "int"}
+    }
+  },
+  "aboutViewEula": "EULA anzeigen",
+  "aboutPrivacyPolicy": "Datenschutzrichtlinie",
+  "aboutHowToUse": "So verwenden Sie SB Simple Netpad",
+  "aboutCouldNotOpenPrivacy": "Datenschutzrichtlinie konnte nicht geöffnet werden",
+  "aboutCouldNotOpenEula": "EULA konnte nicht geöffnet werden",
+  "aboutCopyright": "© 2026 Spencer Beaumier",
+
+  "conflictLiveTitle": "Bearbeitungskonflikt in \"{title}\"",
+  "@conflictLiveTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictLiveBody": "{peer} hat die gleiche Notiz zur gleichen Zeit bearbeitet (Revision {revision}).\n\nIhre Version:\n{localPreview}\n\n{peer}:\n{remotePreview}\n\nWelche Version sollen beide Geräte behalten?",
+  "@conflictLiveBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "revision": {"type": "String"},
+      "localPreview": {"type": "String"},
+      "remotePreview": {"type": "String"}
+    }
+  },
+  "conflictDivergedTitle": "\"{title}\" hat sich verzweigt",
+  "@conflictDivergedTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictDivergedBody": "Ihre Kopie und die Kopie von {peer} von \"{title}\" wurden während der Trennung unterschiedlich geändert.\n\nIhre Version: {localChars} Zeichen\n{peer}: {remoteChars} Zeichen\n\nWelche Version sollen beide Geräte behalten?",
+  "@conflictDivergedBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "title": {"type": "String"},
+      "localChars": {"type": "int"},
+      "remoteChars": {"type": "int"}
+    }
+  },
+  "conflictUsePeers": "Version von {peer} verwenden",
+  "@conflictUsePeers": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "conflictKeepMine": "Meine behalten",
+
+  "fileSavedTo": "Gespeichert in {path}",
+  "@fileSavedTo": {
+    "placeholders": {
+      "path": {"type": "String"}
+    }
+  },
+  "fileCouldNotSave": "Konnte nicht speichern: {error}",
+  "@fileCouldNotSave": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileOpenedAsNewNote": "{name} als neue Notiz geöffnet",
+  "@fileOpenedAsNewNote": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "fileCouldNotOpen": "Konnte nicht öffnen: {error}",
+  "@fileCouldNotOpen": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileNothingToShare": "Nichts zu teilen — die Notiz ist leer",
+  "fileShareFallbackClipboard": "Teilen hier nicht verfügbar — in Zwischenablage kopiert",
+  "fileDefaultNoteName": "netpad-note"
+}

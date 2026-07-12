@@ -1,0 +1,645 @@
+{
+  "@@locale": "nl",
+  "commonAppName": "SB Simple Netpad",
+  "commonProName": "Netpad Pro",
+  "commonCancel": "Annuleren",
+  "commonClose": "Sluiten",
+  "commonSave": "Opslaan",
+  "commonDelete": "Verwijderen",
+  "commonConnect": "Verbinden",
+  "commonHelp": "Help",
+  "commonSettings": "Instellingen",
+  "commonMore": "Meer",
+  "commonCopy": "Kopiëren",
+  "commonClear": "Wissen",
+  "commonAccept": "Accepteren",
+  "commonReject": "Weigeren",
+  "commonBlock": "Blokkeren",
+  "commonUnblock": "Deblokkeren",
+  "commonRevoke": "Intrekken",
+  "commonRestore": "Herstellen",
+  "commonRetry": "Opnieuw proberen",
+  "commonCouldNotOpenLabel": "Kon {label} niet openen",
+  "@commonCouldNotOpenLabel": {
+    "placeholders": {
+      "label": {"type": "String"}
+    }
+  },
+  "commonEulaLabel": "EULA",
+  "commonPrivacyPolicyLabel": "privacybeleid",
+  "commonEndUserLicenseAgreement": "Eindgebruikerslicentieovereenkomst",
+  "commonPrivacyPolicy": "Privacybeleid",
+  "commonVersionLabel": "Versie {version}",
+  "@commonVersionLabel": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+
+  "shellMenuFile": "Bestand",
+  "shellMenuEdit": "Bewerken",
+  "shellMenuView": "Weergave",
+  "shellMenuHelp": "Help",
+  "shellSaveToFile": "Opslaan als bestand…",
+  "shellOpenFileAsNewNote": "Bestand openen als nieuwe notitie…",
+  "shellShareNote": "Notitie delen",
+  "shellVersionHistory": "Versiegeschiedenis…",
+  "shellSettings": "Instellingen…",
+  "shellExit": "Afsluiten",
+  "shellCut": "Knippen",
+  "shellCopy": "Kopiëren",
+  "shellPaste": "Plakken",
+  "shellFind": "Zoeken…",
+  "shellFindAndReplace": "Zoeken en vervangen…",
+  "shellWordWrap": "Tekstterugloop",
+  "shellWordWrapChecked": "Tekstterugloop ✓",
+  "shellNotesPanel": "Notitiesdeelvenster",
+  "shellNotesPanelChecked": "Notitiesdeelvenster ✓",
+  "shellPeersPanel": "Peer-deelvenster",
+  "shellPeersPanelChecked": "Peer-deelvenster ✓",
+  "shellHelpItem": "SB Simple Netpad Help",
+  "shellAboutItem": "Over SB Simple Netpad",
+  "shellHideNotesPanel": "Notitiesdeelvenster verbergen",
+  "shellShowNotesPanel": "Notitiesdeelvenster weergeven (Ctrl+N)",
+  "shellHidePeersPanel": "Peer-deelvenster verbergen",
+  "shellShowPeersPanel": "Peer-deelvenster weergeven (Ctrl+P)",
+  "shellPeersTooltipConnected": "{count} versleutelde peer-sessies · peer-deelvenster {action} (Ctrl+P)",
+  "@shellPeersTooltipConnected": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "action": {"type": "String"}
+    }
+  },
+  "shellPeersTooltipActionHide": "verbergen",
+  "shellPeersTooltipActionShow": "weergeven",
+  "shellFindInNote": "Zoeken in notitie (Ctrl+F)",
+  "shellSecurityChipConnected": "{count} peer-sessies versleuteld met WSS/TLS · tik voor peers",
+  "@shellSecurityChipConnected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "shellSecurityChipNone": "Geen actieve peer-sessies · tik voor peers",
+  "shellMobileWordWrap": "Tekstterugloop",
+  "shellMobileSaveToFile": "Opslaan als bestand…",
+  "shellMobileOpenFileAsNewNote": "Bestand openen als nieuwe notitie…",
+  "shellMobileShareNote": "Notitie delen",
+  "shellMobileVersionHistory": "Versiegeschiedenis…",
+  "shellMobileSettings": "Instellingen",
+  "shellMobileHelp": "Help",
+  "shellMobileAbout": "Over SB Simple Netpad",
+  "shellListeningSnack": "Luisteren… tik opnieuw op de microfoon om te stoppen",
+
+  "notesTitle": "Notities",
+  "notesNewNote": "Nieuwe notitie",
+  "notesSearchHint": "Alle notities doorzoeken",
+  "notesRenameTitle": "Notitie hernoemen",
+  "notesTitleLabel": "Titel",
+  "notesDeleteTitle": "\"{title}\" verwijderen?",
+  "@notesDeleteTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "notesDeleteSyncedBody": "Dit verwijdert de notitie voor u en alle verbonden peers.",
+  "notesDeleteLocalBody": "Dit verwijdert de notitie alleen van dit apparaat.",
+  "notesNoMatches": "Geen overeenkomsten",
+  "notesNoNotes": "Geen notities",
+  "notesRename": "Hernoemen",
+  "notesVersionHistory": "Versiegeschiedenis",
+  "notesDelete": "Verwijderen",
+  "notesSyncWithPeers": "Synchroniseren met peers",
+  "notesLocalOnly": "Alleen lokaal",
+  "notesEmptyNote": "Lege notitie",
+  "notesMatchCount": "{count} overeenkomsten",
+  "@notesMatchCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "notesLocalOnlyWithMatches": "Alleen lokaal · {matchLine}",
+  "@notesLocalOnlyWithMatches": {
+    "placeholders": {
+      "matchLine": {"type": "String"}
+    }
+  },
+  "notesSearchSnippetMatches": "{snippet}  ·  {count} overeenkomsten",
+  "@notesSearchSnippetMatches": {
+    "placeholders": {
+      "snippet": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "notesNoNoteSelected": "Geen notitie geselecteerd",
+
+  "historyTitle": "Versiegeschiedenis · \"{title}\"",
+  "@historyTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "historyEmpty": "Nog geen opgeslagen versies. Snapshots worden automatisch bewaard voordat externe bewerkingen uw tekst vervangen.",
+  "historyEntrySubtitle": "{label} · {time} · {chars} tekens",
+  "@historyEntrySubtitle": {
+    "placeholders": {
+      "label": {"type": "String"},
+      "time": {"type": "String"},
+      "chars": {"type": "int"}
+    }
+  },
+  "historyRestore": "Herstellen",
+  "historyRestoredSnack": "Versie hersteld",
+  "historyBeforeRemoteUpdate": "Voor externe update",
+  "historySnapshot": "Snapshot",
+  "historyImportedFile": "Geïmporteerd bestand",
+
+  "editorFindHint": "Zoeken",
+  "editorReplaceHint": "Vervangen door",
+  "editorMatchCounter": "{current}/{total}",
+  "@editorMatchCounter": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "editorMatchNone": "0/0",
+  "editorPrevious": "Vorige",
+  "editorNext": "Volgende",
+  "editorShowReplace": "Vervangen weergeven (Ctrl+H)",
+  "editorHideReplace": "Vervangen verbergen (Ctrl+H)",
+  "editorClose": "Sluiten",
+  "editorReplace": "Vervangen",
+  "editorReplaceAll": "Alles",
+  "editorListening": "Luisteren…",
+  "editorDictate": "Dicteren",
+  "editorStopDictation": "Dictaat stoppen",
+
+  "peersConnectByIp": "Verbinden via IP",
+  "peersConnected": "Verbonden",
+  "peersNearby": "In de buurt",
+  "peersTrustedDevices": "Vertrouwde apparaten",
+  "peersBlocked": "Geblokkeerd",
+  "peersConnectionLog": "Verbindingslogboek",
+  "peersNoActiveConnections": "Geen actieve verbindingen",
+  "peersNoTrustedDevices": "Geen vertrouwde apparaten — koppel eenmalig om automatisch synchroniseren in te schakelen",
+  "peersNoBlockedDevices": "Geen geblokkeerde apparaten",
+  "peersNoConnectionEvents": "Nog geen verbindingsgebeurtenissen",
+  "peersNoDiscoveredPeers": "Geen peers ontdekt — Linux moet zich op hetzelfde Wi‑Fi-subnet bevinden als Dit apparaat (controleer het adres hierboven), of gebruik Verbinden via IP",
+  "peersDiscoveryPaused": "Peer-detectie is gepauzeerd totdat u lid wordt van een lokaal netwerk",
+  "peersDisconnect": "Verbinding verbreken",
+  "peersConnectNow": "Nu verbinden",
+  "peersConnect": "Verbinden",
+  "peersResolving": "Oplossen…",
+  "peersBlockTooltip": "Blokkeren",
+  "peersBlockTitle": "{peer} blokkeren?",
+  "@peersBlockTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersBlockBody": "Dit verbreekt de verbinding met het apparaat, vergeet het vastgemaakte certificaat en weigert toekomstige verbindingsverzoeken totdat u het deblokkert.",
+  "peersRevokeTitle": "{peer} intrekken?",
+  "@peersRevokeTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersRevokeBody": "De volgende verbinding vereist opnieuw tikken op Accepteren. De beveiligingspincode wordt bewaard zodat certificaatcontroles nog steeds van toepassing zijn.",
+  "peersAutoSync": "Automatisch synchroniseren",
+  "peersCopiedOneLogEntry": "1 logboekitem gekopieerd",
+  "peersCopiedLogEntries": "{count} logboekitems gekopieerd",
+  "@peersCopiedLogEntries": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "peersLogRevision": "{time} • revisie {revision}",
+  "@peersLogRevision": {
+    "placeholders": {
+      "time": {"type": "String"},
+      "revision": {"type": "String"}
+    }
+  },
+  "peersStillResolving": "{peer} nog steeds oplossen…",
+  "@peersStillResolving": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersResolveFailedSnack": "Kon {peer} niet oplossen. Controleer Avahi en hetzelfde subnet, of gebruik Verbinden via IP.",
+  "@peersResolveFailedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersPairingRequestSent": "Koppelverzoek verzonden naar {peer}",
+  "@peersPairingRequestSent": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersCouldNotConnect": "Kon niet verbinden: {message}",
+  "@peersCouldNotConnect": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "peersManualHostPort": "{host}:{port} (handmatig)",
+  "@peersManualHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersManual": "Handmatig",
+  "peersResolveFailedSubtitle": "Oplossen mislukt — probeer Verbinden via IP",
+  "peersResolvingAddress": "Adres oplossen…",
+  "peersHostPort": "{host}:{port}",
+  "@peersHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersNoAddressYet": "Nog geen adres",
+  "peersEncryptedPinned": "Versleuteld · vastgemaakt {code}",
+  "@peersEncryptedPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersEncryptedWss": "Versleuteld (WSS/TLS)",
+  "peersSubtitleWithPresence": "{subtitle} • {presence}",
+  "@peersSubtitleWithPresence": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "presence": {"type": "String"}
+    }
+  },
+  "peersSubtitleWithSecurity": "{subtitle} • {security}",
+  "@peersSubtitleWithSecurity": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "security": {"type": "String"}
+    }
+  },
+  "peersPairedStatus": "Gekoppeld {date} · {status}",
+  "@peersPairedStatus": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "status": {"type": "String"}
+    }
+  },
+  "peersStatusConnected": "Verbonden",
+  "peersStatusManualOnly": "Alleen handmatig",
+  "peersStatusReconnecting": "Opnieuw verbinden…",
+  "peersStatusRetryIn": "Opnieuw proberen over {seconds}s",
+  "@peersStatusRetryIn": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "peersStatusNotOnNetwork": "Niet op netwerk",
+  "peersStatusConnecting": "Verbinding maken…",
+  "peersStatusAutoReconnect": "Automatisch herverbinden",
+  "peersPresenceLineCol": "regel {line}, kol {column}",
+  "@peersPresenceLineCol": {
+    "placeholders": {
+      "line": {"type": "int"},
+      "column": {"type": "int"}
+    }
+  },
+  "peersPresenceInNote": "\"{title}\" · {position}",
+  "@peersPresenceInNote": {
+    "placeholders": {
+      "title": {"type": "String"},
+      "position": {"type": "String"}
+    }
+  },
+  "peersRoomLabel": "Ruimte \"{room}\"",
+  "@peersRoomLabel": {
+    "placeholders": {
+      "room": {"type": "String"}
+    }
+  },
+
+  "discoveryThisDevice": "Dit apparaat",
+  "discoveryCopyAddress": "Adres kopiëren",
+  "discoveryCopiedAddress": "Gekopieerd {address}",
+  "@discoveryCopiedAddress": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "discoveryLocalNetworkRequired": "Lokaal netwerk vereist",
+  "discoveryNotListeningTitle": "Niet luisterend",
+  "discoveryNotListeningBody": "Dit apparaat luistert nog niet naar peers. Wacht een paar seconden na verbinden met Wi‑Fi, of tik op Opnieuw proberen op een netwerkfoutbanner.",
+  "discoveryModeTitle": "Detectiemodus",
+  "discoveryUnavailableTitle": "Peer-detectie niet beschikbaar",
+  "discoveryRetryTooltip": "Detectie opnieuw proberen",
+
+  "peersSecuredSessions": "Beveiligde sessies",
+  "peersSecurityBannerIdle": "Dit apparaat adverteert via WSS/TLS · code {code}",
+  "@peersSecurityBannerIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityBannerActive": "{connectedCount} versleutelde sessies · {pinnedCount} certificaten vastgemaakt",
+  "@peersSecurityBannerActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityCompactIdle": "WSS/TLS · code {code}",
+  "@peersSecurityCompactIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityCompactActive": "{connectedCount} versleuteld · {pinnedCount} vastgemaakt",
+  "@peersSecurityCompactActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityTooltipPinned": "Versleuteld (WSS/TLS) · vastgemaakt {code}",
+  "@peersSecurityTooltipPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityTooltipActive": "Versleuteld (WSS/TLS) · actieve sessie",
+
+  "pairingConnectionRequest": "Verbindingsverzoek",
+  "pairingAllowPeer": "{peer} toestaan verbinding te maken en deze notitie te delen?",
+  "@pairingAllowPeer": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingVerificationCode": "Verificatiecode",
+  "pairingConfirmCode": "Bevestig dat deze code overeenkomt op beide apparaten voordat u accepteert.",
+  "pairingThisDeviceSecurityCode": "Beveiligingscode van dit apparaat",
+  "pairingOtherDevicePins": "Het andere apparaat maakt dit vast bij de eerste verbinding.",
+
+  "manualConnectTitle": "Verbinden via adres",
+  "manualConnectBody": "Gebruik dit wanneer detectie geen peers op hetzelfde subnet kan vinden. Alleen adressen op uw actieve lokale netwerksegment zijn toegestaan.",
+  "manualConnectHostLabel": "Host of IP",
+  "manualConnectHostHint": "192.168.1.42",
+  "manualConnectPortLabel": "Poort",
+  "manualConnectPortHint": "54321",
+  "manualConnectLabelOptional": "Label (optioneel)",
+  "manualConnectLabelHint": "Woonkamer-pc",
+  "manualConnectInvalidHostPort": "Voer een geldige host en poort in (1–65535)",
+
+  "settingsTitle": "Instellingen",
+  "settingsDeviceSection": "Apparaat",
+  "settingsDeviceHint": "Apparaatnaam en ruimte vereisen Opslaan (Ctrl+S). Uiterlijk- en editorvoorkeuren worden direct opgeslagen.",
+  "settingsDeviceName": "Apparaatnaam",
+  "settingsDeviceNameHint": "Naam weergegeven aan andere apparaten",
+  "settingsSessionRoom": "Sessie / ruimte",
+  "settingsSessionRoomHint": "Alleen peers in dezelfde ruimte worden ontdekt",
+  "settingsListeningPort": "Luisterpoort",
+  "settingsStartingServer": "Server starten…",
+  "settingsAddressShare": "{address} (deel dit voor handmatige verbinding)",
+  "@settingsAddressShare": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "settingsCopyAddress": "Adres kopiëren",
+  "settingsAddressCopied": "Adres gekopieerd naar klembord",
+  "settingsSavedSnack": "Instellingen opgeslagen · \"{name}\" · ruimte \"{room}\"",
+  "@settingsSavedSnack": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "room": {"type": "String"}
+    }
+  },
+  "settingsAppearanceSection": "Uiterlijk",
+  "settingsMode": "Modus",
+  "settingsThemeSystem": "Systeem",
+  "settingsThemeLight": "Licht",
+  "settingsThemeDark": "Donker",
+  "settingsSkin": "Skin",
+  "settingsSkinDefault": "Standaard",
+  "settingsSkinOcean": "Oceaan",
+  "settingsSkinForest": "Woud",
+  "settingsSkinSunset": "Zonsondergang",
+  "settingsSkinSlate": "Leisteen",
+  "settingsSkinProLabel": "{skin} · Pro",
+  "@settingsSkinProLabel": {
+    "placeholders": {
+      "skin": {"type": "String"}
+    }
+  },
+  "settingsProSection": "Netpad Pro",
+  "settingsProUnlocked": "Pro ontgrendeld",
+  "settingsFree": "Gratis",
+  "settingsProUnlockedSubtitle": "Onbeperkte notities en peers, skins, geschiedenis, automatisch synchroniseren en spraak",
+  "settingsProBuySubtitle": "Eenmalig ontgrendelen via uw app store",
+  "settingsPurchasesUnavailable": "Aankopen niet beschikbaar op dit platform",
+  "settingsRestorePurchases": "Aankopen herstellen",
+  "settingsProRestored": "Pro hersteld",
+  "settingsNoPreviousPro": "Geen eerdere Pro-aankoop gevonden",
+  "settingsEditorSection": "Editor",
+  "settingsWordWrap": "Tekstterugloop",
+  "settingsWordWrapSubtitle": "Lange regels afbreken in plaats van horizontaal scrollen",
+  "settingsFontSize": "Tekengrootte ({size} pt)",
+  "@settingsFontSize": {
+    "placeholders": {
+      "size": {"type": "int"}
+    }
+  },
+  "settingsLegalSection": "Juridisch",
+  "settingsEulaSubtitlePro": "Pro · Opent EULA op GitHub Pages",
+  "settingsEulaSubtitleFree": "Gratis · Opent EULA op GitHub Pages",
+  "settingsPrivacySubtitle": "Opent privacypagina op GitHub Pages",
+  "settingsDisclaimerTitle": "Disclaimer en aansprakelijkheid",
+  "settingsDisclaimerSubtitle": "Gebruik op eigen risico",
+  "settingsDisclaimerP1": "Deze software wordt geleverd \"zoals het is\", zonder garanties van welke aard dan ook, expliciet of impliciet, inclusief verhandelbaarheid, geschiktheid voor een bepaald doel en niet-inbreuk.",
+  "settingsDisclaimerP2": "U bent als enige verantwoordelijk voor hoe u deze app gebruikt en voor naleving van alle toepasselijke wetten, regelgeving, beleidsregels en overeenkomsten.",
+  "settingsDisclaimerP3": "De auteursrechthebbende is niet aansprakelijk voor claims, schade, verlies, gegevensverlies, bedrijfsonderbreking of andere aansprakelijkheid die voortvloeit uit het gebruik of misbruik van deze software.",
+  "settingsNoLegalAdviceTitle": "Geen juridisch advies",
+  "settingsNoLegalAdviceSubtitle": "Alleen informatieve software",
+  "settingsNoLegalAdviceP1": "Deze app en de bijbehorende documentatie bieden geen juridisch, regelgevend of professioneel advies.",
+  "settingsNoLegalAdviceP2": "Als u juridische begeleiding nodig heeft voor uw gebruik, raadpleeg dan een gekwalificeerde professional.",
+  "settingsCopyright": "© 2026 Spencer Beaumier",
+
+  "paywallTitle": "Netpad Pro ontgrendelen",
+  "paywallSubtitle": "Eenmalige aankoop. Kernbewerking en LAN-synchronisatie blijven gratis.",
+  "paywallBenefitUnlimitedNotes": "Onbeperkte notities",
+  "paywallBenefitUnlimitedPeers": "Onbeperkte verbonden peers",
+  "paywallBenefitSkins": "Extra kleurskins",
+  "paywallBenefitHistory": "Versiegeschiedenis",
+  "paywallBenefitAutoSync": "Automatisch synchroniseren van vertrouwde peers",
+  "paywallBenefitVoice": "Spraakdictaat",
+  "paywallPurchasesUnsupported": "In-app aankopen zijn niet beschikbaar op dit platform. Installeer vanuit de App Store, Google Play of Microsoft Store om Pro te ontgrendelen.",
+  "paywallBuyPro": "Pro kopen",
+  "paywallBuyProPrice": "Pro kopen · {price}",
+  "@paywallBuyProPrice": {
+    "placeholders": {
+      "price": {"type": "String"}
+    }
+  },
+  "paywallRestorePurchases": "Aankopen herstellen",
+  "paywallPurchaseNotCompleted": "Aankoop is niet voltooid.",
+  "paywallPurchaseFailed": "Aankoop mislukt.",
+  "paywallProRestored": "Pro hersteld",
+  "paywallNoPreviousPro": "Geen eerdere Pro-aankoop gevonden",
+
+  "proHighlightNoteLimit": "De gratis versie bevat tot {limit} notities. Ontgrendel Pro voor onbeperkte notities.",
+  "@proHighlightNoteLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightPeerLimit": "De gratis versie bevat tot {limit} verbonden peers. Ontgrendel Pro voor onbeperkte peers.",
+  "@proHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightVersionHistory": "Versiegeschiedenis is een Pro-functie.",
+  "proHighlightVoice": "Spraakdictaat is een Pro-functie.",
+  "proHighlightAutoSync": "Automatisch synchroniseren van vertrouwde peers is een Pro-functie.",
+  "proHighlightSkins": "Extra skins zijn inbegrepen bij Pro.",
+
+  "helpTitle": "Help",
+  "helpIntro": "Een LAN-kladblok voor notities in platte tekst. Apparaten op hetzelfde Wi‑Fi ontdekken elkaar, koppelen eenmalig en synchroniseren notities daarna in realtime.",
+  "helpAboutTile": "Over SB Simple Netpad",
+  "helpEulaSubtitle": "Opent EULA op GitHub Pages",
+  "helpPrivacySubtitle": "Opent privacypagina op GitHub Pages",
+  "helpGettingStartedTitle": "Aan de slag",
+  "helpGettingStarted1": "Verbind met hetzelfde Wi‑Fi-netwerk als de apparaten waarmee u wilt synchroniseren.",
+  "helpGettingStarted2": "Open het peer-deelvenster (slotpictogram of peers-lade) en wacht tot nabijgelegen apparaten verschijnen.",
+  "helpGettingStarted3": "Kopieer uw adres van Dit apparaat en deel het als detectie traag is.",
+  "helpGettingStarted4": "Gebruik Verbinden via IP wanneer mDNS-detectie geen peers vindt.",
+  "helpNotesTitle": "Notities",
+  "helpNotes1": "Tik op het menupictogram (☰) of het notitiesdeelvenster om tussen notities te wisselen.",
+  "helpNotes2": "Maak notities aan, hernoem, herorden en verwijder ze vanuit de notitieslijst.",
+  "helpNotes3": "Elke notitie synchroniseert onafhankelijk — schakel synchronisatie per notitie in indien nodig.",
+  "helpNotes4": "Zoek binnen een notitie (Zoeken) of in alle notities vanuit de editor.",
+  "helpNotes5": "Versiegeschiedenis slaat lokale snapshots op die u later kunt herstellen.",
+  "helpPeersTitle": "Peers en koppelen",
+  "helpPeers1": "In de buurt toont ontdekte apparaten in dezelfde ruimte (zie Instellingen).",
+  "helpPeers2": "Tik op Verbinden bij een peer — het andere apparaat moet op Accepteren tikken.",
+  "helpPeers3": "Vergelijk de koppelingsverificatiecode voordat u accepteert.",
+  "helpPeers4": "Na de eerste Accepteren kunnen vertrouwde apparaten automatisch opnieuw verbinden.",
+  "helpPeers5": "Vertrouwde apparaten: schakel automatisch synchroniseren in/uit of Intrekken om opnieuw Accepteren te vereisen.",
+  "helpPeers6": "Blokkeren verbreekt de verbinding met een apparaat en weigert toekomstige koppelingen totdat het gedeblokkerd is.",
+  "helpPeers7": "Verbonden toont actieve sessies met adres en cursorpositie.",
+  "helpFileSharingTitle": "Bestanden en delen",
+  "helpFileSharing1Desktop": "Menu Bestand: Opslaan als bestand, Bestand openen als nieuwe notitie, Notitie delen, Versiegeschiedenis, Instellingen, Afsluiten.",
+  "helpFileSharing1Mobile": "Menu (⋮): opslaan als bestand, bestand openen als nieuwe notitie, delen, versiegeschiedenis, instellingen en deze helpgids.",
+  "helpFileSharing2": "Opslaan als bestand exporteert de actieve notitie als .txt of .md.",
+  "helpFileSharing3": "Bestand openen importeert tekst in een nieuwe notitie die synchroniseert zoals elke andere.",
+  "helpFileSharing4": "Delen gebruikt het OS-deelblad; Linux gebruikt het klembord als fallback.",
+  "helpSettingsTitle": "Instellingen",
+  "helpSettings1": "Apparaatnaam en ruimte vereisen Opslaan — andere opties worden direct toegepast.",
+  "helpSettings2": "Ruimte-ID groepeert peers: alleen apparaten in dezelfde ruimte worden ontdekt.",
+  "helpSettings3": "Uiterlijk- en editorvoorkeuren (thema, skin, terugloop, lettertype) worden opgeslagen bij wijziging.",
+  "helpDesktopShortcutsTitle": "Bureaubladsneltoetsen",
+  "helpDesktopShortcuts1": "Ctrl/Cmd+S — Opslaan als bestand",
+  "helpDesktopShortcuts2": "Ctrl/Cmd+O — Bestand openen als nieuwe notitie",
+  "helpDesktopShortcuts3": "Ctrl/Cmd+F — Zoeken in notitie",
+  "helpDesktopShortcuts4": "Ctrl/Cmd+H — Zoeken en vervangen",
+  "helpDesktopShortcuts5": "Ctrl/Cmd+N — Notitiesdeelvenster in-/uitschakelen",
+  "helpDesktopShortcuts6": "Ctrl/Cmd+P — Peer-deelvenster in-/uitschakelen",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Afsluiten (Windows/Linux)",
+  "helpTroubleshootingTitle": "Probleemoplossing",
+  "helpTroubleshooting1": "Geen peers? Bevestig hetzelfde Wi‑Fi-subnet en ruimte-ID; probeer Verbinden via IP.",
+  "helpTroubleshooting2": "De banner lokaal netwerk vereist betekent dat synchronisatie is gepauzeerd totdat Wi‑Fi actief is.",
+  "helpTroubleshooting3": "Sta de app toe via uw firewall bij de eerste start (desktop).",
+  "helpTroubleshooting4": "Linux: installeer dbus en avahi-daemon als detectie nooit start.",
+  "helpTroubleshooting5": "Android: verleen de nabijgelegen Wi‑Fi-machtiging wanneer gevraagd.",
+
+  "aboutTitle": "Over",
+  "aboutTagline": "LAN-kladblok met peer-detectie en gedeeld bewerken.",
+  "aboutDescription": "Schrijf notities in platte tekst op uw telefoon of computer en houd ze gesynchroniseerd met andere apparaten op hetzelfde Wi‑Fi. Peers ontdekken elkaar op het lokale netwerk, koppelen eenmalig met wederzijdse goedkeuring en delen vervolgens meerdere benoemde notities met versleutelde peer-sessies.",
+  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutStatus": "Beta — geschikt voor dagelijks LAN-gebruik.",
+  "aboutEulaHeading": "Eindgebruikerslicentieovereenkomst",
+  "aboutEulaBody": "SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (tot {noteLimit} notities en {peerLimit} verbonden peers). Netpad Pro is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.",
+  "@aboutEulaBody": {
+    "placeholders": {
+      "noteLimit": {"type": "int"},
+      "peerLimit": {"type": "int"}
+    }
+  },
+  "aboutViewEula": "EULA bekijken",
+  "aboutPrivacyPolicy": "Privacybeleid",
+  "aboutHowToUse": "Hoe SB Simple Netpad te gebruiken",
+  "aboutCouldNotOpenPrivacy": "Kon privacybeleid niet openen",
+  "aboutCouldNotOpenEula": "Kon EULA niet openen",
+  "aboutCopyright": "© 2026 Spencer Beaumier",
+
+  "conflictLiveTitle": "Bewerkingsconflict in \"{title}\"",
+  "@conflictLiveTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictLiveBody": "{peer} heeft dezelfde notitie tegelijkertijd bewerkt (revisie {revision}).\n\nUw versie:\n{localPreview}\n\n{peer}:\n{remotePreview}\n\nWelke versie moeten beide apparaten bewaren?",
+  "@conflictLiveBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "revision": {"type": "String"},
+      "localPreview": {"type": "String"},
+      "remotePreview": {"type": "String"}
+    }
+  },
+  "conflictDivergedTitle": "\"{title}\" is afgeweken",
+  "@conflictDivergedTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictDivergedBody": "Uw kopie en de kopie van {peer} van \"{title}\" zijn anders gewijzigd terwijl de verbinding was verbroken.\n\nUw versie: {localChars} tekens\n{peer}: {remoteChars} tekens\n\nWelke versie moeten beide apparaten bewaren?",
+  "@conflictDivergedBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "title": {"type": "String"},
+      "localChars": {"type": "int"},
+      "remoteChars": {"type": "int"}
+    }
+  },
+  "conflictUsePeers": "Die van {peer} gebruiken",
+  "@conflictUsePeers": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "conflictKeepMine": "Mijn versie bewaren",
+
+  "fileSavedTo": "Opgeslagen in {path}",
+  "@fileSavedTo": {
+    "placeholders": {
+      "path": {"type": "String"}
+    }
+  },
+  "fileCouldNotSave": "Kon niet opslaan: {error}",
+  "@fileCouldNotSave": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileOpenedAsNewNote": "{name} geopend als nieuwe notitie",
+  "@fileOpenedAsNewNote": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "fileCouldNotOpen": "Kon niet openen: {error}",
+  "@fileCouldNotOpen": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileNothingToShare": "Niets te delen — de notitie is leeg",
+  "fileShareFallbackClipboard": "Delen niet beschikbaar hier — gekopieerd naar klembord",
+  "fileDefaultNoteName": "netpad-note"
+}

@@ -1,3 +1,5 @@
+import 'package:netpad/l10n/app_localizations.dart';
+
 /// Last-known cursor position reported by a connected peer, including which
 /// note they were editing.
 class PeerPresence {
@@ -19,6 +21,15 @@ class PeerPresence {
   /// Title of that note, resolved locally for display.
   final String? docTitle;
 
+  String localizedLabel(AppLocalizations l10n) {
+    final position = l10n.peersPresenceLineCol(line, column);
+    if (docTitle != null && docTitle!.isNotEmpty) {
+      return l10n.peersPresenceInNote(docTitle!, position);
+    }
+    return position;
+  }
+
+  /// English fallback for non-UI callers.
   String get label {
     final position = 'line $line, col $column';
     if (docTitle != null && docTitle!.isNotEmpty) {

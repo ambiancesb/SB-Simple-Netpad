@@ -12,6 +12,7 @@ import 'package:netpad/features/entitlements/pro_gate.dart';
 import 'package:netpad/features/peers/manual_connect_dialog.dart';
 import 'package:netpad/features/peers/session_security_banner.dart';
 import 'package:netpad/features/peers/this_device_banner.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,7 @@ class PeersPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final discovery = context.watch<DiscoveryRepository>();
     final connectionLog = context.watch<ConnectionLogRepository>();
     final sync = context.watch<SyncRepository>();
@@ -51,18 +53,19 @@ class PeersPanel extends StatelessWidget {
           _NetworkingInfoBanner(
             message: discovery.networkingPolicyNote!,
             icon: Icons.signal_cellular_alt,
-            title: 'Local network required',
+            title: l10n.discoveryLocalNetworkRequired,
           )
         else if (discovery.serverPort == null)
           _NetworkingInfoBanner(
-            message:
-                'This device is not listening for peers yet. Wait a few seconds '
-                'after joining Wi‑Fi, or tap Retry on a networking error banner.',
+            message: l10n.discoveryNotListeningBody,
             icon: Icons.cloud_off,
-            title: 'Not listening',
+            title: l10n.discoveryNotListeningTitle,
           ),
         if (discovery.networkingNote != null)
-          _NetworkingInfoBanner(message: discovery.networkingNote!),
+          _NetworkingInfoBanner(
+            message: discovery.networkingNote!,
+            title: l10n.discoveryModeTitle,
+          ),
         const SessionSecurityBanner(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -71,11 +74,11 @@ class PeersPanel extends StatelessWidget {
                 ? () => _manualConnect(context)
                 : null,
             icon: const Icon(Icons.add_link),
-            label: const Text('Connect by IP'),
+            label: Text(l10n.peersConnectByIp),
           ),
         ),
-        _sectionHeader(context, 'Connected'),
-        if (connected.isEmpty) const _EmptyHint('No active connections'),
+        _sectionHeader(context, l10n.peersConnected),
+        if (connected.isEmpty) _EmptyHint(l10n.peersNoActiveConnections),
         ...connected.map(
           (peer) => _PeerRow(
             peer: peer,
@@ -86,7 +89,7 @@ class PeersPanel extends StatelessWidget {
                 PeerSecurityIcon(peerId: peer.id),
                 IconButton(
                   icon: const Icon(Icons.link_off, size: 20),
-                  tooltip: 'Disconnect',
+                  tooltip: l10n.peersDisconnect,
                   onPressed: () => pairing.disconnectPeer(peer.id),
                 ),
                 _BlockButton(peer: peer),
@@ -101,13 +104,12 @@ class PeersPanel extends StatelessWidget {
           pairing: pairing,
         ),
         const Divider(height: 24),
-        _sectionHeader(context, 'Nearby'),
+        _sectionHeader(context, l10n.peersNearby),
         if (nearby.isEmpty)
           _EmptyHint(
             discovery.canDiscoverPeers
-                ? 'No discovered peers — Linux must be on the same Wi‑Fi subnet '
-                  'as This device (check the address above), or use Connect by IP'
-                : 'Peer discovery is paused until you join a local network',
+                ? l10n.peersNoDiscoveredPeers
+                : l10n.peersDiscoveryPaused,
           ),
         ...nearby.map(
           (peer) => _PeerRow(
@@ -119,7 +121,7 @@ class PeersPanel extends StatelessWidget {
                   if (!pairing.isReconnectInFlight(peer.id))
                     TextButton(
                       onPressed: () => _connect(context, peer),
-                      child: const Text('Connect now'),
+                      child: Text(l10n.peersConnectNow),
                     ),
                 ] else
                   _ConnectButton(
@@ -172,20 +174,19 @@ class PeersPanel extends StatelessWidget {
   }
 
   Future<void> _connect(BuildContext context, Peer peer) async {
+    final l10n = context.l10n;
     if (!peer.isManual &&
         !peer.isConnectable &&
         peer.resolveState != PeerResolveState.failed) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Still resolving ${peer.displayName}…')),
+        SnackBar(content: Text(l10n.peersStillResolving(peer.displayName))),
       );
       return;
     }
     if (!peer.isManual && peer.resolveState == PeerResolveState.failed) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Could not resolve ${peer.displayName}. Check Avahi and same subnet, or use Connect by IP.',
-          ),
+          content: Text(l10n.peersResolveFailedSnack(peer.displayName)),
         ),
       );
       return;
@@ -204,16 +205,16 @@ class PeersPanel extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Pairing request sent to ${peer.displayName}'),
+            content: Text(l10n.peersPairingRequestSent(peer.displayName)),
           ),
         );
       }
     } catch (e) {
       if (context.mounted) {
         final message = e is StateError ? e.message : e.toString();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Could not connect: $message')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.peersCouldNotConnect(message))),
+        );
       }
     }
   }
@@ -239,29 +240,31 @@ class _ConnectButton extends StatelessWidget {
         connecting
             ? '…'
             : resolving
-            ? 'Resolving…'
-            : 'Connect',
+            ? context.l10n.peersResolving
+            : context.l10n.peersConnect,
       ),
     );
   }
 }
 
-String _peerSubtitle(Peer peer) {
+String _peerSubtitle(Peer peer, AppLocalizations l10n) {
   if (peer.isManual) {
     final host = peer.primaryHost;
-    return host != null ? '$host:${peer.port} (manual)' : 'Manual';
+    return host != null
+        ? l10n.peersManualHostPort(host, peer.port)
+        : l10n.peersManual;
   }
   if (peer.resolveState == PeerResolveState.failed) {
-    return 'Resolve failed — try Connect by IP';
+    return l10n.peersResolveFailedSubtitle;
   }
   if (peer.resolveState == PeerResolveState.resolving) {
-    return 'Resolving address…';
+    return l10n.peersResolvingAddress;
   }
   final host = peer.primaryHost;
   if (host != null) {
-    return '$host:${peer.port}';
+    return l10n.peersHostPort(host, peer.port);
   }
-  return 'No address yet';
+  return l10n.peersNoAddressYet;
 }
 
 String _formatPairedAt(DateTime pairedAt) {
@@ -287,25 +290,32 @@ class _PeerRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final color = switch (peer.connectionState) {
       PeerConnectionState.connected => Colors.green,
       PeerConnectionState.connecting => Colors.orange,
       _ => peer.isManual ? Colors.blue : Colors.grey,
     };
 
+    final baseSubtitle = _peerSubtitle(peer, l10n);
     final subtitle = presence == null
-        ? _peerSubtitle(peer)
-        : '${_peerSubtitle(peer)} • ${presence!.label}';
+        ? baseSubtitle
+        : l10n.peersSubtitleWithPresence(
+            baseSubtitle,
+            presence!.localizedLabel(l10n),
+          );
     final trust = context.watch<TrustStore>();
     final pinned = trust.hasPin(peer.id);
     final securityLabel = peer.connectionState == PeerConnectionState.connected
         ? pinned
-              ? 'Encrypted · pinned ${shortFingerprint(trust.pinnedFingerprint(peer.id)!)}'
-              : 'Encrypted (WSS/TLS)'
+              ? l10n.peersEncryptedPinned(
+                  shortFingerprint(trust.pinnedFingerprint(peer.id)!),
+                )
+              : l10n.peersEncryptedWss
         : null;
     final fullSubtitle = securityLabel == null
         ? subtitle
-        : '$subtitle • $securityLabel';
+        : l10n.peersSubtitleWithSecurity(subtitle, securityLabel);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
@@ -368,6 +378,7 @@ class _TrustedDeviceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
@@ -403,12 +414,12 @@ class _TrustedDeviceRow extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text('Auto-sync', style: Theme.of(context).textTheme.bodySmall),
+              Text(l10n.peersAutoSync, style: Theme.of(context).textTheme.bodySmall),
               Switch(
                 value: autoSyncEnabled,
                 onChanged: onAutoSyncChanged,
               ),
-              TextButton(onPressed: onRevoke, child: const Text('Revoke')),
+              TextButton(onPressed: onRevoke, child: Text(l10n.commonRevoke)),
             ],
           ),
         ],
@@ -424,27 +435,25 @@ class _BlockButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return IconButton(
       icon: const Icon(Icons.block, size: 20),
-      tooltip: 'Block',
+      tooltip: l10n.peersBlockTooltip,
       onPressed: () async {
         final pairing = context.read<PairingRepository>();
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('Block ${peer.displayName}?'),
-            content: const Text(
-              'This disconnects the device, forgets its pinned certificate, and '
-              'refuses future connection requests until you unblock it.',
-            ),
+            title: Text(l10n.peersBlockTitle(peer.displayName)),
+            content: Text(l10n.peersBlockBody),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel'),
+                child: Text(l10n.commonCancel),
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Block'),
+                child: Text(l10n.commonBlock),
               ),
             ],
           ),
@@ -470,6 +479,7 @@ class _TrustedSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final entitlements = context.watch<EntitlementService>();
     final entries = trusted.entries.toList()
       ..sort((a, b) => a.value.displayName.compareTo(b.value.displayName));
@@ -480,14 +490,14 @@ class _TrustedSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
           child: Text(
-            'Trusted devices',
+            l10n.peersTrustedDevices,
             style: Theme.of(
               context,
             ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
         if (entries.isEmpty)
-          const _EmptyHint('No trusted devices — pair once to enable auto-sync'),
+          _EmptyHint(l10n.peersNoTrustedDevices),
         ...entries.map((entry) {
           final peerId = entry.key;
           final record = entry.value;
@@ -501,7 +511,10 @@ class _TrustedSection extends StatelessWidget {
             connected: connected,
             autoSyncEnabled: record.autoSyncEnabled,
           );
-          final subtitle = 'Paired ${_formatPairedAt(record.pairedAt)} · $status';
+          final subtitle = l10n.peersPairedStatus(
+            _formatPairedAt(record.pairedAt),
+            status,
+          );
 
           return _TrustedDeviceRow(
             displayName: record.displayName,
@@ -527,22 +540,20 @@ class _TrustedSection extends StatelessWidget {
     String peerId,
     TrustedPeer record,
   ) async {
+    final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Revoke ${record.displayName}?'),
-        content: const Text(
-          'The next connection will require tapping Accept again. '
-          'The security pin is kept so certificate checks still apply.',
-        ),
+        title: Text(l10n.peersRevokeTitle(record.displayName)),
+        content: Text(l10n.peersRevokeBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Revoke'),
+            child: Text(l10n.commonRevoke),
           ),
         ],
       ),
@@ -560,6 +571,7 @@ class _BlockedSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final pairing = context.read<PairingRepository>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -567,13 +579,13 @@ class _BlockedSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
           child: Text(
-            'Blocked',
+            l10n.peersBlocked,
             style: Theme.of(
               context,
             ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
-        if (blocked.isEmpty) const _EmptyHint('No blocked devices'),
+        if (blocked.isEmpty) _EmptyHint(l10n.peersNoBlockedDevices),
         ...blocked.entries.map(
           (entry) => ListTile(
             dense: true,
@@ -581,7 +593,7 @@ class _BlockedSection extends StatelessWidget {
             title: Text(entry.value),
             trailing: TextButton(
               onPressed: () => pairing.unblockPeer(entry.key),
-              child: const Text('Unblock'),
+              child: Text(l10n.commonUnblock),
             ),
           ),
         ),
@@ -593,8 +605,8 @@ class _BlockedSection extends StatelessWidget {
 class _NetworkingInfoBanner extends StatelessWidget {
   const _NetworkingInfoBanner({
     required this.message,
+    required this.title,
     this.icon = Icons.info_outline,
-    this.title = 'Discovery mode',
   });
 
   final String message;
@@ -636,6 +648,7 @@ class _NetworkingErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Material(
@@ -650,11 +663,11 @@ class _NetworkingErrorBanner extends StatelessWidget {
             size: 20,
             color: Theme.of(context).colorScheme.error,
           ),
-          title: const Text('Peer discovery unavailable'),
+          title: Text(l10n.discoveryUnavailableTitle),
           subtitle: Text(message),
           trailing: IconButton(
             icon: const Icon(Icons.refresh, size: 20),
-            tooltip: 'Retry discovery',
+            tooltip: l10n.discoveryRetryTooltip,
             onPressed: onRetry,
           ),
         ),
@@ -689,6 +702,7 @@ class _ConnectionLogSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final entries = connectionLog.entries;
 
     return Column(
@@ -700,7 +714,7 @@ class _ConnectionLogSection extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Connection log',
+                  l10n.peersConnectionLog,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
@@ -708,16 +722,16 @@ class _ConnectionLogSection extends StatelessWidget {
               ),
               TextButton(
                 onPressed: entries.isEmpty ? null : () => _copyLog(context),
-                child: const Text('Copy'),
+                child: Text(l10n.commonCopy),
               ),
               TextButton(
                 onPressed: entries.isEmpty ? null : connectionLog.clear,
-                child: const Text('Clear'),
+                child: Text(l10n.commonClear),
               ),
             ],
           ),
         ),
-        if (entries.isEmpty) const _EmptyHint('No connection events yet'),
+        if (entries.isEmpty) _EmptyHint(l10n.peersNoConnectionEvents),
         if (entries.isNotEmpty)
           SelectionArea(
             child: Column(
@@ -732,7 +746,10 @@ class _ConnectionLogSection extends StatelessWidget {
                       subtitle: Text(
                         entry.revision == null
                             ? entry.timeLabel
-                            : '${entry.timeLabel} • revision ${entry.revision}',
+                            : l10n.peersLogRevision(
+                                entry.timeLabel,
+                                entry.revision!.toString(),
+                              ),
                       ),
                     ),
                   )
@@ -748,11 +765,14 @@ class _ConnectionLogSection extends StatelessWidget {
     if (text.isEmpty) return;
     await Clipboard.setData(ClipboardData(text: text));
     if (context.mounted) {
+      final l10n = context.l10n;
       final count = connectionLog.entries.length;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            count == 1 ? 'Copied 1 log entry' : 'Copied $count log entries',
+            count == 1
+                ? l10n.peersCopiedOneLogEntry
+                : l10n.peersCopiedLogEntries(count),
           ),
         ),
       );

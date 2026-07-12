@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/features/entitlements/paywall_sheet.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/entitlements/entitlement_constants.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/entitlements/pro_features.dart';
@@ -21,9 +22,9 @@ abstract final class ProGate {
     }
     return showPaywallSheet(
       context,
-      highlight:
-          'Free includes up to ${EntitlementConstants.freeNoteLimit} notes. '
-          'Unlock Pro for unlimited notes.',
+      highlight: context.l10n.proHighlightNoteLimit(
+        EntitlementConstants.freeNoteLimit,
+      ),
     );
   }
 
@@ -40,9 +41,9 @@ abstract final class ProGate {
     }
     return showPaywallSheet(
       context,
-      highlight:
-          'Free includes up to ${EntitlementConstants.freePeerLimit} connected '
-          'peers. Unlock Pro for unlimited peers.',
+      highlight: context.l10n.proHighlightPeerLimit(
+        EntitlementConstants.freePeerLimit,
+      ),
     );
   }
 
@@ -53,7 +54,7 @@ abstract final class ProGate {
     }
     return showPaywallSheet(
       context,
-      highlight: 'Version history is a Pro feature.',
+      highlight: context.l10n.proHighlightVersionHistory,
     );
   }
 
@@ -64,7 +65,7 @@ abstract final class ProGate {
     }
     return showPaywallSheet(
       context,
-      highlight: 'Voice dictation is a Pro feature.',
+      highlight: context.l10n.proHighlightVoice,
     );
   }
 
@@ -75,7 +76,7 @@ abstract final class ProGate {
     }
     return showPaywallSheet(
       context,
-      highlight: 'Trusted peer auto-sync is a Pro feature.',
+      highlight: context.l10n.proHighlightAutoSync,
     );
   }
 
@@ -86,7 +87,7 @@ abstract final class ProGate {
     }
     return showPaywallSheet(
       context,
-      highlight: 'Extra skins are included with Pro.',
+      highlight: context.l10n.proHighlightSkins,
     );
   }
 }

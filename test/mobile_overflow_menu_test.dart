@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:netpad/features/shell/mobile_overflow_menu.dart';
+import 'package:netpad/l10n/app_localizations.dart';
 
 void main() {
   testWidgets('mobile overflow menu opens and shows Settings', (tester) async {
@@ -8,6 +9,9 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
         home: Scaffold(
           appBar: AppBar(
             actions: [

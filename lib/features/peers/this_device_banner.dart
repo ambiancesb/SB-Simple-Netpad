@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/local_address_service.dart';
 import 'package:provider/provider.dart';
 
@@ -44,14 +45,15 @@ class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
     final text = '$_lanIp:$port';
     await Clipboard.setData(ClipboardData(text: text));
     if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Copied $text')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.discoveryCopiedAddress(text))),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final discovery = context.watch<DiscoveryRepository>();
     final refreshKey = Object.hash(
       widget.port,
@@ -75,11 +77,11 @@ class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
         child: ListTile(
           dense: true,
           leading: const Icon(Icons.computer, size: 20),
-          title: const Text('This device'),
+          title: Text(l10n.discoveryThisDevice),
           subtitle: Text(address),
           trailing: IconButton(
             icon: const Icon(Icons.copy, size: 20),
-            tooltip: 'Copy address',
+            tooltip: l10n.discoveryCopyAddress,
             onPressed: port == null ? null : () => _copy(context),
           ),
         ),

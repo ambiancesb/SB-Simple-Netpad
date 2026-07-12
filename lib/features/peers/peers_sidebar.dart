@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/features/peers/peers_panel.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:provider/provider.dart';
 
 /// Peers list with device header — used in drawer (mobile) and docked panel.
@@ -28,7 +29,7 @@ class PeersSidebar extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Room "${discovery.roomId}"',
+                  context.l10n.peersRoomLabel(discovery.roomId),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],

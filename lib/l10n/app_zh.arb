@@ -1,0 +1,645 @@
+{
+  "@@locale": "zh",
+  "commonAppName": "SB Simple Netpad",
+  "commonProName": "Netpad Pro",
+  "commonCancel": "取消",
+  "commonClose": "关闭",
+  "commonSave": "保存",
+  "commonDelete": "删除",
+  "commonConnect": "连接",
+  "commonHelp": "帮助",
+  "commonSettings": "设置",
+  "commonMore": "更多",
+  "commonCopy": "复制",
+  "commonClear": "清除",
+  "commonAccept": "接受",
+  "commonReject": "拒绝",
+  "commonBlock": "屏蔽",
+  "commonUnblock": "取消屏蔽",
+  "commonRevoke": "撤销",
+  "commonRestore": "恢复",
+  "commonRetry": "重试",
+  "commonCouldNotOpenLabel": "无法打开 {label}",
+  "@commonCouldNotOpenLabel": {
+    "placeholders": {
+      "label": {"type": "String"}
+    }
+  },
+  "commonEulaLabel": "EULA",
+  "commonPrivacyPolicyLabel": "隐私政策",
+  "commonEndUserLicenseAgreement": "最终用户许可协议",
+  "commonPrivacyPolicy": "隐私政策",
+  "commonVersionLabel": "版本 {version}",
+  "@commonVersionLabel": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+
+  "shellMenuFile": "文件",
+  "shellMenuEdit": "编辑",
+  "shellMenuView": "视图",
+  "shellMenuHelp": "帮助",
+  "shellSaveToFile": "保存到文件…",
+  "shellOpenFileAsNewNote": "打开文件作为新笔记…",
+  "shellShareNote": "分享笔记",
+  "shellVersionHistory": "版本历史…",
+  "shellSettings": "设置…",
+  "shellExit": "退出",
+  "shellCut": "剪切",
+  "shellCopy": "复制",
+  "shellPaste": "粘贴",
+  "shellFind": "查找…",
+  "shellFindAndReplace": "查找和替换…",
+  "shellWordWrap": "自动换行",
+  "shellWordWrapChecked": "自动换行 ✓",
+  "shellNotesPanel": "笔记面板",
+  "shellNotesPanelChecked": "笔记面板 ✓",
+  "shellPeersPanel": "节点面板",
+  "shellPeersPanelChecked": "节点面板 ✓",
+  "shellHelpItem": "SB Simple Netpad 帮助",
+  "shellAboutItem": "关于 SB Simple Netpad",
+  "shellHideNotesPanel": "隐藏笔记面板",
+  "shellShowNotesPanel": "显示笔记面板 (Ctrl+N)",
+  "shellHidePeersPanel": "隐藏节点面板",
+  "shellShowPeersPanel": "显示节点面板 (Ctrl+P)",
+  "shellPeersTooltipConnected": "{count} 个加密节点会话 · {action}节点面板 (Ctrl+P)",
+  "@shellPeersTooltipConnected": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "action": {"type": "String"}
+    }
+  },
+  "shellPeersTooltipActionHide": "隐藏",
+  "shellPeersTooltipActionShow": "显示",
+  "shellFindInNote": "在笔记中查找 (Ctrl+F)",
+  "shellSecurityChipConnected": "{count} 个节点会话已通过 WSS/TLS 加密 · 点击查看节点",
+  "@shellSecurityChipConnected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "shellSecurityChipNone": "无活跃节点会话 · 点击查看节点",
+  "shellMobileWordWrap": "自动换行",
+  "shellMobileSaveToFile": "保存到文件…",
+  "shellMobileOpenFileAsNewNote": "打开文件作为新笔记…",
+  "shellMobileShareNote": "分享笔记",
+  "shellMobileVersionHistory": "版本历史…",
+  "shellMobileSettings": "设置",
+  "shellMobileHelp": "帮助",
+  "shellMobileAbout": "关于 SB Simple Netpad",
+  "shellListeningSnack": "正在聆听… 再次点击麦克风停止",
+
+  "notesTitle": "笔记",
+  "notesNewNote": "新笔记",
+  "notesSearchHint": "搜索所有笔记",
+  "notesRenameTitle": "重命名笔记",
+  "notesTitleLabel": "标题",
+  "notesDeleteTitle": "删除 \"{title}\"？",
+  "@notesDeleteTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "notesDeleteSyncedBody": "这将为您和所有连接的节点删除该笔记。",
+  "notesDeleteLocalBody": "这仅从此设备删除笔记。",
+  "notesNoMatches": "无匹配结果",
+  "notesNoNotes": "无笔记",
+  "notesRename": "重命名",
+  "notesVersionHistory": "版本历史",
+  "notesDelete": "删除",
+  "notesSyncWithPeers": "与节点同步",
+  "notesLocalOnly": "仅本地",
+  "notesEmptyNote": "空笔记",
+  "notesMatchCount": "{count} 个匹配",
+  "@notesMatchCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "notesLocalOnlyWithMatches": "仅本地 · {matchLine}",
+  "@notesLocalOnlyWithMatches": {
+    "placeholders": {
+      "matchLine": {"type": "String"}
+    }
+  },
+  "notesSearchSnippetMatches": "{snippet}  ·  {count} 个匹配",
+  "@notesSearchSnippetMatches": {
+    "placeholders": {
+      "snippet": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "notesNoNoteSelected": "未选择笔记",
+
+  "historyTitle": "版本历史 · \"{title}\"",
+  "@historyTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "historyEmpty": "暂无保存的版本。在远程编辑替换您的文字之前，快照会自动保留。",
+  "historyEntrySubtitle": "{label} · {time} · {chars} 个字符",
+  "@historyEntrySubtitle": {
+    "placeholders": {
+      "label": {"type": "String"},
+      "time": {"type": "String"},
+      "chars": {"type": "int"}
+    }
+  },
+  "historyRestore": "恢复",
+  "historyRestoredSnack": "版本已恢复",
+  "historyBeforeRemoteUpdate": "远程更新前",
+  "historySnapshot": "快照",
+  "historyImportedFile": "导入的文件",
+
+  "editorFindHint": "查找",
+  "editorReplaceHint": "替换为",
+  "editorMatchCounter": "{current}/{total}",
+  "@editorMatchCounter": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "editorMatchNone": "0/0",
+  "editorPrevious": "上一个",
+  "editorNext": "下一个",
+  "editorShowReplace": "显示替换 (Ctrl+H)",
+  "editorHideReplace": "隐藏替换 (Ctrl+H)",
+  "editorClose": "关闭",
+  "editorReplace": "替换",
+  "editorReplaceAll": "全部",
+  "editorListening": "正在聆听…",
+  "editorDictate": "听写",
+  "editorStopDictation": "停止听写",
+
+  "peersConnectByIp": "通过 IP 连接",
+  "peersConnected": "已连接",
+  "peersNearby": "附近设备",
+  "peersTrustedDevices": "受信任设备",
+  "peersBlocked": "已屏蔽",
+  "peersConnectionLog": "连接日志",
+  "peersNoActiveConnections": "无活跃连接",
+  "peersNoTrustedDevices": "无受信任设备 — 配对一次即可启用自动同步",
+  "peersNoBlockedDevices": "无屏蔽设备",
+  "peersNoConnectionEvents": "暂无连接事件",
+  "peersNoDiscoveredPeers": "未发现节点 — Linux 必须与此设备处于同一 Wi‑Fi 子网（检查上方地址），或使用通过 IP 连接",
+  "peersDiscoveryPaused": "节点发现已暂停，直到加入本地网络",
+  "peersDisconnect": "断开连接",
+  "peersConnectNow": "立即连接",
+  "peersConnect": "连接",
+  "peersResolving": "解析中…",
+  "peersBlockTooltip": "屏蔽",
+  "peersBlockTitle": "屏蔽 {peer}？",
+  "@peersBlockTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersBlockBody": "这将断开该设备的连接，忘记其固定证书，并拒绝未来的连接请求直至您取消屏蔽。",
+  "peersRevokeTitle": "撤销 {peer}？",
+  "@peersRevokeTitle": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersRevokeBody": "下次连接将需要再次点击接受。安全 PIN 将被保留，以便证书检查仍然适用。",
+  "peersAutoSync": "自动同步",
+  "peersCopiedOneLogEntry": "已复制 1 条日志条目",
+  "peersCopiedLogEntries": "已复制 {count} 条日志条目",
+  "@peersCopiedLogEntries": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "peersLogRevision": "{time} • 修订版 {revision}",
+  "@peersLogRevision": {
+    "placeholders": {
+      "time": {"type": "String"},
+      "revision": {"type": "String"}
+    }
+  },
+  "peersStillResolving": "仍在解析 {peer}…",
+  "@peersStillResolving": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersResolveFailedSnack": "无法解析 {peer}。请检查 Avahi 和相同子网，或使用通过 IP 连接。",
+  "@peersResolveFailedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersPairingRequestSent": "已向 {peer} 发送配对请求",
+  "@peersPairingRequestSent": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "peersCouldNotConnect": "无法连接: {message}",
+  "@peersCouldNotConnect": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "peersManualHostPort": "{host}:{port}（手动）",
+  "@peersManualHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersManual": "手动",
+  "peersResolveFailedSubtitle": "解析失败 — 请尝试通过 IP 连接",
+  "peersResolvingAddress": "正在解析地址…",
+  "peersHostPort": "{host}:{port}",
+  "@peersHostPort": {
+    "placeholders": {
+      "host": {"type": "String"},
+      "port": {"type": "int"}
+    }
+  },
+  "peersNoAddressYet": "暂无地址",
+  "peersEncryptedPinned": "已加密 · 已固定 {code}",
+  "@peersEncryptedPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersEncryptedWss": "已加密 (WSS/TLS)",
+  "peersSubtitleWithPresence": "{subtitle} • {presence}",
+  "@peersSubtitleWithPresence": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "presence": {"type": "String"}
+    }
+  },
+  "peersSubtitleWithSecurity": "{subtitle} • {security}",
+  "@peersSubtitleWithSecurity": {
+    "placeholders": {
+      "subtitle": {"type": "String"},
+      "security": {"type": "String"}
+    }
+  },
+  "peersPairedStatus": "{date} 已配对 · {status}",
+  "@peersPairedStatus": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "status": {"type": "String"}
+    }
+  },
+  "peersStatusConnected": "已连接",
+  "peersStatusManualOnly": "仅手动",
+  "peersStatusReconnecting": "重新连接中…",
+  "peersStatusRetryIn": "{seconds}秒后重试",
+  "@peersStatusRetryIn": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "peersStatusNotOnNetwork": "不在网络中",
+  "peersStatusConnecting": "连接中…",
+  "peersStatusAutoReconnect": "自动重连",
+  "peersPresenceLineCol": "第 {line} 行，第 {column} 列",
+  "@peersPresenceLineCol": {
+    "placeholders": {
+      "line": {"type": "int"},
+      "column": {"type": "int"}
+    }
+  },
+  "peersPresenceInNote": "\"{title}\" · {position}",
+  "@peersPresenceInNote": {
+    "placeholders": {
+      "title": {"type": "String"},
+      "position": {"type": "String"}
+    }
+  },
+  "peersRoomLabel": "房间 \"{room}\"",
+  "@peersRoomLabel": {
+    "placeholders": {
+      "room": {"type": "String"}
+    }
+  },
+
+  "discoveryThisDevice": "此设备",
+  "discoveryCopyAddress": "复制地址",
+  "discoveryCopiedAddress": "已复制 {address}",
+  "@discoveryCopiedAddress": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "discoveryLocalNetworkRequired": "需要本地网络",
+  "discoveryNotListeningTitle": "未在监听",
+  "discoveryNotListeningBody": "此设备尚未监听节点。加入 Wi‑Fi 后等待几秒，或点击网络错误横幅上的重试。",
+  "discoveryModeTitle": "发现模式",
+  "discoveryUnavailableTitle": "节点发现不可用",
+  "discoveryRetryTooltip": "重试发现",
+
+  "peersSecuredSessions": "安全会话",
+  "peersSecurityBannerIdle": "此设备通过 WSS/TLS 广播 · 代码 {code}",
+  "@peersSecurityBannerIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityBannerActive": "{connectedCount} 个加密会话 · {pinnedCount} 个证书已固定",
+  "@peersSecurityBannerActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityCompactIdle": "WSS/TLS · 代码 {code}",
+  "@peersSecurityCompactIdle": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityCompactActive": "{connectedCount} 个已加密 · {pinnedCount} 个已固定",
+  "@peersSecurityCompactActive": {
+    "placeholders": {
+      "connectedCount": {"type": "int"},
+      "pinnedCount": {"type": "int"}
+    }
+  },
+  "peersSecurityTooltipPinned": "已加密 (WSS/TLS) · 已固定 {code}",
+  "@peersSecurityTooltipPinned": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "peersSecurityTooltipActive": "已加密 (WSS/TLS) · 活跃会话",
+
+  "pairingConnectionRequest": "连接请求",
+  "pairingAllowPeer": "允许 {peer} 连接并共享此笔记？",
+  "@pairingAllowPeer": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingVerificationCode": "验证码",
+  "pairingConfirmCode": "接受前请确认此代码在两台设备上匹配。",
+  "pairingThisDeviceSecurityCode": "此设备安全码",
+  "pairingOtherDevicePins": "另一台设备在首次连接时固定此代码。",
+
+  "manualConnectTitle": "通过地址连接",
+  "manualConnectBody": "当发现无法在同一子网上找到节点时使用。仅允许活跃本地网络段上的地址。",
+  "manualConnectHostLabel": "主机或 IP",
+  "manualConnectHostHint": "192.168.1.42",
+  "manualConnectPortLabel": "端口",
+  "manualConnectPortHint": "54321",
+  "manualConnectLabelOptional": "标签（可选）",
+  "manualConnectLabelHint": "客厅电脑",
+  "manualConnectInvalidHostPort": "请输入有效的主机和端口（1–65535）",
+
+  "settingsTitle": "设置",
+  "settingsDeviceSection": "设备",
+  "settingsDeviceHint": "设备名称和房间需要保存 (Ctrl+S)。外观和编辑器偏好立即保存。",
+  "settingsDeviceName": "设备名称",
+  "settingsDeviceNameHint": "显示给其他设备的名称",
+  "settingsSessionRoom": "会话 / 房间",
+  "settingsSessionRoomHint": "仅发现同一房间中的节点",
+  "settingsListeningPort": "监听端口",
+  "settingsStartingServer": "正在启动服务器…",
+  "settingsAddressShare": "{address}（分享此地址用于手动连接）",
+  "@settingsAddressShare": {
+    "placeholders": {
+      "address": {"type": "String"}
+    }
+  },
+  "settingsCopyAddress": "复制地址",
+  "settingsAddressCopied": "地址已复制到剪贴板",
+  "settingsSavedSnack": "设置已保存 · \"{name}\" · 房间 \"{room}\"",
+  "@settingsSavedSnack": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "room": {"type": "String"}
+    }
+  },
+  "settingsAppearanceSection": "外观",
+  "settingsMode": "模式",
+  "settingsThemeSystem": "系统",
+  "settingsThemeLight": "浅色",
+  "settingsThemeDark": "深色",
+  "settingsSkin": "皮肤",
+  "settingsSkinDefault": "默认",
+  "settingsSkinOcean": "海洋",
+  "settingsSkinForest": "森林",
+  "settingsSkinSunset": "日落",
+  "settingsSkinSlate": "石板",
+  "settingsSkinProLabel": "{skin} · Pro",
+  "@settingsSkinProLabel": {
+    "placeholders": {
+      "skin": {"type": "String"}
+    }
+  },
+  "settingsProSection": "Netpad Pro",
+  "settingsProUnlocked": "Pro 已解锁",
+  "settingsFree": "免费",
+  "settingsProUnlockedSubtitle": "无限笔记和节点、皮肤、历史、自动同步和语音",
+  "settingsProBuySubtitle": "通过您的应用商店一次性解锁",
+  "settingsPurchasesUnavailable": "此平台上购买不可用",
+  "settingsRestorePurchases": "恢复购买",
+  "settingsProRestored": "Pro 已恢复",
+  "settingsNoPreviousPro": "未找到之前的 Pro 购买记录",
+  "settingsEditorSection": "编辑器",
+  "settingsWordWrap": "自动换行",
+  "settingsWordWrapSubtitle": "换行长行而不是水平滚动",
+  "settingsFontSize": "字体大小（{size} pt）",
+  "@settingsFontSize": {
+    "placeholders": {
+      "size": {"type": "int"}
+    }
+  },
+  "settingsLegalSection": "法律",
+  "settingsEulaSubtitlePro": "Pro · 在 GitHub Pages 上打开 EULA",
+  "settingsEulaSubtitleFree": "免费 · 在 GitHub Pages 上打开 EULA",
+  "settingsPrivacySubtitle": "在 GitHub Pages 上打开隐私页面",
+  "settingsDisclaimerTitle": "免责声明和责任",
+  "settingsDisclaimerSubtitle": "使用风险自负",
+  "settingsDisclaimerP1": "本软件按\"原样\"提供，不提供任何形式的明示或暗示保证，包括适销性、特定用途适用性和非侵权性。",
+  "settingsDisclaimerP2": "您对使用本应用的方式以及遵守所有适用法律、法规、政策和协议负全责。",
+  "settingsDisclaimerP3": "版权持有人对因使用或滥用本软件而产生的任何索赔、损害、损失、数据丢失、业务中断或其他责任不承担任何责任。",
+  "settingsNoLegalAdviceTitle": "无法律建议",
+  "settingsNoLegalAdviceSubtitle": "仅为信息软件",
+  "settingsNoLegalAdviceP1": "本应用及其文档不提供法律、监管或专业建议。",
+  "settingsNoLegalAdviceP2": "如果您需要针对使用情况的法律指导，请咨询合格的专业人士。",
+  "settingsCopyright": "© 2026 Spencer Beaumier",
+
+  "paywallTitle": "解锁 Netpad Pro",
+  "paywallSubtitle": "一次性购买。核心编辑和 LAN 同步保持免费。",
+  "paywallBenefitUnlimitedNotes": "无限笔记",
+  "paywallBenefitUnlimitedPeers": "无限连接节点",
+  "paywallBenefitSkins": "额外颜色皮肤",
+  "paywallBenefitHistory": "版本历史",
+  "paywallBenefitAutoSync": "受信任节点自动同步",
+  "paywallBenefitVoice": "语音听写",
+  "paywallPurchasesUnsupported": "此平台上无法进行应用内购买。请从 App Store、Google Play 或 Microsoft Store 安装以解锁 Pro。",
+  "paywallBuyPro": "购买 Pro",
+  "paywallBuyProPrice": "购买 Pro · {price}",
+  "@paywallBuyProPrice": {
+    "placeholders": {
+      "price": {"type": "String"}
+    }
+  },
+  "paywallRestorePurchases": "恢复购买",
+  "paywallPurchaseNotCompleted": "购买未完成。",
+  "paywallPurchaseFailed": "购买失败。",
+  "paywallProRestored": "Pro 已恢复",
+  "paywallNoPreviousPro": "未找到之前的 Pro 购买记录",
+
+  "proHighlightNoteLimit": "免费版最多包含 {limit} 条笔记。解锁 Pro 获得无限笔记。",
+  "@proHighlightNoteLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightPeerLimit": "免费版最多包含 {limit} 个连接节点。解锁 Pro 获得无限节点。",
+  "@proHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "proHighlightVersionHistory": "版本历史是 Pro 功能。",
+  "proHighlightVoice": "语音听写是 Pro 功能。",
+  "proHighlightAutoSync": "受信任节点自动同步是 Pro 功能。",
+  "proHighlightSkins": "额外皮肤包含在 Pro 中。",
+
+  "helpTitle": "帮助",
+  "helpIntro": "用于纯文本笔记的 LAN 记事本。同一 Wi‑Fi 上的设备相互发现，配对一次，然后实时同步笔记。",
+  "helpAboutTile": "关于 SB Simple Netpad",
+  "helpEulaSubtitle": "在 GitHub Pages 上打开 EULA",
+  "helpPrivacySubtitle": "在 GitHub Pages 上打开隐私页面",
+  "helpGettingStartedTitle": "入门指南",
+  "helpGettingStarted1": "加入与要同步的设备相同的 Wi‑Fi 网络。",
+  "helpGettingStarted2": "打开节点面板（锁图标或节点抽屉），等待附近设备出现。",
+  "helpGettingStarted3": "从此设备复制您的地址，如果发现速度慢则分享它。",
+  "helpGettingStarted4": "当 mDNS 发现找不到节点时，使用通过 IP 连接。",
+  "helpNotesTitle": "笔记",
+  "helpNotes1": "点击菜单图标（☰）或笔记面板以切换笔记。",
+  "helpNotes2": "从笔记列表创建、重命名、重新排序和删除笔记。",
+  "helpNotes3": "每条笔记独立同步 — 根据需要切换每条笔记的同步。",
+  "helpNotes4": "在笔记内搜索（查找）或从编辑器搜索所有笔记。",
+  "helpNotes5": "版本历史保存可以稍后恢复的本地快照。",
+  "helpPeersTitle": "节点和配对",
+  "helpPeers1": "附近设备列出同一房间中发现的设备（参见设置）。",
+  "helpPeers2": "点击节点上的连接 — 另一台设备必须点击接受。",
+  "helpPeers3": "接受前比较配对验证码。",
+  "helpPeers4": "第一次接受后，受信任设备可以自动重新连接。",
+  "helpPeers5": "受信任设备: 切换自动同步或撤销以再次要求接受。",
+  "helpPeers6": "屏蔽会断开设备连接并拒绝未来配对直至取消屏蔽。",
+  "helpPeers7": "已连接显示包含地址和光标位置的活跃会话。",
+  "helpFileSharingTitle": "文件和分享",
+  "helpFileSharing1Desktop": "文件菜单: 保存到文件、打开文件作为新笔记、分享笔记、版本历史、设置、退出。",
+  "helpFileSharing1Mobile": "菜单（⋮）: 保存到文件、打开文件作为新笔记、分享、版本历史、设置和此帮助指南。",
+  "helpFileSharing2": "保存到文件将活跃笔记导出为 .txt 或 .md。",
+  "helpFileSharing3": "打开文件将文本导入到像其他笔记一样同步的新笔记中。",
+  "helpFileSharing4": "分享使用系统分享表单；Linux 回退到剪贴板。",
+  "helpSettingsTitle": "设置",
+  "helpSettings1": "设备名称和房间需要保存 — 其他选项立即生效。",
+  "helpSettings2": "房间 ID 对节点进行分组: 仅发现同一房间中的设备。",
+  "helpSettings3": "外观和编辑器偏好（主题、皮肤、换行、字体）在更改时保存。",
+  "helpDesktopShortcutsTitle": "桌面快捷键",
+  "helpDesktopShortcuts1": "Ctrl/Cmd+S — 保存到文件",
+  "helpDesktopShortcuts2": "Ctrl/Cmd+O — 打开文件作为新笔记",
+  "helpDesktopShortcuts3": "Ctrl/Cmd+F — 在笔记中查找",
+  "helpDesktopShortcuts4": "Ctrl/Cmd+H — 查找和替换",
+  "helpDesktopShortcuts5": "Ctrl/Cmd+N — 切换笔记面板",
+  "helpDesktopShortcuts6": "Ctrl/Cmd+P — 切换节点面板",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — 退出（Windows/Linux）",
+  "helpTroubleshootingTitle": "故障排除",
+  "helpTroubleshooting1": "没有节点？确认相同的 Wi‑Fi 子网和房间 ID；尝试通过 IP 连接。",
+  "helpTroubleshooting2": "需要本地网络横幅表示同步已暂停，直到 Wi‑Fi 连接。",
+  "helpTroubleshooting3": "首次启动时允许应用通过防火墙（桌面）。",
+  "helpTroubleshooting4": "Linux: 如果发现从未启动，请安装 dbus 和 avahi-daemon。",
+  "helpTroubleshooting5": "Android: 提示时授予附近 Wi‑Fi 权限。",
+
+  "aboutTitle": "关于",
+  "aboutTagline": "具有节点发现和共享编辑功能的 LAN 记事本。",
+  "aboutDescription": "在手机或电脑上写纯文本笔记，与同一 Wi‑Fi 上的其他设备保持同步。节点在本地网络上相互发现，通过相互批准配对一次，然后通过加密节点会话共享多个命名笔记。",
+  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutStatus": "测试版 — 适合日常 LAN 使用。",
+  "aboutEulaHeading": "最终用户许可协议",
+  "aboutEulaBody": "SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（最多 {noteLimit} 条笔记和 {peerLimit} 个连接节点）。Netpad Pro 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。",
+  "@aboutEulaBody": {
+    "placeholders": {
+      "noteLimit": {"type": "int"},
+      "peerLimit": {"type": "int"}
+    }
+  },
+  "aboutViewEula": "查看 EULA",
+  "aboutPrivacyPolicy": "隐私政策",
+  "aboutHowToUse": "如何使用 SB Simple Netpad",
+  "aboutCouldNotOpenPrivacy": "无法打开隐私政策",
+  "aboutCouldNotOpenEula": "无法打开 EULA",
+  "aboutCopyright": "© 2026 Spencer Beaumier",
+
+  "conflictLiveTitle": "\"{title}\" 中的编辑冲突",
+  "@conflictLiveTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictLiveBody": "{peer} 同时编辑了相同的笔记（修订版 {revision}）。\n\n您的版本:\n{localPreview}\n\n{peer}:\n{remotePreview}\n\n两台设备应保留哪个版本？",
+  "@conflictLiveBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "revision": {"type": "String"},
+      "localPreview": {"type": "String"},
+      "remotePreview": {"type": "String"}
+    }
+  },
+  "conflictDivergedTitle": "\"{title}\" 已分歧",
+  "@conflictDivergedTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "conflictDivergedBody": "您的副本和 {peer} 的 \"{title}\" 副本在断开连接期间发生了不同的变化。\n\n您的版本: {localChars} 个字符\n{peer}: {remoteChars} 个字符\n\n两台设备应保留哪个版本？",
+  "@conflictDivergedBody": {
+    "placeholders": {
+      "peer": {"type": "String"},
+      "title": {"type": "String"},
+      "localChars": {"type": "int"},
+      "remoteChars": {"type": "int"}
+    }
+  },
+  "conflictUsePeers": "使用 {peer} 的版本",
+  "@conflictUsePeers": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "conflictKeepMine": "保留我的",
+
+  "fileSavedTo": "已保存到 {path}",
+  "@fileSavedTo": {
+    "placeholders": {
+      "path": {"type": "String"}
+    }
+  },
+  "fileCouldNotSave": "无法保存: {error}",
+  "@fileCouldNotSave": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileOpenedAsNewNote": "已将 {name} 作为新笔记打开",
+  "@fileOpenedAsNewNote": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "fileCouldNotOpen": "无法打开: {error}",
+  "@fileCouldNotOpen": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "fileNothingToShare": "无内容可分享 — 笔记为空",
+  "fileShareFallbackClipboard": "此处分享不可用 — 已复制到剪贴板",
+  "fileDefaultNoteName": "netpad-note"
+}

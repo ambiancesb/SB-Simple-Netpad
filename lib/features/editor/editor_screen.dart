@@ -5,6 +5,7 @@ import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/find_replace.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/speech_input_service.dart';
 import 'package:netpad/theme/app_skin.dart';
@@ -40,7 +41,7 @@ class _EditorScreenState extends State<EditorScreen> {
       selector: (_, workspace) => workspace.active,
       builder: (context, document, _) {
         if (document == null) {
-          return const Center(child: Text('No note selected'));
+          return Center(child: Text(context.l10n.notesNoNoteSelected));
         }
 
         return _EditorBody(
@@ -304,11 +305,12 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final label = _findQuery.text.isEmpty
         ? ''
         : _matches.isEmpty
-        ? '0/0'
-        : '${_current + 1}/${_matches.length}';
+        ? l10n.editorMatchNone
+        : l10n.editorMatchCounter(_current + 1, _matches.length);
 
     return Material(
       elevation: 1,
@@ -322,11 +324,11 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
                   child: TextField(
                     controller: _findQuery,
                     focusNode: _findFocus,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       isDense: true,
-                      prefixIcon: Icon(Icons.search, size: 18),
-                      hintText: 'Find',
-                      border: OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.search, size: 18),
+                      hintText: l10n.editorFindHint,
+                      border: const OutlineInputBorder(),
                     ),
                     onChanged: _recompute,
                     onSubmitted: (_) => _step(1),
@@ -336,12 +338,12 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
                 Text(label, style: Theme.of(context).textTheme.bodySmall),
                 IconButton(
                   icon: const Icon(Icons.keyboard_arrow_up),
-                  tooltip: 'Previous',
+                  tooltip: l10n.editorPrevious,
                   onPressed: _matches.isEmpty ? null : () => _step(-1),
                 ),
                 IconButton(
                   icon: const Icon(Icons.keyboard_arrow_down),
-                  tooltip: 'Next',
+                  tooltip: l10n.editorNext,
                   onPressed: _matches.isEmpty ? null : () => _step(1),
                 ),
                 IconButton(
@@ -351,14 +353,14 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
                         : Icons.find_replace_outlined,
                   ),
                   tooltip: widget.replaceMode
-                      ? 'Hide replace (Ctrl+H)'
-                      : 'Show replace (Ctrl+H)',
+                      ? l10n.editorHideReplace
+                      : l10n.editorShowReplace,
                   onPressed: () =>
                       widget.onReplaceModeChanged(!widget.replaceMode),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
-                  tooltip: 'Close',
+                  tooltip: l10n.editorClose,
                   onPressed: widget.onClose,
                 ),
               ],
@@ -371,11 +373,11 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
                     child: TextField(
                       controller: _replaceQuery,
                       focusNode: _replaceFocus,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         isDense: true,
-                        prefixIcon: Icon(Icons.find_replace, size: 18),
-                        hintText: 'Replace with',
-                        border: OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.find_replace, size: 18),
+                        hintText: l10n.editorReplaceHint,
+                        border: const OutlineInputBorder(),
                       ),
                       onSubmitted: (_) => _applyReplace(all: false),
                     ),
@@ -384,12 +386,12 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
                   TextButton(
                     onPressed:
                         _matches.isEmpty ? null : () => _applyReplace(all: false),
-                    child: const Text('Replace'),
+                    child: Text(l10n.editorReplace),
                   ),
                   TextButton(
                     onPressed:
                         _matches.isEmpty ? null : () => _applyReplace(all: true),
-                    child: const Text('All'),
+                    child: Text(l10n.editorReplaceAll),
                   ),
                 ],
               ),
@@ -424,7 +426,7 @@ class _DictationBar extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    preview.isEmpty ? 'Listening…' : preview,
+                    preview.isEmpty ? context.l10n.editorListening : preview,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: colorScheme.onErrorContainer),

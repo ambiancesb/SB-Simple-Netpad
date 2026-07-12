@@ -3,6 +3,7 @@ import 'package:netpad/core/models/pair_request.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/features/entitlements/pro_gate.dart';
+import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 
@@ -13,19 +14,20 @@ class PairingRequestDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final pairing = context.read<PairingRepository>();
     final tls = context.read<TlsIdentity>();
 
     return AlertDialog(
-      title: const Text('Connection request'),
+      title: Text(l10n.pairingConnectionRequest),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Allow ${request.fromName} to connect and share this note?'),
+          Text(l10n.pairingAllowPeer(request.fromName)),
           const SizedBox(height: 16),
           Text(
-            'Verification code',
+            l10n.pairingVerificationCode,
             style: Theme.of(context).textTheme.labelMedium,
           ),
           const SizedBox(height: 4),
@@ -38,12 +40,12 @@ class PairingRequestDialog extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Confirm this code matches on both devices before accepting.',
+            l10n.pairingConfirmCode,
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 16),
           Text(
-            'This device security code',
+            l10n.pairingThisDeviceSecurityCode,
             style: Theme.of(context).textTheme.labelMedium,
           ),
           const SizedBox(height: 4),
@@ -55,7 +57,7 @@ class PairingRequestDialog extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'The other device pins this on first connect.',
+            l10n.pairingOtherDevicePins,
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -66,7 +68,7 @@ class PairingRequestDialog extends StatelessWidget {
             pairing.rejectRequest(request);
             Navigator.of(context).pop();
           },
-          child: const Text('Reject'),
+          child: Text(l10n.commonReject),
         ),
         FilledButton(
           onPressed: () async {
@@ -79,7 +81,7 @@ class PairingRequestDialog extends StatelessWidget {
             pairing.acceptRequest(request);
             Navigator.of(context).pop();
           },
-          child: const Text('Accept'),
+          child: Text(l10n.commonAccept),
         ),
       ],
     );
