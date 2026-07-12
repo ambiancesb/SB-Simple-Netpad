@@ -1,7 +1,7 @@
 {
   "@@locale": "nl",
   "commonAppName": "SB Simple Netpad",
-  "commonProName": "Netpad Pro",
+  "commonStandardName": "Netpad Standard",
   "commonCancel": "Annuleren",
   "commonClose": "Sluiten",
   "commonSave": "Opslaan",
@@ -430,21 +430,21 @@
   "settingsSkinForest": "Woud",
   "settingsSkinSunset": "Zonsondergang",
   "settingsSkinSlate": "Leisteen",
-  "settingsSkinProLabel": "{skin} · Pro",
-  "@settingsSkinProLabel": {
+  "settingsSkinStandardLabel": "{skin} · Standard",
+  "@settingsSkinStandardLabel": {
     "placeholders": {
       "skin": {"type": "String"}
     }
   },
-  "settingsProSection": "Netpad Pro",
-  "settingsProUnlocked": "Pro ontgrendeld",
+  "settingsStandardSection": "Netpad Standard",
+  "settingsStandardUnlocked": "Standard ontgrendeld",
   "settingsFree": "Gratis",
-  "settingsProUnlockedSubtitle": "Onbeperkte notities en peers, skins, geschiedenis, automatisch synchroniseren en spraak",
-  "settingsProBuySubtitle": "Eenmalig ontgrendelen via uw app store",
+  "settingsStandardUnlockedSubtitle": "Onbeperkte notities en peers, skins, geschiedenis, automatisch synchroniseren en spraak",
+  "settingsStandardBuySubtitle": "Eenmalig ontgrendelen via uw app store",
   "settingsPurchasesUnavailable": "Aankopen niet beschikbaar op dit platform",
   "settingsRestorePurchases": "Aankopen herstellen",
-  "settingsProRestored": "Pro hersteld",
-  "settingsNoPreviousPro": "Geen eerdere Pro-aankoop gevonden",
+  "settingsStandardRestored": "Standard hersteld",
+  "settingsNoPreviousStandard": "Geen eerdere Standard-aankoop gevonden",
   "settingsEditorSection": "Editor",
   "settingsWordWrap": "Tekstterugloop",
   "settingsWordWrapSubtitle": "Lange regels afbreken in plaats van horizontaal scrollen",
@@ -455,7 +455,7 @@
     }
   },
   "settingsLegalSection": "Juridisch",
-  "settingsEulaSubtitlePro": "Pro · Opent EULA op GitHub Pages",
+  "settingsEulaSubtitleStandard": "Standard · Opent EULA op GitHub Pages",
   "settingsEulaSubtitleFree": "Gratis · Opent EULA op GitHub Pages",
   "settingsPrivacySubtitle": "Opent privacypagina op GitHub Pages",
   "settingsDisclaimerTitle": "Disclaimer en aansprakelijkheid",
@@ -469,7 +469,7 @@
   "settingsNoLegalAdviceP2": "Als u juridische begeleiding nodig heeft voor uw gebruik, raadpleeg dan een gekwalificeerde professional.",
   "settingsCopyright": "© 2026 Spencer Beaumier",
 
-  "paywallTitle": "Netpad Pro ontgrendelen",
+  "paywallTitle": "Netpad Standard ontgrendelen",
   "paywallSubtitle": "Eenmalige aankoop. Kernbewerking en LAN-synchronisatie blijven gratis.",
   "paywallBenefitUnlimitedNotes": "Onbeperkte notities",
   "paywallBenefitUnlimitedPeers": "Onbeperkte verbonden peers",
@@ -477,10 +477,10 @@
   "paywallBenefitHistory": "Versiegeschiedenis",
   "paywallBenefitAutoSync": "Automatisch synchroniseren van vertrouwde peers",
   "paywallBenefitVoice": "Spraakdictaat",
-  "paywallPurchasesUnsupported": "In-app aankopen zijn niet beschikbaar op dit platform. Installeer vanuit de App Store, Google Play of Microsoft Store om Pro te ontgrendelen.",
-  "paywallBuyPro": "Pro kopen",
-  "paywallBuyProPrice": "Pro kopen · {price}",
-  "@paywallBuyProPrice": {
+  "paywallPurchasesUnsupported": "In-app aankopen zijn niet beschikbaar op dit platform. Installeer vanuit de App Store, Google Play of Microsoft Store om Standard te ontgrendelen.",
+  "paywallBuyStandard": "Standard kopen",
+  "paywallBuyStandardPrice": "Standard kopen · {price}",
+  "@paywallBuyStandardPrice": {
     "placeholders": {
       "price": {"type": "String"}
     }
@@ -488,25 +488,25 @@
   "paywallRestorePurchases": "Aankopen herstellen",
   "paywallPurchaseNotCompleted": "Aankoop is niet voltooid.",
   "paywallPurchaseFailed": "Aankoop mislukt.",
-  "paywallProRestored": "Pro hersteld",
-  "paywallNoPreviousPro": "Geen eerdere Pro-aankoop gevonden",
+  "paywallStandardRestored": "Standard hersteld",
+  "paywallNoPreviousStandard": "Geen eerdere Standard-aankoop gevonden",
 
-  "proHighlightNoteLimit": "De gratis versie bevat tot {limit} notities. Ontgrendel Pro voor onbeperkte notities.",
-  "@proHighlightNoteLimit": {
+  "standardHighlightNoteLimit": "De gratis versie bevat tot {limit} notities. Ontgrendel Standard voor onbeperkte notities.",
+  "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightPeerLimit": "De gratis versie bevat tot {limit} verbonden peers. Ontgrendel Pro voor onbeperkte peers.",
-  "@proHighlightPeerLimit": {
+  "standardHighlightPeerLimit": "De gratis versie bevat tot {limit} verbonden peers. Ontgrendel Standard voor onbeperkte peers.",
+  "@standardHighlightPeerLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightVersionHistory": "Versiegeschiedenis is een Pro-functie.",
-  "proHighlightVoice": "Spraakdictaat is een Pro-functie.",
-  "proHighlightAutoSync": "Automatisch synchroniseren van vertrouwde peers is een Pro-functie.",
-  "proHighlightSkins": "Extra skins zijn inbegrepen bij Pro.",
+  "standardHighlightVersionHistory": "Versiegeschiedenis is een Standard-functie.",
+  "standardHighlightVoice": "Spraakdictaat is een Standard-functie.",
+  "standardHighlightAutoSync": "Automatisch synchroniseren van vertrouwde peers is een Standard-functie.",
+  "standardHighlightSkins": "Extra skins zijn inbegrepen bij Standard.",
 
   "helpTitle": "Help",
   "helpIntro": "Een LAN-kladblok voor notities in platte tekst. Apparaten op hetzelfde Wi‑Fi ontdekken elkaar, koppelen eenmalig en synchroniseren notities daarna in realtime.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "Beta — geschikt voor dagelijks LAN-gebruik.",
   "aboutEulaHeading": "Eindgebruikerslicentieovereenkomst",
-  "aboutEulaBody": "SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (tot {noteLimit} notities en {peerLimit} verbonden peers). Netpad Pro is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.",
+  "aboutEulaBody": "SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (tot {noteLimit} notities en {peerLimit} verbonden peers). Netpad Standard is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

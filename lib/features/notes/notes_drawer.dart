@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
-import 'package:netpad/features/entitlements/pro_gate.dart';
+import 'package:netpad/features/entitlements/standard_gate.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +53,7 @@ class _NotesPanelState extends State<NotesPanel> {
     BuildContext context,
     WorkspaceRepository workspace,
   ) async {
-    final allowed = await ProGate.createNoteAllowed(
+    final allowed = await StandardGate.createNoteAllowed(
       context,
       currentNoteCount: workspace.documents.length,
     );
@@ -66,7 +66,7 @@ class _NotesPanelState extends State<NotesPanel> {
     BuildContext context,
     DocumentRepository doc,
   ) async {
-    final allowed = await ProGate.versionHistoryAllowed(context);
+    final allowed = await StandardGate.versionHistoryAllowed(context);
     if (!allowed || !context.mounted) return;
     await showVersionHistory(context, doc);
   }

@@ -10,11 +10,11 @@
             }
         },
         {
-            "name": "SB Simple Netpad (Pro unlock)",
+            "name": "SB Simple Netpad (Standard unlock)",
             "request": "launch",
             "type": "dart",
             "toolArgs": [
-                "--dart-define=NETPAD_PRO_OVERRIDE=true"
+                "--dart-define=NETPAD_STANDARD_OVERRIDE=true"
             ],
             "env": {
                 "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${env:PATH}"

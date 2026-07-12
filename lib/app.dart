@@ -12,7 +12,7 @@ import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/features/editor/editor_screen.dart';
 import 'package:netpad/features/editor/mobile_voice_input_button.dart';
-import 'package:netpad/features/entitlements/pro_gate.dart';
+import 'package:netpad/features/entitlements/standard_gate.dart';
 import 'package:netpad/features/notes/notes_drawer.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
@@ -26,7 +26,7 @@ import 'package:netpad/features/shell/mobile_overflow_menu.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
-import 'package:netpad/services/entitlements/pro_features.dart';
+import 'package:netpad/services/entitlements/standard_features.dart';
 import 'package:netpad/services/file_service.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/share_service.dart';
@@ -78,7 +78,7 @@ class NetpadApp extends StatelessWidget {
       ],
       child: Consumer2<AppPreferences, EntitlementService>(
         builder: (context, prefs, ents, _) {
-          final skin = ProFeatures.effectiveSkin(prefs.skin, ents);
+          final skin = StandardFeatures.effectiveSkin(prefs.skin, ents);
           return MaterialApp(
             title: 'SB Simple Netpad',
             debugShowCheckedModeBanner: false,
@@ -144,7 +144,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
 
   Future<void> _toggleVoiceInput() async {
     if (!_speechInput.isListening) {
-      final allowed = await ProGate.voiceInputAllowed(context);
+      final allowed = await StandardGate.voiceInputAllowed(context);
       if (!allowed || !mounted) return;
       FocusManager.instance.primaryFocus?.unfocus();
     }
@@ -307,7 +307,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       onOpen: () => _openNote(context),
       onShare: () => _shareNote(context),
       onHistory: () async {
-        final allowed = await ProGate.versionHistoryAllowed(context);
+        final allowed = await StandardGate.versionHistoryAllowed(context);
         if (!allowed || !mounted) return;
         final doc = context.read<WorkspaceRepository>().active;
         if (doc != null) await showVersionHistory(context, doc);
@@ -513,7 +513,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       case MobileAppMenuAction.share:
         await _shareNote(context);
       case MobileAppMenuAction.history:
-        final allowed = await ProGate.versionHistoryAllowed(context);
+        final allowed = await StandardGate.versionHistoryAllowed(context);
         if (!allowed || !context.mounted) return;
         final doc = context.read<WorkspaceRepository>().active;
         if (doc != null) await showVersionHistory(context, doc);
@@ -644,7 +644,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       final loaded = await _fileService.openText();
       if (loaded == null || !context.mounted) return;
 
-      final allowed = await ProGate.createNoteAllowed(
+      final allowed = await StandardGate.createNoteAllowed(
         context,
         currentNoteCount: workspace.documents.length,
       );

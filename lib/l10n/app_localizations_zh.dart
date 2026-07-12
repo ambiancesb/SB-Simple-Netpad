@@ -12,7 +12,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonAppName => 'SB Simple Netpad';
 
   @override
-  String get commonProName => 'Netpad Pro';
+  String get commonStandardName => 'Netpad Standard';
 
   @override
   String get commonCancel => '取消';
@@ -729,24 +729,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsSkinSlate => '石板';
 
   @override
-  String settingsSkinProLabel(String skin) {
-    return '$skin · Pro';
+  String settingsSkinStandardLabel(String skin) {
+    return '$skin · Standard';
   }
 
   @override
-  String get settingsProSection => 'Netpad Pro';
+  String get settingsStandardSection => 'Netpad Standard';
 
   @override
-  String get settingsProUnlocked => 'Pro 已解锁';
+  String get settingsStandardUnlocked => 'Standard 已解锁';
 
   @override
   String get settingsFree => '免费';
 
   @override
-  String get settingsProUnlockedSubtitle => '无限笔记和节点、皮肤、历史、自动同步和语音';
+  String get settingsStandardUnlockedSubtitle => '无限笔记和节点、皮肤、历史、自动同步和语音';
 
   @override
-  String get settingsProBuySubtitle => '通过您的应用商店一次性解锁';
+  String get settingsStandardBuySubtitle => '通过您的应用商店一次性解锁';
 
   @override
   String get settingsPurchasesUnavailable => '此平台上购买不可用';
@@ -755,10 +755,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsRestorePurchases => '恢复购买';
 
   @override
-  String get settingsProRestored => 'Pro 已恢复';
+  String get settingsStandardRestored => 'Standard 已恢复';
 
   @override
-  String get settingsNoPreviousPro => '未找到之前的 Pro 购买记录';
+  String get settingsNoPreviousStandard => '未找到之前的 Standard 购买记录';
 
   @override
   String get settingsEditorSection => '编辑器';
@@ -778,7 +778,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsLegalSection => '法律';
 
   @override
-  String get settingsEulaSubtitlePro => 'Pro · 在 GitHub Pages 上打开 EULA';
+  String get settingsEulaSubtitleStandard =>
+      'Standard · 在 GitHub Pages 上打开 EULA';
 
   @override
   String get settingsEulaSubtitleFree => '免费 · 在 GitHub Pages 上打开 EULA';
@@ -819,7 +820,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsCopyright => '© 2026 Spencer Beaumier';
 
   @override
-  String get paywallTitle => '解锁 Netpad Pro';
+  String get paywallTitle => '解锁 Netpad Standard';
 
   @override
   String get paywallSubtitle => '一次性购买。核心编辑和 LAN 同步保持免费。';
@@ -844,14 +845,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      '此平台上无法进行应用内购买。请从 App Store、Google Play 或 Microsoft Store 安装以解锁 Pro。';
+      '此平台上无法进行应用内购买。请从 App Store、Google Play 或 Microsoft Store 安装以解锁 Standard。';
 
   @override
-  String get paywallBuyPro => '购买 Pro';
+  String get paywallBuyStandard => '购买 Standard';
 
   @override
-  String paywallBuyProPrice(String price) {
-    return '购买 Pro · $price';
+  String paywallBuyStandardPrice(String price) {
+    return '购买 Standard · $price';
   }
 
   @override
@@ -864,32 +865,32 @@ class AppLocalizationsZh extends AppLocalizations {
   String get paywallPurchaseFailed => '购买失败。';
 
   @override
-  String get paywallProRestored => 'Pro 已恢复';
+  String get paywallStandardRestored => 'Standard 已恢复';
 
   @override
-  String get paywallNoPreviousPro => '未找到之前的 Pro 购买记录';
+  String get paywallNoPreviousStandard => '未找到之前的 Standard 购买记录';
 
   @override
-  String proHighlightNoteLimit(int limit) {
-    return '免费版最多包含 $limit 条笔记。解锁 Pro 获得无限笔记。';
+  String standardHighlightNoteLimit(int limit) {
+    return '免费版最多包含 $limit 条笔记。解锁 Standard 获得无限笔记。';
   }
 
   @override
-  String proHighlightPeerLimit(int limit) {
-    return '免费版最多包含 $limit 个连接节点。解锁 Pro 获得无限节点。';
+  String standardHighlightPeerLimit(int limit) {
+    return '免费版最多包含 $limit 个连接节点。解锁 Standard 获得无限节点。';
   }
 
   @override
-  String get proHighlightVersionHistory => '版本历史是 Pro 功能。';
+  String get standardHighlightVersionHistory => '版本历史是 Standard 功能。';
 
   @override
-  String get proHighlightVoice => '语音听写是 Pro 功能。';
+  String get standardHighlightVoice => '语音听写是 Standard 功能。';
 
   @override
-  String get proHighlightAutoSync => '受信任节点自动同步是 Pro 功能。';
+  String get standardHighlightAutoSync => '受信任节点自动同步是 Standard 功能。';
 
   @override
-  String get proHighlightSkins => '额外皮肤包含在 Pro 中。';
+  String get standardHighlightSkins => '额外皮肤包含在 Standard 中。';
 
   @override
   String get helpTitle => '帮助';
@@ -1058,7 +1059,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（最多 $noteLimit 条笔记和 $peerLimit 个连接节点）。Netpad Pro 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。';
+    return 'SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（最多 $noteLimit 条笔记和 $peerLimit 个连接节点）。Netpad Standard 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。';
   }
 
   @override

@@ -3,12 +3,12 @@ import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/theme/app_skin.dart';
 
 /// Soft freemium gates shared by UI and repositories.
-abstract final class ProFeatures {
+abstract final class StandardFeatures {
   static bool canCreateNote({
     required EntitlementService entitlements,
     required int currentNoteCount,
   }) {
-    if (entitlements.isPro) return true;
+    if (entitlements.isStandard) return true;
     return currentNoteCount < EntitlementConstants.freeNoteLimit;
   }
 
@@ -18,32 +18,32 @@ abstract final class ProFeatures {
     required EntitlementService entitlements,
     required int currentConnectedCount,
   }) {
-    if (entitlements.isPro) return true;
+    if (entitlements.isStandard) return true;
     return currentConnectedCount < EntitlementConstants.freePeerLimit;
   }
 
   static int get freePeerLimit => EntitlementConstants.freePeerLimit;
 
   static bool isSkinAvailable(AppSkin skin, EntitlementService entitlements) {
-    if (entitlements.isPro) return true;
+    if (entitlements.isStandard) return true;
     return skin == AppSkin.defaultBlue;
   }
 
   static Iterable<AppSkin> availableSkins(EntitlementService entitlements) {
-    if (entitlements.isPro) return AppSkin.values;
+    if (entitlements.isStandard) return AppSkin.values;
     return const [AppSkin.defaultBlue];
   }
 
   static bool canUseVersionHistory(EntitlementService entitlements) =>
-      entitlements.isPro;
+      entitlements.isStandard;
 
   static bool canUseTrustedAutoSync(EntitlementService entitlements) =>
-      entitlements.isPro;
+      entitlements.isStandard;
 
   static bool canUseVoiceInput(EntitlementService entitlements) =>
-      entitlements.isPro;
+      entitlements.isStandard;
 
-  /// If a free user somehow has a Pro skin selected, fall back to default.
+  /// If a free user somehow has a Standard skin selected, fall back to default.
   static AppSkin effectiveSkin(
     AppSkin preferred,
     EntitlementService entitlements,

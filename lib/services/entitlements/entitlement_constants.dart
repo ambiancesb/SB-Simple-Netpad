@@ -1,12 +1,16 @@
 /// Shared product / entitlement ids across store backends.
 abstract final class EntitlementConstants {
   /// RevenueCat entitlement identifier (Apple + Google).
-  static const proEntitlementId = 'pro';
+  ///
+  /// Legacy id `pro` maps to the **Standard** unlock (not a future Pro tier).
+  static const standardEntitlementId = 'pro';
 
-  /// Store product id for the one-time Pro unlock (all three stores).
-  static const proProductId = 'netpad_pro';
+  /// Store product id for the one-time Standard unlock (all three stores).
+  ///
+  /// Legacy SKU `netpad_pro` — do not rename; existing purchases restore against it.
+  static const standardProductId = 'netpad_pro';
 
-  /// RevenueCat offering that contains the Pro package.
+  /// RevenueCat offering that contains the Standard package.
   static const defaultOfferingId = 'default';
 
   /// Free tier local note creation cap (synced peer notes may exceed this).

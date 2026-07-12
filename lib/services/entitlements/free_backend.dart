@@ -2,23 +2,24 @@ import 'package:netpad/services/entitlements/entitlement_backend.dart';
 
 /// Linux / sideload / unsupported platforms — no store IAP.
 class FreeBackend implements EntitlementBackend {
-  FreeBackend({this.forcePro = false});
+  FreeBackend({this.forceStandard = false});
 
-  /// Debug override via `--dart-define=NETPAD_PRO_OVERRIDE=true`.
-  final bool forcePro;
+  /// Debug override via `--dart-define=NETPAD_STANDARD_OVERRIDE=true`
+  /// (or legacy `NETPAD_PRO_OVERRIDE=true`).
+  final bool forceStandard;
 
   @override
   bool get purchasesSupported => false;
 
   @override
-  Future<bool> refreshIsPro() async => forcePro;
+  Future<bool> refreshIsStandard() async => forceStandard;
 
   @override
   Future<String?> loadPriceString() async => null;
 
   @override
-  Future<bool> purchasePro() async => forcePro;
+  Future<bool> purchaseStandard() async => forceStandard;
 
   @override
-  Future<bool> restorePurchases() async => forcePro;
+  Future<bool> restorePurchases() async => forceStandard;
 }

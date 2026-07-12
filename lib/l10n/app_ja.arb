@@ -1,7 +1,7 @@
 {
   "@@locale": "ja",
   "commonAppName": "SB Simple Netpad",
-  "commonProName": "Netpad Pro",
+  "commonStandardName": "Netpad Standard",
   "commonCancel": "キャンセル",
   "commonClose": "閉じる",
   "commonSave": "保存",
@@ -430,21 +430,21 @@
   "settingsSkinForest": "フォレスト",
   "settingsSkinSunset": "サンセット",
   "settingsSkinSlate": "スレート",
-  "settingsSkinProLabel": "{skin} · Pro",
-  "@settingsSkinProLabel": {
+  "settingsSkinStandardLabel": "{skin} · Standard",
+  "@settingsSkinStandardLabel": {
     "placeholders": {
       "skin": {"type": "String"}
     }
   },
-  "settingsProSection": "Netpad Pro",
-  "settingsProUnlocked": "Pro 解除済み",
+  "settingsStandardSection": "Netpad Standard",
+  "settingsStandardUnlocked": "Standard 解除済み",
   "settingsFree": "無料",
-  "settingsProUnlockedSubtitle": "無制限のメモとピア、スキン、履歴、自動同期、音声",
-  "settingsProBuySubtitle": "アプリストアで一度だけ解除",
+  "settingsStandardUnlockedSubtitle": "無制限のメモとピア、スキン、履歴、自動同期、音声",
+  "settingsStandardBuySubtitle": "アプリストアで一度だけ解除",
   "settingsPurchasesUnavailable": "このプラットフォームでは購入できません",
   "settingsRestorePurchases": "購入を復元",
-  "settingsProRestored": "Pro を復元しました",
-  "settingsNoPreviousPro": "以前の Pro 購入が見つかりません",
+  "settingsStandardRestored": "Standard を復元しました",
+  "settingsNoPreviousStandard": "以前の Standard 購入が見つかりません",
   "settingsEditorSection": "エディタ",
   "settingsWordWrap": "折り返し",
   "settingsWordWrapSubtitle": "横スクロールの代わりに長い行を折り返す",
@@ -455,7 +455,7 @@
     }
   },
   "settingsLegalSection": "法的情報",
-  "settingsEulaSubtitlePro": "Pro · GitHub Pages で EULA を開く",
+  "settingsEulaSubtitleStandard": "Standard · GitHub Pages で EULA を開く",
   "settingsEulaSubtitleFree": "無料 · GitHub Pages で EULA を開く",
   "settingsPrivacySubtitle": "GitHub Pages でプライバシーページを開く",
   "settingsDisclaimerTitle": "免責事項と責任",
@@ -469,7 +469,7 @@
   "settingsNoLegalAdviceP2": "ご使用目的に法的なガイダンスが必要な場合は、資格のある専門家にご相談ください。",
   "settingsCopyright": "© 2026 Spencer Beaumier",
 
-  "paywallTitle": "Netpad Pro を解除",
+  "paywallTitle": "Netpad Standard を解除",
   "paywallSubtitle": "一度の購入。基本的な編集とLAN同期は無料のまま。",
   "paywallBenefitUnlimitedNotes": "無制限のメモ",
   "paywallBenefitUnlimitedPeers": "無制限の接続ピア",
@@ -477,10 +477,10 @@
   "paywallBenefitHistory": "バージョン履歴",
   "paywallBenefitAutoSync": "信頼済みピアの自動同期",
   "paywallBenefitVoice": "音声ディクテーション",
-  "paywallPurchasesUnsupported": "このプラットフォームではアプリ内購入はご利用いただけません。Pro を解除するには App Store、Google Play、または Microsoft Store からインストールしてください。",
-  "paywallBuyPro": "Pro を購入",
-  "paywallBuyProPrice": "Pro を購入 · {price}",
-  "@paywallBuyProPrice": {
+  "paywallPurchasesUnsupported": "このプラットフォームではアプリ内購入はご利用いただけません。Standard を解除するには App Store、Google Play、または Microsoft Store からインストールしてください。",
+  "paywallBuyStandard": "Standard を購入",
+  "paywallBuyStandardPrice": "Standard を購入 · {price}",
+  "@paywallBuyStandardPrice": {
     "placeholders": {
       "price": {"type": "String"}
     }
@@ -488,25 +488,25 @@
   "paywallRestorePurchases": "購入を復元",
   "paywallPurchaseNotCompleted": "購入が完了しませんでした。",
   "paywallPurchaseFailed": "購入に失敗しました。",
-  "paywallProRestored": "Pro を復元しました",
-  "paywallNoPreviousPro": "以前の Pro 購入が見つかりません",
+  "paywallStandardRestored": "Standard を復元しました",
+  "paywallNoPreviousStandard": "以前の Standard 購入が見つかりません",
 
-  "proHighlightNoteLimit": "無料版は最大 {limit} 件のメモが含まれます。無制限のメモには Pro を解除してください。",
-  "@proHighlightNoteLimit": {
+  "standardHighlightNoteLimit": "無料版は最大 {limit} 件のメモが含まれます。無制限のメモには Standard を解除してください。",
+  "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightPeerLimit": "無料版は最大 {limit} 件の接続ピアが含まれます。無制限のピアには Pro を解除してください。",
-  "@proHighlightPeerLimit": {
+  "standardHighlightPeerLimit": "無料版は最大 {limit} 件の接続ピアが含まれます。無制限のピアには Standard を解除してください。",
+  "@standardHighlightPeerLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightVersionHistory": "バージョン履歴は Pro の機能です。",
-  "proHighlightVoice": "音声ディクテーションは Pro の機能です。",
-  "proHighlightAutoSync": "信頼済みピアの自動同期は Pro の機能です。",
-  "proHighlightSkins": "追加スキンは Pro に含まれています。",
+  "standardHighlightVersionHistory": "バージョン履歴は Standard の機能です。",
+  "standardHighlightVoice": "音声ディクテーションは Standard の機能です。",
+  "standardHighlightAutoSync": "信頼済みピアの自動同期は Standard の機能です。",
+  "standardHighlightSkins": "追加スキンは Standard に含まれています。",
 
   "helpTitle": "ヘルプ",
   "helpIntro": "プレーンテキストメモ用のLANメモ帳。同じWi‑Fi上のデバイスが互いを検出し、一度ペアリングして、リアルタイムでメモを同期します。",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "ベータ版 — 日常的なLAN使用に適しています。",
   "aboutEulaHeading": "エンドユーザーライセンス契約",
-  "aboutEulaBody": "SB Simple Netpad はオープンソースライセンスではなく EULA の下でライセンスされています。基本的な編集とLAN同期は無料です（最大 {noteLimit} 件のメモと {peerLimit} 件の接続ピア）。Netpad Pro は App Store、Google Play、または Microsoft Store を通じた一度きりの解除です。",
+  "aboutEulaBody": "SB Simple Netpad はオープンソースライセンスではなく EULA の下でライセンスされています。基本的な編集とLAN同期は無料です（最大 {noteLimit} 件のメモと {peerLimit} 件の接続ピア）。Netpad Standard は App Store、Google Play、または Microsoft Store を通じた一度きりの解除です。",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

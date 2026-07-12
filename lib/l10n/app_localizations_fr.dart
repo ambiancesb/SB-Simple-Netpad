@@ -12,7 +12,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get commonAppName => 'SB Simple Netpad';
 
   @override
-  String get commonProName => 'Netpad Pro';
+  String get commonStandardName => 'Netpad Standard';
 
   @override
   String get commonCancel => 'Annuler';
@@ -749,25 +749,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsSkinSlate => 'Ardoise';
 
   @override
-  String settingsSkinProLabel(String skin) {
-    return '$skin · Pro';
+  String settingsSkinStandardLabel(String skin) {
+    return '$skin · Standard';
   }
 
   @override
-  String get settingsProSection => 'Netpad Pro';
+  String get settingsStandardSection => 'Netpad Standard';
 
   @override
-  String get settingsProUnlocked => 'Pro débloqué';
+  String get settingsStandardUnlocked => 'Standard débloqué';
 
   @override
   String get settingsFree => 'Gratuit';
 
   @override
-  String get settingsProUnlockedSubtitle =>
+  String get settingsStandardUnlockedSubtitle =>
       'Notes et pairs illimités, thèmes, historique, synchronisation automatique et voix';
 
   @override
-  String get settingsProBuySubtitle =>
+  String get settingsStandardBuySubtitle =>
       'Déblocage unique via votre boutique d\'applications';
 
   @override
@@ -778,10 +778,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsRestorePurchases => 'Restaurer les achats';
 
   @override
-  String get settingsProRestored => 'Pro restauré';
+  String get settingsStandardRestored => 'Standard restauré';
 
   @override
-  String get settingsNoPreviousPro => 'Aucun achat Pro précédent trouvé';
+  String get settingsNoPreviousStandard =>
+      'Aucun achat Standard précédent trouvé';
 
   @override
   String get settingsEditorSection => 'Éditeur';
@@ -802,7 +803,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsLegalSection => 'Mentions légales';
 
   @override
-  String get settingsEulaSubtitlePro => 'Pro · Ouvre l\'EULA sur GitHub Pages';
+  String get settingsEulaSubtitleStandard =>
+      'Standard · Ouvre l\'EULA sur GitHub Pages';
 
   @override
   String get settingsEulaSubtitleFree =>
@@ -849,7 +851,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsCopyright => '© 2026 Spencer Beaumier';
 
   @override
-  String get paywallTitle => 'Débloquer Netpad Pro';
+  String get paywallTitle => 'Débloquer Netpad Standard';
 
   @override
   String get paywallSubtitle =>
@@ -876,14 +878,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      'Les achats intégrés ne sont pas disponibles sur cette plateforme. Installez depuis l\'App Store, Google Play ou Microsoft Store pour débloquer Pro.';
+      'Les achats intégrés ne sont pas disponibles sur cette plateforme. Installez depuis l\'App Store, Google Play ou Microsoft Store pour débloquer Standard.';
 
   @override
-  String get paywallBuyPro => 'Acheter Pro';
+  String get paywallBuyStandard => 'Acheter Standard';
 
   @override
-  String paywallBuyProPrice(String price) {
-    return 'Acheter Pro · $price';
+  String paywallBuyStandardPrice(String price) {
+    return 'Acheter Standard · $price';
   }
 
   @override
@@ -896,36 +898,37 @@ class AppLocalizationsFr extends AppLocalizations {
   String get paywallPurchaseFailed => 'L\'achat a échoué.';
 
   @override
-  String get paywallProRestored => 'Pro restauré';
+  String get paywallStandardRestored => 'Standard restauré';
 
   @override
-  String get paywallNoPreviousPro => 'Aucun achat Pro précédent trouvé';
+  String get paywallNoPreviousStandard =>
+      'Aucun achat Standard précédent trouvé';
 
   @override
-  String proHighlightNoteLimit(int limit) {
-    return 'La version gratuite inclut jusqu\'à $limit notes. Débloquez Pro pour des notes illimitées.';
+  String standardHighlightNoteLimit(int limit) {
+    return 'La version gratuite inclut jusqu\'à $limit notes. Débloquez Standard pour des notes illimitées.';
   }
 
   @override
-  String proHighlightPeerLimit(int limit) {
-    return 'La version gratuite inclut jusqu\'à $limit pairs connectés. Débloquez Pro pour des pairs illimités.';
+  String standardHighlightPeerLimit(int limit) {
+    return 'La version gratuite inclut jusqu\'à $limit pairs connectés. Débloquez Standard pour des pairs illimités.';
   }
 
   @override
-  String get proHighlightVersionHistory =>
-      'L\'historique des versions est une fonctionnalité Pro.';
+  String get standardHighlightVersionHistory =>
+      'L\'historique des versions est une fonctionnalité Standard.';
 
   @override
-  String get proHighlightVoice =>
-      'La dictée vocale est une fonctionnalité Pro.';
+  String get standardHighlightVoice =>
+      'La dictée vocale est une fonctionnalité Standard.';
 
   @override
-  String get proHighlightAutoSync =>
-      'La synchronisation automatique des pairs de confiance est une fonctionnalité Pro.';
+  String get standardHighlightAutoSync =>
+      'La synchronisation automatique des pairs de confiance est une fonctionnalité Standard.';
 
   @override
-  String get proHighlightSkins =>
-      'Les thèmes supplémentaires sont inclus avec Pro.';
+  String get standardHighlightSkins =>
+      'Les thèmes supplémentaires sont inclus avec Standard.';
 
   @override
   String get helpTitle => 'Aide';
@@ -1128,7 +1131,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad est sous licence EULA, pas une licence open source. L\'édition principale et la synchronisation LAN sont gratuites (jusqu\'à $noteLimit notes et $peerLimit pairs connectés). Netpad Pro est un déblocage unique via l\'App Store, Google Play ou Microsoft Store.';
+    return 'SB Simple Netpad est sous licence EULA, pas une licence open source. L\'édition principale et la synchronisation LAN sont gratuites (jusqu\'à $noteLimit notes et $peerLimit pairs connectés). Netpad Standard est un déblocage unique via l\'App Store, Google Play ou Microsoft Store.';
   }
 
   @override

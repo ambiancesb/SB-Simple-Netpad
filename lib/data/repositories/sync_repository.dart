@@ -43,7 +43,7 @@ class SyncRepository extends ChangeNotifier {
     required ConnectionLogRepository connectionLog,
     required TrustStore trustStore,
     required TlsIdentity tlsIdentity,
-    bool Function()? isPro,
+    bool Function()? isStandard,
   }) : _displayName = displayName,
        _server = localServer,
        _discovery = discovery,
@@ -51,7 +51,7 @@ class SyncRepository extends ChangeNotifier {
        _connectionLog = connectionLog,
        _trustStore = trustStore,
        _tlsIdentity = tlsIdentity,
-       _isPro = isPro ?? (() => false) {
+       _isStandard = isStandard ?? (() => false) {
     _server.onMessage = _onInboundMessage;
     _server.onConnectionClosed = _onInboundClosed;
     _server.onConnectionOpened = _onInboundOpened;
@@ -67,7 +67,7 @@ class SyncRepository extends ChangeNotifier {
   final ConnectionLogRepository _connectionLog;
   final TrustStore _trustStore;
   final TlsIdentity _tlsIdentity;
-  final bool Function() _isPro;
+  final bool Function() _isStandard;
 
   bool _divergencePromptActive = false;
   bool _liveConflictPromptActive = false;

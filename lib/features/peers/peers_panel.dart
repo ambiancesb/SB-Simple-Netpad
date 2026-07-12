@@ -8,7 +8,7 @@ import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
-import 'package:netpad/features/entitlements/pro_gate.dart';
+import 'package:netpad/features/entitlements/standard_gate.dart';
 import 'package:netpad/features/peers/manual_connect_dialog.dart';
 import 'package:netpad/features/peers/session_security_banner.dart';
 import 'package:netpad/features/peers/this_device_banner.dart';
@@ -193,7 +193,7 @@ class PeersPanel extends StatelessWidget {
     }
 
     final sync = context.read<SyncRepository>();
-    final allowed = await ProGate.connectPeerAllowed(
+    final allowed = await StandardGate.connectPeerAllowed(
       context,
       currentConnectedCount: sync.authenticatedPeerCount,
     );
@@ -505,7 +505,7 @@ class _TrustedSection extends StatelessWidget {
           final connected =
               livePeer?.connectionState == PeerConnectionState.connected;
           final autoSyncOn =
-              entitlements.isPro && record.autoSyncEnabled;
+              entitlements.isStandard && record.autoSyncEnabled;
           final status = pairing.trustedReconnectStatus(
             peerId: peerId,
             connected: connected,
@@ -522,7 +522,7 @@ class _TrustedSection extends StatelessWidget {
             autoSyncEnabled: autoSyncOn,
             onAutoSyncChanged: (enabled) async {
               if (enabled) {
-                final allowed = await ProGate.trustedAutoSyncAllowed(context);
+                final allowed = await StandardGate.trustedAutoSyncAllowed(context);
                 if (!allowed || !context.mounted) return;
               }
               await pairing.setPeerAutoSyncEnabled(peerId, enabled);

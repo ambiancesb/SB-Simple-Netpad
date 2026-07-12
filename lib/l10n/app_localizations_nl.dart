@@ -12,7 +12,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get commonAppName => 'SB Simple Netpad';
 
   @override
-  String get commonProName => 'Netpad Pro';
+  String get commonStandardName => 'Netpad Standard';
 
   @override
   String get commonCancel => 'Annuleren';
@@ -749,25 +749,26 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsSkinSlate => 'Leisteen';
 
   @override
-  String settingsSkinProLabel(String skin) {
-    return '$skin · Pro';
+  String settingsSkinStandardLabel(String skin) {
+    return '$skin · Standard';
   }
 
   @override
-  String get settingsProSection => 'Netpad Pro';
+  String get settingsStandardSection => 'Netpad Standard';
 
   @override
-  String get settingsProUnlocked => 'Pro ontgrendeld';
+  String get settingsStandardUnlocked => 'Standard ontgrendeld';
 
   @override
   String get settingsFree => 'Gratis';
 
   @override
-  String get settingsProUnlockedSubtitle =>
+  String get settingsStandardUnlockedSubtitle =>
       'Onbeperkte notities en peers, skins, geschiedenis, automatisch synchroniseren en spraak';
 
   @override
-  String get settingsProBuySubtitle => 'Eenmalig ontgrendelen via uw app store';
+  String get settingsStandardBuySubtitle =>
+      'Eenmalig ontgrendelen via uw app store';
 
   @override
   String get settingsPurchasesUnavailable =>
@@ -777,10 +778,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsRestorePurchases => 'Aankopen herstellen';
 
   @override
-  String get settingsProRestored => 'Pro hersteld';
+  String get settingsStandardRestored => 'Standard hersteld';
 
   @override
-  String get settingsNoPreviousPro => 'Geen eerdere Pro-aankoop gevonden';
+  String get settingsNoPreviousStandard =>
+      'Geen eerdere Standard-aankoop gevonden';
 
   @override
   String get settingsEditorSection => 'Editor';
@@ -801,7 +803,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsLegalSection => 'Juridisch';
 
   @override
-  String get settingsEulaSubtitlePro => 'Pro · Opent EULA op GitHub Pages';
+  String get settingsEulaSubtitleStandard =>
+      'Standard · Opent EULA op GitHub Pages';
 
   @override
   String get settingsEulaSubtitleFree => 'Gratis · Opent EULA op GitHub Pages';
@@ -845,7 +848,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsCopyright => '© 2026 Spencer Beaumier';
 
   @override
-  String get paywallTitle => 'Netpad Pro ontgrendelen';
+  String get paywallTitle => 'Netpad Standard ontgrendelen';
 
   @override
   String get paywallSubtitle =>
@@ -872,14 +875,14 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      'In-app aankopen zijn niet beschikbaar op dit platform. Installeer vanuit de App Store, Google Play of Microsoft Store om Pro te ontgrendelen.';
+      'In-app aankopen zijn niet beschikbaar op dit platform. Installeer vanuit de App Store, Google Play of Microsoft Store om Standard te ontgrendelen.';
 
   @override
-  String get paywallBuyPro => 'Pro kopen';
+  String get paywallBuyStandard => 'Standard kopen';
 
   @override
-  String paywallBuyProPrice(String price) {
-    return 'Pro kopen · $price';
+  String paywallBuyStandardPrice(String price) {
+    return 'Standard kopen · $price';
   }
 
   @override
@@ -892,34 +895,36 @@ class AppLocalizationsNl extends AppLocalizations {
   String get paywallPurchaseFailed => 'Aankoop mislukt.';
 
   @override
-  String get paywallProRestored => 'Pro hersteld';
+  String get paywallStandardRestored => 'Standard hersteld';
 
   @override
-  String get paywallNoPreviousPro => 'Geen eerdere Pro-aankoop gevonden';
+  String get paywallNoPreviousStandard =>
+      'Geen eerdere Standard-aankoop gevonden';
 
   @override
-  String proHighlightNoteLimit(int limit) {
-    return 'De gratis versie bevat tot $limit notities. Ontgrendel Pro voor onbeperkte notities.';
+  String standardHighlightNoteLimit(int limit) {
+    return 'De gratis versie bevat tot $limit notities. Ontgrendel Standard voor onbeperkte notities.';
   }
 
   @override
-  String proHighlightPeerLimit(int limit) {
-    return 'De gratis versie bevat tot $limit verbonden peers. Ontgrendel Pro voor onbeperkte peers.';
+  String standardHighlightPeerLimit(int limit) {
+    return 'De gratis versie bevat tot $limit verbonden peers. Ontgrendel Standard voor onbeperkte peers.';
   }
 
   @override
-  String get proHighlightVersionHistory =>
-      'Versiegeschiedenis is een Pro-functie.';
+  String get standardHighlightVersionHistory =>
+      'Versiegeschiedenis is een Standard-functie.';
 
   @override
-  String get proHighlightVoice => 'Spraakdictaat is een Pro-functie.';
+  String get standardHighlightVoice => 'Spraakdictaat is een Standard-functie.';
 
   @override
-  String get proHighlightAutoSync =>
-      'Automatisch synchroniseren van vertrouwde peers is een Pro-functie.';
+  String get standardHighlightAutoSync =>
+      'Automatisch synchroniseren van vertrouwde peers is een Standard-functie.';
 
   @override
-  String get proHighlightSkins => 'Extra skins zijn inbegrepen bij Pro.';
+  String get standardHighlightSkins =>
+      'Extra skins zijn inbegrepen bij Standard.';
 
   @override
   String get helpTitle => 'Help';
@@ -1120,7 +1125,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (tot $noteLimit notities en $peerLimit verbonden peers). Netpad Pro is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.';
+    return 'SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (tot $noteLimit notities en $peerLimit verbonden peers). Netpad Standard is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.';
   }
 
   @override

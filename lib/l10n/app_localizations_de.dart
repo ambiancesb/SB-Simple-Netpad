@@ -12,7 +12,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonAppName => 'SB Simple Netpad';
 
   @override
-  String get commonProName => 'Netpad Pro';
+  String get commonStandardName => 'Netpad Standard';
 
   @override
   String get commonCancel => 'Abbrechen';
@@ -747,25 +747,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsSkinSlate => 'Schiefer';
 
   @override
-  String settingsSkinProLabel(String skin) {
-    return '$skin · Pro';
+  String settingsSkinStandardLabel(String skin) {
+    return '$skin · Standard';
   }
 
   @override
-  String get settingsProSection => 'Netpad Pro';
+  String get settingsStandardSection => 'Netpad Standard';
 
   @override
-  String get settingsProUnlocked => 'Pro freigeschaltet';
+  String get settingsStandardUnlocked => 'Standard freigeschaltet';
 
   @override
   String get settingsFree => 'Kostenlos';
 
   @override
-  String get settingsProUnlockedSubtitle =>
+  String get settingsStandardUnlockedSubtitle =>
       'Unbegrenzte Notizen und Peers, Designs, Verlauf, automatische Synchronisierung und Sprache';
 
   @override
-  String get settingsProBuySubtitle =>
+  String get settingsStandardBuySubtitle =>
       'Einmalige Freischaltung über Ihren App-Store';
 
   @override
@@ -776,10 +776,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsRestorePurchases => 'Käufe wiederherstellen';
 
   @override
-  String get settingsProRestored => 'Pro wiederhergestellt';
+  String get settingsStandardRestored => 'Standard wiederhergestellt';
 
   @override
-  String get settingsNoPreviousPro => 'Kein früherer Pro-Kauf gefunden';
+  String get settingsNoPreviousStandard =>
+      'Kein früherer Standard-Kauf gefunden';
 
   @override
   String get settingsEditorSection => 'Editor';
@@ -800,7 +801,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsLegalSection => 'Rechtliches';
 
   @override
-  String get settingsEulaSubtitlePro => 'Pro · Öffnet EULA auf GitHub Pages';
+  String get settingsEulaSubtitleStandard =>
+      'Standard · Öffnet EULA auf GitHub Pages';
 
   @override
   String get settingsEulaSubtitleFree =>
@@ -846,7 +848,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsCopyright => '© 2026 Spencer Beaumier';
 
   @override
-  String get paywallTitle => 'Netpad Pro freischalten';
+  String get paywallTitle => 'Netpad Standard freischalten';
 
   @override
   String get paywallSubtitle =>
@@ -873,14 +875,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      'In-App-Käufe sind auf dieser Plattform nicht verfügbar. Installieren Sie aus dem App Store, Google Play oder Microsoft Store, um Pro freizuschalten.';
+      'In-App-Käufe sind auf dieser Plattform nicht verfügbar. Installieren Sie aus dem App Store, Google Play oder Microsoft Store, um Standard freizuschalten.';
 
   @override
-  String get paywallBuyPro => 'Pro kaufen';
+  String get paywallBuyStandard => 'Standard kaufen';
 
   @override
-  String paywallBuyProPrice(String price) {
-    return 'Pro kaufen · $price';
+  String paywallBuyStandardPrice(String price) {
+    return 'Standard kaufen · $price';
   }
 
   @override
@@ -893,34 +895,37 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paywallPurchaseFailed => 'Kauf fehlgeschlagen.';
 
   @override
-  String get paywallProRestored => 'Pro wiederhergestellt';
+  String get paywallStandardRestored => 'Standard wiederhergestellt';
 
   @override
-  String get paywallNoPreviousPro => 'Kein früherer Pro-Kauf gefunden';
+  String get paywallNoPreviousStandard =>
+      'Kein früherer Standard-Kauf gefunden';
 
   @override
-  String proHighlightNoteLimit(int limit) {
-    return 'Die kostenlose Version enthält bis zu $limit Notizen. Schalten Sie Pro für unbegrenzte Notizen frei.';
+  String standardHighlightNoteLimit(int limit) {
+    return 'Die kostenlose Version enthält bis zu $limit Notizen. Schalten Sie Standard für unbegrenzte Notizen frei.';
   }
 
   @override
-  String proHighlightPeerLimit(int limit) {
-    return 'Die kostenlose Version enthält bis zu $limit verbundene Peers. Schalten Sie Pro für unbegrenzte Peers frei.';
+  String standardHighlightPeerLimit(int limit) {
+    return 'Die kostenlose Version enthält bis zu $limit verbundene Peers. Schalten Sie Standard für unbegrenzte Peers frei.';
   }
 
   @override
-  String get proHighlightVersionHistory =>
-      'Versionsverlauf ist eine Pro-Funktion.';
+  String get standardHighlightVersionHistory =>
+      'Versionsverlauf ist eine Standard-Funktion.';
 
   @override
-  String get proHighlightVoice => 'Sprachdiktat ist eine Pro-Funktion.';
+  String get standardHighlightVoice =>
+      'Sprachdiktat ist eine Standard-Funktion.';
 
   @override
-  String get proHighlightAutoSync =>
-      'Automatische Synchronisierung vertrauenswürdiger Peers ist eine Pro-Funktion.';
+  String get standardHighlightAutoSync =>
+      'Automatische Synchronisierung vertrauenswürdiger Peers ist eine Standard-Funktion.';
 
   @override
-  String get proHighlightSkins => 'Zusätzliche Designs sind in Pro enthalten.';
+  String get standardHighlightSkins =>
+      'Zusätzliche Designs sind in Standard enthalten.';
 
   @override
   String get helpTitle => 'Hilfe';
@@ -1119,7 +1124,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad ist unter einem EULA lizenziert, nicht unter einer Open-Source-Lizenz. Grundlegende Bearbeitung und LAN-Synchronisierung sind kostenlos (bis zu $noteLimit Notizen und $peerLimit verbundene Peers). Netpad Pro ist eine einmalige Freischaltung über App Store, Google Play oder Microsoft Store.';
+    return 'SB Simple Netpad ist unter einem EULA lizenziert, nicht unter einer Open-Source-Lizenz. Grundlegende Bearbeitung und LAN-Synchronisierung sind kostenlos (bis zu $noteLimit Notizen und $peerLimit verbundene Peers). Netpad Standard ist eine einmalige Freischaltung über App Store, Google Play oder Microsoft Store.';
   }
 
   @override

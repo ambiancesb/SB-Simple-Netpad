@@ -1,7 +1,7 @@
 {
   "@@locale": "pt_BR",
   "commonAppName": "SB Simple Netpad",
-  "commonProName": "Netpad Pro",
+  "commonStandardName": "Netpad Standard",
   "commonCancel": "Cancelar",
   "commonClose": "Fechar",
   "commonSave": "Salvar",
@@ -430,21 +430,21 @@
   "settingsSkinForest": "Floresta",
   "settingsSkinSunset": "Pôr do sol",
   "settingsSkinSlate": "Ardósia",
-  "settingsSkinProLabel": "{skin} · Pro",
-  "@settingsSkinProLabel": {
+  "settingsSkinStandardLabel": "{skin} · Standard",
+  "@settingsSkinStandardLabel": {
     "placeholders": {
       "skin": {"type": "String"}
     }
   },
-  "settingsProSection": "Netpad Pro",
-  "settingsProUnlocked": "Pro desbloqueado",
+  "settingsStandardSection": "Netpad Standard",
+  "settingsStandardUnlocked": "Standard desbloqueado",
   "settingsFree": "Grátis",
-  "settingsProUnlockedSubtitle": "Notas e pares ilimitados, visuais, histórico, sincronização automática e voz",
-  "settingsProBuySubtitle": "Desbloqueio único pela sua loja de aplicativos",
+  "settingsStandardUnlockedSubtitle": "Notas e pares ilimitados, visuais, histórico, sincronização automática e voz",
+  "settingsStandardBuySubtitle": "Desbloqueio único pela sua loja de aplicativos",
   "settingsPurchasesUnavailable": "Compras indisponíveis nesta plataforma",
   "settingsRestorePurchases": "Restaurar compras",
-  "settingsProRestored": "Pro restaurado",
-  "settingsNoPreviousPro": "Nenhuma compra anterior de Pro encontrada",
+  "settingsStandardRestored": "Standard restaurado",
+  "settingsNoPreviousStandard": "Nenhuma compra anterior de Standard encontrada",
   "settingsEditorSection": "Editor",
   "settingsWordWrap": "Quebra de linha",
   "settingsWordWrapSubtitle": "Quebrar linhas longas em vez de rolar horizontalmente",
@@ -455,7 +455,7 @@
     }
   },
   "settingsLegalSection": "Legal",
-  "settingsEulaSubtitlePro": "Pro · Abre EULA no GitHub Pages",
+  "settingsEulaSubtitleStandard": "Standard · Abre EULA no GitHub Pages",
   "settingsEulaSubtitleFree": "Grátis · Abre EULA no GitHub Pages",
   "settingsPrivacySubtitle": "Abre página de privacidade no GitHub Pages",
   "settingsDisclaimerTitle": "Isenção de responsabilidade e responsabilidade civil",
@@ -469,7 +469,7 @@
   "settingsNoLegalAdviceP2": "Se você precisar de orientação jurídica para seu caso de uso, consulte um profissional qualificado.",
   "settingsCopyright": "© 2026 Spencer Beaumier",
 
-  "paywallTitle": "Desbloquear Netpad Pro",
+  "paywallTitle": "Desbloquear Netpad Standard",
   "paywallSubtitle": "Compra única. Edição básica e sincronização LAN permanecem gratuitas.",
   "paywallBenefitUnlimitedNotes": "Notas ilimitadas",
   "paywallBenefitUnlimitedPeers": "Pares conectados ilimitados",
@@ -477,10 +477,10 @@
   "paywallBenefitHistory": "Histórico de versões",
   "paywallBenefitAutoSync": "Sincronização automática com pares confiáveis",
   "paywallBenefitVoice": "Ditado por voz",
-  "paywallPurchasesUnsupported": "Compras no aplicativo não estão disponíveis nesta plataforma. Instale da App Store, Google Play ou Microsoft Store para desbloquear o Pro.",
-  "paywallBuyPro": "Comprar Pro",
-  "paywallBuyProPrice": "Comprar Pro · {price}",
-  "@paywallBuyProPrice": {
+  "paywallPurchasesUnsupported": "Compras no aplicativo não estão disponíveis nesta plataforma. Instale da App Store, Google Play ou Microsoft Store para desbloquear o Standard.",
+  "paywallBuyStandard": "Comprar Standard",
+  "paywallBuyStandardPrice": "Comprar Standard · {price}",
+  "@paywallBuyStandardPrice": {
     "placeholders": {
       "price": {"type": "String"}
     }
@@ -488,25 +488,25 @@
   "paywallRestorePurchases": "Restaurar compras",
   "paywallPurchaseNotCompleted": "A compra não foi concluída.",
   "paywallPurchaseFailed": "A compra falhou.",
-  "paywallProRestored": "Pro restaurado",
-  "paywallNoPreviousPro": "Nenhuma compra anterior de Pro encontrada",
+  "paywallStandardRestored": "Standard restaurado",
+  "paywallNoPreviousStandard": "Nenhuma compra anterior de Standard encontrada",
 
-  "proHighlightNoteLimit": "A versão gratuita inclui até {limit} notas. Desbloqueie o Pro para notas ilimitadas.",
-  "@proHighlightNoteLimit": {
+  "standardHighlightNoteLimit": "A versão gratuita inclui até {limit} notas. Desbloqueie o Standard para notas ilimitadas.",
+  "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightPeerLimit": "A versão gratuita inclui até {limit} pares conectados. Desbloqueie o Pro para pares ilimitados.",
-  "@proHighlightPeerLimit": {
+  "standardHighlightPeerLimit": "A versão gratuita inclui até {limit} pares conectados. Desbloqueie o Standard para pares ilimitados.",
+  "@standardHighlightPeerLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightVersionHistory": "O histórico de versões é um recurso Pro.",
-  "proHighlightVoice": "O ditado por voz é um recurso Pro.",
-  "proHighlightAutoSync": "A sincronização automática com pares confiáveis é um recurso Pro.",
-  "proHighlightSkins": "Visuais extras estão incluídos no Pro.",
+  "standardHighlightVersionHistory": "O histórico de versões é um recurso Standard.",
+  "standardHighlightVoice": "O ditado por voz é um recurso Standard.",
+  "standardHighlightAutoSync": "A sincronização automática com pares confiáveis é um recurso Standard.",
+  "standardHighlightSkins": "Visuais extras estão incluídos no Standard.",
 
   "helpTitle": "Ajuda",
   "helpIntro": "Um bloco de notas LAN para notas em texto simples. Dispositivos na mesma rede Wi‑Fi se descobrem, emparelham uma vez e sincronizam notas em tempo real.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "Beta — adequado para uso LAN diário.",
   "aboutEulaHeading": "Contrato de Licença do Usuário Final",
-  "aboutEulaBody": "SB Simple Netpad é licenciado sob um EULA, não uma licença de código aberto. A edição básica e a sincronização LAN são gratuitas (até {noteLimit} notas e {peerLimit} pares conectados). Netpad Pro é um desbloqueio único via App Store, Google Play ou Microsoft Store.",
+  "aboutEulaBody": "SB Simple Netpad é licenciado sob um EULA, não uma licença de código aberto. A edição básica e a sincronização LAN são gratuitas (até {noteLimit} notas e {peerLimit} pares conectados). Netpad Standard é um desbloqueio único via App Store, Google Play ou Microsoft Store.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

@@ -1,7 +1,7 @@
 {
   "@@locale": "zh",
   "commonAppName": "SB Simple Netpad",
-  "commonProName": "Netpad Pro",
+  "commonStandardName": "Netpad Standard",
   "commonCancel": "取消",
   "commonClose": "关闭",
   "commonSave": "保存",
@@ -430,21 +430,21 @@
   "settingsSkinForest": "森林",
   "settingsSkinSunset": "日落",
   "settingsSkinSlate": "石板",
-  "settingsSkinProLabel": "{skin} · Pro",
-  "@settingsSkinProLabel": {
+  "settingsSkinStandardLabel": "{skin} · Standard",
+  "@settingsSkinStandardLabel": {
     "placeholders": {
       "skin": {"type": "String"}
     }
   },
-  "settingsProSection": "Netpad Pro",
-  "settingsProUnlocked": "Pro 已解锁",
+  "settingsStandardSection": "Netpad Standard",
+  "settingsStandardUnlocked": "Standard 已解锁",
   "settingsFree": "免费",
-  "settingsProUnlockedSubtitle": "无限笔记和节点、皮肤、历史、自动同步和语音",
-  "settingsProBuySubtitle": "通过您的应用商店一次性解锁",
+  "settingsStandardUnlockedSubtitle": "无限笔记和节点、皮肤、历史、自动同步和语音",
+  "settingsStandardBuySubtitle": "通过您的应用商店一次性解锁",
   "settingsPurchasesUnavailable": "此平台上购买不可用",
   "settingsRestorePurchases": "恢复购买",
-  "settingsProRestored": "Pro 已恢复",
-  "settingsNoPreviousPro": "未找到之前的 Pro 购买记录",
+  "settingsStandardRestored": "Standard 已恢复",
+  "settingsNoPreviousStandard": "未找到之前的 Standard 购买记录",
   "settingsEditorSection": "编辑器",
   "settingsWordWrap": "自动换行",
   "settingsWordWrapSubtitle": "换行长行而不是水平滚动",
@@ -455,7 +455,7 @@
     }
   },
   "settingsLegalSection": "法律",
-  "settingsEulaSubtitlePro": "Pro · 在 GitHub Pages 上打开 EULA",
+  "settingsEulaSubtitleStandard": "Standard · 在 GitHub Pages 上打开 EULA",
   "settingsEulaSubtitleFree": "免费 · 在 GitHub Pages 上打开 EULA",
   "settingsPrivacySubtitle": "在 GitHub Pages 上打开隐私页面",
   "settingsDisclaimerTitle": "免责声明和责任",
@@ -469,7 +469,7 @@
   "settingsNoLegalAdviceP2": "如果您需要针对使用情况的法律指导，请咨询合格的专业人士。",
   "settingsCopyright": "© 2026 Spencer Beaumier",
 
-  "paywallTitle": "解锁 Netpad Pro",
+  "paywallTitle": "解锁 Netpad Standard",
   "paywallSubtitle": "一次性购买。核心编辑和 LAN 同步保持免费。",
   "paywallBenefitUnlimitedNotes": "无限笔记",
   "paywallBenefitUnlimitedPeers": "无限连接节点",
@@ -477,10 +477,10 @@
   "paywallBenefitHistory": "版本历史",
   "paywallBenefitAutoSync": "受信任节点自动同步",
   "paywallBenefitVoice": "语音听写",
-  "paywallPurchasesUnsupported": "此平台上无法进行应用内购买。请从 App Store、Google Play 或 Microsoft Store 安装以解锁 Pro。",
-  "paywallBuyPro": "购买 Pro",
-  "paywallBuyProPrice": "购买 Pro · {price}",
-  "@paywallBuyProPrice": {
+  "paywallPurchasesUnsupported": "此平台上无法进行应用内购买。请从 App Store、Google Play 或 Microsoft Store 安装以解锁 Standard。",
+  "paywallBuyStandard": "购买 Standard",
+  "paywallBuyStandardPrice": "购买 Standard · {price}",
+  "@paywallBuyStandardPrice": {
     "placeholders": {
       "price": {"type": "String"}
     }
@@ -488,25 +488,25 @@
   "paywallRestorePurchases": "恢复购买",
   "paywallPurchaseNotCompleted": "购买未完成。",
   "paywallPurchaseFailed": "购买失败。",
-  "paywallProRestored": "Pro 已恢复",
-  "paywallNoPreviousPro": "未找到之前的 Pro 购买记录",
+  "paywallStandardRestored": "Standard 已恢复",
+  "paywallNoPreviousStandard": "未找到之前的 Standard 购买记录",
 
-  "proHighlightNoteLimit": "免费版最多包含 {limit} 条笔记。解锁 Pro 获得无限笔记。",
-  "@proHighlightNoteLimit": {
+  "standardHighlightNoteLimit": "免费版最多包含 {limit} 条笔记。解锁 Standard 获得无限笔记。",
+  "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightPeerLimit": "免费版最多包含 {limit} 个连接节点。解锁 Pro 获得无限节点。",
-  "@proHighlightPeerLimit": {
+  "standardHighlightPeerLimit": "免费版最多包含 {limit} 个连接节点。解锁 Standard 获得无限节点。",
+  "@standardHighlightPeerLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightVersionHistory": "版本历史是 Pro 功能。",
-  "proHighlightVoice": "语音听写是 Pro 功能。",
-  "proHighlightAutoSync": "受信任节点自动同步是 Pro 功能。",
-  "proHighlightSkins": "额外皮肤包含在 Pro 中。",
+  "standardHighlightVersionHistory": "版本历史是 Standard 功能。",
+  "standardHighlightVoice": "语音听写是 Standard 功能。",
+  "standardHighlightAutoSync": "受信任节点自动同步是 Standard 功能。",
+  "standardHighlightSkins": "额外皮肤包含在 Standard 中。",
 
   "helpTitle": "帮助",
   "helpIntro": "用于纯文本笔记的 LAN 记事本。同一 Wi‑Fi 上的设备相互发现，配对一次，然后实时同步笔记。",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "测试版 — 适合日常 LAN 使用。",
   "aboutEulaHeading": "最终用户许可协议",
-  "aboutEulaBody": "SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（最多 {noteLimit} 条笔记和 {peerLimit} 个连接节点）。Netpad Pro 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。",
+  "aboutEulaBody": "SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（最多 {noteLimit} 条笔记和 {peerLimit} 个连接节点）。Netpad Standard 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

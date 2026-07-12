@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:netpad/core/models/pair_request.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
-import 'package:netpad/features/entitlements/pro_gate.dart';
+import 'package:netpad/features/entitlements/standard_gate.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +73,7 @@ class PairingRequestDialog extends StatelessWidget {
         FilledButton(
           onPressed: () async {
             final sync = context.read<SyncRepository>();
-            final allowed = await ProGate.connectPeerAllowed(
+            final allowed = await StandardGate.connectPeerAllowed(
               context,
               currentConnectedCount: sync.authenticatedPeerCount,
             );

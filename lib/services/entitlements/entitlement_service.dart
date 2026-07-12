@@ -7,8 +7,7 @@ import 'package:netpad/services/entitlements/revenue_cat_backend.dart';
 import 'package:netpad/services/entitlements/windows_store_backend.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-/// App-wide Pro entitlement state backed by the active store.
+/// App-wide Standard entitlement state backed by the active store.
 class EntitlementService extends ChangeNotifier {
   EntitlementService({
     required SharedPreferences prefs,
@@ -16,26 +15,28 @@ class EntitlementService extends ChangeNotifier {
   }) : _prefs = prefs,
        _backend = backend ?? createDefaultBackend();
 
-  static const _cacheKey = 'entitlement_is_pro';
-  static const _debugForceProKey = 'entitlement_debug_force_pro';
+  static const _cacheKey = 'entitlement_is_standard';
+  static const _legacyCacheKey = 'entitlement_is_pro';
+  static const _debugForceStandardKey = 'entitlement_debug_force_standard';
+  static const _legacyDebugForceKey = 'entitlement_debug_force_pro';
 
   final SharedPreferences _prefs;
   final EntitlementBackend _backend;
 
-  bool _isPro = false;
-  bool _debugForcePro = false;
+  bool _isStandard = false;
+  bool _debugForceStandard = false;
   bool _loading = true;
   String? _priceString;
   String? _lastError;
 
-  bool get isPro => _debugForcePro || _isPro;
+  bool get isStandard => _debugForceStandard || _isStandard;
   bool get loading => _loading;
   bool get purchasesSupported => _backend.purchasesSupported;
   String? get priceString => _priceString;
   String? get lastError => _lastError;
 
   /// Debug-only unlock persisted for local testing. Always false in release.
-  bool get debugForcePro => kDebugMode && _debugForcePro;
+  bool get debugForceStandard => kDebugMode && _debugForceStandard;
 
   /// Factory used by [main] and tests.
   static EntitlementBackend createDefaultBackend({
@@ -45,10 +46,12 @@ class EntitlementService extends ChangeNotifier {
     String googleApiKey = const String.fromEnvironment(
       'REVENUECAT_GOOGLE_API_KEY',
     ),
-    bool forcePro = const bool.fromEnvironment('NETPAD_PRO_OVERRIDE'),
+    bool forceStandard =
+        const bool.fromEnvironment('NETPAD_STANDARD_OVERRIDE') ||
+        const bool.fromEnvironment('NETPAD_PRO_OVERRIDE'),
   }) {
-    if (forcePro) {
-      return FreeBackend(forcePro: true);
+    if (forceStandard) {
+      return FreeBackend(forceStandard: true);
     }
     if (kIsWeb) {
       return FreeBackend();
@@ -66,15 +69,20 @@ class EntitlementService extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
-    _isPro = _prefs.getBool(_cacheKey) ?? false;
+    _isStandard = _prefs.getBool(_cacheKey) ??
+        _prefs.getBool(_legacyCacheKey) ??
+        false;
     if (kDebugMode) {
-      _debugForcePro = _prefs.getBool(_debugForceProKey) ?? false;
+      _debugForceStandard = _prefs.getBool(_debugForceStandardKey) ??
+          _prefs.getBool(_legacyDebugForceKey) ??
+          false;
     }
     _loading = true;
     notifyListeners();
     try {
-      _isPro = await _backend.refreshIsPro();
-      await _prefs.setBool(_cacheKey, _isPro);
+      _isStandard = await _backend.refreshIsStandard();
+      await _prefs.setBool(_cacheKey, _isStandard);
+      await _prefs.remove(_legacyCacheKey);
       if (_backend.purchasesSupported) {
         _priceString = await _backend.loadPriceString();
       }
@@ -87,24 +95,26 @@ class EntitlementService extends ChangeNotifier {
     }
   }
 
-  /// Debug builds only: force Pro without talking to a store.
-  Future<void> setDebugForcePro(bool enabled) async {
+  /// Debug builds only: force Standard without talking to a store.
+  Future<void> setDebugForceStandard(bool enabled) async {
     if (!kDebugMode) return;
-    _debugForcePro = enabled;
-    await _prefs.setBool(_debugForceProKey, enabled);
+    _debugForceStandard = enabled;
+    await _prefs.setBool(_debugForceStandardKey, enabled);
+    await _prefs.remove(_legacyDebugForceKey);
     notifyListeners();
   }
 
-  Future<bool> purchasePro() async {
+  Future<bool> purchaseStandard() async {
     _lastError = null;
     notifyListeners();
     try {
-      final unlocked = await _backend.purchasePro();
-      _isPro = unlocked || await _backend.refreshIsPro();
-      await _prefs.setBool(_cacheKey, _isPro);
+      final unlocked = await _backend.purchaseStandard();
+      _isStandard = unlocked || await _backend.refreshIsStandard();
+      await _prefs.setBool(_cacheKey, _isStandard);
+      await _prefs.remove(_legacyCacheKey);
       _priceString ??= await _backend.loadPriceString();
       notifyListeners();
-      return _isPro;
+      return _isStandard;
     } catch (e) {
       _lastError = e.toString();
       notifyListeners();
@@ -116,10 +126,11 @@ class EntitlementService extends ChangeNotifier {
     _lastError = null;
     notifyListeners();
     try {
-      _isPro = await _backend.restorePurchases();
-      await _prefs.setBool(_cacheKey, _isPro);
+      _isStandard = await _backend.restorePurchases();
+      await _prefs.setBool(_cacheKey, _isStandard);
+      await _prefs.remove(_legacyCacheKey);
       notifyListeners();
-      return _isPro;
+      return _isStandard;
     } catch (e) {
       _lastError = e.toString();
       notifyListeners();

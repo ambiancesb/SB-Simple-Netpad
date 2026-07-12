@@ -55,7 +55,7 @@ Future<void> main() async {
     connectionLog: connectionLog,
     trustStore: trustStore,
     tlsIdentity: tlsIdentity,
-    isPro: () => entitlements.isPro,
+    isStandard: () => entitlements.isStandard,
   );
 
   workspace.onDocUpdate = sync.broadcastDocUpdate;
@@ -70,7 +70,7 @@ Future<void> main() async {
     discovery: discovery,
     connectionLog: connectionLog,
     trustStore: trustStore,
-    isPro: () => entitlements.isPro,
+    isStandard: () => entitlements.isStandard,
   );
 
   await AndroidNetworking.initialize(discovery);

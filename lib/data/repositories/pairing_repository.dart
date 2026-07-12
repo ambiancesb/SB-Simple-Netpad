@@ -19,11 +19,11 @@ class PairingRepository extends ChangeNotifier {
     required DiscoveryRepository discovery,
     required ConnectionLogRepository connectionLog,
     required TrustStore trustStore,
-    bool Function()? isPro,
+    bool Function()? isStandard,
   }) : _sync = sync,
        _discovery = discovery,
        _trustStore = trustStore,
-       _isPro = isPro ?? (() => false) {
+       _isStandard = isStandard ?? (() => false) {
     _connectionLog = connectionLog;
     _sync.onIncomingPairRequest = _onIncomingPairRequest;
     _sync.onPairRequestResolved = _onPairRequestResolved;
@@ -32,7 +32,7 @@ class PairingRepository extends ChangeNotifier {
   final SyncRepository _sync;
   final DiscoveryRepository _discovery;
   final TrustStore _trustStore;
-  final bool Function() _isPro;
+  final bool Function() _isStandard;
   late final ConnectionLogRepository _connectionLog;
 
   final List<PairRequest> _pendingIncoming = [];
@@ -56,7 +56,7 @@ class PairingRepository extends ChangeNotifier {
     required bool autoSyncEnabled,
   }) {
     if (connected) return 'Connected';
-    if (!_isPro() || !autoSyncEnabled) return 'Manual only';
+    if (!_isStandard() || !autoSyncEnabled) return 'Manual only';
     if (_reconnectInFlight.contains(peerId)) return 'Reconnecting…';
     final backoff = _reconnectBackoffUntil[peerId];
     if (backoff != null && backoff.isAfter(DateTime.now())) {
@@ -111,7 +111,7 @@ class PairingRepository extends ChangeNotifier {
     final now = DateTime.now();
     final targets = <Peer>[];
     for (final peer in _discovery.discoveredPeers) {
-      if (!_isPro()) continue;
+      if (!_isStandard()) continue;
       if (!_trustStore.canAutoSync(peer.id)) continue;
       if (_sync.isPeerAuthenticated(peer.id)) continue;
       if (peer.connectionState == PeerConnectionState.connected) continue;

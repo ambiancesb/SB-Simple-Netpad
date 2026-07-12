@@ -15,8 +15,9 @@ class WindowsStoreBackend implements EntitlementBackend {
   bool get purchasesSupported => true;
 
   @override
-  Future<bool> refreshIsPro() async {
+  Future<bool> refreshIsStandard() async {
     try {
+      // Native method name is legacy; product id remains netpad_pro.
       final result = await _channel.invokeMethod<bool>('isPro');
       return result ?? false;
     } on MissingPluginException {
@@ -38,7 +39,7 @@ class WindowsStoreBackend implements EntitlementBackend {
   }
 
   @override
-  Future<bool> purchasePro() async {
+  Future<bool> purchaseStandard() async {
     try {
       final result = await _channel.invokeMethod<bool>('purchase');
       return result ?? false;
@@ -51,5 +52,5 @@ class WindowsStoreBackend implements EntitlementBackend {
   }
 
   @override
-  Future<bool> restorePurchases() => refreshIsPro();
+  Future<bool> restorePurchases() => refreshIsStandard();
 }

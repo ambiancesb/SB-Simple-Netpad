@@ -3,7 +3,7 @@ import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:provider/provider.dart';
 
-/// Shows the one-time Pro paywall. Returns true if Pro was unlocked.
+/// Shows the one-time Standard paywall. Returns true if Standard was unlocked.
 Future<bool> showPaywallSheet(
   BuildContext context, {
   String? highlight,
@@ -32,7 +32,7 @@ class _PaywallSheetState extends State<_PaywallSheet> {
   Future<void> _buy() async {
     final entitlements = context.read<EntitlementService>();
     setState(() => _busy = true);
-    final ok = await entitlements.purchasePro();
+    final ok = await entitlements.purchaseStandard();
     if (!mounted) return;
     setState(() => _busy = false);
     if (ok) {
@@ -54,12 +54,12 @@ class _PaywallSheetState extends State<_PaywallSheet> {
     if (ok) {
       Navigator.of(context).pop(true);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.paywallProRestored)),
+        SnackBar(content: Text(context.l10n.paywallStandardRestored)),
       );
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.paywallNoPreviousPro)),
+      SnackBar(content: Text(context.l10n.paywallNoPreviousStandard)),
     );
   }
 
@@ -131,8 +131,8 @@ class _PaywallSheetState extends State<_PaywallSheet> {
                       )
                     : Text(
                         price == null
-                            ? l10n.paywallBuyPro
-                            : l10n.paywallBuyProPrice(price),
+                            ? l10n.paywallBuyStandard
+                            : l10n.paywallBuyStandardPrice(price),
                       ),
               ),
               const SizedBox(height: 8),

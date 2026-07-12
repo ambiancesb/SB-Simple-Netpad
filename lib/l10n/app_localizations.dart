@@ -121,11 +121,11 @@ abstract class AppLocalizations {
   /// **'SB Simple Netpad'**
   String get commonAppName;
 
-  /// No description provided for @commonProName.
+  /// No description provided for @commonStandardName.
   ///
   /// In en, this message translates to:
-  /// **'Netpad Pro'**
-  String get commonProName;
+  /// **'Netpad Standard'**
+  String get commonStandardName;
 
   /// No description provided for @commonCancel.
   ///
@@ -1399,23 +1399,23 @@ abstract class AppLocalizations {
   /// **'Slate'**
   String get settingsSkinSlate;
 
-  /// No description provided for @settingsSkinProLabel.
+  /// No description provided for @settingsSkinStandardLabel.
   ///
   /// In en, this message translates to:
-  /// **'{skin} · Pro'**
-  String settingsSkinProLabel(String skin);
+  /// **'{skin} · Standard'**
+  String settingsSkinStandardLabel(String skin);
 
-  /// No description provided for @settingsProSection.
+  /// No description provided for @settingsStandardSection.
   ///
   /// In en, this message translates to:
-  /// **'Netpad Pro'**
-  String get settingsProSection;
+  /// **'Netpad Standard'**
+  String get settingsStandardSection;
 
-  /// No description provided for @settingsProUnlocked.
+  /// No description provided for @settingsStandardUnlocked.
   ///
   /// In en, this message translates to:
-  /// **'Pro unlocked'**
-  String get settingsProUnlocked;
+  /// **'Standard unlocked'**
+  String get settingsStandardUnlocked;
 
   /// No description provided for @settingsFree.
   ///
@@ -1423,17 +1423,17 @@ abstract class AppLocalizations {
   /// **'Free'**
   String get settingsFree;
 
-  /// No description provided for @settingsProUnlockedSubtitle.
+  /// No description provided for @settingsStandardUnlockedSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Unlimited notes and peers, skins, history, auto-sync, and voice'**
-  String get settingsProUnlockedSubtitle;
+  String get settingsStandardUnlockedSubtitle;
 
-  /// No description provided for @settingsProBuySubtitle.
+  /// No description provided for @settingsStandardBuySubtitle.
   ///
   /// In en, this message translates to:
   /// **'One-time unlock via your app store'**
-  String get settingsProBuySubtitle;
+  String get settingsStandardBuySubtitle;
 
   /// No description provided for @settingsPurchasesUnavailable.
   ///
@@ -1447,17 +1447,17 @@ abstract class AppLocalizations {
   /// **'Restore purchases'**
   String get settingsRestorePurchases;
 
-  /// No description provided for @settingsProRestored.
+  /// No description provided for @settingsStandardRestored.
   ///
   /// In en, this message translates to:
-  /// **'Pro restored'**
-  String get settingsProRestored;
+  /// **'Standard restored'**
+  String get settingsStandardRestored;
 
-  /// No description provided for @settingsNoPreviousPro.
+  /// No description provided for @settingsNoPreviousStandard.
   ///
   /// In en, this message translates to:
-  /// **'No previous Pro purchase found'**
-  String get settingsNoPreviousPro;
+  /// **'No previous Standard purchase found'**
+  String get settingsNoPreviousStandard;
 
   /// No description provided for @settingsEditorSection.
   ///
@@ -1489,11 +1489,11 @@ abstract class AppLocalizations {
   /// **'Legal'**
   String get settingsLegalSection;
 
-  /// No description provided for @settingsEulaSubtitlePro.
+  /// No description provided for @settingsEulaSubtitleStandard.
   ///
   /// In en, this message translates to:
-  /// **'Pro · Opens EULA on GitHub Pages'**
-  String get settingsEulaSubtitlePro;
+  /// **'Standard · Opens EULA on GitHub Pages'**
+  String get settingsEulaSubtitleStandard;
 
   /// No description provided for @settingsEulaSubtitleFree.
   ///
@@ -1570,7 +1570,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unlock Netpad Pro'**
+  /// **'Unlock Netpad Standard'**
   String get paywallTitle;
 
   /// No description provided for @paywallSubtitle.
@@ -1618,20 +1618,20 @@ abstract class AppLocalizations {
   /// No description provided for @paywallPurchasesUnsupported.
   ///
   /// In en, this message translates to:
-  /// **'In-app purchases are not available on this platform. Install from the App Store, Google Play, or Microsoft Store to unlock Pro.'**
+  /// **'In-app purchases are not available on this platform. Install from the App Store, Google Play, or Microsoft Store to unlock Standard.'**
   String get paywallPurchasesUnsupported;
 
-  /// No description provided for @paywallBuyPro.
+  /// No description provided for @paywallBuyStandard.
   ///
   /// In en, this message translates to:
-  /// **'Buy Pro'**
-  String get paywallBuyPro;
+  /// **'Buy Standard'**
+  String get paywallBuyStandard;
 
-  /// No description provided for @paywallBuyProPrice.
+  /// No description provided for @paywallBuyStandardPrice.
   ///
   /// In en, this message translates to:
-  /// **'Buy Pro · {price}'**
-  String paywallBuyProPrice(String price);
+  /// **'Buy Standard · {price}'**
+  String paywallBuyStandardPrice(String price);
 
   /// No description provided for @paywallRestorePurchases.
   ///
@@ -1651,53 +1651,53 @@ abstract class AppLocalizations {
   /// **'Purchase failed.'**
   String get paywallPurchaseFailed;
 
-  /// No description provided for @paywallProRestored.
+  /// No description provided for @paywallStandardRestored.
   ///
   /// In en, this message translates to:
-  /// **'Pro restored'**
-  String get paywallProRestored;
+  /// **'Standard restored'**
+  String get paywallStandardRestored;
 
-  /// No description provided for @paywallNoPreviousPro.
+  /// No description provided for @paywallNoPreviousStandard.
   ///
   /// In en, this message translates to:
-  /// **'No previous Pro purchase found'**
-  String get paywallNoPreviousPro;
+  /// **'No previous Standard purchase found'**
+  String get paywallNoPreviousStandard;
 
-  /// No description provided for @proHighlightNoteLimit.
+  /// No description provided for @standardHighlightNoteLimit.
   ///
   /// In en, this message translates to:
-  /// **'Free includes up to {limit} notes. Unlock Pro for unlimited notes.'**
-  String proHighlightNoteLimit(int limit);
+  /// **'Free includes up to {limit} notes. Unlock Standard for unlimited notes.'**
+  String standardHighlightNoteLimit(int limit);
 
-  /// No description provided for @proHighlightPeerLimit.
+  /// No description provided for @standardHighlightPeerLimit.
   ///
   /// In en, this message translates to:
-  /// **'Free includes up to {limit} connected peers. Unlock Pro for unlimited peers.'**
-  String proHighlightPeerLimit(int limit);
+  /// **'Free includes up to {limit} connected peers. Unlock Standard for unlimited peers.'**
+  String standardHighlightPeerLimit(int limit);
 
-  /// No description provided for @proHighlightVersionHistory.
+  /// No description provided for @standardHighlightVersionHistory.
   ///
   /// In en, this message translates to:
-  /// **'Version history is a Pro feature.'**
-  String get proHighlightVersionHistory;
+  /// **'Version history is a Standard feature.'**
+  String get standardHighlightVersionHistory;
 
-  /// No description provided for @proHighlightVoice.
+  /// No description provided for @standardHighlightVoice.
   ///
   /// In en, this message translates to:
-  /// **'Voice dictation is a Pro feature.'**
-  String get proHighlightVoice;
+  /// **'Voice dictation is a Standard feature.'**
+  String get standardHighlightVoice;
 
-  /// No description provided for @proHighlightAutoSync.
+  /// No description provided for @standardHighlightAutoSync.
   ///
   /// In en, this message translates to:
-  /// **'Trusted peer auto-sync is a Pro feature.'**
-  String get proHighlightAutoSync;
+  /// **'Trusted peer auto-sync is a Standard feature.'**
+  String get standardHighlightAutoSync;
 
-  /// No description provided for @proHighlightSkins.
+  /// No description provided for @standardHighlightSkins.
   ///
   /// In en, this message translates to:
-  /// **'Extra skins are included with Pro.'**
-  String get proHighlightSkins;
+  /// **'Extra skins are included with Standard.'**
+  String get standardHighlightSkins;
 
   /// No description provided for @helpTitle.
   ///
@@ -2026,7 +2026,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutEulaBody.
   ///
   /// In en, this message translates to:
-  /// **'SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (up to {noteLimit} notes and {peerLimit} connected peers). Netpad Pro is a one-time unlock via the App Store, Google Play, or Microsoft Store.'**
+  /// **'SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (up to {noteLimit} notes and {peerLimit} connected peers). Netpad Standard is a one-time unlock via the App Store, Google Play, or Microsoft Store.'**
   String aboutEulaBody(int noteLimit, int peerLimit);
 
   /// No description provided for @aboutViewEula.

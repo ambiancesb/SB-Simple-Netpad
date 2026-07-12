@@ -1,13 +1,13 @@
 # Store freemium setup
 
-One Flutter binary unlocks **Netpad Pro** (`pro` entitlement) via a one-time product id `netpad_pro`.
+One Flutter binary unlocks **Netpad Standard** via a one-time product id `netpad_pro` and RevenueCat entitlement `pro` (legacy store IDs — display name is Standard).
 
 App package / bundle id (all store platforms): **`com.spencerbeaumier.sbnetpad`**
 
 Free tier caps (enforced in app):
 
-| Cap | Free | Pro |
-|-----|------|-----|
+| Cap | Free | Standard |
+|-----|------|----------|
 | Local note creation | **3** notes | Unlimited |
 | Simultaneous connected peers | **3** peers | Unlimited |
 
@@ -21,12 +21,12 @@ Synced notes received from peers may push the note count above 3 on free; the ca
 | Google Play | `netpad_pro` | One-time / managed product |
 | Microsoft Store | `netpad_pro` | Durable add-on |
 
-Use the **same** product id on every store so RevenueCat / in-app copy stay aligned.
+Use the **same** product id on every store so RevenueCat / in-app copy stay aligned. The SKU id is legacy; store listing titles can say “Netpad Standard”.
 
-## Free vs Pro (shipping matrix)
+## Free vs Standard (shipping matrix)
 
-| Free | Pro |
-|------|-----|
+| Free | Standard |
+|------|----------|
 | Editing, discovery, pairing, sync | Unlimited notes (free create capped at 3) |
 | Up to 3 connected peers | Unlimited connected peers |
 | Default skin + light/dark | Extra skins |
@@ -37,8 +37,8 @@ Use the **same** product id on every store so RevenueCat / in-app copy stay alig
 ## RevenueCat (Apple + Google)
 
 1. Create a RevenueCat project and apps for iOS, Android, and macOS.
-2. Create entitlement **`pro`** and attach each store product to it.
-3. Create offering **`default`** containing the Pro package (this is what the SDK looks up).
+2. Create entitlement **`pro`** (legacy id for the Standard unlock) and attach each store product to it.
+3. Create offering **`default`** containing the Standard package (this is what the SDK looks up).
 4. Pass public SDK keys at build time (never commit them):
 
 ```bash
@@ -76,11 +76,11 @@ Release signing uses `android/key.properties` + `android/upload-keystore.jks` (b
 3. In RevenueCat: upload the Play service account JSON with billing permission.
 4. Map product `netpad_pro` → entitlement `pro` → offering `default`.
 
-Until products are **approved / active** in the store and linked in RevenueCat, the paywall shows a generic “Buy Pro” label (no localized price) or purchase fails.
+Until products are **approved / active** in the store and linked in RevenueCat, the paywall shows a generic “Buy Standard” label (no localized price) or purchase fails.
 
 ## Microsoft Store
 
-RevenueCat does not support Windows. Pro is checked through WinRT `StoreContext` (`windows/runner/store_plugin.cpp`).
+RevenueCat does not support Windows. Standard is checked through WinRT `StoreContext` (`windows/runner/store_plugin.cpp`).
 
 - Package the Windows build as **MSIX** with a Partner Center identity (sideload / Inno Setup builds cannot purchase).
 - Create durable add-on `netpad_pro` and publish it with the app.
@@ -92,12 +92,12 @@ Disclose freemium clearly in each store listing so review does not treat caps as
 
 Suggested short description snippet:
 
-> Free: up to 3 notes and 3 connected LAN peers. Unlock Netpad Pro once for unlimited notes and peers, skins, version history, trusted auto-sync, and voice dictation.
+> Free: up to 3 notes and 3 connected LAN peers. Unlock Netpad Standard once for unlimited notes and peers, skins, version history, trusted auto-sync, and voice dictation.
 
 Suggested “What’s New” / privacy / monetization notes:
 
 - Core editing and same-subnet LAN sync work without purchase.
-- Pro is a **one-time** unlock, not a subscription.
+- Standard is a **one-time** unlock, not a subscription.
 - Restore purchases is available in Settings and on the paywall.
 - Linux builds stay on the free tier (no store billing).
 
@@ -135,20 +135,20 @@ Push `docs/eula.html` to the branch that feeds GitHub Pages before submitting bu
 ## Debug override
 
 ```bash
-flutter run --dart-define=NETPAD_PRO_OVERRIDE=true
+flutter run --dart-define=NETPAD_STANDARD_OVERRIDE=true
 ```
 
-Forces Pro without talking to a store (useful for UI testing). In VS Code / Cursor, use the **SB Simple Netpad (Pro unlock)** launch config.
+Legacy alias `NETPAD_PRO_OVERRIDE=true` is still accepted. Forces Standard without talking to a store (useful for UI testing). In VS Code / Cursor, use the **SB Simple Netpad (Standard unlock)** launch config.
 
-In **debug builds only**, Settings also has **Unlock Pro (debug)** — a toggle that persists locally and is stripped from release.
+In **debug builds only**, Settings also has **Unlock Standard (debug)** — a toggle that persists locally and is stripped from release.
 
 ## Code touchpoints
 
 | Concern | Location |
 |---------|----------|
 | Cap values | `lib/services/entitlements/entitlement_constants.dart` |
-| Gate logic | `lib/services/entitlements/pro_features.dart` |
-| Paywall UI | `lib/features/entitlements/pro_gate.dart`, `paywall_sheet.dart` |
+| Gate logic | `lib/services/entitlements/standard_features.dart` |
+| Paywall UI | `lib/features/entitlements/standard_gate.dart`, `paywall_sheet.dart` |
 | Peer hard stop | `SyncRepository.connectAndRequestPair` / inbound accept |
 | Apple/Google billing | `revenue_cat_backend.dart` + `purchases_flutter` |
 | Windows billing | `windows_store_backend.dart` + `windows/runner/store_plugin.cpp` |

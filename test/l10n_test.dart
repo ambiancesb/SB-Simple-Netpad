@@ -27,6 +27,6 @@ void main() {
 
     final ja = await AppLocalizations.delegate.load(const Locale('ja'));
     expect(ja.commonConnect, isNot(equals('Connect')));
-    expect(ja.commonProName, 'Netpad Pro');
+    expect(ja.commonStandardName, 'Netpad Standard');
   });
 }

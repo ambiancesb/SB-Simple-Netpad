@@ -9,11 +9,11 @@ extension SyncRepositoryPairing on SyncRepository {
     if (existing?.authenticated == true) {
       throw StateError('Already connected to ${peer.displayName}.');
     }
-    if (!_isPro() &&
+    if (!_isStandard() &&
         authenticatedPeerCount >= EntitlementConstants.freePeerLimit) {
       throw StateError(
         'Free includes up to ${EntitlementConstants.freePeerLimit} connected '
-        'peers. Unlock Pro for unlimited peers.',
+        'peers. Unlock Standard for unlimited peers.',
       );
     }
     await LocalNetwork.refreshActiveSubnets();
@@ -105,7 +105,7 @@ extension SyncRepositoryPairing on SyncRepository {
     final connectionId = 'out_${peer.id}';
     _pendingOutboundRequestId[connectionId] = requestId;
 
-    final canAutoSync = _isPro() && _trustStore.canAutoSync(peer.id);
+    final canAutoSync = _isStandard() && _trustStore.canAutoSync(peer.id);
     final autoSyncToken =
         canAutoSync ? _trustStore.autoSyncToken(peer.id) : null;
     final trustedReconnect = shouldSendAutoSyncToken(
@@ -174,7 +174,7 @@ extension SyncRepositoryPairing on SyncRepository {
     required bool accepted,
   }) {
     if (accepted) {
-      if (!_isPro() &&
+      if (!_isStandard() &&
           authenticatedPeerCount >= EntitlementConstants.freePeerLimit) {
         _refuseInboundPairRequest(
           connectionId: connectionId,
@@ -331,7 +331,7 @@ extension SyncRepositoryPairing on SyncRepository {
       isBlocked: _trustStore.isBlocked(fromId),
       peerProtocol: peerProtocol,
       alreadyConnected: _linksByPeerId[fromId]?.authenticated == true,
-      canAutoSync: _isPro() && _trustStore.canAutoSync(fromId),
+      canAutoSync: _isStandard() && _trustStore.canAutoSync(fromId),
       storedToken: _trustStore.autoSyncToken(fromId),
       requestToken: pendingAutoSyncToken,
       pinnedFingerprint: _trustStore.pinnedFingerprint(fromId),

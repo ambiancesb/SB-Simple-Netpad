@@ -26,7 +26,7 @@ are granted by implication or otherwise.
 The Software uses a freemium model. Core editing and local-network sync are
 available without payment, subject to usage limits published in the product
 (currently up to three local notes and three simultaneous connected peers).
-“Netpad Pro” is an optional one-time in-app unlock offered through the Apple
+“Netpad Standard” is an optional one-time in-app unlock offered through the Apple
 App Store, Google Play, and/or Microsoft Store. Store purchases, billing,
 refunds, and account management are handled by the applicable store under
 that store’s terms. Linux builds may ship without in-app purchase support and
@@ -88,7 +88,7 @@ OR ANY LOSS OF DATA, PROFITS, OR BUSINESS, ARISING OUT OF OR RELATED TO THE
 SOFTWARE OR THIS AGREEMENT, WHETHER IN CONTRACT, TORT, OR OTHERWISE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. LICENSOR’S TOTAL LIABILITY FOR ANY
 CLAIM ARISING OUT OF THE SOFTWARE OR THIS AGREEMENT SHALL NOT EXCEED THE
-GREATER OF (A) THE AMOUNT YOU PAID LICENSOR FOR NETPAD PRO IN THE TWELVE (12)
+GREATER OF (A) THE AMOUNT YOU PAID LICENSOR FOR NETPAD STANDARD IN THE TWELVE (12)
 MONTHS BEFORE THE CLAIM OR (B) TEN U.S. DOLLARS (US $10). SOME JURISDICTIONS
 DO NOT ALLOW CERTAIN LIMITATIONS; IN THOSE CASES, LIABILITY IS LIMITED TO THE
 MAXIMUM EXTENT PERMITTED BY LAW.

@@ -7,7 +7,7 @@ import 'package:netpad/core/app_info.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/features/entitlements/paywall_sheet.dart';
-import 'package:netpad/features/entitlements/pro_gate.dart';
+import 'package:netpad/features/entitlements/standard_gate.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/app_preferences.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
@@ -275,11 +275,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _SkinChoiceChip(
                         skin: skin,
                         selected: prefs.skin == skin,
-                        locked: !entitlements.isPro &&
+                        locked: !entitlements.isStandard &&
                             skin != AppSkin.defaultBlue,
                         onSelected: () async {
                           final allowed =
-                              await ProGate.skinAllowed(context, skin);
+                              await StandardGate.skinAllowed(context, skin);
                           if (!allowed || !context.mounted) return;
                           await prefs.setSkin(skin);
                         },
@@ -288,23 +288,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const Divider(height: 32),
                 Text(
-                  l10n.settingsProSection,
+                  l10n.settingsStandardSection,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 8),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(
-                    entitlements.isPro ? l10n.settingsProUnlocked : l10n.settingsFree,
+                    entitlements.isStandard ? l10n.settingsStandardUnlocked : l10n.settingsFree,
                   ),
                   subtitle: Text(
-                    entitlements.isPro
-                        ? l10n.settingsProUnlockedSubtitle
+                    entitlements.isStandard
+                        ? l10n.settingsStandardUnlockedSubtitle
                         : entitlements.purchasesSupported
-                        ? l10n.settingsProBuySubtitle
+                        ? l10n.settingsStandardBuySubtitle
                         : l10n.settingsPurchasesUnavailable,
                   ),
-                  trailing: entitlements.isPro
+                  trailing: entitlements.isStandard
                       ? Icon(
                           Icons.verified,
                           color: Theme.of(context).colorScheme.primary,
@@ -312,11 +312,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       : entitlements.purchasesSupported
                       ? const Icon(Icons.chevron_right)
                       : null,
-                  onTap: entitlements.isPro || !entitlements.purchasesSupported
+                  onTap: entitlements.isStandard || !entitlements.purchasesSupported
                       ? null
                       : () => showPaywallSheet(context),
                 ),
-                if (!entitlements.isPro && entitlements.purchasesSupported)
+                if (!entitlements.isStandard && entitlements.purchasesSupported)
                   Align(
                     alignment: Alignment.centerLeft,
                     child: TextButton(
@@ -327,8 +327,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           SnackBar(
                             content: Text(
                               ok
-                                  ? context.l10n.settingsProRestored
-                                  : context.l10n.settingsNoPreviousPro,
+                                  ? context.l10n.settingsStandardRestored
+                                  : context.l10n.settingsNoPreviousStandard,
                             ),
                           ),
                         );
@@ -339,12 +339,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (kDebugMode) ...[
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('Unlock Pro (debug)'),
+                    title: const Text('Unlock Standard (debug)'),
                     subtitle: const Text(
-                      'Forces Netpad Pro for local testing. Not available in release builds.',
+                      'Forces Netpad Standard for local testing. Not available in release builds.',
                     ),
-                    value: entitlements.debugForcePro,
-                    onChanged: (value) => entitlements.setDebugForcePro(value),
+                    value: entitlements.debugForceStandard,
+                    onChanged: (value) => entitlements.setDebugForceStandard(value),
                   ),
                 ],
                 const Divider(height: 32),
@@ -386,8 +386,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   contentPadding: EdgeInsets.zero,
                   title: Text(l10n.commonEndUserLicenseAgreement),
                   subtitle: Text(
-                    entitlements.isPro
-                        ? l10n.settingsEulaSubtitlePro
+                    entitlements.isStandard
+                        ? l10n.settingsEulaSubtitleStandard
                         : l10n.settingsEulaSubtitleFree,
                   ),
                   trailing: const Icon(Icons.open_in_new),
@@ -510,7 +510,7 @@ class _SkinChoiceChip extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                locked ? l10n.settingsSkinProLabel(skinName) : skinName,
+                locked ? l10n.settingsSkinStandardLabel(skinName) : skinName,
                 style: TextStyle(
                   color: colors.foreground,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w500,

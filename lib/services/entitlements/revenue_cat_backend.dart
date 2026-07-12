@@ -48,12 +48,12 @@ class RevenueCatBackend implements EntitlementBackend {
   }
 
   @override
-  Future<bool> refreshIsPro() async {
+  Future<bool> refreshIsStandard() async {
     if (!purchasesSupported) return false;
     await _ensureConfigured();
     final info = await Purchases.getCustomerInfo();
     return info.entitlements.active.containsKey(
-      EntitlementConstants.proEntitlementId,
+      EntitlementConstants.standardEntitlementId,
     );
   }
 
@@ -62,22 +62,22 @@ class RevenueCatBackend implements EntitlementBackend {
     if (!purchasesSupported) return null;
     await _ensureConfigured();
     _offerings = await Purchases.getOfferings();
-    final package = _proPackage(_offerings);
+    final package = _standardPackage(_offerings);
     return package?.storeProduct.priceString;
   }
 
   @override
-  Future<bool> purchasePro() async {
+  Future<bool> purchaseStandard() async {
     if (!purchasesSupported) return false;
     await _ensureConfigured();
     _offerings ??= await Purchases.getOfferings();
-    final package = _proPackage(_offerings);
+    final package = _standardPackage(_offerings);
     if (package == null) {
-      throw StateError('Pro package not found in RevenueCat offerings');
+      throw StateError('Standard package not found in RevenueCat offerings');
     }
     final result = await Purchases.purchase(PurchaseParams.package(package));
     return result.customerInfo.entitlements.active.containsKey(
-      EntitlementConstants.proEntitlementId,
+      EntitlementConstants.standardEntitlementId,
     );
   }
 
@@ -87,11 +87,11 @@ class RevenueCatBackend implements EntitlementBackend {
     await _ensureConfigured();
     final info = await Purchases.restorePurchases();
     return info.entitlements.active.containsKey(
-      EntitlementConstants.proEntitlementId,
+      EntitlementConstants.standardEntitlementId,
     );
   }
 
-  Package? _proPackage(Offerings? offerings) {
+  Package? _standardPackage(Offerings? offerings) {
     if (offerings == null) return null;
     final offering =
         offerings.getOffering(EntitlementConstants.defaultOfferingId) ??
@@ -99,7 +99,7 @@ class RevenueCatBackend implements EntitlementBackend {
     if (offering == null) return null;
     for (final package in offering.availablePackages) {
       if (package.storeProduct.identifier ==
-          EntitlementConstants.proProductId) {
+          EntitlementConstants.standardProductId) {
         return package;
       }
     }

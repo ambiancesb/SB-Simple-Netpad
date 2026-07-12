@@ -1,7 +1,7 @@
 {
   "@@locale": "ko",
   "commonAppName": "SB Simple Netpad",
-  "commonProName": "Netpad Pro",
+  "commonStandardName": "Netpad Standard",
   "commonCancel": "취소",
   "commonClose": "닫기",
   "commonSave": "저장",
@@ -430,21 +430,21 @@
   "settingsSkinForest": "포레스트",
   "settingsSkinSunset": "선셋",
   "settingsSkinSlate": "슬레이트",
-  "settingsSkinProLabel": "{skin} · Pro",
-  "@settingsSkinProLabel": {
+  "settingsSkinStandardLabel": "{skin} · Standard",
+  "@settingsSkinStandardLabel": {
     "placeholders": {
       "skin": {"type": "String"}
     }
   },
-  "settingsProSection": "Netpad Pro",
-  "settingsProUnlocked": "Pro 잠금 해제됨",
+  "settingsStandardSection": "Netpad Standard",
+  "settingsStandardUnlocked": "Standard 잠금 해제됨",
   "settingsFree": "무료",
-  "settingsProUnlockedSubtitle": "무제한 메모 및 피어, 스킨, 기록, 자동 동기화, 음성",
-  "settingsProBuySubtitle": "앱 스토어를 통해 한 번만 잠금 해제",
+  "settingsStandardUnlockedSubtitle": "무제한 메모 및 피어, 스킨, 기록, 자동 동기화, 음성",
+  "settingsStandardBuySubtitle": "앱 스토어를 통해 한 번만 잠금 해제",
   "settingsPurchasesUnavailable": "이 플랫폼에서는 구매를 사용할 수 없습니다",
   "settingsRestorePurchases": "구매 복원",
-  "settingsProRestored": "Pro 복원됨",
-  "settingsNoPreviousPro": "이전 Pro 구매 내역을 찾을 수 없습니다",
+  "settingsStandardRestored": "Standard 복원됨",
+  "settingsNoPreviousStandard": "이전 Standard 구매 내역을 찾을 수 없습니다",
   "settingsEditorSection": "편집기",
   "settingsWordWrap": "자동 줄 바꿈",
   "settingsWordWrapSubtitle": "가로 스크롤 대신 긴 줄 줄 바꿈",
@@ -455,7 +455,7 @@
     }
   },
   "settingsLegalSection": "법적 정보",
-  "settingsEulaSubtitlePro": "Pro · GitHub Pages에서 EULA 열기",
+  "settingsEulaSubtitleStandard": "Standard · GitHub Pages에서 EULA 열기",
   "settingsEulaSubtitleFree": "무료 · GitHub Pages에서 EULA 열기",
   "settingsPrivacySubtitle": "GitHub Pages에서 개인정보 페이지 열기",
   "settingsDisclaimerTitle": "면책 조항 및 책임",
@@ -469,7 +469,7 @@
   "settingsNoLegalAdviceP2": "사용 사례에 대한 법적 지침이 필요한 경우 자격을 갖춘 전문가에게 문의하세요.",
   "settingsCopyright": "© 2026 Spencer Beaumier",
 
-  "paywallTitle": "Netpad Pro 잠금 해제",
+  "paywallTitle": "Netpad Standard 잠금 해제",
   "paywallSubtitle": "일회성 구매. 핵심 편집 및 LAN 동기화는 무료로 유지됩니다.",
   "paywallBenefitUnlimitedNotes": "무제한 메모",
   "paywallBenefitUnlimitedPeers": "무제한 연결 피어",
@@ -477,10 +477,10 @@
   "paywallBenefitHistory": "버전 기록",
   "paywallBenefitAutoSync": "신뢰할 수 있는 피어 자동 동기화",
   "paywallBenefitVoice": "음성 받아쓰기",
-  "paywallPurchasesUnsupported": "이 플랫폼에서는 인앱 구매를 사용할 수 없습니다. Pro를 잠금 해제하려면 App Store, Google Play 또는 Microsoft Store에서 설치하세요.",
-  "paywallBuyPro": "Pro 구매",
-  "paywallBuyProPrice": "Pro 구매 · {price}",
-  "@paywallBuyProPrice": {
+  "paywallPurchasesUnsupported": "이 플랫폼에서는 인앱 구매를 사용할 수 없습니다. Standard를 잠금 해제하려면 App Store, Google Play 또는 Microsoft Store에서 설치하세요.",
+  "paywallBuyStandard": "Standard 구매",
+  "paywallBuyStandardPrice": "Standard 구매 · {price}",
+  "@paywallBuyStandardPrice": {
     "placeholders": {
       "price": {"type": "String"}
     }
@@ -488,25 +488,25 @@
   "paywallRestorePurchases": "구매 복원",
   "paywallPurchaseNotCompleted": "구매가 완료되지 않았습니다.",
   "paywallPurchaseFailed": "구매에 실패했습니다.",
-  "paywallProRestored": "Pro 복원됨",
-  "paywallNoPreviousPro": "이전 Pro 구매 내역을 찾을 수 없습니다",
+  "paywallStandardRestored": "Standard 복원됨",
+  "paywallNoPreviousStandard": "이전 Standard 구매 내역을 찾을 수 없습니다",
 
-  "proHighlightNoteLimit": "무료 버전에는 최대 {limit}개의 메모가 포함됩니다. 무제한 메모를 위해 Pro를 잠금 해제하세요.",
-  "@proHighlightNoteLimit": {
+  "standardHighlightNoteLimit": "무료 버전에는 최대 {limit}개의 메모가 포함됩니다. 무제한 메모를 위해 Standard를 잠금 해제하세요.",
+  "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightPeerLimit": "무료 버전에는 최대 {limit}개의 연결 피어가 포함됩니다. 무제한 피어를 위해 Pro를 잠금 해제하세요.",
-  "@proHighlightPeerLimit": {
+  "standardHighlightPeerLimit": "무료 버전에는 최대 {limit}개의 연결 피어가 포함됩니다. 무제한 피어를 위해 Standard를 잠금 해제하세요.",
+  "@standardHighlightPeerLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
   },
-  "proHighlightVersionHistory": "버전 기록은 Pro 기능입니다.",
-  "proHighlightVoice": "음성 받아쓰기는 Pro 기능입니다.",
-  "proHighlightAutoSync": "신뢰할 수 있는 피어 자동 동기화는 Pro 기능입니다.",
-  "proHighlightSkins": "추가 스킨은 Pro에 포함되어 있습니다.",
+  "standardHighlightVersionHistory": "버전 기록은 Standard 기능입니다.",
+  "standardHighlightVoice": "음성 받아쓰기는 Standard 기능입니다.",
+  "standardHighlightAutoSync": "신뢰할 수 있는 피어 자동 동기화는 Standard 기능입니다.",
+  "standardHighlightSkins": "추가 스킨은 Standard에 포함되어 있습니다.",
 
   "helpTitle": "도움말",
   "helpIntro": "일반 텍스트 메모를 위한 LAN 메모장. 같은 Wi‑Fi의 기기들이 서로를 발견하고, 한 번 페어링한 후 실시간으로 메모를 동기화합니다.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "베타 — 일상적인 LAN 사용에 적합합니다.",
   "aboutEulaHeading": "최종 사용자 라이선스 계약",
-  "aboutEulaBody": "SB Simple Netpad는 오픈 소스 라이선스가 아닌 EULA 하에 라이선스됩니다. 핵심 편집 및 LAN 동기화는 무료입니다(최대 {noteLimit}개 메모 및 {peerLimit}개 연결 피어). Netpad Pro는 App Store, Google Play 또는 Microsoft Store를 통한 일회성 잠금 해제입니다.",
+  "aboutEulaBody": "SB Simple Netpad는 오픈 소스 라이선스가 아닌 EULA 하에 라이선스됩니다. 핵심 편집 및 LAN 동기화는 무료입니다(최대 {noteLimit}개 메모 및 {peerLimit}개 연결 피어). Netpad Standard는 App Store, Google Play 또는 Microsoft Store를 통한 일회성 잠금 해제입니다.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},
