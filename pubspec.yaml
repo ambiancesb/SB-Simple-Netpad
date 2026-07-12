@@ -38,9 +38,16 @@ dependencies:
 #   - path_provider_foundation >=2.5.0 depends on `objective_c`, whose build hook
 #     runs on Linux too and fails looking for a linker.
 # We only share plain text, so path_provider is not exercised at runtime.
+#
+# speech_to_text_windows calls CoInitializeEx(APARTMENTTHREADED) in its plugin
+# constructor, which conflicts with Flutter's COM init and can show a Windows
+# "Debug Assertion Failed" dialog on Debug desktop launches. Voice dictation is
+# mobile-only here, so we ship a no-op Windows stub instead.
 dependency_overrides:
   path_provider_android: 2.2.23
   path_provider_foundation: 2.4.1
+  speech_to_text_windows:
+    path: packages/speech_to_text_windows_stub
 
 dev_dependencies:
   flutter_test:

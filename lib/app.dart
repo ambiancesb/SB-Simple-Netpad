@@ -106,7 +106,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FileService _fileService = const FileService();
   final ShareService _shareService = const ShareService();
-  final SpeechInputService _speechInput = SpeechInputService();
+  final SpeechInputService? _speechInput =
+      SpeechInputService.isSupported ? SpeechInputService() : null;
   late final SyncRepository _sync;
   late final WorkspaceRepository _workspace;
   bool _findVisible = false;
@@ -125,11 +126,14 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     _workspace = context.read<WorkspaceRepository>();
     _sync.onLiveConflict = _resolveLiveConflict;
     _sync.onSnapshotDivergence = _resolveDivergence;
-    _speechInput.getDictationAnchor = () {
-      final doc = _workspace.active;
-      return doc?.dictationAnchorOffset() ?? 0;
-    };
-    _speechInput.onDictationUpdate = _onDictationUpdate;
+    final speech = _speechInput;
+    if (speech != null) {
+      speech.getDictationAnchor = () {
+        final doc = _workspace.active;
+        return doc?.dictationAnchorOffset() ?? 0;
+      };
+      speech.onDictationUpdate = _onDictationUpdate;
+    }
   }
 
   String _onDictationUpdate(DictationUpdate update) {
@@ -143,29 +147,31 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   }
 
   Future<void> _toggleVoiceInput() async {
-    if (!_speechInput.isListening) {
+    final speech = _speechInput;
+    if (speech == null) return;
+    if (!speech.isListening) {
       final allowed = await StandardGate.voiceInputAllowed(context);
       if (!allowed || !mounted) return;
       FocusManager.instance.primaryFocus?.unfocus();
     }
-    final started = await _speechInput.toggleListening();
-  if (!mounted) return;
-  final messenger = ScaffoldMessenger.of(context);
-  final l10n = context.l10n;
-  if (_speechInput.lastError != null) {
-    messenger.showSnackBar(
-      SnackBar(content: Text(_speechInput.lastError!)),
-    );
-    return;
-  }
-  if (started) {
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(l10n.shellListeningSnack),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
+    final started = await speech.toggleListening();
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
+    if (speech.lastError != null) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(speech.lastError!)),
+      );
+      return;
+    }
+    if (started) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.shellListeningSnack),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   String _previewText(String text, {int maxLen = 200}) {
@@ -266,7 +272,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _speechInput.dispose();
+    _speechInput?.dispose();
     unawaited(_workspace.flushSaveAll());
     _sync.dispose();
     super.dispose();
@@ -277,7 +283,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       unawaited(_workspace.flushSaveAll());
-      unawaited(_speechInput.stopListening());
+      unawaited(_speechInput?.stopListening() ?? Future<void>.value());
     }
   }
 
@@ -376,6 +382,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   }) {
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
+    final speechInput = _speechInput;
     return Scaffold(
       key: _scaffoldKey,
       drawer: desktopMenus ? null : const NotesDrawer(),
@@ -428,9 +435,9 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               tooltip: l10n.shellFindInNote,
               onPressed: () => _toggleFind(),
             ),
-          if (!desktopMenus && SpeechInputService.isSupported)
+          if (!desktopMenus && speechInput != null)
             MobileVoiceInputButton(
-              service: _speechInput,
+              service: speechInput,
               onToggle: _toggleVoiceInput,
             ),
           Padding(
@@ -550,7 +557,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
         _findVisible = false;
         _replaceMode = false;
       }),
-      speechInput: SpeechInputService.isSupported ? _speechInput : null,
+      speechInput: _speechInput,
     );
 
     final shellBody = desktopMenus

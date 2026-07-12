@@ -22,9 +22,12 @@ class DictationUpdate {
 
 /// Wraps platform speech recognition for dictating into the editor on mobile.
 class SpeechInputService extends ChangeNotifier {
-  SpeechInputService() : _speech = SpeechToText();
+  SpeechInputService();
 
-  final SpeechToText _speech;
+  /// Native speech plugin — created lazily and only on supported platforms so
+  /// Windows/Linux debug builds never load speech_to_text_windows (which can
+  /// trip CRT debug assertions just by constructing the plugin).
+  SpeechToText? _speech;
 
   bool _initialized = false;
   bool _listening = false;
@@ -46,12 +49,16 @@ class SpeechInputService extends ChangeNotifier {
   /// Supplies the text offset where the current phrase should be inserted.
   int Function()? getDictationAnchor;
 
+  SpeechToText get _speechOrThrow {
+    return _speech ??= SpeechToText();
+  }
+
   Future<bool> initialize() async {
     if (!isSupported) return false;
-    if (_initialized) return _speech.isAvailable;
+    if (_initialized) return _speechOrThrow.isAvailable;
 
     _initialized = true;
-    final ok = await _speech.initialize(
+    final ok = await _speechOrThrow.initialize(
       onError: (error) {
         _lastError = error.errorMsg;
         _setListening(false);
@@ -82,14 +89,15 @@ class SpeechInputService extends ChangeNotifier {
     if (_listening) return true;
 
     final ready = await initialize();
-    if (!ready || !_speech.isAvailable) return false;
+    final speech = _speech;
+    if (!ready || speech == null || !speech.isAvailable) return false;
 
     _lastError = null;
     _liveText = '';
     _segmentAnchor = getDictationAnchor?.call();
     _segmentSpan = '';
 
-    final started = await _speech.listen(
+    final started = await speech.listen(
       onResult: _onSpeechResult,
       listenOptions: SpeechListenOptions(
         listenMode: ListenMode.dictation,
@@ -132,7 +140,7 @@ class SpeechInputService extends ChangeNotifier {
 
   Future<void> stopListening() async {
     if (!_listening) return;
-    await _speech.stop();
+    await _speech?.stop();
     _resetSession();
     _setListening(false);
   }

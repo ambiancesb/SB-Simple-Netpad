@@ -1,0 +1,21 @@
+name: speech_to_text_windows
+description: No-op Windows stub for speech_to_text (voice is mobile-only in Netpad).
+version: 1.0.1
+publish_to: "none"
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.0.0"
+
+flutter:
+  plugin:
+    implements: speech_to_text
+    platforms:
+      windows:
+        pluginClass: SpeechToTextWindows
+        dartPluginClass: SpeechToTextWindows
+
+dependencies:
+  flutter:
+    sdk: flutter
+  speech_to_text_platform_interface: ^2.4.0
