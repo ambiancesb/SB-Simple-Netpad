@@ -27,32 +27,33 @@ void main() {
       await standard.initialize();
     });
 
-    test('free note limit blocks at cap', () {
+    test('free synced note limit blocks at cap', () {
       expect(
-        StandardFeatures.canCreateNote(
+        StandardFeatures.canEnableNoteSync(
           entitlements: free,
-          currentNoteCount: EntitlementConstants.freeNoteLimit - 1,
+          currentSyncedNoteCount:
+              EntitlementConstants.freeSyncedNoteLimit - 1,
         ),
         isTrue,
       );
       expect(
-        StandardFeatures.canCreateNote(
+        StandardFeatures.canEnableNoteSync(
           entitlements: free,
-          currentNoteCount: EntitlementConstants.freeNoteLimit,
+          currentSyncedNoteCount: EntitlementConstants.freeSyncedNoteLimit,
         ),
         isFalse,
       );
       expect(
-        StandardFeatures.canCreateNote(
+        StandardFeatures.canEnableNoteSync(
           entitlements: standard,
-          currentNoteCount: 100,
+          currentSyncedNoteCount: 100,
         ),
         isTrue,
       );
     });
 
     test('free peer limit blocks at cap', () {
-      expect(EntitlementConstants.freeNoteLimit, 3);
+      expect(EntitlementConstants.freeSyncedNoteLimit, 3);
       expect(EntitlementConstants.freePeerLimit, 3);
       expect(
         StandardFeatures.canConnectPeer(

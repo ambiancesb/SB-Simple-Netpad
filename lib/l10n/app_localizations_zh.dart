@@ -743,7 +743,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsFree => '免费';
 
   @override
-  String get settingsStandardUnlockedSubtitle => '无限笔记和节点、皮肤、历史、自动同步和语音';
+  String get settingsStandardUnlockedSubtitle => '无限同步笔记和节点、皮肤、历史、自动同步和语音';
 
   @override
   String get settingsStandardBuySubtitle => '通过您的应用商店一次性解锁';
@@ -826,7 +826,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get paywallSubtitle => '一次性购买。核心编辑和 LAN 同步保持免费。';
 
   @override
-  String get paywallBenefitUnlimitedNotes => '无限笔记';
+  String get paywallBenefitUnlimitedNotes => '无限同步笔记';
 
   @override
   String get paywallBenefitUnlimitedPeers => '无限连接节点';
@@ -872,7 +872,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String standardHighlightNoteLimit(int limit) {
-    return '免费版最多包含 $limit 条笔记。解锁 Standard 获得无限笔记。';
+    return '免费版最多可同时同步 $limit 条笔记。解锁 Standard 获得无限同步笔记。';
   }
 
   @override
@@ -932,7 +932,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get helpNotes2 => '从笔记列表创建、重命名、重新排序和删除笔记。';
 
   @override
-  String get helpNotes3 => '每条笔记独立同步 — 根据需要切换每条笔记的同步。';
+  String get helpNotes3 => '每条笔记独立同步 — 新笔记默认为仅本地；需要与节点共享时再打开同步。';
 
   @override
   String get helpNotes4 => '在笔记内搜索（查找）或从编辑器搜索所有笔记。';
@@ -979,7 +979,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get helpFileSharing2 => '保存到文件将活跃笔记导出为 .txt 或 .md。';
 
   @override
-  String get helpFileSharing3 => '打开文件将文本导入到像其他笔记一样同步的新笔记中。';
+  String get helpFileSharing3 => '打开文件将文本导入仅本地的新笔记；若希望节点收到，请打开同步。';
 
   @override
   String get helpFileSharing4 => '分享使用系统分享表单；Linux 回退到剪贴板。';
@@ -1059,7 +1059,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（最多 $noteLimit 条笔记和 $peerLimit 个连接节点）。Netpad Standard 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。';
+    return 'SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（本地笔记不限量，最多 $noteLimit 条同步笔记和 $peerLimit 个连接节点）。Netpad Standard 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。';
   }
 
   @override

@@ -644,12 +644,6 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       final loaded = await _fileService.openText();
       if (loaded == null || !context.mounted) return;
 
-      final allowed = await StandardGate.createNoteAllowed(
-        context,
-        currentNoteCount: workspace.documents.length,
-      );
-      if (!allowed || !context.mounted) return;
-
       final doc = workspace.createNote(title: _titleFromFile(loaded.name));
       doc.replaceLocal(loaded.text, snapshotLabel: 'Imported file');
       messenger.showSnackBar(

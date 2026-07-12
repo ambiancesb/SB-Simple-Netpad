@@ -8,10 +8,11 @@ Free tier caps (enforced in app):
 
 | Cap | Free | Standard |
 |-----|------|----------|
-| Local note creation | **3** notes | Unlimited |
+| Local notes | Unlimited | Unlimited |
+| Notes with peer sync enabled | **3** notes | Unlimited |
 | Simultaneous connected peers | **3** peers | Unlimited |
 
-Synced notes received from peers may push the note count above 3 on free; the cap only blocks **creating** additional local notes (and importing a file as a new note). Peer cap counts **authenticated** sessions only.
+New notes start **local-only** (sync off). Free users can turn sync on for up to 3 notes; enabling a 4th shows the Standard paywall. Notes received from peers stay sync-enabled and may push the synced count above 3 on free (grandfathered). Peer cap counts **authenticated** sessions only.
 
 ## Products
 
@@ -27,12 +28,13 @@ Use the **same** product id on every store so RevenueCat / in-app copy stay alig
 
 | Free | Standard |
 |------|----------|
-| Editing, discovery, pairing, sync | Unlimited notes (free create capped at 3) |
-| Up to 3 connected peers | Unlimited connected peers |
-| Default skin + light/dark | Extra skins |
-| Find/replace, share/export | Version history |
-| Manual reconnect | Trusted peer auto-sync |
-| | Voice dictation |
+| Editing, discovery, pairing | Same, plus Standard unlocks below |
+| Unlimited local notes | Unlimited synced notes |
+| Up to 3 notes with sync on | Unlimited connected peers |
+| Up to 3 connected peers | Extra skins |
+| Default skin + light/dark | Version history |
+| Find/replace, share/export | Trusted peer auto-sync |
+| Manual reconnect | Voice dictation |
 
 ## RevenueCat (Apple + Google)
 
@@ -92,7 +94,7 @@ Disclose freemium clearly in each store listing so review does not treat caps as
 
 Suggested short description snippet:
 
-> Free: up to 3 notes and 3 connected LAN peers. Unlock Netpad Standard once for unlimited notes and peers, skins, version history, trusted auto-sync, and voice dictation.
+> Free: unlimited local notes, up to 3 synced notes and 3 connected LAN peers. Unlock Netpad Standard once for unlimited synced notes and peers, skins, version history, trusted auto-sync, and voice dictation.
 
 Suggested “What’s New” / privacy / monetization notes:
 

@@ -439,7 +439,7 @@
   "settingsStandardSection": "Netpad Standard",
   "settingsStandardUnlocked": "Standard 解除済み",
   "settingsFree": "無料",
-  "settingsStandardUnlockedSubtitle": "無制限のメモとピア、スキン、履歴、自動同期、音声",
+  "settingsStandardUnlockedSubtitle": "無制限の同期メモとピア、スキン、履歴、自動同期、音声",
   "settingsStandardBuySubtitle": "アプリストアで一度だけ解除",
   "settingsPurchasesUnavailable": "このプラットフォームでは購入できません",
   "settingsRestorePurchases": "購入を復元",
@@ -471,7 +471,7 @@
 
   "paywallTitle": "Netpad Standard を解除",
   "paywallSubtitle": "一度の購入。基本的な編集とLAN同期は無料のまま。",
-  "paywallBenefitUnlimitedNotes": "無制限のメモ",
+  "paywallBenefitUnlimitedNotes": "無制限の同期メモ",
   "paywallBenefitUnlimitedPeers": "無制限の接続ピア",
   "paywallBenefitSkins": "追加カラースキン",
   "paywallBenefitHistory": "バージョン履歴",
@@ -491,7 +491,7 @@
   "paywallStandardRestored": "Standard を復元しました",
   "paywallNoPreviousStandard": "以前の Standard 購入が見つかりません",
 
-  "standardHighlightNoteLimit": "無料版は最大 {limit} 件のメモが含まれます。無制限のメモには Standard を解除してください。",
+  "standardHighlightNoteLimit": "無料版は同時に最大 {limit} 件のメモを同期できます。無制限の同期メモには Standard を解除してください。",
   "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
@@ -521,7 +521,7 @@
   "helpNotesTitle": "メモ",
   "helpNotes1": "メニューアイコン（☰）またはメモパネルをタップしてメモを切り替えます。",
   "helpNotes2": "メモリストからメモを作成、名前変更、並び替え、削除します。",
-  "helpNotes3": "各メモは独立して同期します — 必要に応じてメモごとに同期を切り替えます。",
+  "helpNotes3": "各メモは独立して同期します — 新しいメモはローカルのみで開始し、ピアと共有するときに同期をオンにします。",
   "helpNotes4": "メモ内（検索）またはエディタからすべてのメモを検索します。",
   "helpNotes5": "バージョン履歴は後で復元できるローカルスナップショットを保存します。",
   "helpPeersTitle": "ピアとペアリング",
@@ -536,7 +536,7 @@
   "helpFileSharing1Desktop": "ファイルメニュー: ファイルに保存、ファイルを新しいメモとして開く、メモを共有、バージョン履歴、設定、終了。",
   "helpFileSharing1Mobile": "メニュー（⋮）: ファイルに保存、ファイルを新しいメモとして開く、共有、バージョン履歴、設定、このヘルプガイド。",
   "helpFileSharing2": "ファイルに保存すると、アクティブなメモが .txt または .md としてエクスポートされます。",
-  "helpFileSharing3": "ファイルを開くと、テキストが他のメモと同様に同期する新しいメモにインポートされます。",
+  "helpFileSharing3": "ファイルを開くとローカルのみの新しいメモにテキストがインポートされます。ピアに届ける場合は同期をオンにしてください。",
   "helpFileSharing4": "共有はOSの共有シートを使用します。Linuxではクリップボードにフォールバックします。",
   "helpSettingsTitle": "設定",
   "helpSettings1": "デバイス名とルームには保存が必要です — 他のオプションはすぐに適用されます。",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "ベータ版 — 日常的なLAN使用に適しています。",
   "aboutEulaHeading": "エンドユーザーライセンス契約",
-  "aboutEulaBody": "SB Simple Netpad はオープンソースライセンスではなく EULA の下でライセンスされています。基本的な編集とLAN同期は無料です（最大 {noteLimit} 件のメモと {peerLimit} 件の接続ピア）。Netpad Standard は App Store、Google Play、または Microsoft Store を通じた一度きりの解除です。",
+  "aboutEulaBody": "SB Simple Netpad はオープンソースライセンスではなく EULA の下でライセンスされています。基本的な編集とLAN同期は無料です（ローカルメモは無制限、同期メモは最大 {noteLimit} 件、接続ピアは {peerLimit} 件）。Netpad Standard は App Store、Google Play、または Microsoft Store を通じた一度きりの解除です。",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

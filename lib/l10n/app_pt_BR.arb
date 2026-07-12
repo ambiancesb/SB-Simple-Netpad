@@ -439,7 +439,7 @@
   "settingsStandardSection": "Netpad Standard",
   "settingsStandardUnlocked": "Standard desbloqueado",
   "settingsFree": "Grátis",
-  "settingsStandardUnlockedSubtitle": "Notas e pares ilimitados, visuais, histórico, sincronização automática e voz",
+  "settingsStandardUnlockedSubtitle": "Notas sincronizadas e pares ilimitados, visuais, histórico, sincronização automática e voz",
   "settingsStandardBuySubtitle": "Desbloqueio único pela sua loja de aplicativos",
   "settingsPurchasesUnavailable": "Compras indisponíveis nesta plataforma",
   "settingsRestorePurchases": "Restaurar compras",
@@ -471,7 +471,7 @@
 
   "paywallTitle": "Desbloquear Netpad Standard",
   "paywallSubtitle": "Compra única. Edição básica e sincronização LAN permanecem gratuitas.",
-  "paywallBenefitUnlimitedNotes": "Notas ilimitadas",
+  "paywallBenefitUnlimitedNotes": "Notas sincronizadas ilimitadas",
   "paywallBenefitUnlimitedPeers": "Pares conectados ilimitados",
   "paywallBenefitSkins": "Visuais de cores extras",
   "paywallBenefitHistory": "Histórico de versões",
@@ -491,7 +491,7 @@
   "paywallStandardRestored": "Standard restaurado",
   "paywallNoPreviousStandard": "Nenhuma compra anterior de Standard encontrada",
 
-  "standardHighlightNoteLimit": "A versão gratuita inclui até {limit} notas. Desbloqueie o Standard para notas ilimitadas.",
+  "standardHighlightNoteLimit": "A versão gratuita pode sincronizar até {limit} notas por vez. Desbloqueie o Standard para notas sincronizadas ilimitadas.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
@@ -521,7 +521,7 @@
   "helpNotesTitle": "Notas",
   "helpNotes1": "Toque no ícone de menu (☰) ou no painel de notas para alternar entre notas.",
   "helpNotes2": "Crie, renomeie, reordene e exclua notas na lista de notas.",
-  "helpNotes3": "Cada nota sincroniza de forma independente — alterne a sincronização por nota quando necessário.",
+  "helpNotes3": "Cada nota sincroniza de forma independente — notas novas começam só locais; ative a sincronização para compartilhar com pares.",
   "helpNotes4": "Pesquise dentro de uma nota (Localizar) ou em todas as notas pelo editor.",
   "helpNotes5": "O histórico de versões salva instantâneos locais que você pode restaurar posteriormente.",
   "helpPeersTitle": "Pares e emparelhamento",
@@ -536,7 +536,7 @@
   "helpFileSharing1Desktop": "Menu Arquivo: Salvar em arquivo, Abrir arquivo como nova nota, Compartilhar nota, Histórico de versões, Configurações, Sair.",
   "helpFileSharing1Mobile": "Menu (⋮): salvar em arquivo, abrir arquivo como nova nota, compartilhar, histórico de versões, configurações e este guia de ajuda.",
   "helpFileSharing2": "Salvar em arquivo exporta a nota ativa como .txt ou .md.",
-  "helpFileSharing3": "Abrir arquivo importa texto para uma nova nota que sincroniza como qualquer outra.",
+  "helpFileSharing3": "Abrir arquivo importa texto para uma nova nota só local; ative a sincronização se quiser que os pares a recebam.",
   "helpFileSharing4": "Compartilhar usa a planilha de compartilhamento do SO; Linux recorre à área de transferência.",
   "helpSettingsTitle": "Configurações",
   "helpSettings1": "O nome do dispositivo e a sala requerem Salvar — outras opções se aplicam imediatamente.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "Beta — adequado para uso LAN diário.",
   "aboutEulaHeading": "Contrato de Licença do Usuário Final",
-  "aboutEulaBody": "SB Simple Netpad é licenciado sob um EULA, não uma licença de código aberto. A edição básica e a sincronização LAN são gratuitas (até {noteLimit} notas e {peerLimit} pares conectados). Netpad Standard é um desbloqueio único via App Store, Google Play ou Microsoft Store.",
+  "aboutEulaBody": "SB Simple Netpad é licenciado sob um EULA, não uma licença de código aberto. A edição básica e a sincronização LAN são gratuitas (notas locais ilimitadas, até {noteLimit} notas sincronizadas e {peerLimit} pares conectados). Netpad Standard é um desbloqueio único via App Store, Google Play ou Microsoft Store.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

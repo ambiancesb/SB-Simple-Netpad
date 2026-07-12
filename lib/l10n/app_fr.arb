@@ -439,7 +439,7 @@
   "settingsStandardSection": "Netpad Standard",
   "settingsStandardUnlocked": "Standard débloqué",
   "settingsFree": "Gratuit",
-  "settingsStandardUnlockedSubtitle": "Notes et pairs illimités, thèmes, historique, synchronisation automatique et voix",
+  "settingsStandardUnlockedSubtitle": "Notes synchronisées et pairs illimités, thèmes, historique, synchronisation automatique et voix",
   "settingsStandardBuySubtitle": "Déblocage unique via votre boutique d'applications",
   "settingsPurchasesUnavailable": "Achats indisponibles sur cette plateforme",
   "settingsRestorePurchases": "Restaurer les achats",
@@ -471,7 +471,7 @@
 
   "paywallTitle": "Débloquer Netpad Standard",
   "paywallSubtitle": "Achat unique. L'édition principale et la synchronisation LAN restent gratuites.",
-  "paywallBenefitUnlimitedNotes": "Notes illimitées",
+  "paywallBenefitUnlimitedNotes": "Notes synchronisées illimitées",
   "paywallBenefitUnlimitedPeers": "Pairs connectés illimités",
   "paywallBenefitSkins": "Thèmes de couleurs supplémentaires",
   "paywallBenefitHistory": "Historique des versions",
@@ -491,7 +491,7 @@
   "paywallStandardRestored": "Standard restauré",
   "paywallNoPreviousStandard": "Aucun achat Standard précédent trouvé",
 
-  "standardHighlightNoteLimit": "La version gratuite inclut jusqu'à {limit} notes. Débloquez Standard pour des notes illimitées.",
+  "standardHighlightNoteLimit": "La version gratuite peut synchroniser jusqu'à {limit} notes à la fois. Débloquez Standard pour des notes synchronisées illimitées.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
@@ -521,7 +521,7 @@
   "helpNotesTitle": "Notes",
   "helpNotes1": "Appuyez sur l'icône de menu (☰) ou sur le panneau de notes pour basculer entre les notes.",
   "helpNotes2": "Créez, renommez, réorganisez et supprimez des notes depuis la liste des notes.",
-  "helpNotes3": "Chaque note se synchronise indépendamment — activez/désactivez la synchronisation par note si nécessaire.",
+  "helpNotes3": "Chaque note se synchronise indépendamment — les nouvelles notes démarrent en local uniquement ; activez la sync pour partager avec les pairs.",
   "helpNotes4": "Recherchez dans une note (Rechercher) ou dans toutes les notes depuis l'éditeur.",
   "helpNotes5": "L'historique des versions enregistre des instantanés locaux que vous pouvez restaurer ultérieurement.",
   "helpPeersTitle": "Pairs et association",
@@ -536,7 +536,7 @@
   "helpFileSharing1Desktop": "Menu Fichier : Enregistrer dans un fichier, Ouvrir un fichier comme nouvelle note, Partager la note, Historique des versions, Paramètres, Quitter.",
   "helpFileSharing1Mobile": "Menu (⋮) : enregistrer dans un fichier, ouvrir un fichier comme nouvelle note, partager, historique des versions, paramètres et ce guide d'aide.",
   "helpFileSharing2": "Enregistrer dans un fichier exporte la note active en .txt ou .md.",
-  "helpFileSharing3": "Ouvrir un fichier importe du texte dans une nouvelle note qui se synchronise comme les autres.",
+  "helpFileSharing3": "Ouvrir un fichier importe du texte dans une nouvelle note locale ; activez la sync pour que les pairs la reçoivent.",
   "helpFileSharing4": "Partager utilise la feuille de partage du système ; Linux bascule sur le presse-papiers.",
   "helpSettingsTitle": "Paramètres",
   "helpSettings1": "Le nom de l'appareil et la salle nécessitent Enregistrer — les autres options s'appliquent immédiatement.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "Bêta — adapté à un usage LAN quotidien.",
   "aboutEulaHeading": "Contrat de licence utilisateur final",
-  "aboutEulaBody": "SB Simple Netpad est sous licence EULA, pas une licence open source. L'édition principale et la synchronisation LAN sont gratuites (jusqu'à {noteLimit} notes et {peerLimit} pairs connectés). Netpad Standard est un déblocage unique via l'App Store, Google Play ou Microsoft Store.",
+  "aboutEulaBody": "SB Simple Netpad est sous licence EULA, pas une licence open source. L'édition principale et la synchronisation LAN sont gratuites (notes locales illimitées, jusqu'à {noteLimit} notes synchronisées et {peerLimit} pairs connectés). Netpad Standard est un déblocage unique via l'App Store, Google Play ou Microsoft Store.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

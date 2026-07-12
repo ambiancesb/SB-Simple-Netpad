@@ -758,7 +758,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsStandardUnlockedSubtitle =>
-      'Unlimited notes and peers, skins, history, auto-sync, and voice';
+      'Unlimited synced notes and peers, skins, history, auto-sync, and voice';
 
   @override
   String get settingsStandardBuySubtitle =>
@@ -849,7 +849,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'One-time purchase. Core editing and LAN sync stay free.';
 
   @override
-  String get paywallBenefitUnlimitedNotes => 'Unlimited notes';
+  String get paywallBenefitUnlimitedNotes => 'Unlimited synced notes';
 
   @override
   String get paywallBenefitUnlimitedPeers => 'Unlimited connected peers';
@@ -895,7 +895,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String standardHighlightNoteLimit(int limit) {
-    return 'Free includes up to $limit notes. Unlock Standard for unlimited notes.';
+    return 'Free can sync up to $limit notes at a time. Unlock Standard for unlimited synced notes.';
   }
 
   @override
@@ -966,7 +966,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpNotes3 =>
-      'Each note syncs independently — toggle sync per note when needed.';
+      'Each note syncs independently — new notes start local-only; turn sync on when you want to share with peers.';
 
   @override
   String get helpNotes4 =>
@@ -1024,7 +1024,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpFileSharing3 =>
-      'Open file imports text into a new note that syncs like any other.';
+      'Open file imports text into a new local-only note; turn on sync if you want peers to receive it.';
 
   @override
   String get helpFileSharing4 =>
@@ -1114,7 +1114,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (up to $noteLimit notes and $peerLimit connected peers). Netpad Standard is a one-time unlock via the App Store, Google Play, or Microsoft Store.';
+    return 'SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (unlimited local notes, up to $noteLimit synced notes and $peerLimit connected peers). Netpad Standard is a one-time unlock via the App Store, Google Play, or Microsoft Store.';
   }
 
   @override

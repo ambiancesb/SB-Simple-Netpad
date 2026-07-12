@@ -13,8 +13,8 @@ abstract final class EntitlementConstants {
   /// RevenueCat offering that contains the Standard package.
   static const defaultOfferingId = 'default';
 
-  /// Free tier local note creation cap (synced peer notes may exceed this).
-  static const freeNoteLimit = 3;
+  /// Free tier max notes with peer sync enabled (local notes are unlimited).
+  static const freeSyncedNoteLimit = 3;
 
   /// Free tier simultaneous authenticated peer connections.
   static const freePeerLimit = 3;

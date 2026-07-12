@@ -439,7 +439,7 @@
   "settingsStandardSection": "Netpad Standard",
   "settingsStandardUnlocked": "Standard unlocked",
   "settingsFree": "Free",
-  "settingsStandardUnlockedSubtitle": "Unlimited notes and peers, skins, history, auto-sync, and voice",
+  "settingsStandardUnlockedSubtitle": "Unlimited synced notes and peers, skins, history, auto-sync, and voice",
   "settingsStandardBuySubtitle": "One-time unlock via your app store",
   "settingsPurchasesUnavailable": "Purchases unavailable on this platform",
   "settingsRestorePurchases": "Restore purchases",
@@ -471,7 +471,7 @@
 
   "paywallTitle": "Unlock Netpad Standard",
   "paywallSubtitle": "One-time purchase. Core editing and LAN sync stay free.",
-  "paywallBenefitUnlimitedNotes": "Unlimited notes",
+  "paywallBenefitUnlimitedNotes": "Unlimited synced notes",
   "paywallBenefitUnlimitedPeers": "Unlimited connected peers",
   "paywallBenefitSkins": "Extra color skins",
   "paywallBenefitHistory": "Version history",
@@ -491,7 +491,7 @@
   "paywallStandardRestored": "Standard restored",
   "paywallNoPreviousStandard": "No previous Standard purchase found",
 
-  "standardHighlightNoteLimit": "Free includes up to {limit} notes. Unlock Standard for unlimited notes.",
+  "standardHighlightNoteLimit": "Free can sync up to {limit} notes at a time. Unlock Standard for unlimited synced notes.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
@@ -521,7 +521,7 @@
   "helpNotesTitle": "Notes",
   "helpNotes1": "Tap the menu icon (☰) or Notes panel to switch between notes.",
   "helpNotes2": "Create, rename, reorder, and delete notes from the notes list.",
-  "helpNotes3": "Each note syncs independently — toggle sync per note when needed.",
+  "helpNotes3": "Each note syncs independently — new notes start local-only; turn sync on when you want to share with peers.",
   "helpNotes4": "Search within a note (Find) or across all notes from the editor.",
   "helpNotes5": "Version history saves local snapshots you can restore later.",
   "helpPeersTitle": "Peers & pairing",
@@ -536,7 +536,7 @@
   "helpFileSharing1Desktop": "File menu: Save to File, Open File as New Note, Share Note, Version History, Settings, Exit.",
   "helpFileSharing1Mobile": "Overflow menu (⋮): save to file, open file as new note, share, version history, settings, and this help guide.",
   "helpFileSharing2": "Save to file exports the active note as .txt or .md.",
-  "helpFileSharing3": "Open file imports text into a new note that syncs like any other.",
+  "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it.",
   "helpFileSharing4": "Share uses the OS share sheet; Linux falls back to clipboard.",
   "helpSettingsTitle": "Settings",
   "helpSettings1": "Device name and room require Save — other options apply immediately.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "Beta — suitable for daily LAN use.",
   "aboutEulaHeading": "End User License Agreement",
-  "aboutEulaBody": "SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (up to {noteLimit} notes and {peerLimit} connected peers). Netpad Standard is a one-time unlock via the App Store, Google Play, or Microsoft Store.",
+  "aboutEulaBody": "SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (unlimited local notes, up to {noteLimit} synced notes and {peerLimit} connected peers). Netpad Standard is a one-time unlock via the App Store, Google Play, or Microsoft Store.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

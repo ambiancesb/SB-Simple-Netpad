@@ -749,7 +749,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsStandardUnlockedSubtitle =>
-      '무제한 메모 및 피어, 스킨, 기록, 자동 동기화, 음성';
+      '무제한 동기화 메모 및 피어, 스킨, 기록, 자동 동기화, 음성';
 
   @override
   String get settingsStandardBuySubtitle => '앱 스토어를 통해 한 번만 잠금 해제';
@@ -835,7 +835,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get paywallSubtitle => '일회성 구매. 핵심 편집 및 LAN 동기화는 무료로 유지됩니다.';
 
   @override
-  String get paywallBenefitUnlimitedNotes => '무제한 메모';
+  String get paywallBenefitUnlimitedNotes => '무제한 동기화 메모';
 
   @override
   String get paywallBenefitUnlimitedPeers => '무제한 연결 피어';
@@ -881,7 +881,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String standardHighlightNoteLimit(int limit) {
-    return '무료 버전에는 최대 $limit개의 메모가 포함됩니다. 무제한 메모를 위해 Standard를 잠금 해제하세요.';
+    return '무료 버전은 한 번에 최대 $limit개의 메모를 동기화할 수 있습니다. 무제한 동기화 메모를 위해 Standard를 잠금 해제하세요.';
   }
 
   @override
@@ -943,7 +943,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get helpNotes2 => '메모 목록에서 메모를 만들고, 이름을 바꾸고, 순서를 변경하고, 삭제합니다.';
 
   @override
-  String get helpNotes3 => '각 메모는 독립적으로 동기화됩니다 — 필요에 따라 메모별로 동기화를 전환합니다.';
+  String get helpNotes3 =>
+      '각 메모는 독립적으로 동기화됩니다 — 새 메모는 로컬 전용으로 시작하며, 피어와 공유할 때 동기화를 켭니다.';
 
   @override
   String get helpNotes4 => '편집기에서 메모 내에서(찾기) 또는 모든 메모에서 검색합니다.';
@@ -990,7 +991,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get helpFileSharing2 => '파일로 저장은 활성 메모를 .txt 또는 .md로 내보냅니다.';
 
   @override
-  String get helpFileSharing3 => '파일 열기는 텍스트를 다른 메모처럼 동기화되는 새 메모로 가져옵니다.';
+  String get helpFileSharing3 =>
+      '파일 열기는 텍스트를 로컬 전용 새 메모로 가져옵니다. 피어가 받도록 하려면 동기화를 켜세요.';
 
   @override
   String get helpFileSharing4 => '공유는 OS 공유 시트를 사용합니다. Linux는 클립보드로 대체됩니다.';
@@ -1073,7 +1075,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad는 오픈 소스 라이선스가 아닌 EULA 하에 라이선스됩니다. 핵심 편집 및 LAN 동기화는 무료입니다(최대 $noteLimit개 메모 및 $peerLimit개 연결 피어). Netpad Standard는 App Store, Google Play 또는 Microsoft Store를 통한 일회성 잠금 해제입니다.';
+    return 'SB Simple Netpad는 오픈 소스 라이선스가 아닌 EULA 하에 라이선스됩니다. 핵심 편집 및 LAN 동기화는 무료입니다(로컬 메모 무제한, 동기화 메모 최대 $noteLimit개, 연결 피어 $peerLimit개). Netpad Standard는 App Store, Google Play 또는 Microsoft Store를 통한 일회성 잠금 해제입니다.';
   }
 
   @override

@@ -14,38 +14,42 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('per-note sync flags', () {
-    test('new notes default to sync enabled', () async {
+    test('new notes default to sync disabled', () async {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
-      expect(ws.isSyncEnabled(ws.documents.first.id), isTrue);
+      expect(ws.isSyncEnabled(ws.documents.first.id), isFalse);
+      expect(ws.syncedNoteCount, 0);
 
       final created = ws.createNote(title: 'Second');
-      expect(ws.isSyncEnabled(created.id), isTrue);
+      expect(ws.isSyncEnabled(created.id), isFalse);
+      expect(ws.syncedNoteCount, 0);
     });
 
     test('catalogPayload excludes local-only notes', () async {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
       final synced = ws.documents.first.id;
+      ws.setSyncEnabled(synced, true);
       final localOnly = ws.createNote(title: 'Private').id;
-      ws.setSyncEnabled(localOnly, false);
 
       final catalog = ws.catalogPayload();
       expect(catalog.map((e) => e['docId']), [synced]);
+      expect(catalog.map((e) => e['docId']), isNot(contains(localOnly)));
     });
 
     test('setSyncEnabled persists across load', () async {
       final storage = await _storage();
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: storage);
       await ws.load();
+      final synced = ws.documents.first.id;
+      ws.setSyncEnabled(synced, true);
       final localOnly = ws.createNote(title: 'Private').id;
-      ws.setSyncEnabled(localOnly, false);
       await ws.flushSaveAll();
 
       final reloaded = WorkspaceRepository(instanceId: 'aaa', storage: storage);
       await reloaded.load();
       expect(reloaded.isSyncEnabled(localOnly), isFalse);
-      expect(reloaded.isSyncEnabled(reloaded.documents.first.id), isTrue);
+      expect(reloaded.isSyncEnabled(synced), isTrue);
     });
 
     test('delete removes sync flag for the note', () async {
@@ -53,12 +57,13 @@ void main() {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: storage);
       await ws.load();
       final localOnly = ws.createNote(title: 'Private').id;
-      ws.setSyncEnabled(localOnly, false);
       ws.deleteNote(localOnly);
       await ws.flushSaveAll();
 
       final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getStringList('docs_sync_disabled'), isNull);
+      final disabled = prefs.getStringList('docs_sync_disabled') ?? const [];
+      expect(disabled, isNot(contains(localOnly)));
+      expect(disabled, contains(ws.documents.first.id));
     });
   });
 
@@ -66,8 +71,9 @@ void main() {
     test('local edit on local-only note does not invoke onDocUpdate', () async {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
+      final synced = ws.documents.first.id;
+      ws.setSyncEnabled(synced, true);
       final localOnly = ws.createNote(title: 'Private');
-      ws.setSyncEnabled(localOnly.id, false);
 
       var updateCount = 0;
       ws.onDocUpdate = (_, _, _, _, _) => updateCount++;
@@ -75,7 +81,7 @@ void main() {
       localOnly.replaceLocal('secret text');
       expect(updateCount, 0);
 
-      ws.documentById(ws.documents.first.id)!.replaceLocal('synced text');
+      ws.documentById(synced)!.replaceLocal('synced text');
       expect(updateCount, 1);
     });
 
@@ -83,7 +89,6 @@ void main() {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
       final localOnly = ws.createNote(title: 'Private').id;
-      ws.setSyncEnabled(localOnly, false);
 
       var renameCount = 0;
       var deleteCount = 0;
@@ -101,8 +106,8 @@ void main() {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
       final synced = ws.documents.first.id;
+      ws.setSyncEnabled(synced, true);
       final localOnly = ws.createNote(title: 'Private').id;
-      ws.setSyncEnabled(localOnly, false);
 
       List<String>? broadcastOrder;
       ws.onOrderChanged = (order, _, _) => broadcastOrder = order;
@@ -117,7 +122,6 @@ void main() {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
       final localOnly = ws.createNote(title: 'Private');
-      ws.setSyncEnabled(localOnly.id, false);
       ws.selectNote(localOnly.id);
 
       var presenceCount = 0;
@@ -135,7 +139,6 @@ void main() {
       await ws.load();
       final localOnly = ws.createNote(title: 'Private');
       localOnly.replaceLocal('local secret');
-      ws.setSyncEnabled(localOnly.id, false);
 
       final applied = ws.receiveRemoteContent(
         docId: localOnly.id,
@@ -154,7 +157,6 @@ void main() {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
       final localOnly = ws.createNote(title: 'Private').id;
-      ws.setSyncEnabled(localOnly, false);
 
       ws.receiveRemoteRename(
         docId: localOnly,
@@ -178,7 +180,6 @@ void main() {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
       final localOnly = ws.createNote(title: 'Private').id;
-      ws.setSyncEnabled(localOnly, false);
 
       ws.removeDocumentRemote(localOnly);
 
@@ -190,7 +191,6 @@ void main() {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
       final localOnly = ws.createNote(title: 'Private').id;
-      ws.setSyncEnabled(localOnly, false);
 
       ws.mergeCatalog([
         {'docId': localOnly, 'title': 'Peer Renamed', 'revision': 9},
@@ -315,6 +315,7 @@ void main() {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
       final doc = ws.active!;
+      ws.setSyncEnabled(doc.id, true);
       doc.replaceLocal('keep mine');
 
       var broadcastRevision = 0;

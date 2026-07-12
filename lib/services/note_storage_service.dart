@@ -57,7 +57,8 @@ class WorkspaceData {
   final String? activeId;
   final int orderRevision;
 
-  /// Note ids with peer sync turned off. Omitted ids default to synced.
+  /// Note ids with peer sync turned off. Omitted ids default to synced
+  /// (legacy installs); newly created notes start local-only.
   final Set<String> syncDisabledIds;
 }
 

@@ -266,4 +266,4 @@ SB Simple Netpad is proprietary software distributed under an
 Hosted copy for store listings:
 [https://ambiancesb.github.io/SB-Simple-Netpad/eula.html](https://ambiancesb.github.io/SB-Simple-Netpad/eula.html)
 
-The shipped app is freemium: core editing and LAN sync are free (up to **3 notes** and **3 connected peers**); **Netpad Standard** is a one-time in-app purchase via the Apple App Store, Google Play, or Microsoft Store (RevenueCat on Apple/Google; Microsoft Store durable add-on on Windows). Linux builds stay on the free tier. Store console setup notes are in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md).
+The shipped app is freemium: core editing and LAN sync are free (unlimited local notes, up to **3 synced notes** and **3 connected peers**); **Netpad Standard** is a one-time in-app purchase via the Apple App Store, Google Play, or Microsoft Store (RevenueCat on Apple/Google; Microsoft Store durable add-on on Windows). Linux builds stay on the free tier. Store console setup notes are in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md).

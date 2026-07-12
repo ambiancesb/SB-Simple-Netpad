@@ -9,21 +9,21 @@ import 'package:provider/provider.dart';
 
 /// UI helpers that show the paywall when a Standard feature is blocked.
 abstract final class StandardGate {
-  static Future<bool> createNoteAllowed(
+  static Future<bool> enableNoteSyncAllowed(
     BuildContext context, {
-    required int currentNoteCount,
+    required int currentSyncedNoteCount,
   }) async {
     final entitlements = context.read<EntitlementService>();
-    if (StandardFeatures.canCreateNote(
+    if (StandardFeatures.canEnableNoteSync(
       entitlements: entitlements,
-      currentNoteCount: currentNoteCount,
+      currentSyncedNoteCount: currentSyncedNoteCount,
     )) {
       return true;
     }
     return showPaywallSheet(
       context,
       highlight: context.l10n.standardHighlightNoteLimit(
-        EntitlementConstants.freeNoteLimit,
+        EntitlementConstants.freeSyncedNoteLimit,
       ),
     );
   }

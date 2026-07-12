@@ -439,7 +439,7 @@
   "settingsStandardSection": "Netpad Standard",
   "settingsStandardUnlocked": "Standard ontgrendeld",
   "settingsFree": "Gratis",
-  "settingsStandardUnlockedSubtitle": "Onbeperkte notities en peers, skins, geschiedenis, automatisch synchroniseren en spraak",
+  "settingsStandardUnlockedSubtitle": "Onbeperkt gesynchroniseerde notities en peers, skins, geschiedenis, automatisch synchroniseren en spraak",
   "settingsStandardBuySubtitle": "Eenmalig ontgrendelen via uw app store",
   "settingsPurchasesUnavailable": "Aankopen niet beschikbaar op dit platform",
   "settingsRestorePurchases": "Aankopen herstellen",
@@ -471,7 +471,7 @@
 
   "paywallTitle": "Netpad Standard ontgrendelen",
   "paywallSubtitle": "Eenmalige aankoop. Kernbewerking en LAN-synchronisatie blijven gratis.",
-  "paywallBenefitUnlimitedNotes": "Onbeperkte notities",
+  "paywallBenefitUnlimitedNotes": "Onbeperkt gesynchroniseerde notities",
   "paywallBenefitUnlimitedPeers": "Onbeperkte verbonden peers",
   "paywallBenefitSkins": "Extra kleurskins",
   "paywallBenefitHistory": "Versiegeschiedenis",
@@ -491,7 +491,7 @@
   "paywallStandardRestored": "Standard hersteld",
   "paywallNoPreviousStandard": "Geen eerdere Standard-aankoop gevonden",
 
-  "standardHighlightNoteLimit": "De gratis versie bevat tot {limit} notities. Ontgrendel Standard voor onbeperkte notities.",
+  "standardHighlightNoteLimit": "De gratis versie kan tot {limit} notities tegelijk synchroniseren. Ontgrendel Standard voor onbeperkt gesynchroniseerde notities.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
@@ -521,7 +521,7 @@
   "helpNotesTitle": "Notities",
   "helpNotes1": "Tik op het menupictogram (☰) of het notitiesdeelvenster om tussen notities te wisselen.",
   "helpNotes2": "Maak notities aan, hernoem, herorden en verwijder ze vanuit de notitieslijst.",
-  "helpNotes3": "Elke notitie synchroniseert onafhankelijk — schakel synchronisatie per notitie in indien nodig.",
+  "helpNotes3": "Elke notitie synchroniseert onafhankelijk — nieuwe notities starten lokaal; zet sync aan om met peers te delen.",
   "helpNotes4": "Zoek binnen een notitie (Zoeken) of in alle notities vanuit de editor.",
   "helpNotes5": "Versiegeschiedenis slaat lokale snapshots op die u later kunt herstellen.",
   "helpPeersTitle": "Peers en koppelen",
@@ -536,7 +536,7 @@
   "helpFileSharing1Desktop": "Menu Bestand: Opslaan als bestand, Bestand openen als nieuwe notitie, Notitie delen, Versiegeschiedenis, Instellingen, Afsluiten.",
   "helpFileSharing1Mobile": "Menu (⋮): opslaan als bestand, bestand openen als nieuwe notitie, delen, versiegeschiedenis, instellingen en deze helpgids.",
   "helpFileSharing2": "Opslaan als bestand exporteert de actieve notitie als .txt of .md.",
-  "helpFileSharing3": "Bestand openen importeert tekst in een nieuwe notitie die synchroniseert zoals elke andere.",
+  "helpFileSharing3": "Bestand openen importeert tekst in een nieuwe lokale notitie; zet sync aan als peers die moeten ontvangen.",
   "helpFileSharing4": "Delen gebruikt het OS-deelblad; Linux gebruikt het klembord als fallback.",
   "helpSettingsTitle": "Instellingen",
   "helpSettings1": "Apparaatnaam en ruimte vereisen Opslaan — andere opties worden direct toegepast.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "Beta — geschikt voor dagelijks LAN-gebruik.",
   "aboutEulaHeading": "Eindgebruikerslicentieovereenkomst",
-  "aboutEulaBody": "SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (tot {noteLimit} notities en {peerLimit} verbonden peers). Netpad Standard is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.",
+  "aboutEulaBody": "SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (onbeperkt lokale notities, tot {noteLimit} gesynchroniseerde notities en {peerLimit} verbonden peers). Netpad Standard is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

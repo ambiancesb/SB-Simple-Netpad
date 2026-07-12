@@ -762,7 +762,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsStandardUnlockedSubtitle =>
-      'Unbegrenzte Notizen und Peers, Designs, Verlauf, automatische Synchronisierung und Sprache';
+      'Unbegrenzte synchronisierte Notizen und Peers, Designs, Verlauf, automatische Synchronisierung und Sprache';
 
   @override
   String get settingsStandardBuySubtitle =>
@@ -855,7 +855,8 @@ class AppLocalizationsDe extends AppLocalizations {
       'Einmaliger Kauf. Grundlegende Bearbeitung und LAN-Synchronisierung bleiben kostenlos.';
 
   @override
-  String get paywallBenefitUnlimitedNotes => 'Unbegrenzte Notizen';
+  String get paywallBenefitUnlimitedNotes =>
+      'Unbegrenzt synchronisierte Notizen';
 
   @override
   String get paywallBenefitUnlimitedPeers => 'Unbegrenzte verbundene Peers';
@@ -903,7 +904,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String standardHighlightNoteLimit(int limit) {
-    return 'Die kostenlose Version enthält bis zu $limit Notizen. Schalten Sie Standard für unbegrenzte Notizen frei.';
+    return 'Die kostenlose Version kann bis zu $limit Notizen gleichzeitig synchronisieren. Schalten Sie Standard für unbegrenzte Sync-Notizen frei.';
   }
 
   @override
@@ -975,7 +976,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get helpNotes3 =>
-      'Jede Notiz synchronisiert unabhängig — Synchronisierung pro Notiz bei Bedarf umschalten.';
+      'Jede Notiz synchronisiert unabhängig — neue Notizen starten lokal; aktivieren Sie Sync, um mit Peers zu teilen.';
 
   @override
   String get helpNotes4 =>
@@ -1033,7 +1034,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get helpFileSharing3 =>
-      'Datei öffnen importiert Text in eine neue Notiz, die wie jede andere synchronisiert.';
+      'Datei öffnen importiert Text in eine neue lokale Notiz; Sync aktivieren, wenn Peers sie erhalten sollen.';
 
   @override
   String get helpFileSharing4 =>
@@ -1124,7 +1125,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad ist unter einem EULA lizenziert, nicht unter einer Open-Source-Lizenz. Grundlegende Bearbeitung und LAN-Synchronisierung sind kostenlos (bis zu $noteLimit Notizen und $peerLimit verbundene Peers). Netpad Standard ist eine einmalige Freischaltung über App Store, Google Play oder Microsoft Store.';
+    return 'SB Simple Netpad ist unter einem EULA lizenziert, nicht unter einer Open-Source-Lizenz. Grundlegende Bearbeitung und LAN-Synchronisierung sind kostenlos (unbegrenzte lokale Notizen, bis zu $noteLimit synchronisierte Notizen und $peerLimit verbundene Peers). Netpad Standard ist eine einmalige Freischaltung über App Store, Google Play oder Microsoft Store.';
   }
 
   @override

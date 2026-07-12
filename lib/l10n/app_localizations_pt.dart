@@ -764,7 +764,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsStandardUnlockedSubtitle =>
-      'Notas e pares ilimitados, visuais, histÃ³rico, sincronizaÃ§Ã£o automÃ¡tica e voz';
+      'Notas sincronizadas e pares ilimitados, visuais, histórico, sincronização automática e voz';
 
   @override
   String get settingsStandardBuySubtitle =>
@@ -857,7 +857,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Compra Ãºnica. EdiÃ§Ã£o bÃ¡sica e sincronizaÃ§Ã£o LAN permanecem gratuitas.';
 
   @override
-  String get paywallBenefitUnlimitedNotes => 'Notas ilimitadas';
+  String get paywallBenefitUnlimitedNotes => 'Notas sincronizadas ilimitadas';
 
   @override
   String get paywallBenefitUnlimitedPeers => 'Pares conectados ilimitados';
@@ -905,7 +905,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String standardHighlightNoteLimit(int limit) {
-    return 'A versÃ£o gratuita inclui atÃ© $limit notas. Desbloqueie o Standard para notas ilimitadas.';
+    return 'A versão gratuita pode sincronizar até $limit notas por vez. Desbloqueie o Standard para notas sincronizadas ilimitadas.';
   }
 
   @override
@@ -978,7 +978,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpNotes3 =>
-      'Cada nota sincroniza de forma independente â€” alterne a sincronizaÃ§Ã£o por nota quando necessÃ¡rio.';
+      'Cada nota sincroniza de forma independente — notas novas começam só locais; ative a sincronização para partilhar com pares.';
 
   @override
   String get helpNotes4 =>
@@ -1036,7 +1036,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpFileSharing3 =>
-      'Abrir arquivo importa texto para uma nova nota que sincroniza como qualquer outra.';
+      'Abrir arquivo importa texto para uma nova nota só local; ative a sincronização se quiser que os pares a recebam.';
 
   @override
   String get helpFileSharing4 =>
@@ -1127,7 +1127,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad Ã© licenciado sob um EULA, nÃ£o uma licenÃ§a de cÃ³digo aberto. A ediÃ§Ã£o bÃ¡sica e a sincronizaÃ§Ã£o LAN sÃ£o gratuitas (atÃ© $noteLimit notas e $peerLimit pares conectados). Netpad Standard Ã© um desbloqueio Ãºnico via App Store, Google Play ou Microsoft Store.';
+    return 'SB Simple Netpad é licenciado sob um EULA, não uma licença de código aberto. A edição básica e a sincronização LAN são gratuitas (notas locais ilimitadas, até $noteLimit notas sincronizadas e $peerLimit pares conectados). Netpad Standard é um desbloqueio único via App Store, Google Play ou Microsoft Store.';
   }
 
   @override
@@ -1979,7 +1979,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get settingsStandardUnlockedSubtitle =>
-      'Notas e pares ilimitados, visuais, histórico, sincronização automática e voz';
+      'Notas sincronizadas e pares ilimitados, visuais, histórico, sincronização automática e voz';
 
   @override
   String get settingsStandardBuySubtitle =>
@@ -2072,7 +2072,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Compra única. Edição básica e sincronização LAN permanecem gratuitas.';
 
   @override
-  String get paywallBenefitUnlimitedNotes => 'Notas ilimitadas';
+  String get paywallBenefitUnlimitedNotes => 'Notas sincronizadas ilimitadas';
 
   @override
   String get paywallBenefitUnlimitedPeers => 'Pares conectados ilimitados';
@@ -2120,7 +2120,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String standardHighlightNoteLimit(int limit) {
-    return 'A versão gratuita inclui até $limit notas. Desbloqueie o Standard para notas ilimitadas.';
+    return 'A versão gratuita pode sincronizar até $limit notas por vez. Desbloqueie o Standard para notas sincronizadas ilimitadas.';
   }
 
   @override
@@ -2193,7 +2193,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpNotes3 =>
-      'Cada nota sincroniza de forma independente — alterne a sincronização por nota quando necessário.';
+      'Cada nota sincroniza de forma independente — notas novas começam só locais; ative a sincronização para compartilhar com pares.';
 
   @override
   String get helpNotes4 =>
@@ -2251,7 +2251,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpFileSharing3 =>
-      'Abrir arquivo importa texto para uma nova nota que sincroniza como qualquer outra.';
+      'Abrir arquivo importa texto para uma nova nota só local; ative a sincronização se quiser que os pares a recebam.';
 
   @override
   String get helpFileSharing4 =>
@@ -2342,7 +2342,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad é licenciado sob um EULA, não uma licença de código aberto. A edição básica e a sincronização LAN são gratuitas (até $noteLimit notas e $peerLimit pares conectados). Netpad Standard é um desbloqueio único via App Store, Google Play ou Microsoft Store.';
+    return 'SB Simple Netpad é licenciado sob um EULA, não uma licença de código aberto. A edição básica e a sincronização LAN são gratuitas (notas locais ilimitadas, até $noteLimit notas sincronizadas e $peerLimit pares conectados). Netpad Standard é um desbloqueio único via App Store, Google Play ou Microsoft Store.';
   }
 
   @override

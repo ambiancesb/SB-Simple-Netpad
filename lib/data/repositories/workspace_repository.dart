@@ -82,17 +82,33 @@ class WorkspaceRepository extends ChangeNotifier {
   /// Whether [docId] participates in peer sync (catalog, edits, renames, etc.).
   bool isSyncEnabled(String docId) => !_syncDisabledIds.contains(docId);
 
+  /// Count of notes currently participating in peer sync.
+  int get syncedNoteCount =>
+      _docs.keys.where(isSyncEnabled).length;
+
   /// Inbound peer messages for an existing local-only note are ignored.
   bool shouldIgnoreInboundSync(String docId) =>
       _docs.containsKey(docId) && !isSyncEnabled(docId);
 
-  /// Turns peer sync on or off for an existing note. New notes default to on.
+  /// Turns peer sync on or off for an existing note. New notes default to off.
   void setSyncEnabled(String docId, bool enabled) {
     if (!_docs.containsKey(docId)) return;
     if (enabled) {
       if (!_syncDisabledIds.remove(docId)) return;
+      final doc = _docs[docId]!;
+      onDocCreate?.call(doc.id, doc.title, doc.revision, instanceId);
+      onDocUpdate?.call(
+        doc.id,
+        doc.title,
+        doc.revision,
+        doc.text,
+        instanceId,
+      );
+      _broadcastOrder();
     } else if (!_syncDisabledIds.add(docId)) {
       return;
+    } else {
+      _broadcastOrder();
     }
     unawaited(_persistSyncFlags());
     notifyListeners();
@@ -111,14 +127,16 @@ class WorkspaceRepository extends ChangeNotifier {
   Future<void> load() async {
     final data = await _storage.loadWorkspace();
     if (data.documents.isEmpty) {
-      _createLocal(
+      final doc = _createLocal(
         id: _uuid.v4(),
         title: kDefaultNoteTitle,
         text: '',
         revision: 0,
       );
+      _syncDisabledIds.add(doc.id);
       _activeId = _order.first;
       await _persistIndex();
+      await _persistSyncFlags();
       await _storage.saveDocument(_docs[_activeId]!.toStored());
     } else {
       for (final stored in data.documents) {
@@ -154,10 +172,11 @@ class WorkspaceRepository extends ChangeNotifier {
       text: '',
       revision: 1,
     );
+    _syncDisabledIds.add(doc.id);
     _activeId = doc.id;
     unawaited(_storage.saveDocument(doc.toStored()));
-    onDocCreate?.call(doc.id, doc.title, doc.revision, instanceId);
-    _broadcastOrder();
+    unawaited(_persistSyncFlags());
+    unawaited(_persistIndex());
     notifyListeners();
     return doc;
   }
@@ -205,6 +224,7 @@ class WorkspaceRepository extends ChangeNotifier {
       onDocDeleted?.call(id, instanceId);
     }
     unawaited(_storage.deleteDocument(id));
+    unawaited(_persistSyncFlags());
     _ensureAtLeastOneNote();
     _broadcastOrder();
     notifyListeners();
@@ -547,8 +567,10 @@ class WorkspaceRepository extends ChangeNotifier {
       text: '',
       revision: 0,
     );
+    _syncDisabledIds.add(doc.id);
     _activeId = doc.id;
     unawaited(_storage.saveDocument(doc.toStored()));
+    unawaited(_persistSyncFlags());
   }
 
   @override

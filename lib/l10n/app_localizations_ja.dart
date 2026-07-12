@@ -748,7 +748,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsFree => '無料';
 
   @override
-  String get settingsStandardUnlockedSubtitle => '無制限のメモとピア、スキン、履歴、自動同期、音声';
+  String get settingsStandardUnlockedSubtitle => '無制限の同期メモとピア、スキン、履歴、自動同期、音声';
 
   @override
   String get settingsStandardBuySubtitle => 'アプリストアで一度だけ解除';
@@ -834,7 +834,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get paywallSubtitle => '一度の購入。基本的な編集とLAN同期は無料のまま。';
 
   @override
-  String get paywallBenefitUnlimitedNotes => '無制限のメモ';
+  String get paywallBenefitUnlimitedNotes => '無制限の同期メモ';
 
   @override
   String get paywallBenefitUnlimitedPeers => '無制限の接続ピア';
@@ -880,7 +880,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String standardHighlightNoteLimit(int limit) {
-    return '無料版は最大 $limit 件のメモが含まれます。無制限のメモには Standard を解除してください。';
+    return '無料版は同時に最大 $limit 件のメモを同期できます。無制限の同期メモには Standard を解除してください。';
   }
 
   @override
@@ -942,7 +942,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get helpNotes2 => 'メモリストからメモを作成、名前変更、並び替え、削除します。';
 
   @override
-  String get helpNotes3 => '各メモは独立して同期します — 必要に応じてメモごとに同期を切り替えます。';
+  String get helpNotes3 =>
+      '各メモは独立して同期します — 新しいメモはローカルのみで開始し、ピアと共有するときに同期をオンにします。';
 
   @override
   String get helpNotes4 => 'メモ内（検索）またはエディタからすべてのメモを検索します。';
@@ -990,7 +991,8 @@ class AppLocalizationsJa extends AppLocalizations {
       'ファイルに保存すると、アクティブなメモが .txt または .md としてエクスポートされます。';
 
   @override
-  String get helpFileSharing3 => 'ファイルを開くと、テキストが他のメモと同様に同期する新しいメモにインポートされます。';
+  String get helpFileSharing3 =>
+      'ファイルを開くとローカルのみの新しいメモにテキストがインポートされます。ピアに届ける場合は同期をオンにしてください。';
 
   @override
   String get helpFileSharing4 => '共有はOSの共有シートを使用します。Linuxではクリップボードにフォールバックします。';
@@ -1074,7 +1076,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad はオープンソースライセンスではなく EULA の下でライセンスされています。基本的な編集とLAN同期は無料です（最大 $noteLimit 件のメモと $peerLimit 件の接続ピア）。Netpad Standard は App Store、Google Play、または Microsoft Store を通じた一度きりの解除です。';
+    return 'SB Simple Netpad はオープンソースライセンスではなく EULA の下でライセンスされています。基本的な編集とLAN同期は無料です（ローカルメモは無制限、同期メモは最大 $noteLimit 件、接続ピアは $peerLimit 件）。Netpad Standard は App Store、Google Play、または Microsoft Store を通じた一度きりの解除です。';
   }
 
   @override

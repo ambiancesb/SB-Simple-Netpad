@@ -764,7 +764,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsStandardUnlockedSubtitle =>
-      'Onbeperkte notities en peers, skins, geschiedenis, automatisch synchroniseren en spraak';
+      'Onbeperkt gesynchroniseerde notities en peers, skins, geschiedenis, automatisch synchroniseren en spraak';
 
   @override
   String get settingsStandardBuySubtitle =>
@@ -855,7 +855,8 @@ class AppLocalizationsNl extends AppLocalizations {
       'Eenmalige aankoop. Kernbewerking en LAN-synchronisatie blijven gratis.';
 
   @override
-  String get paywallBenefitUnlimitedNotes => 'Onbeperkte notities';
+  String get paywallBenefitUnlimitedNotes =>
+      'Onbeperkt gesynchroniseerde notities';
 
   @override
   String get paywallBenefitUnlimitedPeers => 'Onbeperkte verbonden peers';
@@ -903,7 +904,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String standardHighlightNoteLimit(int limit) {
-    return 'De gratis versie bevat tot $limit notities. Ontgrendel Standard voor onbeperkte notities.';
+    return 'De gratis versie kan tot $limit notities tegelijk synchroniseren. Ontgrendel Standard voor onbeperkt gesynchroniseerde notities.';
   }
 
   @override
@@ -974,7 +975,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get helpNotes3 =>
-      'Elke notitie synchroniseert onafhankelijk — schakel synchronisatie per notitie in indien nodig.';
+      'Elke notitie synchroniseert onafhankelijk — nieuwe notities starten lokaal; zet sync aan om met peers te delen.';
 
   @override
   String get helpNotes4 =>
@@ -1032,7 +1033,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get helpFileSharing3 =>
-      'Bestand openen importeert tekst in een nieuwe notitie die synchroniseert zoals elke andere.';
+      'Bestand openen importeert tekst in een nieuwe lokale notitie; zet sync aan als peers die moeten ontvangen.';
 
   @override
   String get helpFileSharing4 =>
@@ -1125,7 +1126,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
-    return 'SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (tot $noteLimit notities en $peerLimit verbonden peers). Netpad Standard is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.';
+    return 'SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (onbeperkt lokale notities, tot $noteLimit gesynchroniseerde notities en $peerLimit verbonden peers). Netpad Standard is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.';
   }
 
   @override

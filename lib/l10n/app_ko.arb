@@ -439,7 +439,7 @@
   "settingsStandardSection": "Netpad Standard",
   "settingsStandardUnlocked": "Standard 잠금 해제됨",
   "settingsFree": "무료",
-  "settingsStandardUnlockedSubtitle": "무제한 메모 및 피어, 스킨, 기록, 자동 동기화, 음성",
+  "settingsStandardUnlockedSubtitle": "무제한 동기화 메모 및 피어, 스킨, 기록, 자동 동기화, 음성",
   "settingsStandardBuySubtitle": "앱 스토어를 통해 한 번만 잠금 해제",
   "settingsPurchasesUnavailable": "이 플랫폼에서는 구매를 사용할 수 없습니다",
   "settingsRestorePurchases": "구매 복원",
@@ -471,7 +471,7 @@
 
   "paywallTitle": "Netpad Standard 잠금 해제",
   "paywallSubtitle": "일회성 구매. 핵심 편집 및 LAN 동기화는 무료로 유지됩니다.",
-  "paywallBenefitUnlimitedNotes": "무제한 메모",
+  "paywallBenefitUnlimitedNotes": "무제한 동기화 메모",
   "paywallBenefitUnlimitedPeers": "무제한 연결 피어",
   "paywallBenefitSkins": "추가 색상 스킨",
   "paywallBenefitHistory": "버전 기록",
@@ -491,7 +491,7 @@
   "paywallStandardRestored": "Standard 복원됨",
   "paywallNoPreviousStandard": "이전 Standard 구매 내역을 찾을 수 없습니다",
 
-  "standardHighlightNoteLimit": "무료 버전에는 최대 {limit}개의 메모가 포함됩니다. 무제한 메모를 위해 Standard를 잠금 해제하세요.",
+  "standardHighlightNoteLimit": "무료 버전은 한 번에 최대 {limit}개의 메모를 동기화할 수 있습니다. 무제한 동기화 메모를 위해 Standard를 잠금 해제하세요.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
@@ -521,7 +521,7 @@
   "helpNotesTitle": "메모",
   "helpNotes1": "메뉴 아이콘(☰) 또는 메모 패널을 탭하여 메모 간에 전환합니다.",
   "helpNotes2": "메모 목록에서 메모를 만들고, 이름을 바꾸고, 순서를 변경하고, 삭제합니다.",
-  "helpNotes3": "각 메모는 독립적으로 동기화됩니다 — 필요에 따라 메모별로 동기화를 전환합니다.",
+  "helpNotes3": "각 메모는 독립적으로 동기화됩니다 — 새 메모는 로컬 전용으로 시작하며, 피어와 공유할 때 동기화를 켭니다.",
   "helpNotes4": "편집기에서 메모 내에서(찾기) 또는 모든 메모에서 검색합니다.",
   "helpNotes5": "버전 기록은 나중에 복원할 수 있는 로컬 스냅샷을 저장합니다.",
   "helpPeersTitle": "피어 및 페어링",
@@ -536,7 +536,7 @@
   "helpFileSharing1Desktop": "파일 메뉴: 파일로 저장, 파일을 새 메모로 열기, 메모 공유, 버전 기록, 설정, 종료.",
   "helpFileSharing1Mobile": "메뉴(⋮): 파일로 저장, 파일을 새 메모로 열기, 공유, 버전 기록, 설정, 이 도움말 가이드.",
   "helpFileSharing2": "파일로 저장은 활성 메모를 .txt 또는 .md로 내보냅니다.",
-  "helpFileSharing3": "파일 열기는 텍스트를 다른 메모처럼 동기화되는 새 메모로 가져옵니다.",
+  "helpFileSharing3": "파일 열기는 텍스트를 로컬 전용 새 메모로 가져옵니다. 피어가 받도록 하려면 동기화를 켜세요.",
   "helpFileSharing4": "공유는 OS 공유 시트를 사용합니다. Linux는 클립보드로 대체됩니다.",
   "helpSettingsTitle": "설정",
   "helpSettings1": "기기 이름과 방은 저장이 필요합니다 — 다른 옵션은 즉시 적용됩니다.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "베타 — 일상적인 LAN 사용에 적합합니다.",
   "aboutEulaHeading": "최종 사용자 라이선스 계약",
-  "aboutEulaBody": "SB Simple Netpad는 오픈 소스 라이선스가 아닌 EULA 하에 라이선스됩니다. 핵심 편집 및 LAN 동기화는 무료입니다(최대 {noteLimit}개 메모 및 {peerLimit}개 연결 피어). Netpad Standard는 App Store, Google Play 또는 Microsoft Store를 통한 일회성 잠금 해제입니다.",
+  "aboutEulaBody": "SB Simple Netpad는 오픈 소스 라이선스가 아닌 EULA 하에 라이선스됩니다. 핵심 편집 및 LAN 동기화는 무료입니다(로컬 메모 무제한, 동기화 메모 최대 {noteLimit}개, 연결 피어 {peerLimit}개). Netpad Standard는 App Store, Google Play 또는 Microsoft Store를 통한 일회성 잠금 해제입니다.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

@@ -4,15 +4,19 @@ import 'package:netpad/theme/app_skin.dart';
 
 /// Soft freemium gates shared by UI and repositories.
 abstract final class StandardFeatures {
-  static bool canCreateNote({
+  /// Free users may enable sync on up to [freeSyncedNoteLimit] notes.
+  /// [currentSyncedNoteCount] is the number already syncing (exclude the note
+  /// being enabled if it is currently local-only).
+  static bool canEnableNoteSync({
     required EntitlementService entitlements,
-    required int currentNoteCount,
+    required int currentSyncedNoteCount,
   }) {
     if (entitlements.isStandard) return true;
-    return currentNoteCount < EntitlementConstants.freeNoteLimit;
+    return currentSyncedNoteCount < EntitlementConstants.freeSyncedNoteLimit;
   }
 
-  static int get freeNoteLimit => EntitlementConstants.freeNoteLimit;
+  static int get freeSyncedNoteLimit =>
+      EntitlementConstants.freeSyncedNoteLimit;
 
   static bool canConnectPeer({
     required EntitlementService entitlements,

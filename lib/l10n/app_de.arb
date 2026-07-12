@@ -439,7 +439,7 @@
   "settingsStandardSection": "Netpad Standard",
   "settingsStandardUnlocked": "Standard freigeschaltet",
   "settingsFree": "Kostenlos",
-  "settingsStandardUnlockedSubtitle": "Unbegrenzte Notizen und Peers, Designs, Verlauf, automatische Synchronisierung und Sprache",
+  "settingsStandardUnlockedSubtitle": "Unbegrenzte synchronisierte Notizen und Peers, Designs, Verlauf, automatische Synchronisierung und Sprache",
   "settingsStandardBuySubtitle": "Einmalige Freischaltung über Ihren App-Store",
   "settingsPurchasesUnavailable": "Käufe auf dieser Plattform nicht verfügbar",
   "settingsRestorePurchases": "Käufe wiederherstellen",
@@ -471,7 +471,7 @@
 
   "paywallTitle": "Netpad Standard freischalten",
   "paywallSubtitle": "Einmaliger Kauf. Grundlegende Bearbeitung und LAN-Synchronisierung bleiben kostenlos.",
-  "paywallBenefitUnlimitedNotes": "Unbegrenzte Notizen",
+  "paywallBenefitUnlimitedNotes": "Unbegrenzt synchronisierte Notizen",
   "paywallBenefitUnlimitedPeers": "Unbegrenzte verbundene Peers",
   "paywallBenefitSkins": "Zusätzliche Farbdesigns",
   "paywallBenefitHistory": "Versionsverlauf",
@@ -491,7 +491,7 @@
   "paywallStandardRestored": "Standard wiederhergestellt",
   "paywallNoPreviousStandard": "Kein früherer Standard-Kauf gefunden",
 
-  "standardHighlightNoteLimit": "Die kostenlose Version enthält bis zu {limit} Notizen. Schalten Sie Standard für unbegrenzte Notizen frei.",
+  "standardHighlightNoteLimit": "Die kostenlose Version kann bis zu {limit} Notizen gleichzeitig synchronisieren. Schalten Sie Standard für unbegrenzte Sync-Notizen frei.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
@@ -521,7 +521,7 @@
   "helpNotesTitle": "Notizen",
   "helpNotes1": "Tippen Sie auf das Menüsymbol (☰) oder den Notizenbereich, um zwischen Notizen zu wechseln.",
   "helpNotes2": "Erstellen, umbenennen, neu anordnen und löschen Sie Notizen aus der Notizenliste.",
-  "helpNotes3": "Jede Notiz synchronisiert unabhängig — Synchronisierung pro Notiz bei Bedarf umschalten.",
+  "helpNotes3": "Jede Notiz synchronisiert unabhängig — neue Notizen starten lokal; aktivieren Sie Sync, um mit Peers zu teilen.",
   "helpNotes4": "Suchen Sie innerhalb einer Notiz (Suchen) oder über alle Notizen im Editor.",
   "helpNotes5": "Der Versionsverlauf speichert lokale Snapshots, die Sie später wiederherstellen können.",
   "helpPeersTitle": "Peers und Kopplung",
@@ -536,7 +536,7 @@
   "helpFileSharing1Desktop": "Dateimenü: In Datei speichern, Datei als neue Notiz öffnen, Notiz teilen, Versionsverlauf, Einstellungen, Beenden.",
   "helpFileSharing1Mobile": "Überlaufmenü (⋮): In Datei speichern, Datei als neue Notiz öffnen, Teilen, Versionsverlauf, Einstellungen und dieser Hilfeleitfaden.",
   "helpFileSharing2": "In Datei speichern exportiert die aktive Notiz als .txt oder .md.",
-  "helpFileSharing3": "Datei öffnen importiert Text in eine neue Notiz, die wie jede andere synchronisiert.",
+  "helpFileSharing3": "Datei öffnen importiert Text in eine neue lokale Notiz; Sync aktivieren, wenn Peers sie erhalten sollen.",
   "helpFileSharing4": "Teilen verwendet die OS-Teilen-Oberfläche; Linux weicht auf die Zwischenablage aus.",
   "helpSettingsTitle": "Einstellungen",
   "helpSettings1": "Gerätename und Raum erfordern Speichern — andere Optionen werden sofort angewendet.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "Beta — geeignet für den täglichen LAN-Einsatz.",
   "aboutEulaHeading": "Endbenutzer-Lizenzvertrag",
-  "aboutEulaBody": "SB Simple Netpad ist unter einem EULA lizenziert, nicht unter einer Open-Source-Lizenz. Grundlegende Bearbeitung und LAN-Synchronisierung sind kostenlos (bis zu {noteLimit} Notizen und {peerLimit} verbundene Peers). Netpad Standard ist eine einmalige Freischaltung über App Store, Google Play oder Microsoft Store.",
+  "aboutEulaBody": "SB Simple Netpad ist unter einem EULA lizenziert, nicht unter einer Open-Source-Lizenz. Grundlegende Bearbeitung und LAN-Synchronisierung sind kostenlos (unbegrenzte lokale Notizen, bis zu {noteLimit} synchronisierte Notizen und {peerLimit} verbundene Peers). Netpad Standard ist eine einmalige Freischaltung über App Store, Google Play oder Microsoft Store.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

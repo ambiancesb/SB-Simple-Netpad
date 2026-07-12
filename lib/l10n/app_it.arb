@@ -439,7 +439,7 @@
   "settingsStandardSection": "Netpad Standard",
   "settingsStandardUnlocked": "Standard sbloccato",
   "settingsFree": "Gratuito",
-  "settingsStandardUnlockedSubtitle": "Note e peer illimitati, skin, cronologia, sincronizzazione automatica e voce",
+  "settingsStandardUnlockedSubtitle": "Note sincronizzate e peer illimitati, skin, cronologia, sincronizzazione automatica e voce",
   "settingsStandardBuySubtitle": "Sblocco una tantum tramite il tuo app store",
   "settingsPurchasesUnavailable": "Acquisti non disponibili su questa piattaforma",
   "settingsRestorePurchases": "Ripristina acquisti",
@@ -471,7 +471,7 @@
 
   "paywallTitle": "Sblocca Netpad Standard",
   "paywallSubtitle": "Acquisto unico. Modifica base e sincronizzazione LAN rimangono gratuite.",
-  "paywallBenefitUnlimitedNotes": "Note illimitate",
+  "paywallBenefitUnlimitedNotes": "Note sincronizzate illimitate",
   "paywallBenefitUnlimitedPeers": "Peer connessi illimitati",
   "paywallBenefitSkins": "Skin colori extra",
   "paywallBenefitHistory": "Cronologia versioni",
@@ -491,7 +491,7 @@
   "paywallStandardRestored": "Standard ripristinato",
   "paywallNoPreviousStandard": "Nessun acquisto Standard precedente trovato",
 
-  "standardHighlightNoteLimit": "La versione gratuita include fino a {limit} note. Sblocca Standard per note illimitate.",
+  "standardHighlightNoteLimit": "La versione gratuita può sincronizzare fino a {limit} note alla volta. Sblocca Standard per note sincronizzate illimitate.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
@@ -521,7 +521,7 @@
   "helpNotesTitle": "Note",
   "helpNotes1": "Tocca l'icona del menu (☰) o il pannello note per passare tra le note.",
   "helpNotes2": "Crea, rinomina, riordina ed elimina note dall'elenco note.",
-  "helpNotes3": "Ogni nota si sincronizza indipendentemente — attiva/disattiva la sincronizzazione per nota quando necessario.",
+  "helpNotes3": "Ogni nota si sincronizza indipendentemente — le nuove note partono solo locali; attiva la sync per condividere con i peer.",
   "helpNotes4": "Cerca all'interno di una nota (Trova) o in tutte le note dall'editor.",
   "helpNotes5": "La cronologia versioni salva snapshot locali che puoi ripristinare in seguito.",
   "helpPeersTitle": "Peer e abbinamento",
@@ -536,7 +536,7 @@
   "helpFileSharing1Desktop": "Menu File: Salva su file, Apri file come nuova nota, Condividi nota, Cronologia versioni, Impostazioni, Esci.",
   "helpFileSharing1Mobile": "Menu (⋮): salva su file, apri file come nuova nota, condividi, cronologia versioni, impostazioni e questa guida.",
   "helpFileSharing2": "Salva su file esporta la nota attiva come .txt o .md.",
-  "helpFileSharing3": "Apri file importa il testo in una nuova nota che si sincronizza come le altre.",
+  "helpFileSharing3": "Apri file importa il testo in una nuova nota solo locale; attiva la sync se vuoi che i peer la ricevano.",
   "helpFileSharing4": "Condividi usa il foglio di condivisione del sistema operativo; Linux usa gli appunti come fallback.",
   "helpSettingsTitle": "Impostazioni",
   "helpSettings1": "Il nome del dispositivo e la stanza richiedono Salva — le altre opzioni si applicano immediatamente.",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "Beta — adatto all'uso LAN quotidiano.",
   "aboutEulaHeading": "Contratto di Licenza con l'Utente Finale",
-  "aboutEulaBody": "SB Simple Netpad è concesso in licenza ai sensi di un EULA, non una licenza open source. La modifica base e la sincronizzazione LAN sono gratuite (fino a {noteLimit} note e {peerLimit} peer connessi). Netpad Standard è uno sblocco una tantum tramite App Store, Google Play o Microsoft Store.",
+  "aboutEulaBody": "SB Simple Netpad è concesso in licenza ai sensi di un EULA, non una licenza open source. La modifica base e la sincronizzazione LAN sono gratuite (note locali illimitate, fino a {noteLimit} note sincronizzate e {peerLimit} peer connessi). Netpad Standard è uno sblocco una tantum tramite App Store, Google Play o Microsoft Store.",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

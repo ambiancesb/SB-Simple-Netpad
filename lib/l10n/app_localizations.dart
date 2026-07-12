@@ -1426,7 +1426,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsStandardUnlockedSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Unlimited notes and peers, skins, history, auto-sync, and voice'**
+  /// **'Unlimited synced notes and peers, skins, history, auto-sync, and voice'**
   String get settingsStandardUnlockedSubtitle;
 
   /// No description provided for @settingsStandardBuySubtitle.
@@ -1582,7 +1582,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallBenefitUnlimitedNotes.
   ///
   /// In en, this message translates to:
-  /// **'Unlimited notes'**
+  /// **'Unlimited synced notes'**
   String get paywallBenefitUnlimitedNotes;
 
   /// No description provided for @paywallBenefitUnlimitedPeers.
@@ -1666,7 +1666,7 @@ abstract class AppLocalizations {
   /// No description provided for @standardHighlightNoteLimit.
   ///
   /// In en, this message translates to:
-  /// **'Free includes up to {limit} notes. Unlock Standard for unlimited notes.'**
+  /// **'Free can sync up to {limit} notes at a time. Unlock Standard for unlimited synced notes.'**
   String standardHighlightNoteLimit(int limit);
 
   /// No description provided for @standardHighlightPeerLimit.
@@ -1780,7 +1780,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpNotes3.
   ///
   /// In en, this message translates to:
-  /// **'Each note syncs independently — toggle sync per note when needed.'**
+  /// **'Each note syncs independently — new notes start local-only; turn sync on when you want to share with peers.'**
   String get helpNotes3;
 
   /// No description provided for @helpNotes4.
@@ -1870,7 +1870,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpFileSharing3.
   ///
   /// In en, this message translates to:
-  /// **'Open file imports text into a new note that syncs like any other.'**
+  /// **'Open file imports text into a new local-only note; turn on sync if you want peers to receive it.'**
   String get helpFileSharing3;
 
   /// No description provided for @helpFileSharing4.
@@ -2026,7 +2026,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutEulaBody.
   ///
   /// In en, this message translates to:
-  /// **'SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (up to {noteLimit} notes and {peerLimit} connected peers). Netpad Standard is a one-time unlock via the App Store, Google Play, or Microsoft Store.'**
+  /// **'SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (unlimited local notes, up to {noteLimit} synced notes and {peerLimit} connected peers). Netpad Standard is a one-time unlock via the App Store, Google Play, or Microsoft Store.'**
   String aboutEulaBody(int noteLimit, int peerLimit);
 
   /// No description provided for @aboutViewEula.

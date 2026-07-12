@@ -439,7 +439,7 @@
   "settingsStandardSection": "Netpad Standard",
   "settingsStandardUnlocked": "Standard 已解锁",
   "settingsFree": "免费",
-  "settingsStandardUnlockedSubtitle": "无限笔记和节点、皮肤、历史、自动同步和语音",
+  "settingsStandardUnlockedSubtitle": "无限同步笔记和节点、皮肤、历史、自动同步和语音",
   "settingsStandardBuySubtitle": "通过您的应用商店一次性解锁",
   "settingsPurchasesUnavailable": "此平台上购买不可用",
   "settingsRestorePurchases": "恢复购买",
@@ -471,7 +471,7 @@
 
   "paywallTitle": "解锁 Netpad Standard",
   "paywallSubtitle": "一次性购买。核心编辑和 LAN 同步保持免费。",
-  "paywallBenefitUnlimitedNotes": "无限笔记",
+  "paywallBenefitUnlimitedNotes": "无限同步笔记",
   "paywallBenefitUnlimitedPeers": "无限连接节点",
   "paywallBenefitSkins": "额外颜色皮肤",
   "paywallBenefitHistory": "版本历史",
@@ -491,7 +491,7 @@
   "paywallStandardRestored": "Standard 已恢复",
   "paywallNoPreviousStandard": "未找到之前的 Standard 购买记录",
 
-  "standardHighlightNoteLimit": "免费版最多包含 {limit} 条笔记。解锁 Standard 获得无限笔记。",
+  "standardHighlightNoteLimit": "免费版最多可同时同步 {limit} 条笔记。解锁 Standard 获得无限同步笔记。",
   "@standardHighlightNoteLimit": {
     "placeholders": {
       "limit": {"type": "int"}
@@ -521,7 +521,7 @@
   "helpNotesTitle": "笔记",
   "helpNotes1": "点击菜单图标（☰）或笔记面板以切换笔记。",
   "helpNotes2": "从笔记列表创建、重命名、重新排序和删除笔记。",
-  "helpNotes3": "每条笔记独立同步 — 根据需要切换每条笔记的同步。",
+  "helpNotes3": "每条笔记独立同步 — 新笔记默认为仅本地；需要与节点共享时再打开同步。",
   "helpNotes4": "在笔记内搜索（查找）或从编辑器搜索所有笔记。",
   "helpNotes5": "版本历史保存可以稍后恢复的本地快照。",
   "helpPeersTitle": "节点和配对",
@@ -536,7 +536,7 @@
   "helpFileSharing1Desktop": "文件菜单: 保存到文件、打开文件作为新笔记、分享笔记、版本历史、设置、退出。",
   "helpFileSharing1Mobile": "菜单（⋮）: 保存到文件、打开文件作为新笔记、分享、版本历史、设置和此帮助指南。",
   "helpFileSharing2": "保存到文件将活跃笔记导出为 .txt 或 .md。",
-  "helpFileSharing3": "打开文件将文本导入到像其他笔记一样同步的新笔记中。",
+  "helpFileSharing3": "打开文件将文本导入仅本地的新笔记；若希望节点收到，请打开同步。",
   "helpFileSharing4": "分享使用系统分享表单；Linux 回退到剪贴板。",
   "helpSettingsTitle": "设置",
   "helpSettings1": "设备名称和房间需要保存 — 其他选项立即生效。",
@@ -563,7 +563,7 @@
   "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
   "aboutStatus": "测试版 — 适合日常 LAN 使用。",
   "aboutEulaHeading": "最终用户许可协议",
-  "aboutEulaBody": "SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（最多 {noteLimit} 条笔记和 {peerLimit} 个连接节点）。Netpad Standard 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。",
+  "aboutEulaBody": "SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（本地笔记不限量，最多 {noteLimit} 条同步笔记和 {peerLimit} 个连接节点）。Netpad Standard 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。",
   "@aboutEulaBody": {
     "placeholders": {
       "noteLimit": {"type": "int"},

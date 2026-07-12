@@ -53,13 +53,24 @@ class _NotesPanelState extends State<NotesPanel> {
     BuildContext context,
     WorkspaceRepository workspace,
   ) async {
-    final allowed = await StandardGate.createNoteAllowed(
-      context,
-      currentNoteCount: workspace.documents.length,
-    );
-    if (!allowed || !context.mounted) return;
     workspace.createNote();
     _maybeDismiss();
+  }
+
+  Future<void> _setNoteSync(
+    BuildContext context,
+    WorkspaceRepository workspace,
+    String docId,
+    bool enabled,
+  ) async {
+    if (enabled) {
+      final allowed = await StandardGate.enableNoteSyncAllowed(
+        context,
+        currentSyncedNoteCount: workspace.syncedNoteCount,
+      );
+      if (!allowed || !context.mounted) return;
+    }
+    workspace.setSyncEnabled(docId, enabled);
   }
 
   Future<void> _openHistory(
@@ -230,7 +241,7 @@ class _NotesPanelState extends State<NotesPanel> {
           active: hit.doc.id == workspace.activeId,
           syncEnabled: workspace.isSyncEnabled(hit.doc.id),
           onSyncChanged: (enabled) =>
-              workspace.setSyncEnabled(hit.doc.id, enabled),
+              _setNoteSync(context, workspace, hit.doc.id, enabled),
           onTap: () {
             workspace.selectNote(hit.doc.id);
             _maybeDismiss();
@@ -272,7 +283,7 @@ class _NotesPanelState extends State<NotesPanel> {
           active: doc.id == workspace.activeId,
           syncEnabled: workspace.isSyncEnabled(doc.id),
           onSyncChanged: (enabled) =>
-              workspace.setSyncEnabled(doc.id, enabled),
+              _setNoteSync(context, workspace, doc.id, enabled),
           onTap: () {
             workspace.selectNote(doc.id);
             _maybeDismiss();

@@ -96,7 +96,7 @@ class AboutScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             l10n.aboutEulaBody(
-              EntitlementConstants.freeNoteLimit,
+              EntitlementConstants.freeSyncedNoteLimit,
               EntitlementConstants.freePeerLimit,
             ),
             style: textTheme.bodyMedium,
