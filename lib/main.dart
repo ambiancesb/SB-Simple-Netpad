@@ -43,6 +43,7 @@ Future<void> main() async {
   final workspace = WorkspaceRepository(
     instanceId: instanceId,
     storage: noteStorage,
+    isStandard: () => entitlements.isStandard,
   );
   await workspace.load();
 

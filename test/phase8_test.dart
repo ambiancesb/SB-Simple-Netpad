@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:netpad/core/reconnect_divergence.dart';
 import 'package:netpad/core/sync_relay.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
+import 'package:netpad/services/entitlements/entitlement_constants.dart';
 import 'package:netpad/services/note_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -200,6 +201,72 @@ void main() {
       expect(ws.documentById(localOnly)!.title, 'Private');
       expect(ws.hasDocument('peer-new'), isTrue);
       expect(ws.documentById('peer-new')!.title, 'From Peer');
+    });
+
+    test('free inbound notes claim sync slots up to the free cap', () async {
+      final ws = WorkspaceRepository(
+        instanceId: 'aaa',
+        storage: await _storage(),
+        isStandard: () => false,
+      );
+      await ws.load();
+      expect(ws.syncedNoteCount, 0);
+
+      ws.mergeCatalog([
+        for (var i = 1; i <= 5; i++)
+          {'docId': 'peer-$i', 'title': 'Note $i', 'revision': 1},
+      ], 'bbb', orderRevision: 1);
+
+      expect(ws.documents, hasLength(6)); // default local + 5 peer
+      expect(ws.syncedNoteCount, EntitlementConstants.freeSyncedNoteLimit);
+      expect(ws.isSyncEnabled('peer-1'), isTrue);
+      expect(ws.isSyncEnabled('peer-2'), isTrue);
+      expect(ws.isSyncEnabled('peer-3'), isTrue);
+      expect(ws.isSyncEnabled('peer-4'), isFalse);
+      expect(ws.isSyncEnabled('peer-5'), isFalse);
+
+      // Capped shells still accept the first content snapshot.
+      expect(
+        ws.receiveRemoteContent(
+          docId: 'peer-4',
+          title: 'Note 4',
+          revision: 2,
+          text: 'hello from peer',
+          originId: 'bbb',
+        ),
+        isTrue,
+      );
+      expect(ws.documentById('peer-4')!.text, 'hello from peer');
+      expect(ws.isSyncEnabled('peer-4'), isFalse);
+
+      // Later updates on capped local-only notes are ignored.
+      expect(
+        ws.receiveRemoteContent(
+          docId: 'peer-4',
+          title: 'Note 4',
+          revision: 3,
+          text: 'should not apply',
+          originId: 'bbb',
+        ),
+        isFalse,
+      );
+      expect(ws.documentById('peer-4')!.text, 'hello from peer');
+    });
+
+    test('standard inbound notes are not capped', () async {
+      final ws = WorkspaceRepository(
+        instanceId: 'aaa',
+        storage: await _storage(),
+        isStandard: () => true,
+      );
+      await ws.load();
+
+      ws.mergeCatalog([
+        for (var i = 1; i <= 5; i++)
+          {'docId': 'peer-$i', 'title': 'Note $i', 'revision': 1},
+      ], 'bbb', orderRevision: 1);
+
+      expect(ws.syncedNoteCount, 5);
     });
   });
 

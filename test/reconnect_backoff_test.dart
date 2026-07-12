@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:netpad/core/reconnect_backoff.dart';
 
@@ -57,6 +59,43 @@ void main() {
           alreadyConnected: false,
         ),
         const Duration(seconds: 30),
+      );
+    });
+  });
+
+  group('isConnectionRefusedException', () {
+    test('detects Linux and Windows refused codes', () {
+      expect(
+        isConnectionRefusedException(
+          const SocketException('fail', osError: OSError('refused', 111)),
+        ),
+        isTrue,
+      );
+      expect(
+        isConnectionRefusedException(
+          const SocketException(
+            'The remote computer refused the network connection.',
+            osError: OSError('refused', 10061),
+          ),
+        ),
+        isTrue,
+      );
+      expect(
+        isConnectionRefusedException(
+          const SocketException(
+            'The remote computer refused the network connection.',
+          ),
+        ),
+        isTrue,
+      );
+      expect(
+        isConnectionRefusedException(
+          const SocketException(
+            'Network is unreachable',
+            osError: OSError('unreach', 101),
+          ),
+        ),
+        isFalse,
       );
     });
   });

@@ -1,12 +1,18 @@
+import 'dart:async';
+
 import 'package:code_text_field/code_text_field.dart' show CodeController, LineNumberStyle;
-import 'package:netpad/features/editor/netpad_code_field.dart';
 import 'package:flutter/material.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/find_replace.dart';
+import 'package:netpad/core/ime_voice_gate.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
+import 'package:netpad/features/editor/netpad_code_field.dart';
+import 'package:netpad/features/entitlements/standard_gate.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/app_preferences.dart';
+import 'package:netpad/services/entitlements/entitlement_service.dart';
+import 'package:netpad/services/entitlements/standard_features.dart';
 import 'package:netpad/services/speech_input_service.dart';
 import 'package:netpad/theme/app_skin.dart';
 import 'package:netpad/theme/editor_colors.dart';
@@ -83,20 +89,105 @@ class _EditorBody extends StatefulWidget {
 
 class _EditorBodyState extends State<_EditorBody> {
   late final FocusNode _editorFocusNode;
+  late String _textBeforeChange;
+  bool _checkingImeVoice = false;
 
   @override
   void initState() {
     super.initState();
     _editorFocusNode = FocusNode(debugLabel: 'editorFocusNode');
+    _textBeforeChange = widget.document.text;
+    widget.document.controller.addListener(_onEditorTextChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _editorFocusNode.requestFocus();
     });
   }
 
   @override
+  void didUpdateWidget(covariant _EditorBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.document != widget.document) {
+      oldWidget.document.controller.removeListener(_onEditorTextChanged);
+      _textBeforeChange = widget.document.text;
+      widget.document.controller.addListener(_onEditorTextChanged);
+    }
+  }
+
+  @override
   void dispose() {
+    widget.document.controller.removeListener(_onEditorTextChanged);
     _editorFocusNode.dispose();
     super.dispose();
+  }
+
+  void _onEditorTextChanged() {
+    final document = widget.document;
+    final after = document.controller.text;
+    final before = _textBeforeChange;
+    if (after == before) return;
+
+    if (document.isApplyingProgrammatic) {
+      _textBeforeChange = after;
+      return;
+    }
+
+    final speech = widget.speechInput;
+    if (speech != null && speech.isListening) {
+      _textBeforeChange = after;
+      return;
+    }
+
+    final entitlements = context.read<EntitlementService>();
+    if (StandardFeatures.canUseVoiceInput(entitlements)) {
+      _textBeforeChange = after;
+      return;
+    }
+
+    final inserted = ImeVoiceGate.insertedSpan(before, after);
+    if (inserted == null || !ImeVoiceGate.looksLikeVoiceDictation(inserted)) {
+      _textBeforeChange = after;
+      return;
+    }
+
+    if (_checkingImeVoice) return;
+    _checkingImeVoice = true;
+    unawaited(_blockUnauthorizedImeVoice(
+      document: document,
+      before: before,
+      after: after,
+      inserted: inserted,
+    ));
+  }
+
+  Future<void> _blockUnauthorizedImeVoice({
+    required DocumentRepository document,
+    required String before,
+    required String after,
+    required String inserted,
+  }) async {
+    try {
+      if (await ImeVoiceGate.looksLikePaste(inserted)) {
+        if (document.controller.text == after) {
+          _textBeforeChange = after;
+        }
+        return;
+      }
+      if (!mounted) return;
+      if (document.controller.text != after) {
+        _textBeforeChange = document.controller.text;
+        return;
+      }
+
+      final caret = document.controller.selection.baseOffset
+          .clamp(0, before.length);
+      document.revertUnauthorizedEdit(before, caret: caret);
+      _textBeforeChange = before;
+
+      if (!mounted) return;
+      await StandardGate.voiceInputAllowed(context);
+    } finally {
+      _checkingImeVoice = false;
+    }
   }
 
   LineNumberStyle _lineNumberStyle(

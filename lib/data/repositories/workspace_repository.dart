@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
+import 'package:netpad/services/entitlements/entitlement_constants.dart';
 import 'package:netpad/services/note_storage_service.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,15 +26,20 @@ class WorkspaceRepository extends ChangeNotifier {
   WorkspaceRepository({
     required this.instanceId,
     required NoteStorageService storage,
-  }) : _storage = storage;
+    bool Function()? isStandard,
+  }) : _storage = storage,
+       _isStandard = isStandard ?? (() => false);
 
   final String instanceId;
   final NoteStorageService _storage;
+  final bool Function() _isStandard;
   final _uuid = const Uuid();
 
   final Map<String, DocumentRepository> _docs = {};
   final List<String> _order = [];
   final Set<String> _syncDisabledIds = {};
+  /// Peer notes over the free sync cap that still need a first content fill.
+  final Set<String> _inboundPendingFill = {};
   String? _activeId;
   int _orderRevision = 0;
 
@@ -86,15 +92,49 @@ class WorkspaceRepository extends ChangeNotifier {
   int get syncedNoteCount =>
       _docs.keys.where(isSyncEnabled).length;
 
-  /// Inbound peer messages for an existing local-only note are ignored.
-  bool shouldIgnoreInboundSync(String docId) =>
-      _docs.containsKey(docId) && !isSyncEnabled(docId);
+  /// Inbound peer messages for an existing local-only note are ignored,
+  /// except capped inbound shells still waiting for their first snapshot.
+  bool shouldIgnoreInboundSync(String docId) {
+    if (!_docs.containsKey(docId)) return false;
+    if (isSyncEnabled(docId)) return false;
+    if (_inboundPendingFill.contains(docId)) return false;
+    return true;
+  }
+
+  bool _canClaimInboundSyncSlot() {
+    if (_isStandard()) return true;
+    return syncedNoteCount < EntitlementConstants.freeSyncedNoteLimit;
+  }
+
+  /// Creates a note learned from a peer. Free devices only claim a sync slot
+  /// when under the free synced-note cap; extras stay local-only copies.
+  DocumentRepository _createInboundNote({
+    required String id,
+    required String title,
+    required String text,
+    required int revision,
+  }) {
+    final claimSync = _canClaimInboundSyncSlot();
+    final doc = _createLocal(
+      id: id,
+      title: title,
+      text: text,
+      revision: revision,
+    );
+    if (!claimSync) {
+      _syncDisabledIds.add(doc.id);
+      _inboundPendingFill.add(doc.id);
+      unawaited(_persistSyncFlags());
+    }
+    return doc;
+  }
 
   /// Turns peer sync on or off for an existing note. New notes default to off.
   void setSyncEnabled(String docId, bool enabled) {
     if (!_docs.containsKey(docId)) return;
     if (enabled) {
       if (!_syncDisabledIds.remove(docId)) return;
+      _inboundPendingFill.remove(docId);
       final doc = _docs[docId]!;
       onDocCreate?.call(doc.id, doc.title, doc.revision, instanceId);
       onDocUpdate?.call(
@@ -108,6 +148,7 @@ class WorkspaceRepository extends ChangeNotifier {
     } else if (!_syncDisabledIds.add(docId)) {
       return;
     } else {
+      _inboundPendingFill.remove(docId);
       _broadcastOrder();
     }
     unawaited(_persistSyncFlags());
@@ -236,7 +277,7 @@ class WorkspaceRepository extends ChangeNotifier {
   DocumentRepository ensureDocument(String docId, {String title = ''}) {
     final existing = _docs[docId];
     if (existing != null) return existing;
-    final doc = _createLocal(
+    final doc = _createInboundNote(
       id: docId,
       title: title.isEmpty ? kDefaultNoteTitle : title,
       text: '',
@@ -258,7 +299,7 @@ class WorkspaceRepository extends ChangeNotifier {
     if (shouldIgnoreInboundSync(docId)) return;
     final existing = _docs[docId];
     if (existing == null) {
-      final doc = _createLocal(
+      final doc = _createInboundNote(
         id: docId,
         title: title.isEmpty ? kDefaultNoteTitle : title,
         text: '',
@@ -311,7 +352,7 @@ class WorkspaceRepository extends ChangeNotifier {
       final title = entry['title'] as String? ?? '';
       final revision = entry['revision'] as int? ?? 0;
       if (!_docs.containsKey(docId)) {
-        final doc = _createLocal(
+        final doc = _createInboundNote(
           id: docId,
           title: title.isEmpty ? kDefaultNoteTitle : title,
           text: '',
@@ -390,6 +431,7 @@ class WorkspaceRepository extends ChangeNotifier {
       title: title,
     );
     if (created || applied) {
+      _inboundPendingFill.remove(docId);
       unawaited(_storage.saveDocument(doc.toStored()));
       unawaited(_persistIndex());
       notifyListeners();
@@ -552,6 +594,7 @@ class WorkspaceRepository extends ChangeNotifier {
     final doc = _docs.remove(id);
     _order.remove(id);
     _syncDisabledIds.remove(id);
+    _inboundPendingFill.remove(id);
     doc?.removeListener(_onDocChanged);
     doc?.dispose();
     if (_activeId == id) {

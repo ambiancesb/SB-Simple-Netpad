@@ -96,7 +96,7 @@ extension SyncRepositoryDocuments on SyncRepository {
     _fanOut(message, exceptConnectionId: null, exceptPeerId: instanceId);
   }
 
-  void disconnectPeer(String peerId) {
+  void disconnectPeer(String peerId, {bool announce = true}) {
     final link = _linksByPeerId[peerId];
     if (link == null) return;
 
@@ -109,12 +109,20 @@ extension SyncRepositoryDocuments on SyncRepository {
     final inboundId = link.inboundConnectionId;
     final outboundId = link.outboundConnectionId;
 
+    // Announce on one channel only. Reciprocal disconnects must not announce
+    // again — the initiator already tore down and would log a false token reject.
+    if (announce) {
+      if (inboundId != null) {
+        _sendOnConnection(inboundId, message);
+      } else if (outboundId != null && link.outboundSocket != null) {
+        _sendOnConnection(outboundId, message);
+      }
+    }
+
     if (inboundId != null) {
-      _sendOnConnection(inboundId, message);
       unawaited(_server.closeConnection(inboundId));
     }
     if (link.outboundSocket != null) {
-      _sendOnConnection(outboundId!, message);
       tearDownPeerOutbound(link);
     }
 

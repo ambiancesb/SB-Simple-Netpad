@@ -162,7 +162,8 @@ class PairingRepository extends ChangeNotifier {
       _recordReconnectFailure(
         peer.id,
         now,
-        connectionRefused: e is SocketException && e.osError?.errorCode == 111,
+        connectionRefused:
+            e is SocketException && isConnectionRefusedException(e),
       );
       if (!_sync.isPeerAuthenticated(peer.id)) {
         _discovery.markPeerDisconnected(peer.id);
@@ -361,9 +362,8 @@ class PairingRepository extends ChangeNotifier {
 
   static String _friendlyConnectError(Object e) {
     if (e is SocketException) {
-      final code = e.osError?.errorCode;
-      if (code == 111) {
-        return 'Connection refused (111) — the other device is not listening. '
+      if (isConnectionRefusedException(e)) {
+        return 'Connection refused — the other device is not listening. '
             'Confirm it shows a port under This device and both devices are '
             'on the same Wi‑Fi with sync enabled (no "Local network required" banner).';
       }

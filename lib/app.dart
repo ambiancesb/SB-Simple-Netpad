@@ -133,6 +133,14 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
         return doc?.dictationAnchorOffset() ?? 0;
       };
       speech.onDictationUpdate = _onDictationUpdate;
+      speech.ensureVoiceAllowed = () async {
+        if (!mounted) return false;
+        final allowed = await StandardGate.voiceInputAllowed(context);
+        if (allowed && mounted) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        }
+        return allowed;
+      };
     }
   }
 
@@ -149,11 +157,6 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   Future<void> _toggleVoiceInput() async {
     final speech = _speechInput;
     if (speech == null) return;
-    if (!speech.isListening) {
-      final allowed = await StandardGate.voiceInputAllowed(context);
-      if (!allowed || !mounted) return;
-      FocusManager.instance.primaryFocus?.unfocus();
-    }
     final started = await speech.toggleListening();
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);

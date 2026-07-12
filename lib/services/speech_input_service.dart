@@ -49,6 +49,9 @@ class SpeechInputService extends ChangeNotifier {
   /// Supplies the text offset where the current phrase should be inserted.
   int Function()? getDictationAnchor;
 
+  /// Freemium gate — return false to block starting dictation (e.g. show paywall).
+  Future<bool> Function()? ensureVoiceAllowed;
+
   SpeechToText get _speechOrThrow {
     return _speech ??= SpeechToText();
   }
@@ -87,6 +90,9 @@ class SpeechInputService extends ChangeNotifier {
   Future<bool> startListening() async {
     if (!isSupported) return false;
     if (_listening) return true;
+
+    final ensure = ensureVoiceAllowed;
+    if (ensure != null && !await ensure()) return false;
 
     final ready = await initialize();
     final speech = _speech;

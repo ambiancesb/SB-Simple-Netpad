@@ -12,7 +12,7 @@ Free tier caps (enforced in app):
 | Notes with peer sync enabled | **3** notes | Unlimited |
 | Simultaneous connected peers | **3** peers | Unlimited |
 
-New notes start **local-only** (sync off). Free users can turn sync on for up to 3 notes; enabling a 4th shows the Standard paywall. Notes received from peers stay sync-enabled and may push the synced count above 3 on free (grandfathered). Peer cap counts **authenticated** sessions only.
+New notes start **local-only** (sync off). Free users can turn sync on for up to 3 notes; enabling a 4th shows the Standard paywall. Notes received from a peer claim a free sync slot when available; once the free sync cap is reached, further peer notes are saved as local-only copies (first snapshot kept, later peer edits ignored until sync is enabled). Peer cap counts **authenticated** sessions only.
 
 ## Products
 

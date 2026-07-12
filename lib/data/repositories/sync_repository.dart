@@ -330,19 +330,25 @@ class SyncRepository extends ChangeNotifier {
           }
         }
       case MessageTypes.peerDisconnect:
+        final payloadPeerId = message.payload['peerId'] as String? ?? '';
         if (!_hasValidSessionToken(connectionId, message)) {
-          final peerId = _connectionToPeerId[connectionId];
-          _connectionLog.add(
-            'Rejected disconnect: invalid session token',
-            peerId: peerId,
-            peerName: peerId == null
-                ? null
-                : _linksByPeerId[peerId]?.displayName,
-          );
+          // Initiator already cleared the session; ignore reciprocal teardown.
+          final stillLinked = _connectionToPeerId.containsKey(connectionId) ||
+              _linksByPeerId.containsKey(payloadPeerId);
+          if (stillLinked) {
+            _connectionLog.add(
+              'Rejected disconnect: invalid session token',
+              peerId: payloadPeerId.isEmpty
+                  ? _connectionToPeerId[connectionId]
+                  : payloadPeerId,
+              peerName: _linksByPeerId[payloadPeerId]?.displayName ??
+                  _linksByPeerId[_connectionToPeerId[connectionId] ?? '']
+                      ?.displayName,
+            );
+          }
           return;
         }
         final senderPeerId = _connectionToPeerId[connectionId];
-        final payloadPeerId = message.payload['peerId'] as String? ?? '';
         if (!shouldHonorPeerDisconnect(
           senderPeerId: senderPeerId,
           payloadPeerId: payloadPeerId,
@@ -433,7 +439,8 @@ class SyncRepository extends ChangeNotifier {
   }
 
   void _handleDisconnectByPeerId(String peerId) {
-    disconnectPeer(peerId);
+    // Peer already announced disconnect — tear down locally only.
+    disconnectPeer(peerId, announce: false);
   }
 
   void _cleanupConnection(String connectionId) {

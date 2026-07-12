@@ -54,6 +54,7 @@ class DocumentRepository extends ChangeNotifier {
   Timer? _saveDebounce;
   Timer? _presenceDebounce;
   bool _applyingRemote = false;
+  bool _applyingDictation = false;
   late String _lastKnownText;
   int? _lastLine;
   int? _lastColumn;
@@ -62,6 +63,9 @@ class DocumentRepository extends ChangeNotifier {
   int get revision => _revision;
   String get text => controller.text;
   List<HistoryEntry> get history => List.unmodifiable(_history.reversed);
+
+  /// True while sync/dictation/restore code is writing the controller.
+  bool get isApplyingProgrammatic => _applyingRemote || _applyingDictation;
 
   StoredDocument toStored() => StoredDocument(
     id: id,
@@ -113,13 +117,24 @@ class DocumentRepository extends ChangeNotifier {
     final insertion = '$prefix$recognizedWords';
     final updated = body.replaceRange(start, end, insertion);
     final caret = start + insertion.length;
+    _applyingDictation = true;
     _setControllerText(updated, caret);
+    _applyingDictation = false;
     if (isFinal) {
       onLocalEdit();
     } else {
       notifyListeners();
     }
     return insertion;
+  }
+
+  /// Restores [text] after a blocked IME voice insert (no sync / history bump).
+  void revertUnauthorizedEdit(String text, {required int caret}) {
+    _applyingRemote = true;
+    _setControllerText(text, caret);
+    _lastKnownText = text;
+    _applyingRemote = false;
+    notifyListeners();
   }
 
   int dictationAnchorOffset() {
