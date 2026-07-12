@@ -20,9 +20,11 @@ using flutter::EncodableValue;
 using flutter::MethodCall;
 using flutter::MethodResult;
 using winrt::Windows::Foundation::AsyncStatus;
+using winrt::Windows::Services::Store::StoreAppLicense;
 using winrt::Windows::Services::Store::StoreContext;
 using winrt::Windows::Services::Store::StoreLicense;
 using winrt::Windows::Services::Store::StoreProduct;
+using winrt::Windows::Services::Store::StoreProductQueryResult;
 using winrt::Windows::Services::Store::StorePurchaseStatus;
 
 HWND g_hwnd = nullptr;
@@ -41,19 +43,13 @@ StoreContext GetStoreContext() {
   return g_store_context;
 }
 
-bool LicenseIsActive() {
-  try {
-    auto context = GetStoreContext();
-    auto license = context.GetAppLicenseAsync().get();
-    for (auto const& pair : license.AddOnLicenses()) {
-      StoreLicense add_on = pair.Value();
-      std::wstring sku = add_on.SkuStoreId().c_str();
-      if (sku.rfind(kProProductId, 0) == 0 && add_on.IsActive()) {
-        return true;
-      }
+bool LicenseHasActivePro(StoreAppLicense const& license) {
+  for (auto const& pair : license.AddOnLicenses()) {
+    StoreLicense add_on = pair.Value();
+    std::wstring sku = add_on.SkuStoreId().c_str();
+    if (sku.rfind(kProProductId, 0) == 0 && add_on.IsActive()) {
+      return true;
     }
-  } catch (...) {
-    return false;
   }
   return false;
 }
@@ -74,29 +70,62 @@ std::optional<std::string> WideToUtf8(winrt::hstring const& input) {
   return output;
 }
 
+// Flutter's UI thread is STA. C++/WinRT forbids blocking `.get()` there
+// (debug assert: !is_sta_thread()). Always complete via async callbacks.
 void HandleIsPro(std::unique_ptr<MethodResult<EncodableValue>> result) {
-  result->Success(EncodableValue(LicenseIsActive()));
+  auto shared =
+      std::shared_ptr<MethodResult<EncodableValue>>(std::move(result));
+  try {
+    auto context = GetStoreContext();
+    auto op = context.GetAppLicenseAsync();
+    op.Completed([shared](auto const& async, AsyncStatus status) {
+      try {
+        if (status != AsyncStatus::Completed) {
+          shared->Success(EncodableValue(false));
+          return;
+        }
+        shared->Success(EncodableValue(LicenseHasActivePro(async.GetResults())));
+      } catch (...) {
+        shared->Success(EncodableValue(false));
+      }
+    });
+  } catch (...) {
+    shared->Success(EncodableValue(false));
+  }
 }
 
 void HandleGetPrice(std::unique_ptr<MethodResult<EncodableValue>> result) {
+  auto shared =
+      std::shared_ptr<MethodResult<EncodableValue>>(std::move(result));
   try {
     auto context = GetStoreContext();
     auto kinds = winrt::single_threaded_vector<winrt::hstring>();
     kinds.Append(L"Durable");
-    auto query = context.GetAssociatedStoreProductsAsync(kinds).get();
-    for (auto const& pair : query.Products()) {
-      StoreProduct product = pair.Value();
-      if (std::wstring(product.StoreId().c_str()) == kProProductId) {
-        auto price = WideToUtf8(product.Price().FormattedPrice());
-        if (price.has_value()) {
-          result->Success(EncodableValue(*price));
+    auto op = context.GetAssociatedStoreProductsAsync(kinds);
+    op.Completed([shared](auto const& async, AsyncStatus status) {
+      try {
+        if (status != AsyncStatus::Completed) {
+          shared->Error("store_error", "Could not load Microsoft Store price");
           return;
         }
+        StoreProductQueryResult query = async.GetResults();
+        for (auto const& pair : query.Products()) {
+          StoreProduct product = pair.Value();
+          if (std::wstring(product.StoreId().c_str()) == kProProductId) {
+            auto price = WideToUtf8(product.Price().FormattedPrice());
+            if (price.has_value()) {
+              shared->Success(EncodableValue(*price));
+              return;
+            }
+          }
+        }
+        shared->Success(EncodableValue());
+      } catch (...) {
+        shared->Error("store_error", "Could not load Microsoft Store price");
       }
-    }
-    result->Success(EncodableValue());
+    });
   } catch (...) {
-    result->Error("store_error", "Could not load Microsoft Store price");
+    shared->Error("store_error", "Could not load Microsoft Store price");
   }
 }
 
