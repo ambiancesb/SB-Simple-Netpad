@@ -138,7 +138,9 @@ Push `docs/eula.html` to the branch that feeds GitHub Pages before submitting bu
 flutter run --dart-define=NETPAD_PRO_OVERRIDE=true
 ```
 
-Forces Pro without talking to a store (useful for UI testing).
+Forces Pro without talking to a store (useful for UI testing). In VS Code / Cursor, use the **SB Simple Netpad (Pro unlock)** launch config.
+
+In **debug builds only**, Settings also has **Unlock Pro (debug)** — a toggle that persists locally and is stripped from release.
 
 ## Code touchpoints
 

@@ -17,20 +17,25 @@ class EntitlementService extends ChangeNotifier {
        _backend = backend ?? createDefaultBackend();
 
   static const _cacheKey = 'entitlement_is_pro';
+  static const _debugForceProKey = 'entitlement_debug_force_pro';
 
   final SharedPreferences _prefs;
   final EntitlementBackend _backend;
 
   bool _isPro = false;
+  bool _debugForcePro = false;
   bool _loading = true;
   String? _priceString;
   String? _lastError;
 
-  bool get isPro => _isPro;
+  bool get isPro => _debugForcePro || _isPro;
   bool get loading => _loading;
   bool get purchasesSupported => _backend.purchasesSupported;
   String? get priceString => _priceString;
   String? get lastError => _lastError;
+
+  /// Debug-only unlock persisted for local testing. Always false in release.
+  bool get debugForcePro => kDebugMode && _debugForcePro;
 
   /// Factory used by [main] and tests.
   static EntitlementBackend createDefaultBackend({
@@ -62,6 +67,9 @@ class EntitlementService extends ChangeNotifier {
 
   Future<void> initialize() async {
     _isPro = _prefs.getBool(_cacheKey) ?? false;
+    if (kDebugMode) {
+      _debugForcePro = _prefs.getBool(_debugForceProKey) ?? false;
+    }
     _loading = true;
     notifyListeners();
     try {
@@ -77,6 +85,14 @@ class EntitlementService extends ChangeNotifier {
       _loading = false;
       notifyListeners();
     }
+  }
+
+  /// Debug builds only: force Pro without talking to a store.
+  Future<void> setDebugForcePro(bool enabled) async {
+    if (!kDebugMode) return;
+    _debugForcePro = enabled;
+    await _prefs.setBool(_debugForceProKey, enabled);
+    notifyListeners();
   }
 
   Future<bool> purchasePro() async {

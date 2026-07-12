@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/core/app_info.dart';
@@ -335,6 +336,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Text(l10n.settingsRestorePurchases),
                     ),
                   ),
+                if (kDebugMode) ...[
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Unlock Pro (debug)'),
+                    subtitle: const Text(
+                      'Forces Netpad Pro for local testing. Not available in release builds.',
+                    ),
+                    value: entitlements.debugForcePro,
+                    onChanged: (value) => entitlements.setDebugForcePro(value),
+                  ),
+                ],
                 const Divider(height: 32),
                 Text(
                   l10n.settingsEditorSection,

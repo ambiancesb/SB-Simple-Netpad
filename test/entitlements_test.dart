@@ -102,4 +102,19 @@ void main() {
       expect(await backend.restorePurchases(), isTrue);
     });
   });
+
+  group('debug Pro unlock', () {
+    test('debug force Pro unlocks in debug', () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final service = EntitlementService(prefs: prefs, backend: FreeBackend());
+      await service.initialize();
+      expect(service.isPro, isFalse);
+      await service.setDebugForcePro(true);
+      expect(service.debugForcePro, isTrue);
+      expect(service.isPro, isTrue);
+      await service.setDebugForcePro(false);
+      expect(service.isPro, isFalse);
+    });
+  });
 }
