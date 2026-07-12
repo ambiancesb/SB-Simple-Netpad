@@ -128,6 +128,11 @@ class PairingRepository extends ChangeNotifier {
           peer.resolveState != PeerResolveState.failed) {
         continue;
       }
+      // Skip Bonsoir ghosts that have not advertised recently.
+      if (!peer.isManual && !_discovery.isDiscoveryFresh(peer.id)) {
+        _discovery.forgetStalePeer(peer.id);
+        continue;
+      }
       targets.add(peer);
     }
 
@@ -345,6 +350,7 @@ class PairingRepository extends ChangeNotifier {
   }
 
   void _onPairRequestResolved(String peerId, bool accepted) {
+    _pendingIncoming.removeWhere((r) => r.fromId == peerId);
     if (accepted) {
       _clearReconnectFailure(peerId);
       _sync.markPeerConnectedFromLink(peerId);

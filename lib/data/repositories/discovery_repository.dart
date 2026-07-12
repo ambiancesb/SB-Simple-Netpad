@@ -36,6 +36,9 @@ class DiscoveryRepository extends ChangeNotifier {
   String get displayName => _displayName;
   String get roomId => _roomId;
 
+  /// Invoked when LAN sync is paused (e.g. cellular-only) so Sync can drop links.
+  VoidCallback? onLanSyncPaused;
+
   BonsoirBroadcast? _broadcast;
   BonsoirDiscovery? _discovery;
   StreamSubscription<BonsoirDiscoveryEvent>? _discoverySub;
@@ -49,9 +52,14 @@ class DiscoveryRepository extends ChangeNotifier {
   final Map<String, Peer> _connected = {};
   final Map<String, BonsoirService> _servicesByKey = {};
   final Map<String, int> _resolveAttempts = {};
+  final Map<String, DateTime> _lastSeenByPeerId = {};
+  /// Peers whose mDNS advertisement vanished while still connected.
+  final Set<String> _advertisingLost = {};
 
   static const _maxResolveAttempts = 5;
   static const _refreshInterval = Duration(seconds: 12);
+  /// Drop Nearby ghosts when Bonsoir never sends ServiceLost (common on Windows).
+  static const _staleDiscoveryTtl = Duration(seconds: 30);
 
   List<Peer> get discoveredPeers =>
       _discovered.values.toList()
@@ -238,9 +246,29 @@ class DiscoveryRepository extends ChangeNotifier {
   Future<void> _pauseLanSync() async {
     _refreshTimer?.cancel();
     _refreshTimer = null;
+    _clearNonConnectedDiscovery();
     await _stopBonsoir();
     await _stopLinuxMdns();
     await _localServer.stop();
+    onLanSyncPaused?.call();
+  }
+
+  /// Drops Nearby/manual ghosts and auxiliary discovery maps (keeps connected).
+  void _clearNonConnectedDiscovery() {
+    final staleIds = _discovered.keys
+        .where((id) => !_connected.containsKey(id))
+        .toList();
+    for (final id in staleIds) {
+      _discovered.remove(id);
+      _lastSeenByPeerId.remove(id);
+      _advertisingLost.remove(id);
+    }
+    _servicesByKey.removeWhere((_, svc) {
+      final id = svc.attributes['id'];
+      if (id == null || id.isEmpty) return true;
+      return !_connected.containsKey(id) && !_discovered.containsKey(id);
+    });
+    _resolveAttempts.removeWhere((key, _) => !_servicesByKey.containsKey(key));
   }
 
   void _ensureRefreshTimer() {
@@ -323,9 +351,10 @@ class DiscoveryRepository extends ChangeNotifier {
     if (kDebugMode) {
       debugPrint('Network change detected — restarting discovery/broadcast');
     }
-    _discovered.removeWhere((id, _) => !_connected.containsKey(id));
+    _clearNonConnectedDiscovery();
     if (Platform.isAndroid) {
       scheduleRetryNetworking();
+      notifyListeners();
       return;
     }
     await _applyNetworkPolicy();
@@ -385,7 +414,7 @@ class DiscoveryRepository extends ChangeNotifier {
     _roomId = room;
     // Drop discovered peers that are not connected; they will reappear only if
     // they advertise the new room.
-    _discovered.removeWhere((id, _) => !_connected.containsKey(id));
+    _clearNonConnectedDiscovery();
     if (!_canDiscoverPeers) {
       notifyListeners();
       return;
@@ -420,6 +449,7 @@ class DiscoveryRepository extends ChangeNotifier {
   }) {
     final peer = Peer.manual(host: host, port: port, displayName: displayName);
     _discovered[peer.id] = peer;
+    _touchLastSeen(peer.id);
     notifyListeners();
     return peer;
   }
@@ -472,11 +502,111 @@ class DiscoveryRepository extends ChangeNotifier {
   void _refreshAllServices() {
     if (!_canDiscoverPeers) return;
     if (_useLinuxMdns) {
-      unawaited(_linuxMdns?.scan());
+      unawaited(_linuxMdns?.scan().then((_) => _pruneStaleDiscoveredPeers()));
       return;
     }
+    // Periodic re-resolve must not extend discovery TTL — only ServiceFound does.
     for (final service in _servicesByKey.values) {
       _requestResolve(service);
+    }
+    _pruneStaleDiscoveredPeers();
+  }
+
+  /// Removes Bonsoir Nearby entries that have not been rediscovered recently.
+  /// Manual peers and currently connected peers are kept.
+  void _pruneStaleDiscoveredPeers() {
+    final now = DateTime.now();
+    final staleIds = <String>[];
+    for (final entry in _discovered.entries) {
+      final peer = entry.value;
+      if (peer.isManual) continue;
+      if (_connected.containsKey(peer.id)) continue;
+      final lastSeen = _lastSeenByPeerId[peer.id];
+      final age = lastSeen == null ? null : now.difference(lastSeen);
+      // Allow a short grace window while a connect attempt is in flight.
+      if (peer.connectionState == PeerConnectionState.connecting &&
+          age != null &&
+          age <= _staleDiscoveryTtl) {
+        continue;
+      }
+      if (age == null || age > _staleDiscoveryTtl) {
+        staleIds.add(peer.id);
+      }
+    }
+    if (staleIds.isEmpty) return;
+    for (final id in staleIds) {
+      _dropDiscoveredPeer(id);
+    }
+    notifyListeners();
+  }
+
+  void _dropDiscoveredPeer(String peerId) {
+    _discovered.remove(peerId);
+    _lastSeenByPeerId.remove(peerId);
+    _advertisingLost.remove(peerId);
+    _servicesByKey.removeWhere((_, svc) => svc.attributes['id'] == peerId);
+    _resolveAttempts.removeWhere((key, _) => !_servicesByKey.containsKey(key));
+  }
+
+  /// True when [peerId] was seen via mDNS/Bonsoir within the stale TTL.
+  bool isDiscoveryFresh(String peerId) {
+    if (peerId.startsWith('manual:')) return true;
+    final lastSeen = _lastSeenByPeerId[peerId];
+    if (lastSeen == null) return false;
+    return DateTime.now().difference(lastSeen) <= _staleDiscoveryTtl;
+  }
+
+  /// Forces a non-connected Nearby entry out of discovery (stale reconnect skip).
+  void forgetStalePeer(String peerId) {
+    if (_connected.containsKey(peerId)) return;
+    if (!_discovered.containsKey(peerId) &&
+        !_lastSeenByPeerId.containsKey(peerId)) {
+      return;
+    }
+    _dropDiscoveredPeer(peerId);
+    notifyListeners();
+  }
+
+  void _touchLastSeen(String peerId) {
+    _lastSeenByPeerId[peerId] = DateTime.now();
+    _advertisingLost.remove(peerId);
+  }
+
+  bool _isServiceStillTracked(String peerId) {
+    return _servicesByKey.values.any((svc) => svc.attributes['id'] == peerId);
+  }
+
+  String? _peerIdForLostService(BonsoirService service) {
+    final fromTxt = service.attributes['id'];
+    if (fromTxt != null && fromTxt.isNotEmpty) return fromTxt;
+    final key = _serviceKey(service);
+    final tracked = _servicesByKey[key];
+    final trackedId = tracked?.attributes['id'];
+    if (trackedId != null && trackedId.isNotEmpty) return trackedId;
+    for (final peer in _discovered.values) {
+      if (peer.bonsoirName == service.name) return peer.id;
+    }
+    for (final peer in _connected.values) {
+      if (peer.bonsoirName == service.name) return peer.id;
+    }
+    return null;
+  }
+
+  void _handleServiceLost(String peerId) {
+    if (peerId == instanceId) return;
+    _resolveAttempts.removeWhere((key, _) {
+      final svc = _servicesByKey[key];
+      return svc?.attributes['id'] == peerId;
+    });
+    _servicesByKey.removeWhere((_, svc) => svc.attributes['id'] == peerId);
+    _lastSeenByPeerId.remove(peerId);
+    if (_connected.containsKey(peerId)) {
+      _advertisingLost.add(peerId);
+      return;
+    }
+    if (_discovered.remove(peerId) != null) {
+      _advertisingLost.remove(peerId);
+      notifyListeners();
     }
   }
 
@@ -493,11 +623,13 @@ class DiscoveryRepository extends ChangeNotifier {
     if (!_peerIsOnActiveSubnet(peer)) {
       if (!_connected.containsKey(peer.id)) {
         _discovered.remove(peer.id);
+        _lastSeenByPeerId.remove(peer.id);
         notifyListeners();
       }
       return;
     }
 
+    _touchLastSeen(peer.id);
     final existing = _discovered[peer.id];
     _discovered[peer.id] = Peer.mergeDiscovery(peer, existing).copyWith(
       connectionState: _connected.containsKey(peer.id)
@@ -508,13 +640,19 @@ class DiscoveryRepository extends ChangeNotifier {
   }
 
   void _removeMdnsPeer(String peerId) {
-    if (_connected.containsKey(peerId)) return;
+    if (_connected.containsKey(peerId)) {
+      _advertisingLost.add(peerId);
+      _lastSeenByPeerId.remove(peerId);
+      return;
+    }
     if (_discovered.remove(peerId) != null) {
+      _lastSeenByPeerId.remove(peerId);
+      _advertisingLost.remove(peerId);
       notifyListeners();
     }
   }
 
-  void _upsertPeer(BonsoirService service) {
+  void _upsertPeer(BonsoirService service, {bool touchSeen = false}) {
     final peer = Peer.fromBonsoirService(service);
     if (peer == null || peer.id == instanceId) return;
 
@@ -533,7 +671,7 @@ class DiscoveryRepository extends ChangeNotifier {
     final peerRoom = service.attributes['room'] ?? kDefaultRoom;
     if (peerRoom != _roomId) {
       if (!_connected.containsKey(peer.id)) {
-        _discovered.remove(peer.id);
+        _dropDiscoveredPeer(peer.id);
         notifyListeners();
       }
       return;
@@ -541,12 +679,17 @@ class DiscoveryRepository extends ChangeNotifier {
 
     if (!_peerIsOnActiveSubnet(peer)) {
       if (!_connected.containsKey(peer.id)) {
-        _discovered.remove(peer.id);
+        _dropDiscoveredPeer(peer.id);
         notifyListeners();
       }
       return;
     }
 
+    // TTL is driven by Found/Updated; first Resolved after Found also stamps
+    // lastSeen when Found lacked a TXT id.
+    if (touchSeen || !_lastSeenByPeerId.containsKey(peer.id)) {
+      _touchLastSeen(peer.id);
+    }
     final existing = _discovered[peer.id];
     _discovered[peer.id] = Peer.mergeDiscovery(peer, existing).copyWith(
       connectionState: _connected.containsKey(peer.id)
@@ -576,34 +719,39 @@ class DiscoveryRepository extends ChangeNotifier {
       case BonsoirDiscoveryServiceFoundEvent():
         final service = event.service;
         _trackService(service);
+        final foundId = service.attributes['id'];
+        if (foundId != null && foundId.isNotEmpty) {
+          _touchLastSeen(foundId);
+        }
         _requestResolve(service);
       case BonsoirDiscoveryServiceResolvedEvent():
-      case BonsoirDiscoveryServiceUpdatedEvent():
         final service = event.service;
-        if (service == null) return;
         _trackService(service);
         _resolveAttempts.remove(_serviceKey(service));
         _upsertPeer(service);
         if (!_hasEndpoint(service)) {
           _scheduleResolveRetry(service);
         }
-      case BonsoirDiscoveryServiceResolveFailedEvent():
-        // Linux Avahi does not identify which service failed; retry all known.
-        for (final service in _servicesByKey.values) {
+      case BonsoirDiscoveryServiceUpdatedEvent():
+        final service = event.service;
+        _trackService(service);
+        _resolveAttempts.remove(_serviceKey(service));
+        _upsertPeer(service, touchSeen: true);
+        if (!_hasEndpoint(service)) {
           _scheduleResolveRetry(service);
         }
+      case BonsoirDiscoveryServiceResolveFailedEvent():
+        // Linux Avahi does not identify which service failed; retry known ones.
+        for (final entry in _servicesByKey.entries) {
+          final attempts = _resolveAttempts[entry.key] ?? 0;
+          if (attempts >= _maxResolveAttempts) continue;
+          _scheduleResolveRetry(entry.value);
+        }
       case BonsoirDiscoveryServiceLostEvent():
-        final id = event.service.attributes['id'];
-        if (id != null && id != instanceId) {
-          _resolveAttempts.removeWhere((key, _) {
-            final svc = _servicesByKey[key];
-            return svc?.attributes['id'] == id;
-          });
-          _servicesByKey.removeWhere((_, svc) => svc.attributes['id'] == id);
-          if (!_connected.containsKey(id)) {
-            _discovered.remove(id);
-            notifyListeners();
-          }
+        final service = event.service;
+        final id = _peerIdForLostService(service);
+        if (id != null) {
+          _handleServiceLost(id);
         }
       default:
         break;
@@ -667,6 +815,13 @@ class DiscoveryRepository extends ChangeNotifier {
 
   void markPeerDisconnected(String peerId) {
     _connected.remove(peerId);
+    final advertisingGone =
+        _advertisingLost.remove(peerId) || !_isServiceStillTracked(peerId);
+    if (advertisingGone) {
+      _dropDiscoveredPeer(peerId);
+      notifyListeners();
+      return;
+    }
     final discovered = _discovered[peerId];
     if (discovered != null) {
       _discovered[peerId] = discovered.copyWith(

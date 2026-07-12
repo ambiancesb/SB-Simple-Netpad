@@ -56,6 +56,7 @@ class SyncRepository extends ChangeNotifier {
     _server.onConnectionClosed = _onInboundClosed;
     _server.onConnectionOpened = _onInboundOpened;
     _server.onInboundRejected = _onInboundRejected;
+    _discovery.onLanSyncPaused = disconnectAllPeers;
   }
 
   final String instanceId;
@@ -433,8 +434,16 @@ class SyncRepository extends ChangeNotifier {
           peerId: peerId,
           peerName: link.displayName,
         );
+        onPairRequestResolved?.call(peerId, false);
       }
       notifyPeersChanged();
+    }
+  }
+
+  /// Tears down every peer link (used when LAN sync is paused).
+  void disconnectAllPeers() {
+    for (final peerId in List<String>.of(_linksByPeerId.keys)) {
+      disconnectPeer(peerId, announce: false);
     }
   }
 
@@ -487,6 +496,9 @@ class SyncRepository extends ChangeNotifier {
     if (_disposed) return;
     _disposed = true;
 
+    if (_discovery.onLanSyncPaused == disconnectAllPeers) {
+      _discovery.onLanSyncPaused = null;
+    }
     _server.onMessage = null;
     _server.onConnectionClosed = null;
     _server.onConnectionOpened = null;
