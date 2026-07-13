@@ -385,7 +385,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get peersNoTrustedDevices =>
-      'Keine vertrauenswürdigen Geräte — einmal koppeln, um automatische Synchronisierung zu aktivieren';
+      'Keine vertrauenswürdigen Geräte — bei Akzeptieren „Für Auto-Sync vertrauen“ aktivieren';
 
   @override
   String get peersNoBlockedDevices => 'Keine gesperrten Geräte';
@@ -637,6 +637,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get pairingOtherDevicePins =>
       'Das andere Gerät heftet dies bei der ersten Verbindung an.';
+
+  @override
+  String get pairingTrustForAutoSync => 'Für Auto-Sync vertrauen';
+
+  @override
+  String get pairingTrustForAutoSyncHint =>
+      'Accept bei späteren Verbindungen überspringen. Optional — deaktiviert lassen, um jedes Mal Accept zu verlangen.';
 
   @override
   String get manualConnectTitle => 'Per Adresse verbinden';
@@ -1003,7 +1010,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get helpPeers4 =>
-      'Nach dem ersten Akzeptieren können vertrauenswürdige Geräte automatisch neu verbinden.';
+      'Aktivieren Sie „Für Auto-Sync vertrauen“ beim Akzeptieren, wenn spätere Verbindungen Accept überspringen sollen.';
 
   @override
   String get helpPeers5 =>

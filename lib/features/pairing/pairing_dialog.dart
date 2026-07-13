@@ -7,16 +7,24 @@ import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/tls_identity.dart';
 import 'package:provider/provider.dart';
 
-class PairingRequestDialog extends StatelessWidget {
+class PairingRequestDialog extends StatefulWidget {
   const PairingRequestDialog({super.key, required this.request});
 
   final PairRequest request;
+
+  @override
+  State<PairingRequestDialog> createState() => _PairingRequestDialogState();
+}
+
+class _PairingRequestDialogState extends State<PairingRequestDialog> {
+  bool _trustForAutoSync = false;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final pairing = context.read<PairingRepository>();
     final tls = context.read<TlsIdentity>();
+    final request = widget.request;
 
     return AlertDialog(
       title: Text(l10n.pairingConnectionRequest),
@@ -60,6 +68,15 @@ class PairingRequestDialog extends StatelessWidget {
             l10n.pairingOtherDevicePins,
             style: Theme.of(context).textTheme.bodySmall,
           ),
+          const SizedBox(height: 16),
+          CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            value: _trustForAutoSync,
+            onChanged: _onTrustForAutoSyncChanged,
+            title: Text(l10n.pairingTrustForAutoSync),
+            subtitle: Text(l10n.pairingTrustForAutoSyncHint),
+            controlAffinity: ListTileControlAffinity.leading,
+          ),
         ],
       ),
       actions: [
@@ -78,12 +95,30 @@ class PairingRequestDialog extends StatelessWidget {
               currentConnectedCount: sync.authenticatedPeerCount,
             );
             if (!allowed || !context.mounted) return;
-            pairing.acceptRequest(request);
+            if (_trustForAutoSync) {
+              final autoSyncAllowed =
+                  await StandardGate.trustedAutoSyncAllowed(context);
+              if (!autoSyncAllowed || !context.mounted) return;
+            }
+            pairing.acceptRequest(
+              request,
+              enableAutoSync: _trustForAutoSync,
+            );
             Navigator.of(context).pop();
           },
           child: Text(l10n.commonAccept),
         ),
       ],
     );
+  }
+
+  Future<void> _onTrustForAutoSyncChanged(bool? value) async {
+    if (value != true) {
+      setState(() => _trustForAutoSync = false);
+      return;
+    }
+    final allowed = await StandardGate.trustedAutoSyncAllowed(context);
+    if (!allowed || !mounted) return;
+    setState(() => _trustForAutoSync = true);
   }
 }

@@ -387,7 +387,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get peersNoTrustedDevices =>
-      'Geen vertrouwde apparaten — koppel eenmalig om automatisch synchroniseren in te schakelen';
+      'Geen vertrouwde apparaten — vink Vertrouwen voor auto-sync aan bij accepteren';
 
   @override
   String get peersNoBlockedDevices => 'Geen geblokkeerde apparaten';
@@ -640,6 +640,13 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get pairingOtherDevicePins =>
       'Het andere apparaat maakt dit vast bij de eerste verbinding.';
+
+  @override
+  String get pairingTrustForAutoSync => 'Vertrouwen voor auto-sync';
+
+  @override
+  String get pairingTrustForAutoSyncHint =>
+      'Accepteren overslaan bij latere herverbindingen. Optioneel — uitgeschakeld laten om elke keer Accepteren te vereisen.';
 
   @override
   String get manualConnectTitle => 'Verbinden via adres';
@@ -1002,7 +1009,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get helpPeers4 =>
-      'Na de eerste Accepteren kunnen vertrouwde apparaten automatisch opnieuw verbinden.';
+      'Vink Vertrouwen voor auto-sync aan bij accepteren als latere herverbindingen Accepteren moeten overslaan.';
 
   @override
   String get helpPeers5 =>

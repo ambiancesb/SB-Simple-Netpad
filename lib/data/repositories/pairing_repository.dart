@@ -240,10 +240,12 @@ class PairingRepository extends ChangeNotifier {
     }
   }
 
-  void acceptRequest(PairRequest request) {
+  void acceptRequest(PairRequest request, {bool enableAutoSync = false}) {
     _pendingIncoming.removeWhere((r) => r.requestId == request.requestId);
     _connectionLog.add(
-      'Accepted request from ${request.fromName}',
+      enableAutoSync
+          ? 'Accepted request from ${request.fromName} (auto-sync enabled)'
+          : 'Accepted request from ${request.fromName}',
       peerId: request.fromId,
       peerName: request.fromName,
     );
@@ -253,6 +255,7 @@ class PairingRepository extends ChangeNotifier {
       fromId: request.fromId,
       fromName: request.fromName,
       accepted: true,
+      enableAutoSync: enableAutoSync,
     );
     notifyListeners();
   }

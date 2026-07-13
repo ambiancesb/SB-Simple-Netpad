@@ -379,7 +379,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get peersNoActiveConnections => '无活跃连接';
 
   @override
-  String get peersNoTrustedDevices => '无受信任设备 — 配对一次即可启用自动同步';
+  String get peersNoTrustedDevices => '无受信任设备 — 接受配对时勾选“信任以自动同步”';
 
   @override
   String get peersNoBlockedDevices => '无屏蔽设备';
@@ -624,6 +624,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pairingOtherDevicePins => '另一台设备在首次连接时固定此代码。';
+
+  @override
+  String get pairingTrustForAutoSync => '信任以自动同步';
+
+  @override
+  String get pairingTrustForAutoSyncHint => '之后重新连接时可跳过接受。可选 — 不勾选则每次都需接受。';
 
   @override
   String get manualConnectTitle => '通过地址连接';
@@ -953,7 +959,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get helpPeers3 => '接受前比较配对验证码。';
 
   @override
-  String get helpPeers4 => '第一次接受后，受信任设备可以自动重新连接。';
+  String get helpPeers4 => '若希望之后重新连接跳过接受，请在接受时勾选“信任以自动同步”。';
 
   @override
   String get helpPeers5 => '受信任设备: 切换自动同步或撤销以再次要求接受。';

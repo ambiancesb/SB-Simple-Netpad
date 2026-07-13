@@ -383,7 +383,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get peersNoTrustedDevices =>
-      'No trusted devices — pair once to enable auto-sync';
+      'No trusted devices — check Trust for auto-sync when accepting a pair';
 
   @override
   String get peersNoBlockedDevices => 'No blocked devices';
@@ -634,6 +634,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pairingOtherDevicePins =>
       'The other device pins this on first connect.';
+
+  @override
+  String get pairingTrustForAutoSync => 'Trust for auto-sync';
+
+  @override
+  String get pairingTrustForAutoSyncHint =>
+      'Skip Accept on later reconnects. Optional — leave unchecked to require Accept each time.';
 
   @override
   String get manualConnectTitle => 'Connect by address';
@@ -993,7 +1000,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpPeers4 =>
-      'After the first Accept, trusted devices can auto-reconnect.';
+      'Check Trust for auto-sync when accepting if you want later reconnects to skip Accept.';
 
   @override
   String get helpPeers5 =>

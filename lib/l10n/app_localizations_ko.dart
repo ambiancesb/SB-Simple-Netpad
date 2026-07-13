@@ -380,7 +380,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get peersNoActiveConnections => '활성 연결 없음';
 
   @override
-  String get peersNoTrustedDevices => '신뢰할 수 있는 기기 없음 — 한 번 페어링하여 자동 동기화 사용';
+  String get peersNoTrustedDevices => '신뢰할 수 있는 기기 없음 — 수락 시 자동 동기화 신뢰를 선택하세요';
 
   @override
   String get peersNoBlockedDevices => '차단된 기기 없음';
@@ -627,6 +627,13 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get pairingOtherDevicePins => '다른 기기는 첫 번째 연결 시 이것을 고정합니다.';
+
+  @override
+  String get pairingTrustForAutoSync => '자동 동기화 신뢰';
+
+  @override
+  String get pairingTrustForAutoSyncHint =>
+      '이후 재연결 시 수락을 건너뜁니다. 선택 사항 — 선택하지 않으면 매번 수락이 필요합니다.';
 
   @override
   String get manualConnectTitle => '주소로 연결';
@@ -965,7 +972,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get helpPeers3 => '수락하기 전에 페어링 인증 코드를 비교합니다.';
 
   @override
-  String get helpPeers4 => '첫 번째 수락 후, 신뢰할 수 있는 기기는 자동으로 재연결할 수 있습니다.';
+  String get helpPeers4 => '이후 재연결에서 수락을 건너뛰려면 수락 시 자동 동기화 신뢰를 선택하세요.';
 
   @override
   String get helpPeers5 => '신뢰할 수 있는 기기: 자동 동기화를 전환하거나 취소하여 다시 수락이 필요하게 합니다.';

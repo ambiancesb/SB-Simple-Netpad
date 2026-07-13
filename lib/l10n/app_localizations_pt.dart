@@ -386,7 +386,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get peersNoTrustedDevices =>
-      'Nenhum dispositivo confiÃ¡vel â€” emparelhe uma vez para habilitar sincronizaÃ§Ã£o automÃ¡tica';
+      'Nenhum dispositivo confiável — marque Confiar para sincronização automática ao aceitar';
 
   @override
   String get peersNoBlockedDevices => 'Nenhum dispositivo bloqueado';
@@ -639,6 +639,13 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get pairingOtherDevicePins =>
       'O outro dispositivo fixa isso na primeira conexÃ£o.';
+
+  @override
+  String get pairingTrustForAutoSync => 'Confiar para sincronização automática';
+
+  @override
+  String get pairingTrustForAutoSyncHint =>
+      'Ignorar Aceitar em reconexões posteriores. Opcional — deixe desmarcado para exigir Aceitar sempre.';
 
   @override
   String get manualConnectTitle => 'Conectar por endereÃ§o';
@@ -1005,7 +1012,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpPeers4 =>
-      'ApÃ³s o primeiro Aceitar, dispositivos confiÃ¡veis podem se reconectar automaticamente.';
+      'Marque Confiar para sincronização automática ao aceitar se quiser que as reconexões ignorem Aceitar.';
 
   @override
   String get helpPeers5 =>
@@ -1601,7 +1608,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get peersNoTrustedDevices =>
-      'Nenhum dispositivo confiável — emparelhe uma vez para habilitar sincronização automática';
+      'Nenhum dispositivo confiável — marque Confiar para sincronização automática ao aceitar';
 
   @override
   String get peersNoBlockedDevices => 'Nenhum dispositivo bloqueado';
@@ -1854,6 +1861,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get pairingOtherDevicePins =>
       'O outro dispositivo fixa isso na primeira conexão.';
+
+  @override
+  String get pairingTrustForAutoSync => 'Confiar para sincronização automática';
+
+  @override
+  String get pairingTrustForAutoSyncHint =>
+      'Ignorar Aceitar em reconexões posteriores. Opcional — deixe desmarcado para exigir Aceitar sempre.';
 
   @override
   String get manualConnectTitle => 'Conectar por endereço';
@@ -2220,7 +2234,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpPeers4 =>
-      'Após o primeiro Aceitar, dispositivos confiáveis podem se reconectar automaticamente.';
+      'Marque Confiar para sincronização automática ao aceitar se quiser que as reconexões ignorem Aceitar.';
 
   @override
   String get helpPeers5 =>

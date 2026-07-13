@@ -814,7 +814,7 @@ abstract class AppLocalizations {
   /// No description provided for @peersNoTrustedDevices.
   ///
   /// In en, this message translates to:
-  /// **'No trusted devices — pair once to enable auto-sync'**
+  /// **'No trusted devices — check Trust for auto-sync when accepting a pair'**
   String get peersNoTrustedDevices;
 
   /// No description provided for @peersNoBlockedDevices.
@@ -1200,6 +1200,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The other device pins this on first connect.'**
   String get pairingOtherDevicePins;
+
+  /// No description provided for @pairingTrustForAutoSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust for auto-sync'**
+  String get pairingTrustForAutoSync;
+
+  /// No description provided for @pairingTrustForAutoSyncHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip Accept on later reconnects. Optional — leave unchecked to require Accept each time.'**
+  String get pairingTrustForAutoSyncHint;
 
   /// No description provided for @manualConnectTitle.
   ///
@@ -1822,7 +1834,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpPeers4.
   ///
   /// In en, this message translates to:
-  /// **'After the first Accept, trusted devices can auto-reconnect.'**
+  /// **'Check Trust for auto-sync when accepting if you want later reconnects to skip Accept.'**
   String get helpPeers4;
 
   /// No description provided for @helpPeers5.

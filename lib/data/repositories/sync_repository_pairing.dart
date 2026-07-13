@@ -172,6 +172,7 @@ extension SyncRepositoryPairing on SyncRepository {
     required String fromId,
     required String fromName,
     required bool accepted,
+    bool enableAutoSync = false,
   }) {
     if (accepted) {
       if (!_isStandard() &&
@@ -194,6 +195,7 @@ extension SyncRepositoryPairing on SyncRepository {
         fromId: fromId,
         fromName: fromName,
         autoAccepted: false,
+        issueAutoSyncToken: enableAutoSync && _isStandard(),
       );
     } else {
       _refuseInboundPairRequest(
@@ -212,9 +214,11 @@ extension SyncRepositoryPairing on SyncRepository {
     required String fromId,
     required String fromName,
     required bool autoAccepted,
+    required bool issueAutoSyncToken,
   }) {
     final token = const Uuid().v4();
-    final autoSyncToken = generateAutoSyncToken();
+    final autoSyncToken =
+        issueAutoSyncToken ? generateAutoSyncToken() : null;
     final link = _linksByPeerId[fromId] ??
         PeerConnection(peerId: fromId, displayName: fromName);
     link.inboundConnectionId = connectionId;
@@ -242,19 +246,21 @@ extension SyncRepositoryPairing on SyncRepository {
         type: MessageTypes.pairComplete,
         payload: {
           'sessionToken': token,
-          'autoSyncToken': autoSyncToken,
+          if (autoSyncToken != null) 'autoSyncToken': autoSyncToken,
         },
       ),
     );
 
     _pinRemotePeerIfNeeded(fromId, fromName, link.remoteCertFingerprint);
-    unawaited(
-      _trustStore.setTrustedPeer(
-        peerId: fromId,
-        displayName: fromName,
-        autoSyncToken: autoSyncToken,
-      ),
-    );
+    if (autoSyncToken != null) {
+      unawaited(
+        _trustStore.setTrustedPeer(
+          peerId: fromId,
+          displayName: fromName,
+          autoSyncToken: autoSyncToken,
+        ),
+      );
+    }
 
     markPeerConnectedFromLink(
       fromId,
@@ -264,7 +270,9 @@ extension SyncRepositoryPairing on SyncRepository {
     _connectionLog.add(
       autoAccepted
           ? 'Auto-reconnected to $fromName'
-          : 'Accepted pairing with $fromName',
+          : autoSyncToken != null
+              ? 'Accepted pairing with $fromName (auto-sync enabled)'
+              : 'Accepted pairing with $fromName',
       peerId: fromId,
       peerName: fromName,
     );
@@ -346,6 +354,8 @@ extension SyncRepositoryPairing on SyncRepository {
       fromId: fromId,
       fromName: fromName,
       autoAccepted: true,
+      // Already trusted — rotate and re-issue the auto-sync token.
+      issueAutoSyncToken: true,
     );
     return true;
   }

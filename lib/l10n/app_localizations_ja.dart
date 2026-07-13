@@ -380,7 +380,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get peersNoActiveConnections => 'アクティブな接続なし';
 
   @override
-  String get peersNoTrustedDevices => '信頼済みデバイスなし — 一度ペアリングして自動同期を有効化';
+  String get peersNoTrustedDevices => '信頼済みデバイスなし — 承認時に「自動同期を信頼」をオンにしてください';
 
   @override
   String get peersNoBlockedDevices => 'ブロックされたデバイスなし';
@@ -627,6 +627,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get pairingOtherDevicePins => '相手のデバイスは初回接続時にこれを固定します。';
+
+  @override
+  String get pairingTrustForAutoSync => '自動同期を信頼';
+
+  @override
+  String get pairingTrustForAutoSyncHint =>
+      '以降の再接続で承認を省略します。任意 — オフのままにすると毎回承認が必要です。';
 
   @override
   String get manualConnectTitle => 'アドレスで接続';
@@ -964,7 +971,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get helpPeers3 => '承認する前にペアリングの確認コードを比較してください。';
 
   @override
-  String get helpPeers4 => '最初の「承認」後、信頼済みデバイスは自動的に再接続できます。';
+  String get helpPeers4 => '以降の再接続で承認を省略したい場合は、承認時に「自動同期を信頼」をオンにします。';
 
   @override
   String get helpPeers5 => '信頼済みデバイス: 自動同期を切り替えるか、「取り消し」で再度「承認」が必要になります。';

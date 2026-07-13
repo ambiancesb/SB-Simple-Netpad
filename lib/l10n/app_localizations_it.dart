@@ -386,7 +386,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get peersNoTrustedDevices =>
-      'Nessun dispositivo attendibile — abbina una volta per abilitare la sincronizzazione automatica';
+      'Nessun dispositivo attendibile — seleziona Affida per auto-sync quando accetti';
 
   @override
   String get peersNoBlockedDevices => 'Nessun dispositivo bloccato';
@@ -639,6 +639,13 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get pairingOtherDevicePins =>
       'L\'altro dispositivo associa questo alla prima connessione.';
+
+  @override
+  String get pairingTrustForAutoSync => 'Affida per auto-sync';
+
+  @override
+  String get pairingTrustForAutoSyncHint =>
+      'Salta Accetta alle riconnessioni successive. Facoltativo: lascia deselezionato per richiedere Accetta ogni volta.';
 
   @override
   String get manualConnectTitle => 'Connetti tramite indirizzo';
@@ -1004,7 +1011,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get helpPeers4 =>
-      'Dopo il primo Accetta, i dispositivi attendibili possono riconnettersi automaticamente.';
+      'Seleziona Affida per auto-sync quando accetti se vuoi che le riconnessioni saltino Accetta.';
 
   @override
   String get helpPeers5 =>
