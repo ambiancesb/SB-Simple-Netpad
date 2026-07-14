@@ -79,6 +79,12 @@ void main() {
       );
     });
 
+    test('free note character limit is 500', () {
+      expect(EntitlementConstants.freeNoteCharLimit, 500);
+      expect(StandardFeatures.noteCharacterLimit(free), 500);
+      expect(StandardFeatures.noteCharacterLimit(standard), isNull);
+    });
+
     test('only default skin is free', () {
       expect(StandardFeatures.isSkinAvailable(AppSkin.defaultBlue, free), isTrue);
       expect(StandardFeatures.isSkinAvailable(AppSkin.ocean, free), isFalse);

@@ -19,6 +19,7 @@ class DocumentRepository extends ChangeNotifier {
     required String text,
     required NoteStorageService storage,
     required this.onLocalEditReady,
+    this.maxCharacters,
     List<HistoryEntry> history = const [],
   }) : _storage = storage,
        _title = title,
@@ -35,6 +36,9 @@ class DocumentRepository extends ChangeNotifier {
   /// Reports a ready-to-send local edit: (docId, revision, text, originId).
   final void Function(String docId, int revision, String text, String originId)
   onLocalEditReady;
+
+  /// Free-tier character cap; `null` means unlimited. Remote applies ignore this.
+  final int? Function()? maxCharacters;
   final NoteStorageService _storage;
 
   /// Reports the local cursor position so it can be shared with peers.
@@ -55,6 +59,7 @@ class DocumentRepository extends ChangeNotifier {
   Timer? _presenceDebounce;
   bool _applyingRemote = false;
   bool _applyingDictation = false;
+  bool _clampingCharacters = false;
   late String _lastKnownText;
   int? _lastLine;
   int? _lastColumn;
@@ -64,8 +69,9 @@ class DocumentRepository extends ChangeNotifier {
   String get text => controller.text;
   List<HistoryEntry> get history => List.unmodifiable(_history.reversed);
 
-  /// True while sync/dictation/restore code is writing the controller.
-  bool get isApplyingProgrammatic => _applyingRemote || _applyingDictation;
+  /// True while sync/dictation/restore/clamp code is writing the controller.
+  bool get isApplyingProgrammatic =>
+      _applyingRemote || _applyingDictation || _clampingCharacters;
 
   StoredDocument toStored() => StoredDocument(
     id: id,
@@ -115,8 +121,12 @@ class DocumentRepository extends ChangeNotifier {
             ? ' '
             : '');
     final insertion = '$prefix$recognizedWords';
-    final updated = body.replaceRange(start, end, insertion);
-    final caret = start + insertion.length;
+    var updated = body.replaceRange(start, end, insertion);
+    final limit = maxCharacters?.call();
+    if (limit != null && updated.length > limit) {
+      updated = updated.substring(0, limit);
+    }
+    final caret = (start + insertion.length).clamp(0, updated.length);
     _applyingDictation = true;
     _setControllerText(updated, caret);
     _applyingDictation = false;
@@ -161,25 +171,39 @@ class DocumentRepository extends ChangeNotifier {
   /// file or restoring a version) and broadcasts it immediately.
   void replaceLocal(String text, {String snapshotLabel = 'Before replace'}) {
     _snapshot(snapshotLabel);
+    final limit = maxCharacters?.call();
+    final next = (limit != null && text.length > limit)
+        ? text.substring(0, limit)
+        : text;
     _applyingRemote = true;
-    _setControllerText(text, 0);
+    _setControllerText(next, 0);
     _applyingRemote = false;
     _revision++;
-    onLocalEditReady(id, _revision, text, instanceId);
+    onLocalEditReady(id, _revision, next, instanceId);
     _scheduleSave();
     notifyListeners();
   }
 
   void _onControllerChanged() {
-    final currentText = controller.text;
-    if (_applyingRemote) {
+    var currentText = controller.text;
+    if (_applyingRemote || _clampingCharacters) {
       _lastKnownText = currentText;
       _notifyCursorMoved();
       return;
     }
 
+    final limit = maxCharacters?.call();
+    if (limit != null && currentText.length > limit) {
+      final caret = controller.selection.baseOffset.clamp(0, limit);
+      _clampingCharacters = true;
+      _setControllerText(currentText.substring(0, limit), caret);
+      _clampingCharacters = false;
+      currentText = controller.text;
+    }
+
     if (currentText != _lastKnownText) {
       _lastKnownText = currentText;
+      notifyListeners();
       onLocalEdit();
     }
 

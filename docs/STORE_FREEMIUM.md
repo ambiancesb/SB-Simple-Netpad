@@ -9,6 +9,7 @@ Free tier caps (enforced in app):
 | Cap | Free | Standard |
 |-----|------|----------|
 | Local notes | Unlimited | Unlimited |
+| Characters per note | **500** | Unlimited |
 | Notes with peer sync enabled | **3** notes | Unlimited |
 | Simultaneous connected peers | **3** peers | Unlimited |
 
@@ -29,6 +30,7 @@ Use the **same** product id on every store so RevenueCat / in-app copy stay alig
 | Free | Standard |
 |------|----------|
 | Editing, discovery, pairing | Same, plus Standard unlocks below |
+| Notes up to **500** characters | Unlimited note length |
 | Unlimited local notes | Unlimited synced notes |
 | Up to 3 notes with sync on | Unlimited connected peers |
 | Up to 3 connected peers | Extra skins |

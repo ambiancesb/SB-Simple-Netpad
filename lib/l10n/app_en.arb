@@ -528,6 +528,7 @@
   "paywallSubtitle": "One-time purchase. Core editing and LAN sync stay free.",
   "paywallBenefitUnlimitedNotes": "Unlimited synced notes",
   "paywallBenefitUnlimitedPeers": "Unlimited connected peers",
+  "paywallBenefitUnlimitedLength": "Unlimited note length",
   "paywallBenefitSkins": "Extra color skins",
   "paywallBenefitHistory": "Version history",
   "paywallBenefitAutoSync": "Trusted peer auto-sync",
@@ -546,6 +547,19 @@
   "paywallStandardRestored": "Standard restored",
   "paywallNoPreviousStandard": "No previous Standard purchase found",
 
+  "freeTierUsageTitle": "Free plan usage",
+  "freeTierUsageLine": "Synced notes {synced}/{syncedLimit} · Peers {peers}/{peerLimit} · This note {chars}/{charLimit}",
+  "@freeTierUsageLine": {
+    "placeholders": {
+      "synced": {"type": "int"},
+      "syncedLimit": {"type": "int"},
+      "peers": {"type": "int"},
+      "peerLimit": {"type": "int"},
+      "chars": {"type": "int"},
+      "charLimit": {"type": "int"}
+    }
+  },
+
   "standardHighlightNoteLimit": "Free can sync up to {limit} notes at a time. Unlock Standard for unlimited synced notes.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
@@ -554,6 +568,12 @@
   },
   "standardHighlightPeerLimit": "Free includes up to {limit} connected peers. Unlock Standard for unlimited peers.",
   "@standardHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "standardHighlightCharLimit": "Free notes are limited to {limit} characters. Unlock Standard for unlimited length.",
+  "@standardHighlightCharLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }

@@ -908,6 +908,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get paywallBenefitUnlimitedPeers => 'Pares conectados ilimitados';
 
   @override
+  String get paywallBenefitUnlimitedLength => 'Longitud de nota ilimitada';
+
+  @override
   String get paywallBenefitSkins => 'Apariencias de colores extra';
 
   @override
@@ -949,6 +952,21 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se encontró ninguna compra anterior de Standard';
 
   @override
+  String get freeTierUsageTitle => 'Uso del plan gratuito';
+
+  @override
+  String freeTierUsageLine(
+    int synced,
+    int syncedLimit,
+    int peers,
+    int peerLimit,
+    int chars,
+    int charLimit,
+  ) {
+    return 'Notas sincronizadas $synced/$syncedLimit · Peers $peers/$peerLimit · Esta nota $chars/$charLimit';
+  }
+
+  @override
   String standardHighlightNoteLimit(int limit) {
     return 'La versión gratuita puede sincronizar hasta $limit notas a la vez. Desbloquea Standard para notas sincronizadas ilimitadas.';
   }
@@ -956,6 +974,11 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String standardHighlightPeerLimit(int limit) {
     return 'La versión gratuita incluye hasta $limit pares conectados. Desbloquea Standard para pares ilimitados.';
+  }
+
+  @override
+  String standardHighlightCharLimit(int limit) {
+    return 'Las notas gratis están limitadas a $limit caracteres. Desbloquea Standard para longitud ilimitada.';
   }
 
   @override

@@ -187,6 +187,7 @@ class WorkspaceRepository extends ChangeNotifier {
             history: stored.history,
             storage: _storage,
             onLocalEditReady: _handleLocalEdit,
+            maxCharacters: _noteCharacterLimit,
           ),
         );
       }
@@ -543,6 +544,11 @@ class WorkspaceRepository extends ChangeNotifier {
 
   // ----- Internals ------------------------------------------------------------
 
+  int? _noteCharacterLimit() {
+    if (_isStandard()) return null;
+    return EntitlementConstants.freeNoteCharLimit;
+  }
+
   DocumentRepository _createLocal({
     required String id,
     required String title,
@@ -557,6 +563,7 @@ class WorkspaceRepository extends ChangeNotifier {
       revision: revision,
       storage: _storage,
       onLocalEditReady: _handleLocalEdit,
+      maxCharacters: _noteCharacterLimit,
     );
     _register(doc);
     return doc;

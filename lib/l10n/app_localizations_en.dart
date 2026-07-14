@@ -900,6 +900,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallBenefitUnlimitedPeers => 'Unlimited connected peers';
 
   @override
+  String get paywallBenefitUnlimitedLength => 'Unlimited note length';
+
+  @override
   String get paywallBenefitSkins => 'Extra color skins';
 
   @override
@@ -939,6 +942,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallNoPreviousStandard => 'No previous Standard purchase found';
 
   @override
+  String get freeTierUsageTitle => 'Free plan usage';
+
+  @override
+  String freeTierUsageLine(
+    int synced,
+    int syncedLimit,
+    int peers,
+    int peerLimit,
+    int chars,
+    int charLimit,
+  ) {
+    return 'Synced notes $synced/$syncedLimit · Peers $peers/$peerLimit · This note $chars/$charLimit';
+  }
+
+  @override
   String standardHighlightNoteLimit(int limit) {
     return 'Free can sync up to $limit notes at a time. Unlock Standard for unlimited synced notes.';
   }
@@ -946,6 +964,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String standardHighlightPeerLimit(int limit) {
     return 'Free includes up to $limit connected peers. Unlock Standard for unlimited peers.';
+  }
+
+  @override
+  String standardHighlightCharLimit(int limit) {
+    return 'Free notes are limited to $limit characters. Unlock Standard for unlimited length.';
   }
 
   @override

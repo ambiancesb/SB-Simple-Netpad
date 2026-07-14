@@ -10,7 +10,7 @@ bool isDesktopMenuPlatform() {
   return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
 }
 
-/// macOS renders menus in the system menu bar via [PlatformMenuBar].
+/// macOS renders menus in the system menu bar (not an in-window bar).
 bool useNativeSystemMenuBar() => Platform.isMacOS;
 
 /// Windows and Linux use an in-window Material [MenuBar].
@@ -60,6 +60,16 @@ class DesktopMenuActions {
   final VoidCallback onToggleNotes;
   final VoidCallback onTogglePeers;
   final VoidCallback onExit;
+
+  /// Labels / checkmarks that require pushing a new native menu tree.
+  String get visualSignature =>
+      '$wordWrap|$notesPanelVisible|$peersPanelVisible';
+}
+
+/// Mutable slot so native menu `onSelected` closures stay fresh without
+/// calling [PlatformMenuDelegate.setMenus] (which rebuilds the macOS bar).
+class DesktopMenuActionsHolder {
+  DesktopMenuActions? current;
 }
 
 MenuSerializableShortcut? _menuShortcut(
@@ -88,11 +98,23 @@ MenuSerializableShortcut? _findReplaceShortcut() {
   return const SingleActivator(LogicalKeyboardKey.keyH, control: true);
 }
 
-/// Native macOS menu bar (File, Edit, View).
+/// Avoid the exact label "View" — AppKit injects Tab Bar / Full Screen items
+/// that fight Flutter's menu updates and make the bar feel unstable.
+String _macosViewMenuLabel(AppLocalizations l10n) {
+  final label = l10n.shellMenuView;
+  if (label == 'View') return 'View\u00a0';
+  return label;
+}
+
+/// Native macOS menu bar hierarchy.
+///
+/// Callbacks read [holder.current] so the shell can rotate closures without
+/// rebuilding the native NSMenu (open menus dismiss when [setMenus] runs).
 List<PlatformMenuItem> buildMacosMenus(
-  DesktopMenuActions actions,
+  DesktopMenuActionsHolder holder,
   AppLocalizations l10n,
 ) {
+  DesktopMenuActions a() => holder.current!;
   return [
     PlatformMenu(
       label: l10n.commonAppName,
@@ -102,7 +124,7 @@ List<PlatformMenuItem> buildMacosMenus(
             PlatformMenuItem(
               label: l10n.shellSettings,
               shortcut: _menuShortcut(LogicalKeyboardKey.comma),
-              onSelected: actions.onSettings,
+              onSelected: () => a().onSettings(),
             ),
           ],
         ),
@@ -132,16 +154,16 @@ List<PlatformMenuItem> buildMacosMenus(
             PlatformMenuItem(
               label: l10n.shellSaveToFile,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyS),
-              onSelected: actions.onSave,
+              onSelected: () => a().onSave(),
             ),
             PlatformMenuItem(
               label: l10n.shellOpenFileAsNewNote,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyO),
-              onSelected: actions.onOpen,
+              onSelected: () => a().onOpen(),
             ),
             PlatformMenuItem(
               label: l10n.shellShareNote,
-              onSelected: actions.onShare,
+              onSelected: () => a().onShare(),
             ),
           ],
         ),
@@ -149,7 +171,7 @@ List<PlatformMenuItem> buildMacosMenus(
           members: [
             PlatformMenuItem(
               label: l10n.shellVersionHistory,
-              onSelected: actions.onHistory,
+              onSelected: () => a().onHistory(),
             ),
           ],
         ),
@@ -163,17 +185,17 @@ List<PlatformMenuItem> buildMacosMenus(
             PlatformMenuItem(
               label: l10n.shellCut,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyX),
-              onSelected: actions.onCut,
+              onSelected: () => a().onCut(),
             ),
             PlatformMenuItem(
               label: l10n.shellCopy,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyC),
-              onSelected: actions.onCopy,
+              onSelected: () => a().onCopy(),
             ),
             PlatformMenuItem(
               label: l10n.shellPaste,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyV),
-              onSelected: actions.onPaste,
+              onSelected: () => a().onPaste(),
             ),
           ],
         ),
@@ -182,41 +204,43 @@ List<PlatformMenuItem> buildMacosMenus(
             PlatformMenuItem(
               label: l10n.shellFind,
               shortcut: _menuShortcut(LogicalKeyboardKey.keyF),
-              onSelected: actions.onFind,
+              onSelected: () => a().onFind(),
             ),
             PlatformMenuItem(
               label: l10n.shellFindAndReplace,
               shortcut: _findReplaceShortcut(),
-              onSelected: actions.onFindReplace,
+              onSelected: () => a().onFindReplace(),
             ),
           ],
         ),
         PlatformMenuItemGroup(
           members: [
             PlatformMenuItem(
-              label: actions.wordWrap ? l10n.shellWordWrapChecked : l10n.shellWordWrap,
-              onSelected: actions.onToggleWordWrap,
+              label: a().wordWrap
+                  ? l10n.shellWordWrapChecked
+                  : l10n.shellWordWrap,
+              onSelected: () => a().onToggleWordWrap(),
             ),
           ],
         ),
       ],
     ),
     PlatformMenu(
-      label: l10n.shellMenuView,
+      label: _macosViewMenuLabel(l10n),
       menus: [
         PlatformMenuItem(
-          label: actions.notesPanelVisible
+          label: a().notesPanelVisible
               ? l10n.shellNotesPanelChecked
               : l10n.shellNotesPanel,
           shortcut: _menuShortcut(LogicalKeyboardKey.keyN),
-          onSelected: actions.onToggleNotes,
+          onSelected: () => a().onToggleNotes(),
         ),
         PlatformMenuItem(
-          label: actions.peersPanelVisible
+          label: a().peersPanelVisible
               ? l10n.shellPeersPanelChecked
               : l10n.shellPeersPanel,
           shortcut: _menuShortcut(LogicalKeyboardKey.keyP),
-          onSelected: actions.onTogglePeers,
+          onSelected: () => a().onTogglePeers(),
         ),
       ],
     ),
@@ -225,11 +249,11 @@ List<PlatformMenuItem> buildMacosMenus(
       menus: [
         PlatformMenuItem(
           label: l10n.shellHelpItem,
-          onSelected: actions.onHelp,
+          onSelected: () => a().onHelp(),
         ),
         PlatformMenuItem(
           label: l10n.shellAboutItem,
-          onSelected: actions.onAbout,
+          onSelected: () => a().onAbout(),
         ),
       ],
     ),
@@ -390,8 +414,14 @@ class _CheckMenuLabel extends StatelessWidget {
   }
 }
 
-/// Wraps [child] with a native macOS menu bar when applicable.
-class DesktopMenuHost extends StatelessWidget {
+/// Hosts the macOS system menu bar without using [PlatformMenuBar].
+///
+/// [PlatformMenuBar] calls `clearMenus`/`setMenus` on mount and whenever its
+/// descendant list identity changes — that rebuilds the native menu bar
+/// (including the application menu) and makes titles flash/dismiss under the
+/// mouse. This host pushes menus only when checkmark/label state changes, and
+/// keeps callbacks live via [DesktopMenuActionsHolder].
+class DesktopMenuHost extends StatefulWidget {
   const DesktopMenuHost({
     super.key,
     required this.actions,
@@ -402,11 +432,59 @@ class DesktopMenuHost extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    if (!useNativeSystemMenuBar()) return child;
-    return PlatformMenuBar(
-      menus: buildMacosMenus(actions, context.l10n),
-      child: child,
+  State<DesktopMenuHost> createState() => _DesktopMenuHostState();
+}
+
+class _DesktopMenuHostState extends State<DesktopMenuHost> {
+  final DesktopMenuActionsHolder _holder = DesktopMenuActionsHolder();
+  String? _pushedSignature;
+  Locale? _pushedLocale;
+
+  @override
+  void initState() {
+    super.initState();
+    _holder.current = widget.actions;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncNativeMenus();
+  }
+
+  @override
+  void didUpdateWidget(covariant DesktopMenuHost oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _holder.current = widget.actions;
+    _syncNativeMenus();
+  }
+
+  @override
+  void dispose() {
+    if (useNativeSystemMenuBar()) {
+      WidgetsBinding.instance.platformMenuDelegate.clearMenus();
+    }
+    super.dispose();
+  }
+
+  void _syncNativeMenus() {
+    if (!useNativeSystemMenuBar()) return;
+    final actions = _holder.current;
+    if (actions == null) return;
+
+    final locale = Localizations.localeOf(context);
+    final signature = actions.visualSignature;
+    if (_pushedSignature == signature && _pushedLocale == locale) {
+      return;
+    }
+
+    _pushedSignature = signature;
+    _pushedLocale = locale;
+    WidgetsBinding.instance.platformMenuDelegate.setMenus(
+      buildMacosMenus(_holder, context.l10n),
     );
   }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

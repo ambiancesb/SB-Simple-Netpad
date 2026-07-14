@@ -497,6 +497,7 @@
   "paywallSubtitle": "Compra única. Edição básica e sincronização LAN permanecem gratuitas.",
   "paywallBenefitUnlimitedNotes": "Notas sincronizadas ilimitadas",
   "paywallBenefitUnlimitedPeers": "Pares conectados ilimitados",
+  "paywallBenefitUnlimitedLength": "Comprimento ilimitado da nota",
   "paywallBenefitSkins": "Visuais de cores extras",
   "paywallBenefitHistory": "Histórico de versões",
   "paywallBenefitAutoSync": "Sincronização automática com pares confiáveis",
@@ -515,6 +516,19 @@
   "paywallStandardRestored": "Standard restaurado",
   "paywallNoPreviousStandard": "Nenhuma compra anterior de Standard encontrada",
 
+  "freeTierUsageTitle": "Uso do plano gratuito",
+  "freeTierUsageLine": "Notas sincronizadas {synced}/{syncedLimit} · Pares {peers}/{peerLimit} · Esta nota {chars}/{charLimit}",
+  "@freeTierUsageLine": {
+    "placeholders": {
+      "synced": {"type": "int"},
+      "syncedLimit": {"type": "int"},
+      "peers": {"type": "int"},
+      "peerLimit": {"type": "int"},
+      "chars": {"type": "int"},
+      "charLimit": {"type": "int"}
+    }
+  },
+
   "standardHighlightNoteLimit": "A versão gratuita pode sincronizar até {limit} notas por vez. Desbloqueie o Standard para notas sincronizadas ilimitadas.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
@@ -523,6 +537,12 @@
   },
   "standardHighlightPeerLimit": "A versão gratuita inclui até {limit} pares conectados. Desbloqueie o Standard para pares ilimitados.",
   "@standardHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "standardHighlightCharLimit": "Notas gratuitas têm limite de {limit} caracteres. Desbloqueie Standard para comprimento ilimitado.",
+  "@standardHighlightCharLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }

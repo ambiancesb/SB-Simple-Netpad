@@ -497,6 +497,7 @@
   "paywallSubtitle": "Einmaliger Kauf. Grundlegende Bearbeitung und LAN-Synchronisierung bleiben kostenlos.",
   "paywallBenefitUnlimitedNotes": "Unbegrenzt synchronisierte Notizen",
   "paywallBenefitUnlimitedPeers": "Unbegrenzte verbundene Peers",
+  "paywallBenefitUnlimitedLength": "Unbegrenzte Notizlänge",
   "paywallBenefitSkins": "Zusätzliche Farbdesigns",
   "paywallBenefitHistory": "Versionsverlauf",
   "paywallBenefitAutoSync": "Automatische Synchronisierung vertrauenswürdiger Peers",
@@ -515,6 +516,19 @@
   "paywallStandardRestored": "Standard wiederhergestellt",
   "paywallNoPreviousStandard": "Kein früherer Standard-Kauf gefunden",
 
+  "freeTierUsageTitle": "Free-Plan-Nutzung",
+  "freeTierUsageLine": "Sync-Notizen {synced}/{syncedLimit} · Peers {peers}/{peerLimit} · Diese Notiz {chars}/{charLimit}",
+  "@freeTierUsageLine": {
+    "placeholders": {
+      "synced": {"type": "int"},
+      "syncedLimit": {"type": "int"},
+      "peers": {"type": "int"},
+      "peerLimit": {"type": "int"},
+      "chars": {"type": "int"},
+      "charLimit": {"type": "int"}
+    }
+  },
+
   "standardHighlightNoteLimit": "Die kostenlose Version kann bis zu {limit} Notizen gleichzeitig synchronisieren. Schalten Sie Standard für unbegrenzte Sync-Notizen frei.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
@@ -523,6 +537,12 @@
   },
   "standardHighlightPeerLimit": "Die kostenlose Version enthält bis zu {limit} verbundene Peers. Schalten Sie Standard für unbegrenzte Peers frei.",
   "@standardHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "standardHighlightCharLimit": "Free-Notizen sind auf {limit} Zeichen begrenzt. Mit Standard unbegrenzt.",
+  "@standardHighlightCharLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }

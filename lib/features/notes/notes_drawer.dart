@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
+import 'package:netpad/features/entitlements/free_tier_usage_banner.dart';
 import 'package:netpad/features/entitlements/standard_gate.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
@@ -124,6 +125,7 @@ class _NotesPanelState extends State<NotesPanel> {
               ),
             ),
           ),
+        const FreeTierUsageBanner(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: TextField(

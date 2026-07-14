@@ -886,6 +886,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get paywallBenefitUnlimitedPeers => '무제한 연결 피어';
 
   @override
+  String get paywallBenefitUnlimitedLength => '무제한 메모 길이';
+
+  @override
   String get paywallBenefitSkins => '추가 색상 스킨';
 
   @override
@@ -925,6 +928,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get paywallNoPreviousStandard => '이전 Standard 구매 내역을 찾을 수 없습니다';
 
   @override
+  String get freeTierUsageTitle => '무료 플랜 사용량';
+
+  @override
+  String freeTierUsageLine(
+    int synced,
+    int syncedLimit,
+    int peers,
+    int peerLimit,
+    int chars,
+    int charLimit,
+  ) {
+    return '동기화 메모 $synced/$syncedLimit · 피어 $peers/$peerLimit · 이 메모 $chars/$charLimit';
+  }
+
+  @override
   String standardHighlightNoteLimit(int limit) {
     return '무료 버전은 한 번에 최대 $limit개의 메모를 동기화할 수 있습니다. 무제한 동기화 메모를 위해 Standard를 잠금 해제하세요.';
   }
@@ -932,6 +950,11 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String standardHighlightPeerLimit(int limit) {
     return '무료 버전에는 최대 $limit개의 연결 피어가 포함됩니다. 무제한 피어를 위해 Standard를 잠금 해제하세요.';
+  }
+
+  @override
+  String standardHighlightCharLimit(int limit) {
+    return '무료 메모는 $limit자로 제한됩니다. Standard를 잠금 해제하면 무제한입니다.';
   }
 
   @override

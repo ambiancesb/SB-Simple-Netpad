@@ -1645,6 +1645,12 @@ abstract class AppLocalizations {
   /// **'Unlimited connected peers'**
   String get paywallBenefitUnlimitedPeers;
 
+  /// No description provided for @paywallBenefitUnlimitedLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited note length'**
+  String get paywallBenefitUnlimitedLength;
+
   /// No description provided for @paywallBenefitSkins.
   ///
   /// In en, this message translates to:
@@ -1717,6 +1723,25 @@ abstract class AppLocalizations {
   /// **'No previous Standard purchase found'**
   String get paywallNoPreviousStandard;
 
+  /// No description provided for @freeTierUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan usage'**
+  String get freeTierUsageTitle;
+
+  /// No description provided for @freeTierUsageLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced notes {synced}/{syncedLimit} · Peers {peers}/{peerLimit} · This note {chars}/{charLimit}'**
+  String freeTierUsageLine(
+    int synced,
+    int syncedLimit,
+    int peers,
+    int peerLimit,
+    int chars,
+    int charLimit,
+  );
+
   /// No description provided for @standardHighlightNoteLimit.
   ///
   /// In en, this message translates to:
@@ -1728,6 +1753,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Free includes up to {limit} connected peers. Unlock Standard for unlimited peers.'**
   String standardHighlightPeerLimit(int limit);
+
+  /// No description provided for @standardHighlightCharLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Free notes are limited to {limit} characters. Unlock Standard for unlimited length.'**
+  String standardHighlightCharLimit(int limit);
 
   /// No description provided for @standardHighlightVersionHistory.
   ///

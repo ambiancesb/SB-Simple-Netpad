@@ -497,6 +497,7 @@
   "paywallSubtitle": "Acquisto unico. Modifica base e sincronizzazione LAN rimangono gratuite.",
   "paywallBenefitUnlimitedNotes": "Note sincronizzate illimitate",
   "paywallBenefitUnlimitedPeers": "Peer connessi illimitati",
+  "paywallBenefitUnlimitedLength": "Lunghezza nota illimitata",
   "paywallBenefitSkins": "Skin colori extra",
   "paywallBenefitHistory": "Cronologia versioni",
   "paywallBenefitAutoSync": "Sincronizzazione automatica peer attendibili",
@@ -515,6 +516,19 @@
   "paywallStandardRestored": "Standard ripristinato",
   "paywallNoPreviousStandard": "Nessun acquisto Standard precedente trovato",
 
+  "freeTierUsageTitle": "Utilizzo del piano Free",
+  "freeTierUsageLine": "Note sincronizzate {synced}/{syncedLimit} · Peer {peers}/{peerLimit} · Questa nota {chars}/{charLimit}",
+  "@freeTierUsageLine": {
+    "placeholders": {
+      "synced": {"type": "int"},
+      "syncedLimit": {"type": "int"},
+      "peers": {"type": "int"},
+      "peerLimit": {"type": "int"},
+      "chars": {"type": "int"},
+      "charLimit": {"type": "int"}
+    }
+  },
+
   "standardHighlightNoteLimit": "La versione gratuita può sincronizzare fino a {limit} note alla volta. Sblocca Standard per note sincronizzate illimitate.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
@@ -523,6 +537,12 @@
   },
   "standardHighlightPeerLimit": "La versione gratuita include fino a {limit} peer connessi. Sblocca Standard per peer illimitati.",
   "@standardHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "standardHighlightCharLimit": "Le note Free sono limitate a {limit} caratteri. Sblocca Standard per lunghezza illimitata.",
+  "@standardHighlightCharLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }

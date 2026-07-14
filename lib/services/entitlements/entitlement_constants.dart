@@ -19,6 +19,9 @@ abstract final class EntitlementConstants {
   /// Free tier simultaneous authenticated peer connections.
   static const freePeerLimit = 3;
 
+  /// Free tier max characters per note (Standard is unlimited).
+  static const freeNoteCharLimit = 500;
+
   /// Method channel for Microsoft Store durable purchases.
   static const windowsStoreChannel = 'com.spencerbeaumier.sbnetpad/windows_store';
 }

@@ -497,6 +497,7 @@
   "paywallSubtitle": "Achat unique. L'édition principale et la synchronisation LAN restent gratuites.",
   "paywallBenefitUnlimitedNotes": "Notes synchronisées illimitées",
   "paywallBenefitUnlimitedPeers": "Pairs connectés illimités",
+  "paywallBenefitUnlimitedLength": "Longueur de note illimitée",
   "paywallBenefitSkins": "Thèmes de couleurs supplémentaires",
   "paywallBenefitHistory": "Historique des versions",
   "paywallBenefitAutoSync": "Synchronisation automatique des pairs de confiance",
@@ -515,6 +516,19 @@
   "paywallStandardRestored": "Standard restauré",
   "paywallNoPreviousStandard": "Aucun achat Standard précédent trouvé",
 
+  "freeTierUsageTitle": "Utilisation du forfait gratuit",
+  "freeTierUsageLine": "Notes synchronisées {synced}/{syncedLimit} · Pairs {peers}/{peerLimit} · Cette note {chars}/{charLimit}",
+  "@freeTierUsageLine": {
+    "placeholders": {
+      "synced": {"type": "int"},
+      "syncedLimit": {"type": "int"},
+      "peers": {"type": "int"},
+      "peerLimit": {"type": "int"},
+      "chars": {"type": "int"},
+      "charLimit": {"type": "int"}
+    }
+  },
+
   "standardHighlightNoteLimit": "La version gratuite peut synchroniser jusqu'à {limit} notes à la fois. Débloquez Standard pour des notes synchronisées illimitées.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
@@ -523,6 +537,12 @@
   },
   "standardHighlightPeerLimit": "La version gratuite inclut jusqu'à {limit} pairs connectés. Débloquez Standard pour des pairs illimités.",
   "@standardHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "standardHighlightCharLimit": "Les notes gratuites sont limitées à {limit} caractères. Débloquez Standard pour une longueur illimitée.",
+  "@standardHighlightCharLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }

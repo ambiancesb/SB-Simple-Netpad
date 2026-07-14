@@ -37,6 +37,9 @@ class NetpadCodeField extends StatefulWidget {
   final bool lineNumbers;
   final bool horizontalScroll;
 
+  /// Optional input formatters (e.g. free-tier character limit).
+  final List<TextInputFormatter>? inputFormatters;
+
   const NetpadCodeField({
     super.key,
     required this.controller,
@@ -63,6 +66,7 @@ class NetpadCodeField extends StatefulWidget {
     this.lineNumbers = true,
     this.horizontalScroll = true,
     this.selectionControls,
+    this.inputFormatters,
   });
 
   @override
@@ -308,6 +312,7 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
       maxLines: widget.wrap ? null : widget.maxLines,
       expands: widget.expands,
       scrollController: _codeScroll,
+      inputFormatters: widget.inputFormatters,
       decoration: InputDecoration(
         disabledBorder: InputBorder.none,
         border: InputBorder.none,

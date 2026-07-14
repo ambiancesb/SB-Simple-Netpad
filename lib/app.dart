@@ -552,11 +552,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final discovery = context.watch<DiscoveryRepository>();
-    final workspace = context.watch<WorkspaceRepository>();
     final prefs = context.watch<AppPreferences>();
-    final connected = discovery.connectedPeers.length;
-    final activeTitle = workspace.active?.title ?? 'SB Simple Netpad';
     final desktopMenus = isDesktopMenuPlatform();
     final menuActions = _menuActions(prefs);
 
@@ -572,14 +568,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       speechInput: _speechInput,
     );
 
-    final shellBody = desktopMenus
-        ? _buildDesktopBody(
-            editor: editor,
-            showMaterialMenuBar: useMaterialWindowMenuBar(),
-            menuActions: menuActions,
-          )
-        : editor;
-
+    // Keep discovery/workspace watches under DesktopMenuHost so note edits and
+    // peer presence do not re-push the native macOS menu bar.
     return Shortcuts(
       shortcuts: _shortcutMap(),
       child: Actions(
@@ -625,12 +615,28 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
           autofocus: true,
           child: DesktopMenuHost(
             actions: menuActions,
-            child: _buildScaffold(
-              activeTitle: activeTitle,
-              connected: connected,
-              desktopMenus: desktopMenus,
-              wordWrap: prefs.wordWrap,
-              body: shellBody,
+            child: Builder(
+              builder: (context) {
+                final discovery = context.watch<DiscoveryRepository>();
+                final workspace = context.watch<WorkspaceRepository>();
+                final connected = discovery.connectedPeers.length;
+                final activeTitle =
+                    workspace.active?.title ?? 'SB Simple Netpad';
+                final shellBody = desktopMenus
+                    ? _buildDesktopBody(
+                        editor: editor,
+                        showMaterialMenuBar: useMaterialWindowMenuBar(),
+                        menuActions: menuActions,
+                      )
+                    : editor;
+                return _buildScaffold(
+                  activeTitle: activeTitle,
+                  connected: connected,
+                  desktopMenus: desktopMenus,
+                  wordWrap: prefs.wordWrap,
+                  body: shellBody,
+                );
+              },
             ),
           ),
         ),

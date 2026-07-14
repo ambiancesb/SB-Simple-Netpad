@@ -497,6 +497,7 @@
   "paywallSubtitle": "一次性购买。核心编辑和 LAN 同步保持免费。",
   "paywallBenefitUnlimitedNotes": "无限同步笔记",
   "paywallBenefitUnlimitedPeers": "无限连接节点",
+  "paywallBenefitUnlimitedLength": "无限笔记长度",
   "paywallBenefitSkins": "额外颜色皮肤",
   "paywallBenefitHistory": "版本历史",
   "paywallBenefitAutoSync": "受信任节点自动同步",
@@ -515,6 +516,19 @@
   "paywallStandardRestored": "Standard 已恢复",
   "paywallNoPreviousStandard": "未找到之前的 Standard 购买记录",
 
+  "freeTierUsageTitle": "免费方案用量",
+  "freeTierUsageLine": "同步笔记 {synced}/{syncedLimit} · 对端 {peers}/{peerLimit} · 本笔记 {chars}/{charLimit}",
+  "@freeTierUsageLine": {
+    "placeholders": {
+      "synced": {"type": "int"},
+      "syncedLimit": {"type": "int"},
+      "peers": {"type": "int"},
+      "peerLimit": {"type": "int"},
+      "chars": {"type": "int"},
+      "charLimit": {"type": "int"}
+    }
+  },
+
   "standardHighlightNoteLimit": "免费版最多可同时同步 {limit} 条笔记。解锁 Standard 获得无限同步笔记。",
   "@standardHighlightNoteLimit": {
     "placeholders": {
@@ -523,6 +537,12 @@
   },
   "standardHighlightPeerLimit": "免费版最多包含 {limit} 个连接节点。解锁 Standard 获得无限节点。",
   "@standardHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "standardHighlightCharLimit": "免费笔记限 {limit} 个字符。解锁 Standard 即可不限长度。",
+  "@standardHighlightCharLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }

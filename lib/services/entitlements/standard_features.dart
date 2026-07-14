@@ -28,6 +28,14 @@ abstract final class StandardFeatures {
 
   static int get freePeerLimit => EntitlementConstants.freePeerLimit;
 
+  /// Max note length for free users; `null` means unlimited (Standard).
+  static int? noteCharacterLimit(EntitlementService entitlements) {
+    if (entitlements.isStandard) return null;
+    return EntitlementConstants.freeNoteCharLimit;
+  }
+
+  static int get freeNoteCharLimit => EntitlementConstants.freeNoteCharLimit;
+
   static bool isSkinAvailable(AppSkin skin, EntitlementService entitlements) {
     if (entitlements.isStandard) return true;
     return skin == AppSkin.defaultBlue;

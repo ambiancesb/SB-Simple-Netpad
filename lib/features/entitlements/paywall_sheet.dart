@@ -108,6 +108,7 @@ class _PaywallSheetState extends State<_PaywallSheet> {
             const SizedBox(height: 16),
             _Benefit(icon: Icons.note_add, label: l10n.paywallBenefitUnlimitedNotes),
             _Benefit(icon: Icons.hub, label: l10n.paywallBenefitUnlimitedPeers),
+            _Benefit(icon: Icons.text_fields, label: l10n.paywallBenefitUnlimitedLength),
             _Benefit(icon: Icons.palette, label: l10n.paywallBenefitSkins),
             _Benefit(icon: Icons.history, label: l10n.paywallBenefitHistory),
             _Benefit(icon: Icons.sync, label: l10n.paywallBenefitAutoSync),

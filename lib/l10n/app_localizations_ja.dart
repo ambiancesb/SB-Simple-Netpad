@@ -885,6 +885,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get paywallBenefitUnlimitedPeers => '無制限の接続ピア';
 
   @override
+  String get paywallBenefitUnlimitedLength => '無制限のメモ長';
+
+  @override
   String get paywallBenefitSkins => '追加カラースキン';
 
   @override
@@ -924,6 +927,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get paywallNoPreviousStandard => '以前の Standard 購入が見つかりません';
 
   @override
+  String get freeTierUsageTitle => '無料プランの使用状況';
+
+  @override
+  String freeTierUsageLine(
+    int synced,
+    int syncedLimit,
+    int peers,
+    int peerLimit,
+    int chars,
+    int charLimit,
+  ) {
+    return '同期メモ $synced/$syncedLimit · ピア $peers/$peerLimit · このメモ $chars/$charLimit';
+  }
+
+  @override
   String standardHighlightNoteLimit(int limit) {
     return '無料版は同時に最大 $limit 件のメモを同期できます。無制限の同期メモには Standard を解除してください。';
   }
@@ -931,6 +949,11 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String standardHighlightPeerLimit(int limit) {
     return '無料版は最大 $limit 件の接続ピアが含まれます。無制限のピアには Standard を解除してください。';
+  }
+
+  @override
+  String standardHighlightCharLimit(int limit) {
+    return '無料メモは $limit 文字までに制限されます。Standard で無制限になります。';
   }
 
   @override

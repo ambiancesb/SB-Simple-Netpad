@@ -497,6 +497,7 @@
   "paywallSubtitle": "Eenmalige aankoop. Kernbewerking en LAN-synchronisatie blijven gratis.",
   "paywallBenefitUnlimitedNotes": "Onbeperkt gesynchroniseerde notities",
   "paywallBenefitUnlimitedPeers": "Onbeperkte verbonden peers",
+  "paywallBenefitUnlimitedLength": "Onbeperkte notitielengte",
   "paywallBenefitSkins": "Extra kleurskins",
   "paywallBenefitHistory": "Versiegeschiedenis",
   "paywallBenefitAutoSync": "Automatisch synchroniseren van vertrouwde peers",
@@ -515,6 +516,19 @@
   "paywallStandardRestored": "Standard hersteld",
   "paywallNoPreviousStandard": "Geen eerdere Standard-aankoop gevonden",
 
+  "freeTierUsageTitle": "Gebruik gratis abonnement",
+  "freeTierUsageLine": "Gesyncte notities {synced}/{syncedLimit} · Peers {peers}/{peerLimit} · Deze notitie {chars}/{charLimit}",
+  "@freeTierUsageLine": {
+    "placeholders": {
+      "synced": {"type": "int"},
+      "syncedLimit": {"type": "int"},
+      "peers": {"type": "int"},
+      "peerLimit": {"type": "int"},
+      "chars": {"type": "int"},
+      "charLimit": {"type": "int"}
+    }
+  },
+
   "standardHighlightNoteLimit": "De gratis versie kan tot {limit} notities tegelijk synchroniseren. Ontgrendel Standard voor onbeperkt gesynchroniseerde notities.",
   "@standardHighlightNoteLimit": {
     "placeholders": {
@@ -523,6 +537,12 @@
   },
   "standardHighlightPeerLimit": "De gratis versie bevat tot {limit} verbonden peers. Ontgrendel Standard voor onbeperkte peers.",
   "@standardHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "standardHighlightCharLimit": "Gratis notities zijn beperkt tot {limit} tekens. Ontgrendel Standard voor onbeperkte lengte.",
+  "@standardHighlightCharLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }

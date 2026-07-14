@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
+import 'package:netpad/features/entitlements/free_tier_usage_banner.dart';
 import 'package:netpad/features/peers/peers_panel.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,7 @@ class PeersSidebar extends StatelessWidget {
               ],
             ),
           ),
+        const FreeTierUsageBanner(dense: true),
         const Expanded(child: PeersPanel()),
       ],
     );

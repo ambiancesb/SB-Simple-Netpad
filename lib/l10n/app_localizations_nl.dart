@@ -908,6 +908,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get paywallBenefitUnlimitedPeers => 'Onbeperkte verbonden peers';
 
   @override
+  String get paywallBenefitUnlimitedLength => 'Onbeperkte notitielengte';
+
+  @override
   String get paywallBenefitSkins => 'Extra kleurskins';
 
   @override
@@ -949,6 +952,21 @@ class AppLocalizationsNl extends AppLocalizations {
       'Geen eerdere Standard-aankoop gevonden';
 
   @override
+  String get freeTierUsageTitle => 'Gebruik gratis abonnement';
+
+  @override
+  String freeTierUsageLine(
+    int synced,
+    int syncedLimit,
+    int peers,
+    int peerLimit,
+    int chars,
+    int charLimit,
+  ) {
+    return 'Gesyncte notities $synced/$syncedLimit · Peers $peers/$peerLimit · Deze notitie $chars/$charLimit';
+  }
+
+  @override
   String standardHighlightNoteLimit(int limit) {
     return 'De gratis versie kan tot $limit notities tegelijk synchroniseren. Ontgrendel Standard voor onbeperkt gesynchroniseerde notities.';
   }
@@ -956,6 +974,11 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String standardHighlightPeerLimit(int limit) {
     return 'De gratis versie bevat tot $limit verbonden peers. Ontgrendel Standard voor onbeperkte peers.';
+  }
+
+  @override
+  String standardHighlightCharLimit(int limit) {
+    return 'Gratis notities zijn beperkt tot $limit tekens. Ontgrendel Standard voor onbeperkte lengte.';
   }
 
   @override

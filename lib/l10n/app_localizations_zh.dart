@@ -877,6 +877,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get paywallBenefitUnlimitedPeers => '无限连接节点';
 
   @override
+  String get paywallBenefitUnlimitedLength => '无限笔记长度';
+
+  @override
   String get paywallBenefitSkins => '额外颜色皮肤';
 
   @override
@@ -916,6 +919,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get paywallNoPreviousStandard => '未找到之前的 Standard 购买记录';
 
   @override
+  String get freeTierUsageTitle => '免费方案用量';
+
+  @override
+  String freeTierUsageLine(
+    int synced,
+    int syncedLimit,
+    int peers,
+    int peerLimit,
+    int chars,
+    int charLimit,
+  ) {
+    return '同步笔记 $synced/$syncedLimit · 对端 $peers/$peerLimit · 本笔记 $chars/$charLimit';
+  }
+
+  @override
   String standardHighlightNoteLimit(int limit) {
     return '免费版最多可同时同步 $limit 条笔记。解锁 Standard 获得无限同步笔记。';
   }
@@ -923,6 +941,11 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String standardHighlightPeerLimit(int limit) {
     return '免费版最多包含 $limit 个连接节点。解锁 Standard 获得无限节点。';
+  }
+
+  @override
+  String standardHighlightCharLimit(int limit) {
+    return '免费笔记限 $limit 个字符。解锁 Standard 即可不限长度。';
   }
 
   @override

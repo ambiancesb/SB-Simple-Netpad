@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:code_text_field/code_text_field.dart' show CodeController, LineNumberStyle;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/find_replace.dart';
 import 'package:netpad/core/ime_voice_gate.dart';
@@ -240,25 +241,38 @@ class _EditorBodyState extends State<_EditorBody> {
             onClose: widget.onCloseFind,
           ),
         Expanded(
-          child: NetpadCodeField(
-            key: ValueKey('editor-${document.id}'),
-            controller: document.controller,
-            focusNode: _editorFocusNode,
-            lineNumbers: true,
-            lineNumberStyle: _lineNumberStyle(context, prefs.fontSize, colors),
-            textStyle: _editorTextStyle(prefs.fontSize, colors),
-            background: colors.background,
-            cursorColor: colors.cursor,
-            textSelectionTheme: TextSelectionThemeData(
-              cursorColor: colors.cursor,
-              selectionColor: colors.selection,
-              selectionHandleColor: colors.cursor,
-            ),
-            wrap: prefs.wordWrap,
-            horizontalScroll: !prefs.wordWrap,
-            expands: true,
-            onTap: () => _editorFocusNode.requestFocus(),
-            onChanged: (_) => document.onLocalEdit(),
+          child: Builder(
+            builder: (context) {
+              final entitlements = context.watch<EntitlementService>();
+              final limit = StandardFeatures.noteCharacterLimit(entitlements);
+              return NetpadCodeField(
+                key: ValueKey('editor-${document.id}'),
+                controller: document.controller,
+                focusNode: _editorFocusNode,
+                lineNumbers: true,
+                lineNumberStyle: _lineNumberStyle(
+                  context,
+                  prefs.fontSize,
+                  colors,
+                ),
+                textStyle: _editorTextStyle(prefs.fontSize, colors),
+                background: colors.background,
+                cursorColor: colors.cursor,
+                textSelectionTheme: TextSelectionThemeData(
+                  cursorColor: colors.cursor,
+                  selectionColor: colors.selection,
+                  selectionHandleColor: colors.cursor,
+                ),
+                wrap: prefs.wordWrap,
+                horizontalScroll: !prefs.wordWrap,
+                expands: true,
+                inputFormatters: limit == null
+                    ? null
+                    : [LengthLimitingTextInputFormatter(limit)],
+                onTap: () => _editorFocusNode.requestFocus(),
+                onChanged: (_) => document.onLocalEdit(),
+              );
+            },
           ),
         ),
       ],

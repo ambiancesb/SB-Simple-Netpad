@@ -497,6 +497,7 @@
   "paywallSubtitle": "一度の購入。基本的な編集とLAN同期は無料のまま。",
   "paywallBenefitUnlimitedNotes": "無制限の同期メモ",
   "paywallBenefitUnlimitedPeers": "無制限の接続ピア",
+  "paywallBenefitUnlimitedLength": "無制限のメモ長",
   "paywallBenefitSkins": "追加カラースキン",
   "paywallBenefitHistory": "バージョン履歴",
   "paywallBenefitAutoSync": "信頼済みピアの自動同期",
@@ -515,6 +516,19 @@
   "paywallStandardRestored": "Standard を復元しました",
   "paywallNoPreviousStandard": "以前の Standard 購入が見つかりません",
 
+  "freeTierUsageTitle": "無料プランの使用状況",
+  "freeTierUsageLine": "同期メモ {synced}/{syncedLimit} · ピア {peers}/{peerLimit} · このメモ {chars}/{charLimit}",
+  "@freeTierUsageLine": {
+    "placeholders": {
+      "synced": {"type": "int"},
+      "syncedLimit": {"type": "int"},
+      "peers": {"type": "int"},
+      "peerLimit": {"type": "int"},
+      "chars": {"type": "int"},
+      "charLimit": {"type": "int"}
+    }
+  },
+
   "standardHighlightNoteLimit": "無料版は同時に最大 {limit} 件のメモを同期できます。無制限の同期メモには Standard を解除してください。",
   "@standardHighlightNoteLimit": {
     "placeholders": {
@@ -523,6 +537,12 @@
   },
   "standardHighlightPeerLimit": "無料版は最大 {limit} 件の接続ピアが含まれます。無制限のピアには Standard を解除してください。",
   "@standardHighlightPeerLimit": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "standardHighlightCharLimit": "無料メモは {limit} 文字までに制限されます。Standard で無制限になります。",
+  "@standardHighlightCharLimit": {
     "placeholders": {
       "limit": {"type": "int"}
     }
