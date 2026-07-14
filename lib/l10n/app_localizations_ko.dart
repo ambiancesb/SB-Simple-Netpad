@@ -803,6 +803,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsPurchasesUnavailable => '이 플랫폼에서는 구매를 사용할 수 없습니다';
 
   @override
+  String get settingsStandardStoreSubtitle =>
+      'App Store, Google Play 또는 Microsoft Store에서 Standard 받기';
+
+  @override
   String get settingsRestorePurchases => '구매 복원';
 
   @override
@@ -902,7 +906,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      '이 플랫폼에서는 인앱 구매를 사용할 수 없습니다. Standard를 잠금 해제하려면 App Store, Google Play 또는 Microsoft Store에서 설치하세요.';
+      '이 플랫폼에서는 인앱 구매를 사용할 수 없습니다. 스토어 페이지를 열어 Standard를 잠금 해제하세요.';
 
   @override
   String get paywallBuyStandard => 'Standard 구매';
@@ -911,6 +915,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String paywallBuyStandardPrice(String price) {
     return 'Standard 구매 · $price';
   }
+
+  @override
+  String get paywallGetFromStore => '스토어에서 Standard 받기';
+
+  @override
+  String get paywallOpenAppStore => 'App Store 열기';
+
+  @override
+  String get paywallOpenPlayStore => 'Google Play 열기';
+
+  @override
+  String get paywallOpenMicrosoftStore => 'Microsoft Store 열기';
+
+  @override
+  String get paywallCouldNotOpenStore => '스토어 페이지를 열 수 없습니다';
 
   @override
   String get paywallRestorePurchases => '구매 복원';

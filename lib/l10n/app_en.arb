@@ -497,6 +497,7 @@
   "settingsStandardUnlockedSubtitle": "Unlimited synced notes and peers, skins, history, auto-sync, and voice",
   "settingsStandardBuySubtitle": "One-time unlock via your app store",
   "settingsPurchasesUnavailable": "Purchases unavailable on this platform",
+  "settingsStandardStoreSubtitle": "Get Standard from the App Store, Google Play, or Microsoft Store",
   "settingsRestorePurchases": "Restore purchases",
   "settingsStandardRestored": "Standard restored",
   "settingsNoPreviousStandard": "No previous Standard purchase found",
@@ -533,7 +534,7 @@
   "paywallBenefitHistory": "Version history",
   "paywallBenefitAutoSync": "Trusted peer auto-sync",
   "paywallBenefitVoice": "Voice dictation",
-  "paywallPurchasesUnsupported": "In-app purchases are not available on this platform. Install from the App Store, Google Play, or Microsoft Store to unlock Standard.",
+  "paywallPurchasesUnsupported": "In-app purchases are not available on this platform. Open a store listing to unlock Standard.",
   "paywallBuyStandard": "Buy Standard",
   "paywallBuyStandardPrice": "Buy Standard · {price}",
   "@paywallBuyStandardPrice": {
@@ -541,6 +542,11 @@
       "price": {"type": "String"}
     }
   },
+  "paywallGetFromStore": "Get Standard from the store",
+  "paywallOpenAppStore": "Open App Store",
+  "paywallOpenPlayStore": "Open Google Play",
+  "paywallOpenMicrosoftStore": "Open Microsoft Store",
+  "paywallCouldNotOpenStore": "Could not open the store listing",
   "paywallRestorePurchases": "Restore purchases",
   "paywallPurchaseNotCompleted": "Purchase was not completed.",
   "paywallPurchaseFailed": "Purchase failed.",

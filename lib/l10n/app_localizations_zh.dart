@@ -797,6 +797,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsPurchasesUnavailable => '此平台上购买不可用';
 
   @override
+  String get settingsStandardStoreSubtitle =>
+      '通过 App Store、Google Play 或 Microsoft Store 获取 Standard';
+
+  @override
   String get settingsRestorePurchases => '恢复购买';
 
   @override
@@ -893,7 +897,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      '此平台上无法进行应用内购买。请从 App Store、Google Play 或 Microsoft Store 安装以解锁 Standard。';
+      '此平台上无法进行应用内购买。请打开商店页面以解锁 Standard。';
 
   @override
   String get paywallBuyStandard => '购买 Standard';
@@ -902,6 +906,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String paywallBuyStandardPrice(String price) {
     return '购买 Standard · $price';
   }
+
+  @override
+  String get paywallGetFromStore => '在商店获取 Standard';
+
+  @override
+  String get paywallOpenAppStore => '打开 App Store';
+
+  @override
+  String get paywallOpenPlayStore => '打开 Google Play';
+
+  @override
+  String get paywallOpenMicrosoftStore => '打开 Microsoft Store';
+
+  @override
+  String get paywallCouldNotOpenStore => '无法打开商店页面';
 
   @override
   String get paywallRestorePurchases => '恢复购买';

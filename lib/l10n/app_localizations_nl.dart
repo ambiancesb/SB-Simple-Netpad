@@ -821,6 +821,10 @@ class AppLocalizationsNl extends AppLocalizations {
       'Aankopen niet beschikbaar op dit platform';
 
   @override
+  String get settingsStandardStoreSubtitle =>
+      'Haal Standard via de App Store, Google Play of Microsoft Store';
+
+  @override
   String get settingsRestorePurchases => 'Aankopen herstellen';
 
   @override
@@ -925,7 +929,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      'In-app aankopen zijn niet beschikbaar op dit platform. Installeer vanuit de App Store, Google Play of Microsoft Store om Standard te ontgrendelen.';
+      'In-app aankopen zijn niet beschikbaar op dit platform. Open een storevermelding om Standard te ontgrendelen.';
 
   @override
   String get paywallBuyStandard => 'Standard kopen';
@@ -934,6 +938,21 @@ class AppLocalizationsNl extends AppLocalizations {
   String paywallBuyStandardPrice(String price) {
     return 'Standard kopen · $price';
   }
+
+  @override
+  String get paywallGetFromStore => 'Haal Standard in de store';
+
+  @override
+  String get paywallOpenAppStore => 'App Store openen';
+
+  @override
+  String get paywallOpenPlayStore => 'Google Play openen';
+
+  @override
+  String get paywallOpenMicrosoftStore => 'Microsoft Store openen';
+
+  @override
+  String get paywallCouldNotOpenStore => 'Kon de storevermelding niet openen';
 
   @override
   String get paywallRestorePurchases => 'Aankopen herstellen';

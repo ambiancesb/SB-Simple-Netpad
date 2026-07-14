@@ -302,17 +302,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ? l10n.settingsStandardUnlockedSubtitle
                         : entitlements.purchasesSupported
                         ? l10n.settingsStandardBuySubtitle
-                        : l10n.settingsPurchasesUnavailable,
+                        : l10n.settingsStandardStoreSubtitle,
                   ),
                   trailing: entitlements.isStandard
                       ? Icon(
                           Icons.verified,
                           color: Theme.of(context).colorScheme.primary,
                         )
-                      : entitlements.purchasesSupported
-                      ? const Icon(Icons.chevron_right)
-                      : null,
-                  onTap: entitlements.isStandard || !entitlements.purchasesSupported
+                      : const Icon(Icons.chevron_right),
+                  onTap: entitlements.isStandard
                       ? null
                       : () => showPaywallSheet(context),
                 ),

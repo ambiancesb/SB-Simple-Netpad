@@ -802,6 +802,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsPurchasesUnavailable => 'このプラットフォームでは購入できません';
 
   @override
+  String get settingsStandardStoreSubtitle =>
+      'App Store、Google Play、または Microsoft Store で Standard を入手';
+
+  @override
   String get settingsRestorePurchases => '購入を復元';
 
   @override
@@ -901,7 +905,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      'このプラットフォームではアプリ内購入はご利用いただけません。Standard を解除するには App Store、Google Play、または Microsoft Store からインストールしてください。';
+      'このプラットフォームではアプリ内購入はご利用いただけません。ストアのページを開いて Standard を解除してください。';
 
   @override
   String get paywallBuyStandard => 'Standard を購入';
@@ -910,6 +914,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String paywallBuyStandardPrice(String price) {
     return 'Standard を購入 · $price';
   }
+
+  @override
+  String get paywallGetFromStore => 'ストアで Standard を入手';
+
+  @override
+  String get paywallOpenAppStore => 'App Store を開く';
+
+  @override
+  String get paywallOpenPlayStore => 'Google Play を開く';
+
+  @override
+  String get paywallOpenMicrosoftStore => 'Microsoft Store を開く';
+
+  @override
+  String get paywallCouldNotOpenStore => 'ストアのページを開けませんでした';
 
   @override
   String get paywallRestorePurchases => '購入を復元';

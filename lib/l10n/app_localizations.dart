@@ -1495,6 +1495,12 @@ abstract class AppLocalizations {
   /// **'Purchases unavailable on this platform'**
   String get settingsPurchasesUnavailable;
 
+  /// No description provided for @settingsStandardStoreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Standard from the App Store, Google Play, or Microsoft Store'**
+  String get settingsStandardStoreSubtitle;
+
   /// No description provided for @settingsRestorePurchases.
   ///
   /// In en, this message translates to:
@@ -1678,7 +1684,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallPurchasesUnsupported.
   ///
   /// In en, this message translates to:
-  /// **'In-app purchases are not available on this platform. Install from the App Store, Google Play, or Microsoft Store to unlock Standard.'**
+  /// **'In-app purchases are not available on this platform. Open a store listing to unlock Standard.'**
   String get paywallPurchasesUnsupported;
 
   /// No description provided for @paywallBuyStandard.
@@ -1692,6 +1698,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Buy Standard · {price}'**
   String paywallBuyStandardPrice(String price);
+
+  /// No description provided for @paywallGetFromStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Standard from the store'**
+  String get paywallGetFromStore;
+
+  /// No description provided for @paywallOpenAppStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Open App Store'**
+  String get paywallOpenAppStore;
+
+  /// No description provided for @paywallOpenPlayStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Google Play'**
+  String get paywallOpenPlayStore;
+
+  /// No description provided for @paywallOpenMicrosoftStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Microsoft Store'**
+  String get paywallOpenMicrosoftStore;
+
+  /// No description provided for @paywallCouldNotOpenStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the store listing'**
+  String get paywallCouldNotOpenStore;
 
   /// No description provided for @paywallRestorePurchases.
   ///

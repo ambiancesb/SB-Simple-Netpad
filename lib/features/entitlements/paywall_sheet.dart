@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:netpad/core/store_links.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/theme/app_spacing.dart';
@@ -65,6 +66,14 @@ class _PaywallSheetState extends State<_PaywallSheet> {
     );
   }
 
+  Future<void> _openStore(Uri uri) async {
+    final ok = await StoreLinks.open(uri);
+    if (!mounted || ok) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(context.l10n.paywallCouldNotOpenStore)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -72,6 +81,7 @@ class _PaywallSheetState extends State<_PaywallSheet> {
     final theme = Theme.of(context);
     final price = entitlements.priceString;
     final supported = entitlements.purchasesSupported;
+    final preferredStore = StoreLinks.preferredListing;
 
     return SafeArea(
       child: Padding(
@@ -119,15 +129,7 @@ class _PaywallSheetState extends State<_PaywallSheet> {
             _Benefit(label: l10n.paywallBenefitAutoSync),
             _Benefit(label: l10n.paywallBenefitVoice),
             const SizedBox(height: AppSpacing.xl),
-            if (!supported)
-              Text(
-                l10n.paywallPurchasesUnsupported,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              )
-            else ...[
+            if (supported) ...[
               FilledButton(
                 onPressed: _busy ? null : _buy,
                 child: _busy
@@ -147,6 +149,40 @@ class _PaywallSheetState extends State<_PaywallSheet> {
                 onPressed: _busy ? null : _restore,
                 child: Text(l10n.paywallRestorePurchases),
               ),
+            ] else ...[
+              Text(
+                l10n.paywallPurchasesUnsupported,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              if (preferredStore != null)
+                FilledButton.icon(
+                  onPressed: () => _openStore(preferredStore),
+                  icon: const Icon(Icons.open_in_new, size: 18),
+                  label: Text(l10n.paywallGetFromStore),
+                )
+              else ...[
+                FilledButton.icon(
+                  onPressed: () => _openStore(StoreLinks.appStore),
+                  icon: const Icon(Icons.open_in_new, size: 18),
+                  label: Text(l10n.paywallOpenAppStore),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                OutlinedButton.icon(
+                  onPressed: () => _openStore(StoreLinks.playStore),
+                  icon: const Icon(Icons.open_in_new, size: 18),
+                  label: Text(l10n.paywallOpenPlayStore),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                OutlinedButton.icon(
+                  onPressed: () => _openStore(StoreLinks.microsoftStore),
+                  icon: const Icon(Icons.open_in_new, size: 18),
+                  label: Text(l10n.paywallOpenMicrosoftStore),
+                ),
+              ],
             ],
           ],
         ),

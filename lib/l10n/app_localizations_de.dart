@@ -819,6 +819,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Käufe auf dieser Plattform nicht verfügbar';
 
   @override
+  String get settingsStandardStoreSubtitle =>
+      'Holen Sie sich Standard über den App Store, Google Play oder Microsoft Store';
+
+  @override
   String get settingsRestorePurchases => 'Käufe wiederherstellen';
 
   @override
@@ -925,7 +929,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      'In-App-Käufe sind auf dieser Plattform nicht verfügbar. Installieren Sie aus dem App Store, Google Play oder Microsoft Store, um Standard freizuschalten.';
+      'In-App-Käufe sind auf dieser Plattform nicht verfügbar. Öffnen Sie einen Store-Eintrag, um Standard freizuschalten.';
 
   @override
   String get paywallBuyStandard => 'Standard kaufen';
@@ -934,6 +938,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String paywallBuyStandardPrice(String price) {
     return 'Standard kaufen · $price';
   }
+
+  @override
+  String get paywallGetFromStore => 'Standard im Store holen';
+
+  @override
+  String get paywallOpenAppStore => 'App Store öffnen';
+
+  @override
+  String get paywallOpenPlayStore => 'Google Play öffnen';
+
+  @override
+  String get paywallOpenMicrosoftStore => 'Microsoft Store öffnen';
+
+  @override
+  String get paywallCouldNotOpenStore =>
+      'Store-Eintrag konnte nicht geöffnet werden';
 
   @override
   String get paywallRestorePurchases => 'Käufe wiederherstellen';

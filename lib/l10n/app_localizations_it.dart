@@ -820,6 +820,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Acquisti non disponibili su questa piattaforma';
 
   @override
+  String get settingsStandardStoreSubtitle =>
+      'Ottieni Standard da App Store, Google Play o Microsoft Store';
+
+  @override
   String get settingsRestorePurchases => 'Ripristina acquisti';
 
   @override
@@ -925,7 +929,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get paywallPurchasesUnsupported =>
-      'Gli acquisti in-app non sono disponibili su questa piattaforma. Installa da App Store, Google Play o Microsoft Store per sbloccare Standard.';
+      'Gli acquisti in-app non sono disponibili su questa piattaforma. Apri una scheda dello store per sbloccare Standard.';
 
   @override
   String get paywallBuyStandard => 'Acquista Standard';
@@ -934,6 +938,22 @@ class AppLocalizationsIt extends AppLocalizations {
   String paywallBuyStandardPrice(String price) {
     return 'Acquista Standard · $price';
   }
+
+  @override
+  String get paywallGetFromStore => 'Ottieni Standard dallo store';
+
+  @override
+  String get paywallOpenAppStore => 'Apri App Store';
+
+  @override
+  String get paywallOpenPlayStore => 'Apri Google Play';
+
+  @override
+  String get paywallOpenMicrosoftStore => 'Apri Microsoft Store';
+
+  @override
+  String get paywallCouldNotOpenStore =>
+      'Impossibile aprire la scheda dello store';
 
   @override
   String get paywallRestorePurchases => 'Ripristina acquisti';

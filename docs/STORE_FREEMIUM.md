@@ -123,6 +123,20 @@ Output: `build/macos/Build/Products/Release/SB Simple Netpad.app`. Enable Harden
 
 Until products are **approved / active** in the store and linked in RevenueCat, the paywall shows a generic “Buy Standard” label (no localized price) or purchase fails.
 
+When in-app purchases are unavailable (Linux, sideload without billing, missing SDK keys), the free-tier paywall and Settings → Netpad Standard open store listing links instead:
+
+| Store | URL helper |
+|-------|------------|
+| Google Play | `https://play.google.com/store/apps/details?id=com.spencerbeaumier.sbnetpad` |
+| Apple | `https://apps.apple.com/app/id{APPLE_APP_STORE_ID}` when defined; otherwise App Store search |
+| Microsoft | Microsoft Store search for “SB Simple Netpad” |
+
+Pass the numeric Apple id once the listing exists:
+
+```bash
+flutter run --dart-define=APPLE_APP_STORE_ID=1234567890
+```
+
 ## Microsoft Store
 
 RevenueCat does not support Windows. Standard is checked through WinRT `StoreContext` (`windows/runner/store_plugin.cpp`).
