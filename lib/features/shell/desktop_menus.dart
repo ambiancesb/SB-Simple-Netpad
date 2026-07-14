@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 
-/// True on Windows, macOS, and Linux (not mobile).
+/// True on desktop shells (not mobile).
 bool isDesktopMenuPlatform() {
   return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
 }
@@ -13,7 +13,7 @@ bool isDesktopMenuPlatform() {
 /// macOS renders menus in the system menu bar (not an in-window bar).
 bool useNativeSystemMenuBar() => Platform.isMacOS;
 
-/// Windows and Linux use an in-window Material [MenuBar].
+/// Windows (and other desktop hosts) use an in-window Material [MenuBar].
 bool useMaterialWindowMenuBar() =>
     Platform.isWindows || Platform.isLinux;
 
@@ -85,7 +85,7 @@ MenuSerializableShortcut? _menuShortcut(
   );
 }
 
-/// Find & Replace: Ctrl+H on Win/Linux; Option+Cmd+F on macOS (Cmd+H is Hide).
+/// Find & Replace: Ctrl+H on Windows; Option+Cmd+F on macOS (Cmd+H is Hide).
 MenuSerializableShortcut? _findReplaceShortcut() {
   final isMac = defaultTargetPlatform == TargetPlatform.macOS;
   if (isMac) {
@@ -260,7 +260,7 @@ List<PlatformMenuItem> buildMacosMenus(
   ];
 }
 
-/// In-window File / Edit / View menu for Windows and Linux.
+/// In-window File / Edit / View menu for Windows desktop.
 class DesktopMaterialMenuBar extends StatelessWidget {
   const DesktopMaterialMenuBar({
     super.key,

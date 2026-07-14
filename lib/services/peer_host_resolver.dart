@@ -4,7 +4,7 @@ import 'package:netpad/core/local_network.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/peer_endpoint.dart';
 
-/// Resolves a connectable host for LAN WebSocket URLs (Linux/Avahi friendly).
+/// Resolves a connectable host for LAN WebSocket URLs (mDNS-friendly).
 class PeerHostResolver {
   /// Picks the best local-network address from mDNS results and falls back to
   /// hostname lookup.

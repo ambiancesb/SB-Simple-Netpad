@@ -64,7 +64,7 @@ void main() {
   });
 
   group('isConnectionRefusedException', () {
-    test('detects Linux and Windows refused codes', () {
+    test('detects POSIX and Windows refused codes', () {
       expect(
         isConnectionRefusedException(
           const SocketException('fail', osError: OSError('refused', 111)),

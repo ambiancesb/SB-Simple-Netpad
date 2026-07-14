@@ -364,7 +364,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
           const _FindIntent(),
       const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
           const _FindIntent(),
-      // Win/Linux: Ctrl+H. macOS: Option+Cmd+F (Cmd+H is system Hide).
+      // Windows: Ctrl+H. macOS: Option+Cmd+F (Cmd+H is system Hide).
       const SingleActivator(LogicalKeyboardKey.keyH, control: true):
           const _ReplaceIntent(),
       if (isMac)

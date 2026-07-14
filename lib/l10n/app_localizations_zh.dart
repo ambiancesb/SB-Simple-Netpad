@@ -399,7 +399,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get peersNoDiscoveredPeers =>
-      '未发现节点 — Linux 必须与此设备处于同一 Wi‑Fi 子网（检查上方地址），或使用通过 IP 连接';
+      '未发现节点 — 设备必须与此设备处于同一 Wi‑Fi 子网（检查上方地址），或使用通过 IP 连接';
 
   @override
   String get peersDiscoveryPaused => '节点发现已暂停，直到加入本地网络';
@@ -467,7 +467,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String peersResolveFailedSnack(String peer) {
-    return '无法解析 $peer。请检查 Avahi 和相同子网，或使用通过 IP 连接。';
+    return '无法解析 $peer。请确认同一子网，或使用通过 IP 连接。';
   }
 
   @override
@@ -1079,7 +1079,7 @@ class AppLocalizationsZh extends AppLocalizations {
       'Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).';
 
   @override
-  String get helpFileSharing4 => '分享使用系统分享表单；Linux 回退到剪贴板。';
+  String get helpFileSharing4 => '分享在可用时使用系统分享表单；否则将笔记复制到剪贴板。';
 
   @override
   String get helpSettingsTitle => '设置';
@@ -1107,7 +1107,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts4 =>
-      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
+      'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — 切换笔记面板';
@@ -1117,7 +1117,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts7 =>
-      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
+      'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => '故障排除';
@@ -1132,7 +1132,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get helpTroubleshooting3 => '首次启动时允许应用通过防火墙（桌面）。';
 
   @override
-  String get helpTroubleshooting4 => 'Linux: 如果发现从未启动，请安装 dbus 和 avahi-daemon。';
+  String get helpTroubleshooting4 => '确保所有设备处于同一 Wi‑Fi 子网，并且本地网络/防火墙允许发现。';
 
   @override
   String get helpTroubleshooting5 => 'Android: 提示时授予附近 Wi‑Fi 权限。';
@@ -1152,7 +1152,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '在手机或电脑上写纯文本笔记，与同一 Wi‑Fi 上的其他设备保持同步。节点在本地网络上相互发现，通过相互批准配对一次，然后通过加密节点会话共享多个命名笔记。';
 
   @override
-  String get aboutPlatforms => 'Android · iOS · Windows · macOS · Linux';
+  String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
   String get aboutStatus => '测试版 — 适合日常 LAN 使用。';

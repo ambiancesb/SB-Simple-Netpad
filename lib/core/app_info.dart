@@ -15,7 +15,7 @@ abstract final class AppInfo {
       'local network, pair once with mutual approval, then share multiple named '
       'notes with encrypted peer sessions.';
 
-  static const platforms = 'Android · iOS · Windows · macOS · Linux';
+  static const platforms = 'Android · iOS · Windows · macOS';
 
   static const status = 'Beta — suitable for daily LAN use.';
 

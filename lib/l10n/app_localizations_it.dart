@@ -406,7 +406,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get peersNoDiscoveredPeers =>
-      'Nessun peer scoperto — Linux deve essere nella stessa sottorete Wi‑Fi di Questo dispositivo (controlla l\'indirizzo sopra), o usa Connetti tramite IP';
+      'Nessun peer scoperto — i dispositivi devono essere nella stessa sottorete Wi‑Fi di Questo dispositivo (controlla l\'indirizzo sopra), o usa Connetti tramite IP';
 
   @override
   String get peersDiscoveryPaused =>
@@ -478,7 +478,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String peersResolveFailedSnack(String peer) {
-    return 'Impossibile risolvere $peer. Controlla Avahi e la stessa sottorete, o usa Connetti tramite IP.';
+    return 'Impossibile risolvere $peer. Controlla che siano sulla stessa sottorete, o usa Connetti tramite IP.';
   }
 
   @override
@@ -1136,7 +1136,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get helpFileSharing4 =>
-      'Condividi usa il foglio di condivisione del sistema operativo; Linux usa gli appunti come fallback.';
+      'Condividi usa il foglio di condivisione del sistema operativo quando disponibile; altrimenti la nota viene copiata negli appunti.';
 
   @override
   String get helpSettingsTitle => 'Impostazioni';
@@ -1167,7 +1167,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts4 =>
-      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
+      'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 =>
@@ -1179,7 +1179,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts7 =>
-      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
+      'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => 'Risoluzione dei problemi';
@@ -1198,7 +1198,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get helpTroubleshooting4 =>
-      'Linux: installa dbus e avahi-daemon se la ricerca non si avvia mai.';
+      'Assicurati che tutti i dispositivi siano sulla stessa sottorete Wi‑Fi e che rete locale / firewall consentano la scoperta.';
 
   @override
   String get helpTroubleshooting5 =>
@@ -1220,7 +1220,7 @@ class AppLocalizationsIt extends AppLocalizations {
       'Scrivi note in testo normale sul tuo telefono o computer e mantienile sincronizzate con altri dispositivi sulla stessa rete Wi‑Fi. I peer si scoprono sulla rete locale, si abbinano una volta con approvazione reciproca, poi condividono più note con nome tramite sessioni peer crittografate.';
 
   @override
-  String get aboutPlatforms => 'Android · iOS · Windows · macOS · Linux';
+  String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
   String get aboutStatus => 'Beta — adatto all\'uso LAN quotidiano.';

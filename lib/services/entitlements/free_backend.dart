@@ -1,6 +1,6 @@
 import 'package:netpad/services/entitlements/entitlement_backend.dart';
 
-/// Linux / sideload / unsupported platforms — no store IAP.
+/// Sideload / unsupported platforms — no store IAP.
 class FreeBackend implements EntitlementBackend {
   FreeBackend({this.forceStandard = false});
 

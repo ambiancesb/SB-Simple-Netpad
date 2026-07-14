@@ -400,7 +400,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get peersNoDiscoveredPeers =>
-      'ピアが見つかりません — Linuxはこのデバイスと同じWi‑Fiサブネット上にある必要があります（上記のアドレスを確認）、またはIPで接続を使用してください';
+      'ピアが見つかりません — デバイスはこのデバイスと同じWi‑Fiサブネット上にある必要があります（上記のアドレスを確認）、またはIPで接続を使用してください';
 
   @override
   String get peersDiscoveryPaused => 'ローカルネットワークに参加するまでピア探索は一時停止中です';
@@ -470,7 +470,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String peersResolveFailedSnack(String peer) {
-    return '$peer を解決できませんでした。Avahi と同じサブネットを確認するか、IPで接続を使用してください。';
+    return '$peer を解決できませんでした。同じサブネットを確認するか、IPで接続を使用してください。';
   }
 
   @override
@@ -1090,7 +1090,7 @@ class AppLocalizationsJa extends AppLocalizations {
       'Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).';
 
   @override
-  String get helpFileSharing4 => '共有はOSの共有シートを使用します。Linuxではクリップボードにフォールバックします。';
+  String get helpFileSharing4 => '共有はOSの共有シートがある場合にそれを使用し、ない場合はクリップボードにコピーします。';
 
   @override
   String get helpSettingsTitle => '設定';
@@ -1118,7 +1118,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts4 =>
-      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
+      'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — メモパネルを切り替え';
@@ -1128,7 +1128,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts7 =>
-      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
+      'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => 'トラブルシューティング';
@@ -1146,7 +1146,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get helpTroubleshooting4 =>
-      'Linux: 探索が開始されない場合は dbus と avahi-daemon をインストールしてください。';
+      'すべてのデバイスが同じWi‑Fiサブネットにあり、ローカルネットワーク／ファイアウォールが探索を許可していることを確認してください。';
 
   @override
   String get helpTroubleshooting5 =>
@@ -1167,7 +1167,7 @@ class AppLocalizationsJa extends AppLocalizations {
       'スマートフォンやパソコンでプレーンテキストのメモを書き、同じWi‑Fi上の他のデバイスと同期します。ピアはローカルネットワークで互いを検出し、相互承認で一度ペアリングし、暗号化されたピアセッションで複数の名前付きメモを共有します。';
 
   @override
-  String get aboutPlatforms => 'Android · iOS · Windows · macOS · Linux';
+  String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
   String get aboutStatus => 'ベータ版 — 日常的なLAN使用に適しています。';

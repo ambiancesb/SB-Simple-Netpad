@@ -16,7 +16,7 @@ Duration reconnectBackoffDuration({
 /// True when [e] means the peer TCP port is not accepting connections.
 bool isConnectionRefusedException(SocketException e) {
   final code = e.osError?.errorCode;
-  // Linux/Android ECONNREFUSED=111, Windows WSAECONNREFUSED=10061.
+  // POSIX ECONNREFUSED=111, Windows WSAECONNREFUSED=10061.
   if (code == 111 || code == 10061) return true;
   return e.message.toLowerCase().contains('refused');
 }

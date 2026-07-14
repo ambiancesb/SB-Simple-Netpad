@@ -210,7 +210,7 @@
   "peersNoTrustedDevices": "No trusted devices — check Trust for auto-sync when accepting a pair",
   "peersNoBlockedDevices": "No blocked devices",
   "peersNoConnectionEvents": "No connection events yet",
-  "peersNoDiscoveredPeers": "No discovered peers — Linux must be on the same Wi‑Fi subnet as This device (check the address above), or use Connect by IP",
+  "peersNoDiscoveredPeers": "No discovered peers — devices must be on the same Wi‑Fi subnet as This device (check the address above), or use Connect by IP",
   "peersDiscoveryPaused": "Peer discovery is paused until you join a local network",
   "peersDisconnect": "Disconnect",
   "peersTrustTooltip": "Trust for auto-sync",
@@ -255,7 +255,7 @@
       "peer": {"type": "String"}
     }
   },
-  "peersResolveFailedSnack": "Could not resolve {peer}. Check Avahi and same subnet, or use Connect by IP.",
+  "peersResolveFailedSnack": "Could not resolve {peer}. Check that both devices are on the same subnet, or use Connect by IP.",
   "@peersResolveFailedSnack": {
     "placeholders": {
       "peer": {"type": "String"}
@@ -620,7 +620,7 @@
   "helpFileSharing1Ios": "Overflow menu (⋮): share note, version history, settings, and this help guide. Use Share to export text — Save/Open file are not available on iOS.",
   "helpFileSharing2": "Save to file exports the active note as .txt or .md (desktop and Android).",
   "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).",
-  "helpFileSharing4": "Share uses the OS share sheet; Linux falls back to clipboard.",
+  "helpFileSharing4": "Share uses the OS share sheet when available; otherwise the note is copied to the clipboard.",
   "helpSettingsTitle": "Settings",
   "helpSettings1": "Device name and room require Save — other options apply immediately.",
   "helpSettings2": "Room ID groups peers: only devices in the same room are discovered.",
@@ -629,22 +629,22 @@
   "helpDesktopShortcuts1": "Ctrl/Cmd+S — Save to file",
   "helpDesktopShortcuts2": "Ctrl/Cmd+O — Open file as new note",
   "helpDesktopShortcuts3": "Ctrl/Cmd+F — Find in note",
-  "helpDesktopShortcuts4": "Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace",
+  "helpDesktopShortcuts4": "Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace",
   "helpDesktopShortcuts5": "Ctrl/Cmd+N — Toggle notes panel",
   "helpDesktopShortcuts6": "Ctrl/Cmd+P — Toggle peers panel",
-  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu",
   "helpTroubleshootingTitle": "Troubleshooting",
   "helpTroubleshooting1": "No peers? Confirm same Wi‑Fi subnet and room ID; try Connect by IP.",
   "helpTroubleshooting2": "Local network required banner means sync is paused until Wi‑Fi is up.",
   "helpTroubleshooting3": "Allow the app through your firewall on first launch (desktop).",
-  "helpTroubleshooting4": "Linux: install dbus and avahi-daemon if discovery never starts.",
+  "helpTroubleshooting4": "Ensure all devices are on the same Wi‑Fi subnet and that local network / firewall settings allow discovery.",
   "helpTroubleshooting5": "Android: grant nearby Wi‑Fi permission when prompted.",
   "helpTroubleshooting6": "iOS/macOS: allow Local Network access for SB Simple Netpad in System Settings if peers never appear.",
 
   "aboutTitle": "About",
   "aboutTagline": "LAN notepad with peer discovery and shared editing.",
   "aboutDescription": "Write plain-text notes on your phone or computer and keep them in sync with other devices on the same Wi‑Fi. Peers discover each other on the local network, pair once with mutual approval, then share multiple named notes with encrypted peer sessions.",
-  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutPlatforms": "Android · iOS · Windows · macOS",
   "aboutStatus": "Beta — suitable for daily LAN use.",
   "aboutEulaHeading": "End User License Agreement",
   "aboutEulaBody": "SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (unlimited local notes, up to {noteLimit} synced notes and {peerLimit} connected peers). Netpad Standard is a one-time unlock via the App Store, Google Play, or Microsoft Store.",

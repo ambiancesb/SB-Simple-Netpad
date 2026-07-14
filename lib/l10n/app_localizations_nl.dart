@@ -407,7 +407,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get peersNoDiscoveredPeers =>
-      'Geen peers ontdekt — Linux moet zich op hetzelfde Wi‑Fi-subnet bevinden als Dit apparaat (controleer het adres hierboven), of gebruik Verbinden via IP';
+      'Geen peers ontdekt — apparaten moeten zich op hetzelfde Wi‑Fi-subnet bevinden als Dit apparaat (controleer het adres hierboven), of gebruik Verbinden via IP';
 
   @override
   String get peersDiscoveryPaused =>
@@ -479,7 +479,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String peersResolveFailedSnack(String peer) {
-    return 'Kon $peer niet oplossen. Controleer Avahi en hetzelfde subnet, of gebruik Verbinden via IP.';
+    return 'Kon $peer niet oplossen. Controleer hetzelfde subnet, of gebruik Verbinden via IP.';
   }
 
   @override
@@ -1133,7 +1133,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get helpFileSharing4 =>
-      'Delen gebruikt het OS-deelblad; Linux gebruikt het klembord als fallback.';
+      'Delen gebruikt het OS-deelblad wanneer beschikbaar; anders wordt de notitie naar het klembord gekopieerd.';
 
   @override
   String get helpSettingsTitle => 'Instellingen';
@@ -1165,7 +1165,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts4 =>
-      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
+      'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 =>
@@ -1177,7 +1177,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts7 =>
-      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
+      'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => 'Probleemoplossing';
@@ -1196,7 +1196,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get helpTroubleshooting4 =>
-      'Linux: installeer dbus en avahi-daemon als detectie nooit start.';
+      'Zorg dat alle apparaten op hetzelfde Wi‑Fi-subnet zitten en dat lokale netwerk-/firewallinstellingen detectie toestaan.';
 
   @override
   String get helpTroubleshooting5 =>
@@ -1218,7 +1218,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'Schrijf notities in platte tekst op uw telefoon of computer en houd ze gesynchroniseerd met andere apparaten op hetzelfde Wi‑Fi. Peers ontdekken elkaar op het lokale netwerk, koppelen eenmalig met wederzijdse goedkeuring en delen vervolgens meerdere benoemde notities met versleutelde peer-sessies.';
 
   @override
-  String get aboutPlatforms => 'Android · iOS · Windows · macOS · Linux';
+  String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
   String get aboutStatus => 'Beta — geschikt voor dagelijks LAN-gebruik.';

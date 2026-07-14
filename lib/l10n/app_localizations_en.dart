@@ -403,7 +403,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get peersNoDiscoveredPeers =>
-      'No discovered peers — Linux must be on the same Wi‑Fi subnet as This device (check the address above), or use Connect by IP';
+      'No discovered peers — devices must be on the same Wi‑Fi subnet as This device (check the address above), or use Connect by IP';
 
   @override
   String get peersDiscoveryPaused =>
@@ -474,7 +474,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String peersResolveFailedSnack(String peer) {
-    return 'Could not resolve $peer. Check Avahi and same subnet, or use Connect by IP.';
+    return 'Could not resolve $peer. Check that both devices are on the same subnet, or use Connect by IP.';
   }
 
   @override
@@ -1123,7 +1123,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpFileSharing4 =>
-      'Share uses the OS share sheet; Linux falls back to clipboard.';
+      'Share uses the OS share sheet when available; otherwise the note is copied to the clipboard.';
 
   @override
   String get helpSettingsTitle => 'Settings';
@@ -1154,7 +1154,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts4 =>
-      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
+      'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — Toggle notes panel';
@@ -1164,7 +1164,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts7 =>
-      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
+      'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => 'Troubleshooting';
@@ -1183,7 +1183,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpTroubleshooting4 =>
-      'Linux: install dbus and avahi-daemon if discovery never starts.';
+      'Ensure all devices are on the same Wi‑Fi subnet and that local network / firewall settings allow discovery.';
 
   @override
   String get helpTroubleshooting5 =>
@@ -1205,7 +1205,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Write plain-text notes on your phone or computer and keep them in sync with other devices on the same Wi‑Fi. Peers discover each other on the local network, pair once with mutual approval, then share multiple named notes with encrypted peer sessions.';
 
   @override
-  String get aboutPlatforms => 'Android · iOS · Windows · macOS · Linux';
+  String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
   String get aboutStatus => 'Beta — suitable for daily LAN use.';

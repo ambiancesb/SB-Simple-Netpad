@@ -62,7 +62,7 @@ class WorkspaceData {
   final Set<String> syncDisabledIds;
 }
 
-/// Persists notes via [SharedPreferences] (no JNI / path_provider on Linux).
+/// Persists notes via [SharedPreferences] (avoids path_provider native deps).
 class NoteStorageService {
   NoteStorageService(this._prefs);
 

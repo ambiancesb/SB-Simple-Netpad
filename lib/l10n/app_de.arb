@@ -184,7 +184,7 @@
   "peersNoTrustedDevices": "Keine vertrauenswürdigen Geräte — bei Akzeptieren „Für Auto-Sync vertrauen“ aktivieren",
   "peersNoBlockedDevices": "Keine gesperrten Geräte",
   "peersNoConnectionEvents": "Noch keine Verbindungsereignisse",
-  "peersNoDiscoveredPeers": "Keine Peers gefunden — Linux muss sich im gleichen Wi‑Fi-Subnetz wie Dieses Gerät befinden (Adresse oben prüfen), oder Per IP verbinden verwenden",
+  "peersNoDiscoveredPeers": "Keine Peers gefunden — Geräte müssen sich im gleichen Wi‑Fi-Subnetz wie Dieses Gerät befinden (Adresse oben prüfen), oder Per IP verbinden verwenden",
   "peersDiscoveryPaused": "Peer-Erkennung ist pausiert, bis Sie einem lokalen Netzwerk beitreten",
   "peersDisconnect": "Trennen",
   "peersTrustTooltip": "Für Auto-Sync vertrauen",
@@ -229,7 +229,7 @@
       "peer": {"type": "String"}
     }
   },
-  "peersResolveFailedSnack": "{peer} konnte nicht aufgelöst werden. Avahi und gleiches Subnetz prüfen, oder Per IP verbinden verwenden.",
+  "peersResolveFailedSnack": "{peer} konnte nicht aufgelöst werden. Gleiches Subnetz prüfen, oder Per IP verbinden verwenden.",
   "@peersResolveFailedSnack": {
     "placeholders": {
       "peer": {"type": "String"}
@@ -587,7 +587,7 @@
   "helpFileSharing1Mobile": "Überlaufmenü (⋮): In Datei speichern, Datei als neue Notiz öffnen, Teilen, Versionsverlauf, Einstellungen und dieser Hilfeleitfaden.",
   "helpFileSharing2": "Save to file exports the active note as .txt or .md (desktop and Android).",
   "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).",
-  "helpFileSharing4": "Teilen verwendet die OS-Teilen-Oberfläche; Linux weicht auf die Zwischenablage aus.",
+  "helpFileSharing4": "Teilen verwendet die OS-Teilen-Oberfläche, sofern verfügbar; andernfalls wird die Notiz in die Zwischenablage kopiert.",
   "helpSettingsTitle": "Einstellungen",
   "helpSettings1": "Gerätename und Raum erfordern Speichern — andere Optionen werden sofort angewendet.",
   "helpSettings2": "Raum-ID gruppiert Peers: nur Geräte im gleichen Raum werden erkannt.",
@@ -596,21 +596,21 @@
   "helpDesktopShortcuts1": "Ctrl/Cmd+S — In Datei speichern",
   "helpDesktopShortcuts2": "Ctrl/Cmd+O — Datei als neue Notiz öffnen",
   "helpDesktopShortcuts3": "Ctrl/Cmd+F — In Notiz suchen",
-  "helpDesktopShortcuts4": "Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace",
+  "helpDesktopShortcuts4": "Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace",
   "helpDesktopShortcuts5": "Ctrl/Cmd+N — Notizenbereich umschalten",
   "helpDesktopShortcuts6": "Ctrl/Cmd+P — Peer-Bereich umschalten",
-  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu",
   "helpTroubleshootingTitle": "Fehlerbehebung",
   "helpTroubleshooting1": "Keine Peers? Gleiches Wi‑Fi-Subnetz und Raum-ID bestätigen; Per IP verbinden versuchen.",
   "helpTroubleshooting2": "Das Banner lokales Netzwerk erforderlich bedeutet, dass die Synchronisierung pausiert, bis Wi‑Fi aktiv ist.",
   "helpTroubleshooting3": "App beim ersten Start durch Ihre Firewall erlauben (Desktop).",
-  "helpTroubleshooting4": "Linux: dbus und avahi-daemon installieren, wenn die Erkennung nie startet.",
+  "helpTroubleshooting4": "Stellen Sie sicher, dass alle Geräte im gleichen Wi‑Fi-Subnetz sind und lokale Netzwerk-/Firewall-Einstellungen die Erkennung erlauben.",
   "helpTroubleshooting5": "Android: Wi‑Fi in der Nähe-Berechtigung erteilen, wenn aufgefordert.",
 
   "aboutTitle": "Über",
   "aboutTagline": "LAN-Notizblock mit Peer-Erkennung und gemeinsamem Bearbeiten.",
   "aboutDescription": "Schreiben Sie reine Textnotizen auf Ihrem Telefon oder Computer und halten Sie sie mit anderen Geräten im gleichen Wi‑Fi synchronisiert. Peers entdecken einander im lokalen Netzwerk, koppeln einmalig mit gegenseitiger Genehmigung und teilen dann mehrere benannte Notizen mit verschlüsselten Peer-Sitzungen.",
-  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutPlatforms": "Android · iOS · Windows · macOS",
   "aboutStatus": "Beta — geeignet für den täglichen LAN-Einsatz.",
   "aboutEulaHeading": "Endbenutzer-Lizenzvertrag",
   "aboutEulaBody": "SB Simple Netpad ist unter einem EULA lizenziert, nicht unter einer Open-Source-Lizenz. Grundlegende Bearbeitung und LAN-Synchronisierung sind kostenlos (unbegrenzte lokale Notizen, bis zu {noteLimit} synchronisierte Notizen und {peerLimit} verbundene Peers). Netpad Standard ist eine einmalige Freischaltung über App Store, Google Play oder Microsoft Store.",

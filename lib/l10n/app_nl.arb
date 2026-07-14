@@ -184,7 +184,7 @@
   "peersNoTrustedDevices": "Geen vertrouwde apparaten — vink Vertrouwen voor auto-sync aan bij accepteren",
   "peersNoBlockedDevices": "Geen geblokkeerde apparaten",
   "peersNoConnectionEvents": "Nog geen verbindingsgebeurtenissen",
-  "peersNoDiscoveredPeers": "Geen peers ontdekt — Linux moet zich op hetzelfde Wi‑Fi-subnet bevinden als Dit apparaat (controleer het adres hierboven), of gebruik Verbinden via IP",
+  "peersNoDiscoveredPeers": "Geen peers ontdekt — apparaten moeten zich op hetzelfde Wi‑Fi-subnet bevinden als Dit apparaat (controleer het adres hierboven), of gebruik Verbinden via IP",
   "peersDiscoveryPaused": "Peer-detectie is gepauzeerd totdat u lid wordt van een lokaal netwerk",
   "peersDisconnect": "Verbinding verbreken",
   "peersTrustTooltip": "Vertrouwen voor auto-sync",
@@ -229,7 +229,7 @@
       "peer": {"type": "String"}
     }
   },
-  "peersResolveFailedSnack": "Kon {peer} niet oplossen. Controleer Avahi en hetzelfde subnet, of gebruik Verbinden via IP.",
+  "peersResolveFailedSnack": "Kon {peer} niet oplossen. Controleer hetzelfde subnet, of gebruik Verbinden via IP.",
   "@peersResolveFailedSnack": {
     "placeholders": {
       "peer": {"type": "String"}
@@ -587,7 +587,7 @@
   "helpFileSharing1Mobile": "Menu (⋮): opslaan als bestand, bestand openen als nieuwe notitie, delen, versiegeschiedenis, instellingen en deze helpgids.",
   "helpFileSharing2": "Save to file exports the active note as .txt or .md (desktop and Android).",
   "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).",
-  "helpFileSharing4": "Delen gebruikt het OS-deelblad; Linux gebruikt het klembord als fallback.",
+  "helpFileSharing4": "Delen gebruikt het OS-deelblad wanneer beschikbaar; anders wordt de notitie naar het klembord gekopieerd.",
   "helpSettingsTitle": "Instellingen",
   "helpSettings1": "Apparaatnaam en ruimte vereisen Opslaan — andere opties worden direct toegepast.",
   "helpSettings2": "Ruimte-ID groepeert peers: alleen apparaten in dezelfde ruimte worden ontdekt.",
@@ -596,21 +596,21 @@
   "helpDesktopShortcuts1": "Ctrl/Cmd+S — Opslaan als bestand",
   "helpDesktopShortcuts2": "Ctrl/Cmd+O — Bestand openen als nieuwe notitie",
   "helpDesktopShortcuts3": "Ctrl/Cmd+F — Zoeken in notitie",
-  "helpDesktopShortcuts4": "Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace",
+  "helpDesktopShortcuts4": "Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace",
   "helpDesktopShortcuts5": "Ctrl/Cmd+N — Notitiesdeelvenster in-/uitschakelen",
   "helpDesktopShortcuts6": "Ctrl/Cmd+P — Peer-deelvenster in-/uitschakelen",
-  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu",
   "helpTroubleshootingTitle": "Probleemoplossing",
   "helpTroubleshooting1": "Geen peers? Bevestig hetzelfde Wi‑Fi-subnet en ruimte-ID; probeer Verbinden via IP.",
   "helpTroubleshooting2": "De banner lokaal netwerk vereist betekent dat synchronisatie is gepauzeerd totdat Wi‑Fi actief is.",
   "helpTroubleshooting3": "Sta de app toe via uw firewall bij de eerste start (desktop).",
-  "helpTroubleshooting4": "Linux: installeer dbus en avahi-daemon als detectie nooit start.",
+  "helpTroubleshooting4": "Zorg dat alle apparaten op hetzelfde Wi‑Fi-subnet zitten en dat lokale netwerk-/firewallinstellingen detectie toestaan.",
   "helpTroubleshooting5": "Android: verleen de nabijgelegen Wi‑Fi-machtiging wanneer gevraagd.",
 
   "aboutTitle": "Over",
   "aboutTagline": "LAN-kladblok met peer-detectie en gedeeld bewerken.",
   "aboutDescription": "Schrijf notities in platte tekst op uw telefoon of computer en houd ze gesynchroniseerd met andere apparaten op hetzelfde Wi‑Fi. Peers ontdekken elkaar op het lokale netwerk, koppelen eenmalig met wederzijdse goedkeuring en delen vervolgens meerdere benoemde notities met versleutelde peer-sessies.",
-  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutPlatforms": "Android · iOS · Windows · macOS",
   "aboutStatus": "Beta — geschikt voor dagelijks LAN-gebruik.",
   "aboutEulaHeading": "Eindgebruikerslicentieovereenkomst",
   "aboutEulaBody": "SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (onbeperkt lokale notities, tot {noteLimit} gesynchroniseerde notities en {peerLimit} verbonden peers). Netpad Standard is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.",

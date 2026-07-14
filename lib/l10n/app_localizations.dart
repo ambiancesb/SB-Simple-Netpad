@@ -832,7 +832,7 @@ abstract class AppLocalizations {
   /// No description provided for @peersNoDiscoveredPeers.
   ///
   /// In en, this message translates to:
-  /// **'No discovered peers — Linux must be on the same Wi‑Fi subnet as This device (check the address above), or use Connect by IP'**
+  /// **'No discovered peers — devices must be on the same Wi‑Fi subnet as This device (check the address above), or use Connect by IP'**
   String get peersNoDiscoveredPeers;
 
   /// No description provided for @peersDiscoveryPaused.
@@ -946,7 +946,7 @@ abstract class AppLocalizations {
   /// No description provided for @peersResolveFailedSnack.
   ///
   /// In en, this message translates to:
-  /// **'Could not resolve {peer}. Check Avahi and same subnet, or use Connect by IP.'**
+  /// **'Could not resolve {peer}. Check that both devices are on the same subnet, or use Connect by IP.'**
   String peersResolveFailedSnack(String peer);
 
   /// No description provided for @peersPairingRequestSent.
@@ -2009,7 +2009,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpFileSharing4.
   ///
   /// In en, this message translates to:
-  /// **'Share uses the OS share sheet; Linux falls back to clipboard.'**
+  /// **'Share uses the OS share sheet when available; otherwise the note is copied to the clipboard.'**
   String get helpFileSharing4;
 
   /// No description provided for @helpSettingsTitle.
@@ -2063,7 +2063,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpDesktopShortcuts4.
   ///
   /// In en, this message translates to:
-  /// **'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace'**
+  /// **'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace'**
   String get helpDesktopShortcuts4;
 
   /// No description provided for @helpDesktopShortcuts5.
@@ -2081,7 +2081,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpDesktopShortcuts7.
   ///
   /// In en, this message translates to:
-  /// **'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu'**
+  /// **'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu'**
   String get helpDesktopShortcuts7;
 
   /// No description provided for @helpTroubleshootingTitle.
@@ -2111,7 +2111,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpTroubleshooting4.
   ///
   /// In en, this message translates to:
-  /// **'Linux: install dbus and avahi-daemon if discovery never starts.'**
+  /// **'Ensure all devices are on the same Wi‑Fi subnet and that local network / firewall settings allow discovery.'**
   String get helpTroubleshooting4;
 
   /// No description provided for @helpTroubleshooting5.
@@ -2147,7 +2147,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutPlatforms.
   ///
   /// In en, this message translates to:
-  /// **'Android · iOS · Windows · macOS · Linux'**
+  /// **'Android · iOS · Windows · macOS'**
   String get aboutPlatforms;
 
   /// No description provided for @aboutStatus.

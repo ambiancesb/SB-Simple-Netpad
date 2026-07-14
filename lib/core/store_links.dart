@@ -37,7 +37,7 @@ abstract final class StoreLinks {
     return null;
   }
 
-  /// True when every store listing should be offered (e.g. Linux free builds).
+  /// True when there is no single preferred store for this OS (show all links).
   static bool get showAllStoreOptions => preferredListing == null;
 
   static Future<bool> open(Uri uri) {

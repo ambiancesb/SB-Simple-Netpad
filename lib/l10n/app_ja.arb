@@ -184,7 +184,7 @@
   "peersNoTrustedDevices": "信頼済みデバイスなし — 承認時に「自動同期を信頼」をオンにしてください",
   "peersNoBlockedDevices": "ブロックされたデバイスなし",
   "peersNoConnectionEvents": "まだ接続イベントなし",
-  "peersNoDiscoveredPeers": "ピアが見つかりません — Linuxはこのデバイスと同じWi‑Fiサブネット上にある必要があります（上記のアドレスを確認）、またはIPで接続を使用してください",
+  "peersNoDiscoveredPeers": "ピアが見つかりません — デバイスはこのデバイスと同じWi‑Fiサブネット上にある必要があります（上記のアドレスを確認）、またはIPで接続を使用してください",
   "peersDiscoveryPaused": "ローカルネットワークに参加するまでピア探索は一時停止中です",
   "peersDisconnect": "切断",
   "peersTrustTooltip": "自動同期を信頼",
@@ -229,7 +229,7 @@
       "peer": {"type": "String"}
     }
   },
-  "peersResolveFailedSnack": "{peer} を解決できませんでした。Avahi と同じサブネットを確認するか、IPで接続を使用してください。",
+  "peersResolveFailedSnack": "{peer} を解決できませんでした。同じサブネットを確認するか、IPで接続を使用してください。",
   "@peersResolveFailedSnack": {
     "placeholders": {
       "peer": {"type": "String"}
@@ -587,7 +587,7 @@
   "helpFileSharing1Mobile": "メニュー（⋮）: ファイルに保存、ファイルを新しいメモとして開く、共有、バージョン履歴、設定、このヘルプガイド。",
   "helpFileSharing2": "Save to file exports the active note as .txt or .md (desktop and Android).",
   "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).",
-  "helpFileSharing4": "共有はOSの共有シートを使用します。Linuxではクリップボードにフォールバックします。",
+  "helpFileSharing4": "共有はOSの共有シートがある場合にそれを使用し、ない場合はクリップボードにコピーします。",
   "helpSettingsTitle": "設定",
   "helpSettings1": "デバイス名とルームには保存が必要です — 他のオプションはすぐに適用されます。",
   "helpSettings2": "ルームIDでピアをグループ化: 同じルームのデバイスのみ探索されます。",
@@ -596,21 +596,21 @@
   "helpDesktopShortcuts1": "Ctrl/Cmd+S — ファイルに保存",
   "helpDesktopShortcuts2": "Ctrl/Cmd+O — ファイルを新しいメモとして開く",
   "helpDesktopShortcuts3": "Ctrl/Cmd+F — メモ内を検索",
-  "helpDesktopShortcuts4": "Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace",
+  "helpDesktopShortcuts4": "Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace",
   "helpDesktopShortcuts5": "Ctrl/Cmd+N — メモパネルを切り替え",
   "helpDesktopShortcuts6": "Ctrl/Cmd+P — ピアパネルを切り替え",
-  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu",
   "helpTroubleshootingTitle": "トラブルシューティング",
   "helpTroubleshooting1": "ピアが見つからない場合: 同じWi‑FiサブネットとルームIDを確認し、IPで接続を試してください。",
   "helpTroubleshooting2": "「ローカルネットワークが必要」のバナーは、Wi‑Fiが有効になるまで同期が一時停止していることを意味します。",
   "helpTroubleshooting3": "初回起動時にファイアウォールでアプリを許可してください（デスクトップ）。",
-  "helpTroubleshooting4": "Linux: 探索が開始されない場合は dbus と avahi-daemon をインストールしてください。",
+  "helpTroubleshooting4": "すべてのデバイスが同じWi‑Fiサブネットにあり、ローカルネットワーク／ファイアウォールが探索を許可していることを確認してください。",
   "helpTroubleshooting5": "Android: プロンプトが表示されたら、近くのWi‑Fi権限を付与してください。",
 
   "aboutTitle": "について",
   "aboutTagline": "ピア探索と共有編集機能を持つLANメモ帳。",
   "aboutDescription": "スマートフォンやパソコンでプレーンテキストのメモを書き、同じWi‑Fi上の他のデバイスと同期します。ピアはローカルネットワークで互いを検出し、相互承認で一度ペアリングし、暗号化されたピアセッションで複数の名前付きメモを共有します。",
-  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutPlatforms": "Android · iOS · Windows · macOS",
   "aboutStatus": "ベータ版 — 日常的なLAN使用に適しています。",
   "aboutEulaHeading": "エンドユーザーライセンス契約",
   "aboutEulaBody": "SB Simple Netpad はオープンソースライセンスではなく EULA の下でライセンスされています。基本的な編集とLAN同期は無料です（ローカルメモは無制限、同期メモは最大 {noteLimit} 件、接続ピアは {peerLimit} 件）。Netpad Standard は App Store、Google Play、または Microsoft Store を通じた一度きりの解除です。",

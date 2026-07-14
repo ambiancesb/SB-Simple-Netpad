@@ -28,7 +28,7 @@ extension SyncRepositoryPairing on SyncRepository {
     if (host == null) {
       throw StateError(
         'Peer ${peer.displayName} has no resolved address. '
-        'On Linux, ensure Avahi is running and both devices are on the same subnet.',
+        'Ensure both devices are on the same Wi‑Fi subnet, or use Connect by IP.',
       );
     }
     final resolvedAddr = InternetAddress.tryParse(LocalNetwork.stripZoneId(host));

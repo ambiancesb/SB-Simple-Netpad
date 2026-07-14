@@ -184,7 +184,7 @@
   "peersNoTrustedDevices": "Aucun appareil de confiance — cochez Faire confiance pour la synchro auto à l'acceptation",
   "peersNoBlockedDevices": "Aucun appareil bloqué",
   "peersNoConnectionEvents": "Aucun événement de connexion pour l'instant",
-  "peersNoDiscoveredPeers": "Aucun pair découvert — Linux doit être sur le même sous-réseau Wi‑Fi que Cet appareil (vérifiez l'adresse ci-dessus), ou utilisez Connecter par IP",
+  "peersNoDiscoveredPeers": "Aucun pair découvert — les appareils doivent être sur le même sous-réseau Wi‑Fi que Cet appareil (vérifiez l'adresse ci-dessus), ou utilisez Connecter par IP",
   "peersDiscoveryPaused": "La découverte de pairs est suspendue jusqu'à ce que vous rejoigniez un réseau local",
   "peersDisconnect": "Déconnecter",
   "peersTrustTooltip": "Faire confiance pour la synchro auto",
@@ -229,7 +229,7 @@
       "peer": {"type": "String"}
     }
   },
-  "peersResolveFailedSnack": "Impossible de résoudre {peer}. Vérifiez Avahi et le même sous-réseau, ou utilisez Connecter par IP.",
+  "peersResolveFailedSnack": "Impossible de résoudre {peer}. Vérifiez qu'ils sont sur le même sous-réseau, ou utilisez Connecter par IP.",
   "@peersResolveFailedSnack": {
     "placeholders": {
       "peer": {"type": "String"}
@@ -587,7 +587,7 @@
   "helpFileSharing1Mobile": "Menu (⋮) : enregistrer dans un fichier, ouvrir un fichier comme nouvelle note, partager, historique des versions, paramètres et ce guide d'aide.",
   "helpFileSharing2": "Save to file exports the active note as .txt or .md (desktop and Android).",
   "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).",
-  "helpFileSharing4": "Partager utilise la feuille de partage du système ; Linux bascule sur le presse-papiers.",
+  "helpFileSharing4": "Partager utilise la feuille de partage du système lorsqu'elle est disponible ; sinon la note est copiée dans le presse-papiers.",
   "helpSettingsTitle": "Paramètres",
   "helpSettings1": "Le nom de l'appareil et la salle nécessitent Enregistrer — les autres options s'appliquent immédiatement.",
   "helpSettings2": "L'ID de salle regroupe les pairs : seuls les appareils dans la même salle sont découverts.",
@@ -596,21 +596,21 @@
   "helpDesktopShortcuts1": "Ctrl/Cmd+S — Enregistrer dans un fichier",
   "helpDesktopShortcuts2": "Ctrl/Cmd+O — Ouvrir un fichier comme nouvelle note",
   "helpDesktopShortcuts3": "Ctrl/Cmd+F — Rechercher dans la note",
-  "helpDesktopShortcuts4": "Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace",
+  "helpDesktopShortcuts4": "Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace",
   "helpDesktopShortcuts5": "Ctrl/Cmd+N — Basculer le panneau de notes",
   "helpDesktopShortcuts6": "Ctrl/Cmd+P — Basculer le panneau des pairs",
-  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu",
   "helpTroubleshootingTitle": "Dépannage",
   "helpTroubleshooting1": "Pas de pairs ? Confirmez le même sous-réseau Wi‑Fi et l'ID de salle ; essayez Connecter par IP.",
   "helpTroubleshooting2": "La bannière réseau local requis signifie que la synchronisation est suspendue jusqu'à ce que le Wi‑Fi soit actif.",
   "helpTroubleshooting3": "Autorisez l'application via votre pare-feu au premier lancement (bureau).",
-  "helpTroubleshooting4": "Linux : installez dbus et avahi-daemon si la découverte ne démarre jamais.",
+  "helpTroubleshooting4": "Assurez-vous que tous les appareils sont sur le même sous-réseau Wi‑Fi et que le réseau local / le pare-feu autorisent la découverte.",
   "helpTroubleshooting5": "Android : accordez la permission Wi‑Fi à proximité lorsqu'elle est demandée.",
 
   "aboutTitle": "À propos",
   "aboutTagline": "Bloc-notes LAN avec découverte de pairs et édition partagée.",
   "aboutDescription": "Rédigez des notes en texte brut sur votre téléphone ou ordinateur et maintenez-les synchronisées avec d'autres appareils sur le même Wi‑Fi. Les pairs se découvrent sur le réseau local, s'associent une fois avec approbation mutuelle, puis partagent plusieurs notes nommées avec des sessions de pairs chiffrées.",
-  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutPlatforms": "Android · iOS · Windows · macOS",
   "aboutStatus": "Bêta — adapté à un usage LAN quotidien.",
   "aboutEulaHeading": "Contrat de licence utilisateur final",
   "aboutEulaBody": "SB Simple Netpad est sous licence EULA, pas une licence open source. L'édition principale et la synchronisation LAN sont gratuites (notes locales illimitées, jusqu'à {noteLimit} notes synchronisées et {peerLimit} pairs connectés). Netpad Standard est un déblocage unique via l'App Store, Google Play ou Microsoft Store.",

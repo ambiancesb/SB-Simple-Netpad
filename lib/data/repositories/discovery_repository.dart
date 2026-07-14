@@ -71,7 +71,7 @@ class DiscoveryRepository extends ChangeNotifier {
 
   int? get serverPort => _localServer.port;
 
-  /// Set when mDNS advertise/discover fails (e.g. D-Bus or Avahi unavailable).
+  /// Set when mDNS advertise/discover fails (system bus / discovery unavailable).
   String? get networkingError => _networkingError;
   String? _networkingError;
 
@@ -306,13 +306,13 @@ class DiscoveryRepository extends ChangeNotifier {
       _useLinuxMdns = true;
       if (!bindWifiInterface) {
         _networkingNote =
-            'Peer discovery uses direct mDNS (D-Bus/Avahi unavailable on this system).';
+            'Peer discovery uses direct mDNS (system discovery service unavailable).';
       }
       if (kDebugMode) {
         debugPrint(
           bindWifiInterface
               ? 'Using direct mDNS backend on Android'
-              : 'Using direct mDNS backend on Linux',
+              : 'Using direct mDNS backend',
         );
       }
       return true;
@@ -346,8 +346,8 @@ class DiscoveryRepository extends ChangeNotifier {
 
   static String _formatNetworkingError(Object e) {
     if (isDbusNetworkingError(e)) {
-      return 'D-Bus is not available (Linux needs it for Avahi/mDNS). '
-          'Install and start dbus and avahi-daemon, or use Connect by IP.';
+      return 'Local network discovery is unavailable on this system. '
+          'Use Connect by IP, or check that mDNS/Bonjour services are running.';
     }
     return 'Peer discovery unavailable: $e';
   }
@@ -753,7 +753,7 @@ class DiscoveryRepository extends ChangeNotifier {
           _scheduleResolveRetry(service);
         }
       case BonsoirDiscoveryServiceResolveFailedEvent():
-        // Linux Avahi does not identify which service failed; retry known ones.
+        // Some mDNS stacks do not identify which service failed; retry known ones.
         for (final entry in _servicesByKey.entries) {
           final attempts = _resolveAttempts[entry.key] ?? 0;
           if (attempts >= _maxResolveAttempts) continue;
@@ -772,7 +772,7 @@ class DiscoveryRepository extends ChangeNotifier {
 
   bool _hasEndpoint(BonsoirService service) => service.hasResolvedEndpoint;
 
-  /// Re-resolve a peer before connecting (helps stale Linux Avahi cache).
+  /// Re-resolve a peer before connecting (helps stale mDNS caches).
   Future<Peer?> refreshPeerForConnect(String peerId) async {
     final peer = _discovered[peerId] ?? _connected[peerId];
     if (!_canDiscoverPeers) return peer;

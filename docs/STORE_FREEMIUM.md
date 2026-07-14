@@ -123,7 +123,7 @@ Output: `build/macos/Build/Products/Release/SB Simple Netpad.app`. Enable Harden
 
 Until products are **approved / active** in the store and linked in RevenueCat, the paywall shows a generic “Buy Standard” label (no localized price) or purchase fails.
 
-When in-app purchases are unavailable (Linux, sideload without billing, missing SDK keys), the free-tier paywall and Settings → Netpad Standard open store listing links instead:
+When in-app purchases are unavailable (sideload without billing, missing SDK keys), the free-tier paywall and Settings → Netpad Standard open store listing links instead:
 
 | Store | URL helper |
 |-------|------------|
@@ -158,7 +158,6 @@ Suggested “What’s New” / privacy / monetization notes:
 - Core editing and same-subnet LAN sync work without purchase.
 - Standard is a **one-time** unlock, not a subscription.
 - Restore purchases is available in Settings and on the paywall.
-- Linux builds stay on the free tier (no store billing).
 
 For Apple review, have a demo account / LAN pair of devices ready if they ask how sync works; freemium gates are local and do not require a login.
 

@@ -68,7 +68,7 @@ Phase 4 complete: TLS transport, certificate pinning, peer blocking, and reconne
 - **Reconnect divergence prompt** — detects when a reconnecting peer's note diverged from the local one and prompts to keep mine / use theirs, converging both devices.
 
 ### Changed
-- Bumped `path_provider_android` override to 2.2.23 (last pre-JNI release that still targets the modern Android v2 embedding) so both Android and Linux builds work; added a `path_provider_foundation` 2.4.1 override to avoid the `objective_c` build hook on Linux.
+- Bumped `path_provider_android` override to 2.2.23 (last pre-JNI release that still targets the modern Android v2 embedding) so Android builds keep working against the modern embedding; added a `path_provider_foundation` 2.4.1 override to avoid the `objective_c` build hook on non-Apple hosts.
 
 ## [1.1.0] - 2026-06-04
 
@@ -76,7 +76,7 @@ Phase 4 complete: TLS transport, certificate pinning, peer blocking, and reconne
 - **Save to file** — Export the current note to a user-chosen path via the native save dialog (desktop).
 - **Open from file** — Load a text file into the editor, with confirmation before replacing a live synced note.
 - **Share note** — Send the current note through the OS share sheet / share dialog.
-- Initial Flutter app scaffold for Android, iOS, Windows, macOS, and Linux.
+- Initial Flutter app scaffold for Android, iOS, Windows, and macOS.
 - Line-numbered plain-text editor using `code_text_field`.
 - Local network discovery and broadcast using Bonsoir (`_sbnetpad._tcp`).
 - Pairing flow with explicit Accept/Reject confirmation on target device.
@@ -90,7 +90,7 @@ Phase 4 complete: TLS transport, certificate pinning, peer blocking, and reconne
 - Session-only connection log in the peers drawer.
 - Display-only pairing verification codes.
 - Basic copy/paste support via native selection and editor keyboard shortcuts.
-- Linux troubleshooting notes and dependency setup script.
+- Discovery troubleshooting notes and dependency setup script.
 - Project roadmap in `ROADMAP.md`.
 - File menu with **Save to file**, **Open file**, and **Share note** actions (`file_picker` + `share_plus`).
 - Open-from-file prompts before replacing a non-empty note and propagates the change to connected peers.
@@ -100,17 +100,17 @@ Phase 4 complete: TLS transport, certificate pinning, peer blocking, and reconne
 - Combined Settings dialog for device name and room.
 
 ### Changed
-- Pinned `path_provider_android` to 2.2.23 (pre-JNI) via `dependency_overrides`, since `share_plus` transitively pulls `path_provider` and newer `path_provider_android` uses JNI, which breaks Linux desktop builds.
+- Pinned `path_provider_android` to 2.2.23 (pre-JNI) via `dependency_overrides`, since `share_plus` transitively pulls `path_provider` and newer `path_provider_android` uses JNI, which can break desktop host builds.
 - Lowered Dart SDK constraint to `^3.10.0` and `bonsoir` to 6.x for Flutter 3.38 / Dart 3.10 toolchains.
 - Removed leftover editor debug logging instrumentation and its hardcoded path.
 - Committed Android Gradle wrapper scripts and tuned IDE Gradle memory defaults.
 - Moved Flutter project contents to repository root.
-- Switched note persistence implementation to `shared_preferences` for better Linux build compatibility.
-- Hardened Linux CMake compiler selection and fallback behavior.
+- Switched note persistence implementation to `shared_preferences` for broader desktop build compatibility.
+- Hardened desktop CMake compiler selection and fallback behavior.
 
 ### Fixed
 - Android Studio project load: restore `gradlew`, stop gitignoring wrapper scripts, and remove committed `android/build` artifacts.
-- Linux discovery reliability improvements (re-resolve retries, endpoint handling, connect-time refresh).
-- Linux build breakages caused by JNI transitive dependencies.
+- Discovery reliability improvements (re-resolve retries, endpoint handling, connect-time refresh).
+- Desktop build breakages caused by JNI transitive dependencies.
 - Android Gradle compatibility issue with `bonsoir_android` Kotlin plugin application.
-- Linux desktop build break from `share_plus`'s transitive `path_provider` implementations: pinned `path_provider_android` to 2.2.x (avoids `jni`) and `path_provider_foundation` to 2.4.x (avoids `objective_c` build hooks).
+- Desktop host build break from `share_plus`'s transitive `path_provider` implementations: pinned `path_provider_android` to 2.2.x (avoids `jni`) and `path_provider_foundation` to 2.4.x (avoids `objective_c` build hooks).

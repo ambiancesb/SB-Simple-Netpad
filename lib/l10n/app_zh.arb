@@ -184,7 +184,7 @@
   "peersNoTrustedDevices": "无受信任设备 — 接受配对时勾选“信任以自动同步”",
   "peersNoBlockedDevices": "无屏蔽设备",
   "peersNoConnectionEvents": "暂无连接事件",
-  "peersNoDiscoveredPeers": "未发现节点 — Linux 必须与此设备处于同一 Wi‑Fi 子网（检查上方地址），或使用通过 IP 连接",
+  "peersNoDiscoveredPeers": "未发现节点 — 设备必须与此设备处于同一 Wi‑Fi 子网（检查上方地址），或使用通过 IP 连接",
   "peersDiscoveryPaused": "节点发现已暂停，直到加入本地网络",
   "peersDisconnect": "断开连接",
   "peersTrustTooltip": "信任以自动同步",
@@ -229,7 +229,7 @@
       "peer": {"type": "String"}
     }
   },
-  "peersResolveFailedSnack": "无法解析 {peer}。请检查 Avahi 和相同子网，或使用通过 IP 连接。",
+  "peersResolveFailedSnack": "无法解析 {peer}。请确认同一子网，或使用通过 IP 连接。",
   "@peersResolveFailedSnack": {
     "placeholders": {
       "peer": {"type": "String"}
@@ -587,7 +587,7 @@
   "helpFileSharing1Mobile": "菜单（⋮）: 保存到文件、打开文件作为新笔记、分享、版本历史、设置和此帮助指南。",
   "helpFileSharing2": "Save to file exports the active note as .txt or .md (desktop and Android).",
   "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).",
-  "helpFileSharing4": "分享使用系统分享表单；Linux 回退到剪贴板。",
+  "helpFileSharing4": "分享在可用时使用系统分享表单；否则将笔记复制到剪贴板。",
   "helpSettingsTitle": "设置",
   "helpSettings1": "设备名称和房间需要保存 — 其他选项立即生效。",
   "helpSettings2": "房间 ID 对节点进行分组: 仅发现同一房间中的设备。",
@@ -596,21 +596,21 @@
   "helpDesktopShortcuts1": "Ctrl/Cmd+S — 保存到文件",
   "helpDesktopShortcuts2": "Ctrl/Cmd+O — 打开文件作为新笔记",
   "helpDesktopShortcuts3": "Ctrl/Cmd+F — 在笔记中查找",
-  "helpDesktopShortcuts4": "Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace",
+  "helpDesktopShortcuts4": "Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace",
   "helpDesktopShortcuts5": "Ctrl/Cmd+N — 切换笔记面板",
   "helpDesktopShortcuts6": "Ctrl/Cmd+P — 切换节点面板",
-  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu",
   "helpTroubleshootingTitle": "故障排除",
   "helpTroubleshooting1": "没有节点？确认相同的 Wi‑Fi 子网和房间 ID；尝试通过 IP 连接。",
   "helpTroubleshooting2": "需要本地网络横幅表示同步已暂停，直到 Wi‑Fi 连接。",
   "helpTroubleshooting3": "首次启动时允许应用通过防火墙（桌面）。",
-  "helpTroubleshooting4": "Linux: 如果发现从未启动，请安装 dbus 和 avahi-daemon。",
+  "helpTroubleshooting4": "确保所有设备处于同一 Wi‑Fi 子网，并且本地网络/防火墙允许发现。",
   "helpTroubleshooting5": "Android: 提示时授予附近 Wi‑Fi 权限。",
 
   "aboutTitle": "关于",
   "aboutTagline": "具有节点发现和共享编辑功能的 LAN 记事本。",
   "aboutDescription": "在手机或电脑上写纯文本笔记，与同一 Wi‑Fi 上的其他设备保持同步。节点在本地网络上相互发现，通过相互批准配对一次，然后通过加密节点会话共享多个命名笔记。",
-  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutPlatforms": "Android · iOS · Windows · macOS",
   "aboutStatus": "测试版 — 适合日常 LAN 使用。",
   "aboutEulaHeading": "最终用户许可协议",
   "aboutEulaBody": "SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（本地笔记不限量，最多 {noteLimit} 条同步笔记和 {peerLimit} 个连接节点）。Netpad Standard 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。",

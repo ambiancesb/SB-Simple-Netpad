@@ -4,7 +4,7 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 
 **Status:** Beta — phases 1–9 of the roadmap are complete and the app is suitable for daily LAN use. Protocol and storage formats may still change before 1.0.
 
-**Platforms:** Android, iOS, Windows, macOS, Linux (not web).
+**Platforms:** Android, iOS, Windows, macOS (not web).
 
 ## Features
 
@@ -26,51 +26,14 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) (stable, Dart 3.10+). The repo pins `bonsoir` 6.x for compatibility with Dart 3.10; upgrade to `bonsoir` 7.x after moving to Dart 3.11+.
 - **Android Studio:** open this repository root (not `android/` alone), install the Flutter and Dart plugins, then run `flutter pub get` before the first Gradle sync.
-- **Linux desktop build** (Flutter + CMake):
-
-  ```bash
-  sudo apt install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev build-essential
-  ```
-
-  Linux builds require `clang++` on PATH (`sudo apt install -y clang`). Notes are stored via `shared_preferences` (not `path_provider`, which pulls Android JNI and breaks Linux desktop builds).
-
-  If you see `Could not find the compiler specified in CXX: clang++`, either install `clang` (command above) or clear the variable and use GCC:
-
-  ```bash
-  unset CXX CC
-  flutter run -d linux
-  ```
-
-- **Linux:** D-Bus and Avahi for discovery and advertising (required for finding peers):
-
-  ```bash
-  sudo apt install -y dbus avahi-daemon avahi-utils libnss-mdns
-  sudo systemctl enable --now dbus avahi-daemon
-  ```
-
-  If the app logs `system_bus_socket` or peers never appear, confirm both services are running:
-
-  ```bash
-  systemctl is-active dbus avahi-daemon
-  ```
-
-  Manual **Connect by IP** still works when mDNS is unavailable. On Linux, if D-Bus is missing the app automatically falls back to direct mDNS (no Avahi required).
-
-  If peers show as **Resolving…** or never appear:
-
-  - Confirm both machines are on the same subnet (Wi‑Fi guest networks often block mDNS).
-  - Check Avahi: `avahi-browse -rt _sbnetpad._tcp`
-  - Allow UDP port **5353** (mDNS) and the app TCP port in the firewall.
-  - Restart the app after network changes; discovery re-resolves every 12 seconds.
-
-- **Desktop:** allow incoming connections on the app’s TCP port when the OS firewall prompts you
+- **Desktop / mobile LAN:** allow incoming connections on the app’s TCP port when the OS firewall prompts you. Devices must share the same Wi‑Fi subnet (guest networks often block mDNS). Manual **Connect by IP** still works when discovery is unavailable. Allow UDP port **5353** (mDNS) and the app TCP port in the firewall if peers never appear.
 - **Windows desktop build:** requires Visual Studio with the **Desktop development with C++** workload (CMake + MSVC). Mobile dictation uses [`speech_to_text`](https://pub.dev/packages/speech_to_text), which builds on Windows without extra tools. Do **not** add [`flutter_tts`](https://pub.dev/packages/flutter_tts) unless you also install [NuGet CLI](https://www.nuget.org/downloads) (`winget install Microsoft.NuGet`) — that package’s Windows plugin requires `nuget.exe` even if you only use text-to-speech on Android/iOS.
 
 ## Build and run
 
 ```bash
 flutter pub get
-flutter run -d linux    # or windows, macos, android, ios
+flutter run -d windows    # or macos, android, ios
 ```
 
 ### Apple (iOS / macOS)
@@ -121,16 +84,10 @@ Use two or more devices on the same LAN (physical devices recommended for Androi
 
 - **Save to file** — File menu → *Save to file…* writes the note to a chosen `.txt`/`.md` path.
 - **Open file** — File menu → *Open file…* imports a text file into a **new** note (Phase 5); the new note syncs to connected peers like any other create.
-- **Share note** — File menu → *Share note* opens the OS share sheet; on platforms without one (e.g. Linux) it falls back to copying to the clipboard.
+- **Share note** — File menu → *Share note* opens the OS share sheet; where no share sheet exists it falls back to copying to the clipboard.
 - **Session / room ID** — Set in **Settings**. Only peers advertising the same room are discovered, so multiple groups can coexist on one LAN. Peers without a room are treated as the `default` room.
 - **Cursor presence** — Connected peers report their cursor line/column, shown under each peer in the drawer.
 - **Network change listener** — Discovery and broadcast restart automatically when network interfaces change (Wi‑Fi/VPN switches), not just on the periodic refresh.
-
-On **Linux**, native file dialogs require `zenity` (GNOME) or `kdialog` (KDE):
-
-```bash
-sudo apt install -y zenity
-```
 
 > The note sync model is still full-document replace per note; incremental/CRDT sync remains deferred.
 
@@ -272,4 +229,4 @@ SB Simple Netpad is proprietary software distributed under an
 Hosted copy for store listings:
 [https://ambiancesb.github.io/SB-Simple-Netpad/eula.html](https://ambiancesb.github.io/SB-Simple-Netpad/eula.html)
 
-The shipped app is freemium: core editing and LAN sync are free (unlimited local notes, up to **3 synced notes** and **3 connected peers**); **Netpad Standard** is a one-time in-app purchase via the Apple App Store, Google Play, or Microsoft Store (RevenueCat on Apple/Google; Microsoft Store durable add-on on Windows). Linux builds stay on the free tier. Store console setup notes are in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md).
+The shipped app is freemium: core editing and LAN sync are free (unlimited local notes, up to **3 synced notes** and **3 connected peers**); **Netpad Standard** is a one-time in-app purchase via the Apple App Store, Google Play, or Microsoft Store (RevenueCat on Apple/Google; Microsoft Store durable add-on on Windows). Store console setup notes are in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md).

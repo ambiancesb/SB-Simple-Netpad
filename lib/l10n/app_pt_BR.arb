@@ -184,7 +184,7 @@
   "peersNoTrustedDevices": "Nenhum dispositivo confiável — marque Confiar para sincronização automática ao aceitar",
   "peersNoBlockedDevices": "Nenhum dispositivo bloqueado",
   "peersNoConnectionEvents": "Nenhum evento de conexão ainda",
-  "peersNoDiscoveredPeers": "Nenhum par descoberto — o Linux deve estar na mesma sub-rede Wi‑Fi que Este dispositivo (verifique o endereço acima), ou use Conectar por IP",
+  "peersNoDiscoveredPeers": "Nenhum par descoberto — os dispositivos devem estar na mesma sub-rede Wi‑Fi que Este dispositivo (verifique o endereço acima), ou use Conectar por IP",
   "peersDiscoveryPaused": "A descoberta de pares está pausada até que você entre em uma rede local",
   "peersDisconnect": "Desconectar",
   "peersTrustTooltip": "Confiar para sincronização automática",
@@ -229,7 +229,7 @@
       "peer": {"type": "String"}
     }
   },
-  "peersResolveFailedSnack": "Não foi possível resolver {peer}. Verifique o Avahi e a mesma sub-rede, ou use Conectar por IP.",
+  "peersResolveFailedSnack": "Não foi possível resolver {peer}. Verifique a mesma sub-rede, ou use Conectar por IP.",
   "@peersResolveFailedSnack": {
     "placeholders": {
       "peer": {"type": "String"}
@@ -587,7 +587,7 @@
   "helpFileSharing1Mobile": "Menu (⋮): salvar em arquivo, abrir arquivo como nova nota, compartilhar, histórico de versões, configurações e este guia de ajuda.",
   "helpFileSharing2": "Save to file exports the active note as .txt or .md (desktop and Android).",
   "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).",
-  "helpFileSharing4": "Compartilhar usa a planilha de compartilhamento do SO; Linux recorre à área de transferência.",
+  "helpFileSharing4": "Compartilhar usa a planilha de compartilhamento do SO quando disponível; caso contrário, a nota é copiada para a área de transferência.",
   "helpSettingsTitle": "Configurações",
   "helpSettings1": "O nome do dispositivo e a sala requerem Salvar — outras opções se aplicam imediatamente.",
   "helpSettings2": "O ID da sala agrupa pares: somente dispositivos na mesma sala são descobertos.",
@@ -596,21 +596,21 @@
   "helpDesktopShortcuts1": "Ctrl/Cmd+S — Salvar em arquivo",
   "helpDesktopShortcuts2": "Ctrl/Cmd+O — Abrir arquivo como nova nota",
   "helpDesktopShortcuts3": "Ctrl/Cmd+F — Localizar na nota",
-  "helpDesktopShortcuts4": "Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace",
+  "helpDesktopShortcuts4": "Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace",
   "helpDesktopShortcuts5": "Ctrl/Cmd+N — Alternar painel de notas",
   "helpDesktopShortcuts6": "Ctrl/Cmd+P — Alternar painel de pares",
-  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu",
   "helpTroubleshootingTitle": "Solução de problemas",
   "helpTroubleshooting1": "Sem pares? Confirme a mesma sub-rede Wi‑Fi e ID de sala; tente Conectar por IP.",
   "helpTroubleshooting2": "O banner rede local necessária significa que a sincronização está pausada até o Wi‑Fi estar ativo.",
   "helpTroubleshooting3": "Permita o aplicativo pelo seu firewall no primeiro lançamento (desktop).",
-  "helpTroubleshooting4": "Linux: instale dbus e avahi-daemon se a descoberta nunca iniciar.",
+  "helpTroubleshooting4": "Garanta que todos os dispositivos estejam na mesma sub-rede Wi‑Fi e que a rede local / firewall permita a descoberta.",
   "helpTroubleshooting5": "Android: conceda permissão de Wi‑Fi próximo quando solicitado.",
 
   "aboutTitle": "Sobre",
   "aboutTagline": "Bloco de notas LAN com descoberta de pares e edição compartilhada.",
   "aboutDescription": "Escreva notas em texto simples no seu celular ou computador e mantenha-as sincronizadas com outros dispositivos na mesma rede Wi‑Fi. Os pares se descobrem na rede local, emparelham uma vez com aprovação mútua e compartilham várias notas nomeadas com sessões de pares criptografadas.",
-  "aboutPlatforms": "Android · iOS · Windows · macOS · Linux",
+  "aboutPlatforms": "Android · iOS · Windows · macOS",
   "aboutStatus": "Beta — adequado para uso LAN diário.",
   "aboutEulaHeading": "Contrato de Licença do Usuário Final",
   "aboutEulaBody": "SB Simple Netpad é licenciado sob um EULA, não uma licença de código aberto. A edição básica e a sincronização LAN são gratuitas (notas locais ilimitadas, até {noteLimit} notas sincronizadas e {peerLimit} pares conectados). Netpad Standard é um desbloqueio único via App Store, Google Play ou Microsoft Store.",

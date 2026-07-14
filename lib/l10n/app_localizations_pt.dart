@@ -406,7 +406,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get peersNoDiscoveredPeers =>
-      'Nenhum par descoberto â€” o Linux deve estar na mesma sub-rede Wiâ€‘Fi que Este dispositivo (verifique o endereÃ§o acima), ou use Conectar por IP';
+      'Nenhum par descoberto — os dispositivos devem estar na mesma sub-rede Wi‑Fi que Este dispositivo (verifique o endereço acima), ou use Conectar por IP';
 
   @override
   String get peersDiscoveryPaused =>
@@ -478,7 +478,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String peersResolveFailedSnack(String peer) {
-    return 'NÃ£o foi possÃ­vel resolver $peer. Verifique o Avahi e a mesma sub-rede, ou use Conectar por IP.';
+    return 'Não foi possível resolver $peer. Verifique a mesma sub-rede, ou use Conectar por IP.';
   }
 
   @override
@@ -1137,7 +1137,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpFileSharing4 =>
-      'Compartilhar usa a planilha de compartilhamento do SO; Linux recorre Ã  Ã¡rea de transferÃªncia.';
+      'Compartilhar usa a planilha de compartilhamento do SO quando disponível; caso contrário, a nota é copiada para a área de transferência.';
 
   @override
   String get helpSettingsTitle => 'ConfiguraÃ§Ãµes';
@@ -1169,7 +1169,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts4 =>
-      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
+      'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N â€” Alternar painel de notas';
@@ -1179,7 +1179,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts7 =>
-      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
+      'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => 'SoluÃ§Ã£o de problemas';
@@ -1198,7 +1198,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpTroubleshooting4 =>
-      'Linux: instale dbus e avahi-daemon se a descoberta nunca iniciar.';
+      'Garanta que todos os dispositivos estejam na mesma sub-rede Wi‑Fi e que a rede local / firewall permita a descoberta.';
 
   @override
   String get helpTroubleshooting5 =>
@@ -1220,7 +1220,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Escreva notas em texto simples no seu celular ou computador e mantenha-as sincronizadas com outros dispositivos na mesma rede Wiâ€‘Fi. Os pares se descobrem na rede local, emparelham uma vez com aprovaÃ§Ã£o mÃºtua e compartilham vÃ¡rias notas nomeadas com sessÃµes de pares criptografadas.';
 
   @override
-  String get aboutPlatforms => 'Android Â· iOS Â· Windows Â· macOS Â· Linux';
+  String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
   String get aboutStatus => 'Beta â€” adequado para uso LAN diÃ¡rio.';
@@ -1724,7 +1724,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get peersNoDiscoveredPeers =>
-      'Nenhum par descoberto — o Linux deve estar na mesma sub-rede Wi‑Fi que Este dispositivo (verifique o endereço acima), ou use Conectar por IP';
+      'Nenhum par descoberto — os dispositivos devem estar na mesma sub-rede Wi‑Fi que Este dispositivo (verifique o endereço acima), ou use Conectar por IP';
 
   @override
   String get peersDiscoveryPaused =>
@@ -1796,7 +1796,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String peersResolveFailedSnack(String peer) {
-    return 'Não foi possível resolver $peer. Verifique o Avahi e a mesma sub-rede, ou use Conectar por IP.';
+    return 'Não foi possível resolver $peer. Verifique a mesma sub-rede, ou use Conectar por IP.';
   }
 
   @override
@@ -2447,7 +2447,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpFileSharing4 =>
-      'Compartilhar usa a planilha de compartilhamento do SO; Linux recorre à área de transferência.';
+      'Compartilhar usa a planilha de compartilhamento do SO quando disponível; caso contrário, a nota é copiada para a área de transferência.';
 
   @override
   String get helpSettingsTitle => 'Configurações';
@@ -2479,7 +2479,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpDesktopShortcuts4 =>
-      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
+      'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — Alternar painel de notas';
@@ -2489,7 +2489,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpDesktopShortcuts7 =>
-      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
+      'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => 'Solução de problemas';
@@ -2508,7 +2508,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpTroubleshooting4 =>
-      'Linux: instale dbus e avahi-daemon se a descoberta nunca iniciar.';
+      'Garanta que todos os dispositivos estejam na mesma sub-rede Wi‑Fi e que a rede local / firewall permita a descoberta.';
 
   @override
   String get helpTroubleshooting5 =>
@@ -2526,7 +2526,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Escreva notas em texto simples no seu celular ou computador e mantenha-as sincronizadas com outros dispositivos na mesma rede Wi‑Fi. Os pares se descobrem na rede local, emparelham uma vez com aprovação mútua e compartilham várias notas nomeadas com sessões de pares criptografadas.';
 
   @override
-  String get aboutPlatforms => 'Android · iOS · Windows · macOS · Linux';
+  String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
   String get aboutStatus => 'Beta — adequado para uso LAN diário.';

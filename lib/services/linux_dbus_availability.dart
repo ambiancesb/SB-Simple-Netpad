@@ -1,6 +1,6 @@
 import 'dart:io';
 
-/// Whether the D-Bus system bus socket is present (needed by Avahi via Bonsoir).
+/// Whether the D-Bus system bus socket is present (needed by some mDNS stacks).
 bool isLinuxSystemDBusAvailable() {
   if (!Platform.isLinux) return true;
 

@@ -25,7 +25,7 @@ class SpeechInputService extends ChangeNotifier {
   SpeechInputService();
 
   /// Native speech plugin — created lazily and only on supported platforms so
-  /// Windows/Linux debug builds never load speech_to_text_windows (which can
+  /// Desktop debug builds never load speech_to_text_windows (which can
   /// trip CRT debug assertions just by constructing the plugin).
   SpeechToText? _speech;
 

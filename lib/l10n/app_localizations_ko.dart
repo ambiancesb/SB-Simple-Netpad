@@ -400,7 +400,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get peersNoDiscoveredPeers =>
-      '발견된 피어 없음 — Linux는 이 기기와 같은 Wi‑Fi 서브넷에 있어야 합니다（위 주소 확인）, 또는 IP로 연결 사용';
+      '발견된 피어 없음 — 기기는 이 기기와 같은 Wi‑Fi 서브넷에 있어야 합니다（위 주소 확인）, 또는 IP로 연결 사용';
 
   @override
   String get peersDiscoveryPaused => '로컬 네트워크에 연결할 때까지 피어 검색이 일시 중지됩니다';
@@ -470,7 +470,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String peersResolveFailedSnack(String peer) {
-    return '$peer을(를) 확인할 수 없습니다. Avahi 및 동일 서브넷을 확인하거나 IP로 연결을 사용하세요.';
+    return '$peer을(를) 확인할 수 없습니다. 동일 서브넷을 확인하거나 IP로 연결을 사용하세요.';
   }
 
   @override
@@ -1091,7 +1091,7 @@ class AppLocalizationsKo extends AppLocalizations {
       'Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).';
 
   @override
-  String get helpFileSharing4 => '공유는 OS 공유 시트를 사용합니다. Linux는 클립보드로 대체됩니다.';
+  String get helpFileSharing4 => '공유는 OS 공유 시트가 있으면 이를 사용하고, 없으면 클립보드로 복사합니다.';
 
   @override
   String get helpSettingsTitle => '설정';
@@ -1119,7 +1119,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts4 =>
-      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
+      'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — 메모 패널 전환';
@@ -1129,7 +1129,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get helpDesktopShortcuts7 =>
-      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
+      'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => '문제 해결';
@@ -1147,7 +1147,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get helpTroubleshooting4 =>
-      'Linux: 검색이 시작되지 않으면 dbus 및 avahi-daemon을 설치하세요.';
+      '모든 기기가 같은 Wi‑Fi 서브넷에 있고 로컬 네트워크/방화벽이 검색을 허용하는지 확인하세요.';
 
   @override
   String get helpTroubleshooting5 => 'Android: 메시지가 표시되면 근처 Wi‑Fi 권한을 부여하세요.';
@@ -1167,7 +1167,7 @@ class AppLocalizationsKo extends AppLocalizations {
       '전화기나 컴퓨터에서 일반 텍스트 메모를 작성하고 같은 Wi‑Fi의 다른 기기와 동기화합니다. 피어는 로컬 네트워크에서 서로를 발견하고, 상호 승인으로 한 번 페어링한 후, 암호화된 피어 세션으로 여러 명명된 메모를 공유합니다.';
 
   @override
-  String get aboutPlatforms => 'Android · iOS · Windows · macOS · Linux';
+  String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
   String get aboutStatus => '베타 — 일상적인 LAN 사용에 적합합니다.';

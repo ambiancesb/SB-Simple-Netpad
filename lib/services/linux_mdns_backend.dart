@@ -52,7 +52,7 @@ Peer? peerFromMdnsEntry(ServiceEntry entry) {
   );
 }
 
-/// Raw mDNS advertise/discover (Linux fallback and Android primary path).
+/// Raw mDNS advertise/discover (direct-backend fallback and Android primary path).
 class LinuxMdnsBackend {
   LinuxMdnsBackend({
     required this.instanceId,
