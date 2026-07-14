@@ -15,6 +15,7 @@ import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/instance_config.dart';
 import 'package:netpad/services/local_address_service.dart';
 import 'package:netpad/theme/app_skin.dart';
+import 'package:netpad/theme/app_spacing.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -207,7 +208,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   decoration: InputDecoration(
                     labelText: l10n.settingsDeviceName,
                     hintText: l10n.settingsDeviceNameHint,
-                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -216,7 +216,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   decoration: InputDecoration(
                     labelText: l10n.settingsSessionRoom,
                     hintText: l10n.settingsSessionRoomHint,
-                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -477,7 +476,7 @@ class _SkinChoiceChip extends StatelessWidget {
       color: colors.background,
       elevation: selected ? 3 : 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadii.lgAll,
         side: BorderSide(
           color: selected
               ? skin.seedColor
@@ -487,7 +486,7 @@ class _SkinChoiceChip extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onSelected,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadii.lgAll,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(

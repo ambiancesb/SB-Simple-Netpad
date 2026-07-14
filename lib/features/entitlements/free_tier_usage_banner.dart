@@ -5,6 +5,7 @@ import 'package:netpad/features/entitlements/paywall_sheet.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/entitlements/entitlement_constants.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
+import 'package:netpad/theme/app_spacing.dart';
 import 'package:provider/provider.dart';
 
 /// Compact free-tier usage strip for Notes / Peers drawers (hidden on Standard).
@@ -46,14 +47,19 @@ class FreeTierUsageBanner extends StatelessWidget {
             snap.noteChars >= snap.noteCharLimit;
 
         return Padding(
-          padding: EdgeInsets.fromLTRB(dense ? 12 : 16, dense ? 4 : 0, dense ? 12 : 16, 8),
+          padding: EdgeInsets.fromLTRB(
+            dense ? AppSpacing.md : AppSpacing.lg,
+            dense ? AppSpacing.xs : 0,
+            dense ? AppSpacing.md : AppSpacing.lg,
+            AppSpacing.sm,
+          ),
           child: Material(
             color: atCap
                 ? theme.colorScheme.errorContainer.withValues(alpha: 0.55)
                 : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: AppRadii.smAll,
             child: InkWell(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadii.smAll,
               onTap: () => showPaywallSheet(
                 context,
                 highlight: l10n.standardHighlightCharLimit(
@@ -61,7 +67,10 @@ class FreeTierUsageBanner extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: AppSpacing.sm,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -71,7 +80,7 @@ class FreeTierUsageBanner extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xs),
                     Text(
                       l10n.freeTierUsageLine(
                         snap.syncedNotes,

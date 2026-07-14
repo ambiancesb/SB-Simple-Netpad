@@ -55,6 +55,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.6
 
 flutter_launcher_icons:
   image_path: assets/icon/app_icon.png
@@ -72,11 +73,23 @@ flutter_launcher_icons:
   adaptive_icon_foreground_inset: 0
   remove_alpha_ios: true
 
+flutter_native_splash:
+  color: '#EFF4FF'
+  color_dark: '#0B1220'
+  image: assets/icon/app_icon.png
+  android_12:
+    color: '#EFF4FF'
+    color_dark: '#0B1220'
+    image: assets/icon/app_icon.png
+  ios: true
+  android: true
+  web: false
+
 flutter:
   generate: true
   uses-material-design: true
   assets:
-    - assets/fonts/JetBrainsMono-Regular.ttf
+    - assets/icon/app_icon.png
   fonts:
     - family: JetBrainsMono
       fonts:

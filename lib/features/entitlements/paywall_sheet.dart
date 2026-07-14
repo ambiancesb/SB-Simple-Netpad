@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
+import 'package:netpad/theme/app_spacing.dart';
+import 'package:netpad/widgets/app_logo.dart';
 import 'package:provider/provider.dart';
 
 /// Shows the one-time Standard paywall. Returns true if Standard was unlocked.
@@ -74,49 +76,53 @@ class _PaywallSheetState extends State<_PaywallSheet> {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-          24,
-          8,
-          24,
-          24 + MediaQuery.viewInsetsOf(context).bottom,
+          AppSpacing.xl,
+          AppSpacing.sm,
+          AppSpacing.xl,
+          AppSpacing.xl + MediaQuery.viewInsetsOf(context).bottom,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Center(child: AppLogo(size: 64)),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               l10n.paywallTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+              textAlign: TextAlign.center,
+              style: theme.textTheme.headlineSmall,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               l10n.paywallSubtitle,
+              textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
             if (widget.highlight != null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 widget.highlight!,
+                textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
-            const SizedBox(height: 16),
-            _Benefit(icon: Icons.note_add, label: l10n.paywallBenefitUnlimitedNotes),
-            _Benefit(icon: Icons.hub, label: l10n.paywallBenefitUnlimitedPeers),
-            _Benefit(icon: Icons.text_fields, label: l10n.paywallBenefitUnlimitedLength),
-            _Benefit(icon: Icons.palette, label: l10n.paywallBenefitSkins),
-            _Benefit(icon: Icons.history, label: l10n.paywallBenefitHistory),
-            _Benefit(icon: Icons.sync, label: l10n.paywallBenefitAutoSync),
-            _Benefit(icon: Icons.mic, label: l10n.paywallBenefitVoice),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
+            _Benefit(label: l10n.paywallBenefitUnlimitedNotes),
+            _Benefit(label: l10n.paywallBenefitUnlimitedPeers),
+            _Benefit(label: l10n.paywallBenefitUnlimitedLength),
+            _Benefit(label: l10n.paywallBenefitSkins),
+            _Benefit(label: l10n.paywallBenefitHistory),
+            _Benefit(label: l10n.paywallBenefitAutoSync),
+            _Benefit(label: l10n.paywallBenefitVoice),
+            const SizedBox(height: AppSpacing.xl),
             if (!supported)
               Text(
                 l10n.paywallPurchasesUnsupported,
+                textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -136,7 +142,7 @@ class _PaywallSheetState extends State<_PaywallSheet> {
                             : l10n.paywallBuyStandardPrice(price),
                       ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               TextButton(
                 onPressed: _busy ? null : _restore,
                 child: Text(l10n.paywallRestorePurchases),
@@ -150,20 +156,30 @@ class _PaywallSheetState extends State<_PaywallSheet> {
 }
 
 class _Benefit extends StatelessWidget {
-  const _Benefit({required this.icon, required this.label});
+  const _Benefit({required this.label});
 
-  final IconData icon;
   final String label;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 12),
-          Expanded(child: Text(label)),
+          Icon(
+            Icons.check_rounded,
+            size: 18,
+            color: theme.colorScheme.primary.withValues(alpha: 0.85),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.35),
+            ),
+          ),
         ],
       ),
     );

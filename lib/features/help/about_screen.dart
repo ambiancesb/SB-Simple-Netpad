@@ -3,6 +3,8 @@ import 'package:netpad/core/app_info.dart';
 import 'package:netpad/features/help/help_screen.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/entitlements/entitlement_constants.dart';
+import 'package:netpad/theme/app_spacing.dart';
+import 'package:netpad/widgets/app_logo.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Opens the About screen.
@@ -45,55 +47,50 @@ class AboutScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.aboutTitle)),
       body: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         children: [
           Center(
             child: Column(
               children: [
-                Icon(
-                  Icons.edit_note,
-                  size: 72,
-                  color: colorScheme.primary,
-                ),
-                const SizedBox(height: 16),
+                const AppLogo(size: 88),
+                const SizedBox(height: AppSpacing.lg),
                 Text(
                   AppInfo.name,
                   textAlign: TextAlign.center,
-                  style: textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: textTheme.headlineSmall,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 Text(
                   l10n.commonVersionLabel(AppInfo.versionLabel),
                   style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.outline,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 Text(
                   l10n.aboutTagline,
                   textAlign: TextAlign.center,
-                  style: textTheme.bodyMedium,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: AppSpacing.xxl),
           Text(l10n.aboutDescription, style: textTheme.bodyMedium),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           Text(
             l10n.aboutPlatforms,
-            style: textTheme.bodySmall?.copyWith(color: colorScheme.outline),
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(l10n.aboutStatus, style: textTheme.bodySmall),
-          const Divider(height: 32),
-          Text(
-            l10n.aboutEulaHeading,
-            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 8),
+          const Divider(height: AppSpacing.xxl),
+          Text(l10n.aboutEulaHeading, style: textTheme.titleSmall),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             l10n.aboutEulaBody(
               EntitlementConstants.freeSyncedNoteLimit,
@@ -101,19 +98,19 @@ class AboutScreen extends StatelessWidget {
             ),
             style: textTheme.bodyMedium,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xl),
           OutlinedButton.icon(
             onPressed: () => _openEula(context),
             icon: const Icon(Icons.open_in_new, size: 18),
             label: Text(l10n.aboutViewEula),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           OutlinedButton.icon(
             onPressed: () => _openPrivacyPolicy(context),
             icon: const Icon(Icons.open_in_new, size: 18),
             label: Text(l10n.aboutPrivacyPolicy),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           FilledButton.tonalIcon(
             onPressed: () {
               Navigator.of(context).pushReplacement(
@@ -123,11 +120,8 @@ class AboutScreen extends StatelessWidget {
             icon: const Icon(Icons.help_outline),
             label: Text(l10n.aboutHowToUse),
           ),
-          const SizedBox(height: 24),
-          Text(
-            l10n.aboutCopyright,
-            style: textTheme.bodySmall,
-          ),
+          const SizedBox(height: AppSpacing.xl),
+          Text(l10n.aboutCopyright, style: textTheme.bodySmall),
         ],
       ),
     );

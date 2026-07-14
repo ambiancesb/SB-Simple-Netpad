@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/local_address_service.dart';
+import 'package:netpad/theme/app_spacing.dart';
 import 'package:provider/provider.dart';
 
 class ThisDeviceBanner extends StatefulWidget {
@@ -70,10 +71,15 @@ class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
     final address = _lanIp != null && port != null ? '$_lanIp:$port' : '…';
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        0,
+        AppSpacing.lg,
+        AppSpacing.sm,
+      ),
       child: Material(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadii.smAll,
         child: ListTile(
           dense: true,
           leading: const Icon(Icons.computer, size: 20),

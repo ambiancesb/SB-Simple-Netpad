@@ -273,7 +273,9 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
         expands: widget.expands,
         scrollController: _numberScroll,
         decoration: InputDecoration(
+          filled: false,
           disabledBorder: InputBorder.none,
+          border: InputBorder.none,
           isDense: widget.isDense,
         ),
         textAlign: widget.lineNumberStyle.textAlign,
@@ -314,6 +316,7 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
       scrollController: _codeScroll,
       inputFormatters: widget.inputFormatters,
       decoration: InputDecoration(
+        filled: false,
         disabledBorder: InputBorder.none,
         border: InputBorder.none,
         focusedBorder: InputBorder.none,

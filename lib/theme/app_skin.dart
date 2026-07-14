@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:netpad/theme/app_spacing.dart';
 import 'package:netpad/theme/editor_colors.dart';
 
 /// Named accent palettes for app chrome and the editor text area.
@@ -175,9 +176,48 @@ extension AppSkinX on AppSkin {
           isLight ? p.lightSurfaceContainer : p.darkSurfaceContainer,
     );
 
+    final fill = scheme.surfaceContainerHighest.withValues(
+      alpha: isLight ? 0.72 : 0.55,
+    );
+    final fieldRadius = AppRadii.mdAll;
+    final quietBorder = OutlineInputBorder(
+      borderRadius: fieldRadius,
+      borderSide: BorderSide.none,
+    );
+    final focusedBorder = OutlineInputBorder(
+      borderRadius: fieldRadius,
+      borderSide: BorderSide(color: p.primary, width: 1.5),
+    );
+
+    // Chrome uses the platform UI font; the editor keeps JetBrains Mono.
+    final baseText = ThemeData(
+      useMaterial3: true,
+      brightness: brightness,
+      colorScheme: scheme,
+    ).textTheme;
+    final textTheme = baseText.copyWith(
+      titleLarge: baseText.titleLarge?.copyWith(
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
+      ),
+      titleMedium: baseText.titleMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.1,
+      ),
+      titleSmall: baseText.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+      headlineSmall: baseText.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.3,
+      ),
+      bodyLarge: baseText.bodyLarge?.copyWith(height: 1.35),
+      bodyMedium: baseText.bodyMedium?.copyWith(height: 1.4),
+      labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+    );
+
     return ThemeData(
       colorScheme: scheme,
       useMaterial3: true,
+      textTheme: textTheme,
       scaffoldBackgroundColor:
           isLight ? p.lightBackground : p.darkBackground,
       appBarTheme: AppBarTheme(
@@ -185,11 +225,56 @@ extension AppSkinX on AppSkin {
         foregroundColor: isLight ? Colors.white : scheme.onSurface,
         elevation: 0,
         scrolledUnderElevation: 1,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          color: isLight ? Colors.white : scheme.onSurface,
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: fill,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+        border: quietBorder,
+        enabledBorder: quietBorder,
+        disabledBorder: quietBorder,
+        focusedBorder: focusedBorder,
+        errorBorder: OutlineInputBorder(
+          borderRadius: fieldRadius,
+          borderSide: BorderSide(color: scheme.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: fieldRadius,
+          borderSide: BorderSide(color: scheme.error, width: 1.5),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(borderRadius: AppRadii.lgAll),
+        backgroundColor: scheme.surface,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: scheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(borderRadius: AppRadii.sheetTop),
+        showDragHandle: true,
+        dragHandleSize: const Size(36, 4),
+      ),
+      cardTheme: CardThemeData(
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
+        color: scheme.surface,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
       ),
       chipTheme: ChipThemeData(
         selectedColor: p.primary.withValues(alpha: isLight ? 0.22 : 0.35),
         checkmarkColor: p.primary,
         side: BorderSide(color: p.primary.withValues(alpha: 0.45)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadii.smAll),
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
@@ -213,6 +298,24 @@ extension AppSkinX on AppSkin {
         backgroundColor: p.primary,
         foregroundColor: Colors.white,
       ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xl,
+            vertical: AppSpacing.md,
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
+          ),
+        ),
+      ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) return p.primary;
@@ -227,6 +330,7 @@ extension AppSkinX on AppSkin {
       ),
       listTileTheme: ListTileThemeData(
         iconColor: p.primary,
+        shape: RoundedRectangleBorder(borderRadius: AppRadii.smAll),
       ),
       dividerTheme: DividerThemeData(
         color: p.primary.withValues(alpha: isLight ? 0.18 : 0.3),

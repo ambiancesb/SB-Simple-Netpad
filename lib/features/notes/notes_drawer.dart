@@ -5,6 +5,7 @@ import 'package:netpad/features/entitlements/free_tier_usage_banner.dart';
 import 'package:netpad/features/entitlements/standard_gate.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
+import 'package:netpad/theme/app_spacing.dart';
 import 'package:provider/provider.dart';
 
 /// Mobile slide-out drawer wrapping [NotesPanel].
@@ -127,14 +128,13 @@ class _NotesPanelState extends State<NotesPanel> {
           ),
         const FreeTierUsageBanner(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
               isDense: true,
               prefixIcon: const Icon(Icons.search, size: 20),
               hintText: l10n.notesSearchHint,
-              border: const OutlineInputBorder(),
               suffixIcon: searching
                   ? IconButton(
                       icon: const Icon(Icons.clear, size: 18),
@@ -148,7 +148,7 @@ class _NotesPanelState extends State<NotesPanel> {
             onChanged: (value) => setState(() => _query = value),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Expanded(
           child: searching
               ? _buildSearchResults(context, workspace, hits)

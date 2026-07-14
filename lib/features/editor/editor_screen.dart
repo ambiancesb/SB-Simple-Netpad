@@ -17,6 +17,7 @@ import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/entitlements/standard_features.dart';
 import 'package:netpad/services/speech_input_service.dart';
 import 'package:netpad/theme/app_skin.dart';
+import 'package:netpad/theme/app_spacing.dart';
 import 'package:netpad/theme/editor_colors.dart';
 import 'package:provider/provider.dart';
 
@@ -421,7 +422,10 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
     return Material(
       elevation: 1,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: 6,
+        ),
         child: Column(
           children: [
             Row(
@@ -434,13 +438,12 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
                       isDense: true,
                       prefixIcon: const Icon(Icons.search, size: 18),
                       hintText: l10n.editorFindHint,
-                      border: const OutlineInputBorder(),
                     ),
                     onChanged: _recompute,
                     onSubmitted: (_) => _step(1),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Text(label, style: Theme.of(context).textTheme.bodySmall),
                 IconButton(
                   icon: const Icon(Icons.keyboard_arrow_up),
@@ -483,12 +486,11 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
                         isDense: true,
                         prefixIcon: const Icon(Icons.find_replace, size: 18),
                         hintText: l10n.editorReplaceHint,
-                        border: const OutlineInputBorder(),
                       ),
                       onSubmitted: (_) => _applyReplace(all: false),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.sm),
                   TextButton(
                     onPressed:
                         _matches.isEmpty ? null : () => _applyReplace(all: false),

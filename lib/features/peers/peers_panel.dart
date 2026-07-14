@@ -15,6 +15,7 @@ import 'package:netpad/features/peers/this_device_banner.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/tls_identity.dart';
+import 'package:netpad/theme/app_spacing.dart';
 import 'package:provider/provider.dart';
 
 class PeersPanel extends StatelessWidget {
@@ -642,12 +643,17 @@ class _NetworkingInfoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        0,
+        AppSpacing.lg,
+        AppSpacing.sm,
+      ),
       child: Material(
         color: Theme.of(context).colorScheme.secondaryContainer.withValues(
           alpha: 0.45,
         ),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadii.smAll,
         child: ListTile(
           dense: true,
           leading: Icon(
@@ -676,12 +682,17 @@ class _NetworkingErrorBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        0,
+        AppSpacing.lg,
+        AppSpacing.sm,
+      ),
       child: Material(
         color: Theme.of(context).colorScheme.errorContainer.withValues(
           alpha: 0.55,
         ),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadii.smAll,
         child: ListTile(
           dense: true,
           leading: Icon(
