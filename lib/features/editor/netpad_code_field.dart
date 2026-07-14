@@ -227,6 +227,17 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
     );
   }
 
+  static const _editorInputDecoration = InputDecoration(
+    filled: false,
+    contentPadding: EdgeInsets.zero,
+    border: InputBorder.none,
+    enabledBorder: InputBorder.none,
+    disabledBorder: InputBorder.none,
+    focusedBorder: InputBorder.none,
+    errorBorder: InputBorder.none,
+    focusedErrorBorder: InputBorder.none,
+  );
+
   @override
   Widget build(BuildContext context) {
     const rootKey = 'root';
@@ -272,10 +283,7 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
         selectionControls: widget.selectionControls,
         expands: widget.expands,
         scrollController: _numberScroll,
-        decoration: InputDecoration(
-          filled: false,
-          disabledBorder: InputBorder.none,
-          border: InputBorder.none,
+        decoration: _editorInputDecoration.copyWith(
           isDense: widget.isDense,
         ),
         textAlign: widget.lineNumberStyle.textAlign,
@@ -315,11 +323,7 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
       expands: widget.expands,
       scrollController: _codeScroll,
       inputFormatters: widget.inputFormatters,
-      decoration: InputDecoration(
-        filled: false,
-        disabledBorder: InputBorder.none,
-        border: InputBorder.none,
-        focusedBorder: InputBorder.none,
+      decoration: _editorInputDecoration.copyWith(
         isDense: widget.isDense,
       ),
       cursorColor: cursorColor,
@@ -335,35 +339,43 @@ class _NetpadCodeFieldState extends State<NetpadCodeField> {
       readOnly: widget.readOnly,
     );
 
-    final codeCol = Theme(
-      data: Theme.of(context).copyWith(
-        textSelectionTheme: widget.textSelectionTheme,
-      ),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          if (widget.wrap) {
-            final inset = editorFieldContentPaddingHorizontal(context);
-            _scheduleWrapWidthUpdate(
-              max(constraints.maxWidth - inset, 0),
-              textStyle,
-            );
-            return codeField;
-          }
-          return _wrapInScrollView(codeField, textStyle, constraints.maxWidth);
-        },
+    final editorTheme = Theme.of(context).copyWith(
+      textSelectionTheme: widget.textSelectionTheme,
+      // Keep editor TextFields free of form-field contentPadding from the skin.
+      inputDecorationTheme: const InputDecorationTheme(
+        filled: false,
+        contentPadding: EdgeInsets.zero,
+        border: InputBorder.none,
       ),
     );
 
-    return Container(
-      decoration: widget.decoration,
-      color: backgroundCol,
-      padding: !widget.lineNumbers ? const EdgeInsets.only(left: 8) : null,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.lineNumbers && numberCol != null) numberCol,
-          Expanded(child: codeCol),
-        ],
+    final codeCol = LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        if (widget.wrap) {
+          final inset = editorFieldContentPaddingHorizontal(context);
+          _scheduleWrapWidthUpdate(
+            max(constraints.maxWidth - inset, 0),
+            textStyle,
+          );
+          return codeField;
+        }
+        return _wrapInScrollView(codeField, textStyle, constraints.maxWidth);
+      },
+    );
+
+    return Theme(
+      data: editorTheme,
+      child: Container(
+        decoration: widget.decoration,
+        color: backgroundCol,
+        padding: !widget.lineNumbers ? const EdgeInsets.only(left: 8) : null,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.lineNumbers && numberCol != null) numberCol,
+            Expanded(child: codeCol),
+          ],
+        ),
       ),
     );
   }

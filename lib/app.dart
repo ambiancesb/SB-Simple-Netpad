@@ -382,109 +382,6 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
     };
   }
 
-  Widget _buildScaffold({
-    required String activeTitle,
-    required int connected,
-    required bool desktopMenus,
-    required bool wordWrap,
-    required Widget body,
-  }) {
-    final l10n = context.l10n;
-    final colorScheme = Theme.of(context).colorScheme;
-    final speechInput = _speechInput;
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: desktopMenus ? null : const NotesDrawer(),
-      endDrawer: desktopMenus ? null : const PeersDrawer(),
-      appBar: AppBar(
-        automaticallyImplyLeading: !desktopMenus,
-        title: Text(activeTitle, overflow: TextOverflow.ellipsis),
-        actions: [
-          if (desktopMenus) ...[
-            IconButton(
-              icon: Icon(
-                Icons.notes,
-                color: _notesPanelVisible ? colorScheme.primary : null,
-              ),
-              tooltip: _notesPanelVisible
-                  ? l10n.shellHideNotesPanel
-                  : l10n.shellShowNotesPanel(ShortcutLabels.mod),
-              onPressed: _toggleNotes,
-            ),
-            IconButton(
-              icon: Badge(
-                isLabelVisible: connected > 0,
-                label: Text('$connected'),
-                backgroundColor: Colors.green.shade700,
-                child: Icon(
-                  connected > 0 ? Icons.devices : Icons.devices_outlined,
-                  color: _peersPanelVisible
-                      ? colorScheme.primary
-                      : connected > 0
-                      ? Colors.green.shade700
-                      : null,
-                ),
-              ),
-              tooltip: connected > 0
-                  ? l10n.shellPeersTooltipConnected(
-                      connected,
-                      _peersPanelVisible
-                          ? l10n.shellPeersTooltipActionHide
-                          : l10n.shellPeersTooltipActionShow,
-                      ShortcutLabels.mod,
-                    )
-                  : _peersPanelVisible
-                  ? l10n.shellHidePeersPanel
-                  : l10n.shellShowPeersPanel(ShortcutLabels.mod),
-              onPressed: _togglePeers,
-            ),
-          ],
-          if (!desktopMenus)
-            IconButton(
-              icon: Icon(_findVisible ? Icons.search_off : Icons.search),
-              tooltip: l10n.shellFindInNote(ShortcutLabels.mod),
-              onPressed: () => _toggleFind(),
-            ),
-          if (!desktopMenus && speechInput != null)
-            MobileVoiceInputButton(
-              service: speechInput,
-              onToggle: _toggleVoiceInput,
-            ),
-          Padding(
-            padding: EdgeInsets.only(right: desktopMenus ? 8 : 4),
-            child: Tooltip(
-              message: connected > 0
-                  ? l10n.shellSecurityChipConnected(connected)
-                  : l10n.shellSecurityChipNone,
-              child: ActionChip(
-                visualDensity: VisualDensity.compact,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: desktopMenus
-                    ? null
-                    : const EdgeInsets.symmetric(horizontal: 4),
-                avatar: Icon(
-                  connected > 0 ? Icons.lock : Icons.lock_outline,
-                  size: 16,
-                  color: connected > 0 ? Colors.green : Colors.grey,
-                ),
-                label: Text('$connected'),
-                onPressed: _openPeers,
-              ),
-            ),
-          ),
-          if (!desktopMenus)
-            MobileOverflowMenuButton(
-              wordWrap: wordWrap,
-              showFileImportExport:
-                  MobileOverflowMenuButton.defaultShowFileImportExport,
-              onSelected: (action) => _onAppMenuAction(context, action),
-            ),
-        ],
-      ),
-      body: body,
-    );
-  }
-
   Widget _buildDesktopBody({
     required Widget editor,
     required bool showMaterialMenuBar,
@@ -615,28 +512,27 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
           autofocus: true,
           child: DesktopMenuHost(
             actions: menuActions,
-            child: Builder(
-              builder: (context) {
-                final discovery = context.watch<DiscoveryRepository>();
-                final workspace = context.watch<WorkspaceRepository>();
-                final connected = discovery.connectedPeers.length;
-                final activeTitle =
-                    workspace.active?.title ?? 'SB Simple Netpad';
-                final shellBody = desktopMenus
-                    ? _buildDesktopBody(
-                        editor: editor,
-                        showMaterialMenuBar: useMaterialWindowMenuBar(),
-                        menuActions: menuActions,
-                      )
-                    : editor;
-                return _buildScaffold(
-                  activeTitle: activeTitle,
-                  connected: connected,
-                  desktopMenus: desktopMenus,
-                  wordWrap: prefs.wordWrap,
-                  body: shellBody,
-                );
-              },
+            child: _ShellScaffold(
+              desktopMenus: desktopMenus,
+              wordWrap: prefs.wordWrap,
+              notesPanelVisible: _notesPanelVisible,
+              peersPanelVisible: _peersPanelVisible,
+              findVisible: _findVisible,
+              speechInput: _speechInput,
+              scaffoldKey: _scaffoldKey,
+              onToggleNotes: _toggleNotes,
+              onTogglePeers: _togglePeers,
+              onToggleFind: () => _toggleFind(),
+              onToggleVoiceInput: _toggleVoiceInput,
+              onOpenPeers: _openPeers,
+              onAppMenuAction: (action) => _onAppMenuAction(context, action),
+              body: desktopMenus
+                  ? _buildDesktopBody(
+                      editor: editor,
+                      showMaterialMenuBar: useMaterialWindowMenuBar(),
+                      menuActions: menuActions,
+                    )
+                  : editor,
             ),
           ),
         ),
@@ -715,6 +611,199 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   String _titleFromFile(String fileName) {
     final dot = fileName.lastIndexOf('.');
     return dot > 0 ? fileName.substring(0, dot) : fileName;
+  }
+}
+
+/// Scaffold chrome whose body is not under discovery/workspace watches, so
+/// drawer or panel mutations do not rebuild the editor (and shift line layout).
+class _ShellScaffold extends StatelessWidget {
+  const _ShellScaffold({
+    required this.desktopMenus,
+    required this.wordWrap,
+    required this.notesPanelVisible,
+    required this.peersPanelVisible,
+    required this.findVisible,
+    required this.speechInput,
+    required this.scaffoldKey,
+    required this.onToggleNotes,
+    required this.onTogglePeers,
+    required this.onToggleFind,
+    required this.onToggleVoiceInput,
+    required this.onOpenPeers,
+    required this.onAppMenuAction,
+    required this.body,
+  });
+
+  final bool desktopMenus;
+  final bool wordWrap;
+  final bool notesPanelVisible;
+  final bool peersPanelVisible;
+  final bool findVisible;
+  final SpeechInputService? speechInput;
+  final GlobalKey<ScaffoldState> scaffoldKey;
+  final VoidCallback onToggleNotes;
+  final VoidCallback onTogglePeers;
+  final VoidCallback onToggleFind;
+  final VoidCallback onToggleVoiceInput;
+  final VoidCallback onOpenPeers;
+  final ValueChanged<MobileAppMenuAction> onAppMenuAction;
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: scaffoldKey,
+      // Keep editor geometry stable when drawers steal focus / IME insets change.
+      resizeToAvoidBottomInset: false,
+      drawer: desktopMenus ? null : const NotesDrawer(),
+      endDrawer: desktopMenus ? null : const PeersDrawer(),
+      appBar: _ShellAppBar(
+        desktopMenus: desktopMenus,
+        wordWrap: wordWrap,
+        notesPanelVisible: notesPanelVisible,
+        peersPanelVisible: peersPanelVisible,
+        findVisible: findVisible,
+        speechInput: speechInput,
+        onToggleNotes: onToggleNotes,
+        onTogglePeers: onTogglePeers,
+        onToggleFind: onToggleFind,
+        onToggleVoiceInput: onToggleVoiceInput,
+        onOpenPeers: onOpenPeers,
+        onAppMenuAction: onAppMenuAction,
+      ),
+      body: body,
+    );
+  }
+}
+
+class _ShellAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const _ShellAppBar({
+    required this.desktopMenus,
+    required this.wordWrap,
+    required this.notesPanelVisible,
+    required this.peersPanelVisible,
+    required this.findVisible,
+    required this.speechInput,
+    required this.onToggleNotes,
+    required this.onTogglePeers,
+    required this.onToggleFind,
+    required this.onToggleVoiceInput,
+    required this.onOpenPeers,
+    required this.onAppMenuAction,
+  });
+
+  final bool desktopMenus;
+  final bool wordWrap;
+  final bool notesPanelVisible;
+  final bool peersPanelVisible;
+  final bool findVisible;
+  final SpeechInputService? speechInput;
+  final VoidCallback onToggleNotes;
+  final VoidCallback onTogglePeers;
+  final VoidCallback onToggleFind;
+  final VoidCallback onToggleVoiceInput;
+  final VoidCallback onOpenPeers;
+  final ValueChanged<MobileAppMenuAction> onAppMenuAction;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colorScheme = Theme.of(context).colorScheme;
+    final activeTitle = context.select<WorkspaceRepository, String>(
+      (workspace) => workspace.active?.title ?? 'SB Simple Netpad',
+    );
+    final connected = context.select<DiscoveryRepository, int>(
+      (discovery) => discovery.connectedPeers.length,
+    );
+
+    return AppBar(
+      automaticallyImplyLeading: !desktopMenus,
+      title: Text(activeTitle, overflow: TextOverflow.ellipsis),
+      actions: [
+        if (desktopMenus) ...[
+          IconButton(
+            icon: Icon(
+              Icons.notes,
+              color: notesPanelVisible ? colorScheme.primary : null,
+            ),
+            tooltip: notesPanelVisible
+                ? l10n.shellHideNotesPanel
+                : l10n.shellShowNotesPanel(ShortcutLabels.mod),
+            onPressed: onToggleNotes,
+          ),
+          IconButton(
+            icon: Badge(
+              isLabelVisible: connected > 0,
+              label: Text('$connected'),
+              backgroundColor: Colors.green.shade700,
+              child: Icon(
+                connected > 0 ? Icons.devices : Icons.devices_outlined,
+                color: peersPanelVisible
+                    ? colorScheme.primary
+                    : connected > 0
+                    ? Colors.green.shade700
+                    : null,
+              ),
+            ),
+            tooltip: connected > 0
+                ? l10n.shellPeersTooltipConnected(
+                    connected,
+                    peersPanelVisible
+                        ? l10n.shellPeersTooltipActionHide
+                        : l10n.shellPeersTooltipActionShow,
+                    ShortcutLabels.mod,
+                  )
+                : peersPanelVisible
+                ? l10n.shellHidePeersPanel
+                : l10n.shellShowPeersPanel(ShortcutLabels.mod),
+            onPressed: onTogglePeers,
+          ),
+        ],
+        if (!desktopMenus)
+          IconButton(
+            icon: Icon(findVisible ? Icons.search_off : Icons.search),
+            tooltip: l10n.shellFindInNote(ShortcutLabels.mod),
+            onPressed: onToggleFind,
+          ),
+        if (!desktopMenus && speechInput != null)
+          MobileVoiceInputButton(
+            service: speechInput!,
+            onToggle: onToggleVoiceInput,
+          ),
+        Padding(
+          padding: EdgeInsets.only(right: desktopMenus ? 8 : 4),
+          child: Tooltip(
+            message: connected > 0
+                ? l10n.shellSecurityChipConnected(connected)
+                : l10n.shellSecurityChipNone,
+            child: ActionChip(
+              visualDensity: VisualDensity.compact,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              padding: desktopMenus
+                  ? null
+                  : const EdgeInsets.symmetric(horizontal: 4),
+              avatar: Icon(
+                connected > 0 ? Icons.lock : Icons.lock_outline,
+                size: 16,
+                color: connected > 0 ? Colors.green : Colors.grey,
+              ),
+              label: Text('$connected'),
+              onPressed: onOpenPeers,
+            ),
+          ),
+        ),
+        if (!desktopMenus)
+          MobileOverflowMenuButton(
+            wordWrap: wordWrap,
+            showFileImportExport:
+                MobileOverflowMenuButton.defaultShowFileImportExport,
+            onSelected: onAppMenuAction,
+          ),
+      ],
+    );
   }
 }
 

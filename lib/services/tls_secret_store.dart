@@ -37,11 +37,12 @@ class MemorySecureBackend implements SecureStringBackend {
   }
 }
 
-/// Persists opaque TLS secrets. On Apple platforms uses the Keychain
-/// ([FlutterSecureStorage]); elsewhere uses [SharedPreferences].
+/// Persists opaque TLS secrets.
 ///
-/// If Keychain access fails (common with ad-hoc macOS signing / missing
-/// entitlements), falls back to prefs so the app can still launch.
+/// - **iOS:** Keychain via [FlutterSecureStorage], with a sticky prefs
+///   fallback if the user cancels or Keychain fails once.
+/// - **macOS / others:** [SharedPreferences] only. macOS ad-hoc and local
+///   debug signing pop Keychain ACL dialogs repeatedly; prefs avoid that.
 class TlsSecretStore {
   TlsSecretStore._({
     required SharedPreferences prefs,
@@ -49,28 +50,28 @@ class TlsSecretStore {
   }) : _prefs = prefs,
        _secure = secure;
 
+  static const _keychainDisabledKey = 'tls_keychain_disabled';
+
   /// Production store for the current platform.
   factory TlsSecretStore.platform(SharedPreferences prefs) {
-    final apple = !kIsWeb && (Platform.isIOS || Platform.isMacOS);
-    if (apple) {
-      return TlsSecretStore._(
-        prefs: prefs,
-        secure: _FlutterSecureBackend(
-          const FlutterSecureStorage(
-            iOptions: IOSOptions(
-              accessibility: KeychainAccessibility.first_unlock_this_device,
-            ),
-            // Data-protection keychain needs a team entitlements prefix; ad-hoc
-            // macOS debug signing often returns errSecMissingEntitlement (-34018).
-            mOptions: MacOsOptions(
-              accessibility: KeychainAccessibility.first_unlock_this_device,
-              usesDataProtectionKeychain: false,
-            ),
+    // macOS: never touch Keychain — local "Sign to Run Locally" builds
+    // repeatedly prompt (errSecUserCanceled / -128) and block startup UX.
+    if (kIsWeb || !Platform.isIOS) {
+      return TlsSecretStore._(prefs: prefs);
+    }
+    if (prefs.getBool(_keychainDisabledKey) == true) {
+      return TlsSecretStore._(prefs: prefs);
+    }
+    return TlsSecretStore._(
+      prefs: prefs,
+      secure: _FlutterSecureBackend(
+        const FlutterSecureStorage(
+          iOptions: IOSOptions(
+            accessibility: KeychainAccessibility.first_unlock_this_device,
           ),
         ),
-      );
-    }
-    return TlsSecretStore._(prefs: prefs);
+      ),
+    );
   }
 
   /// Prefs-only store for unit tests on non-Keychain paths.
@@ -98,9 +99,9 @@ class TlsSecretStore {
         final value = await secure.read(key);
         if (value != null && value.isNotEmpty) return value;
       } on PlatformException catch (e) {
-        _disableSecure('read', e);
+        await _disableSecure('read', e);
       } catch (e) {
-        _disableSecure('read', e);
+        await _disableSecure('read', e);
       }
     }
     return _prefs.getString(key);
@@ -114,9 +115,9 @@ class TlsSecretStore {
         await _prefs.remove(key);
         return;
       } on PlatformException catch (e) {
-        _disableSecure('write', e);
+        await _disableSecure('write', e);
       } catch (e) {
-        _disableSecure('write', e);
+        await _disableSecure('write', e);
       }
     }
     await _prefs.setString(key, value);
@@ -138,21 +139,22 @@ class TlsSecretStore {
         await secure.write(key, legacy);
         await _prefs.remove(key);
       } on PlatformException catch (e) {
-        _disableSecure('migrate', e);
+        await _disableSecure('migrate', e);
         return;
       } catch (e) {
-        _disableSecure('migrate', e);
+        await _disableSecure('migrate', e);
         return;
       }
     }
   }
 
-  void _disableSecure(String op, Object error) {
+  Future<void> _disableSecure(String op, Object error) async {
     if (kDebugMode) {
       debugPrint(
         'TlsSecretStore: Keychain $op failed ($error); using SharedPreferences',
       );
     }
     _secure = null;
+    await _prefs.setBool(_keychainDisabledKey, true);
   }
 }

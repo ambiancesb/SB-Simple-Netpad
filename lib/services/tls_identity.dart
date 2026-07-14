@@ -10,8 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///
 /// The certificate and key are generated once and persisted, so the device's
 /// certificate fingerprint is stable and can be pinned by peers (TOFU).
-/// On iOS/macOS the PEM material lives in the Keychain; elsewhere it uses
-/// [SharedPreferences].
+/// On iOS the PEM material prefers the Keychain; elsewhere (including macOS)
+/// it uses [SharedPreferences].
 class TlsIdentity {
   TlsIdentity._(this.certPem, this.keyPem);
 

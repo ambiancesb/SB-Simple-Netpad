@@ -246,8 +246,11 @@ class _EditorBodyState extends State<_EditorBody> {
         Expanded(
           child: Builder(
             builder: (context) {
-              final entitlements = context.watch<EntitlementService>();
-              final limit = StandardFeatures.noteCharacterLimit(entitlements);
+              // Select only the limit so unrelated entitlement noise (e.g. from
+              // drawer gates) does not rebuild the code field.
+              final limit = context.select<EntitlementService, int?>(
+                StandardFeatures.noteCharacterLimit,
+              );
               return NetpadCodeField(
                 key: ValueKey('editor-${document.id}'),
                 controller: document.controller,

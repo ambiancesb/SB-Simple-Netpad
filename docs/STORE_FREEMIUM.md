@@ -109,7 +109,7 @@ Output: `build/macos/Build/Products/Release/SB Simple Netpad.app`. Enable Harden
 | iOS entitlements | `Runner/Runner.entitlements` wired; enable IAP in the Apple Developer portal |
 | Local Network / Bonjour | `NSLocalNetworkUsageDescription` + `NSBonjourServices` = `_sbnetpad._tcp` |
 | Deployment | iOS 14.0+, macOS 11.0+ |
-| TLS identity | Device cert/key stored in Keychain on Apple (migrated from prefs once) |
+| TLS identity | iOS prefers Keychain (sticky prefs fallback on cancel/failure); macOS uses prefs (avoids ACL prompts under local signing) |
 | iOS file export | No Save/Open — Share only; notes still persist in prefs |
 | Nutrition labels | Disclose local network; microphone + speech recognition on iOS (voice dictation / Standard) |
 | Signing | Set Development Team in Xcode locally — do not commit team IDs or API keys |

@@ -38,9 +38,7 @@ List<String> wrapAwareLineNumbers({
 }
 
 /// Horizontal inset applied inside each [TextField] used by the editor gutter.
-double editorFieldContentPaddingHorizontal(BuildContext context) {
-  final padding =
-      Theme.of(context).inputDecorationTheme.contentPadding ??
-      const EdgeInsets.fromLTRB(12, 16, 12, 16);
-  return padding.horizontal;
-}
+///
+/// Editor fields force [EdgeInsets.zero] content padding so wrap metrics match
+/// the visible text column (theme form padding must not affect them).
+double editorFieldContentPaddingHorizontal(BuildContext context) => 0;
