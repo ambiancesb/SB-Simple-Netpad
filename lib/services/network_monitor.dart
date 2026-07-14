@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
-/// Polls the list of network interfaces and invokes a callback when the set of
-/// addresses changes (e.g. Wi-Fi drop, VPN, switching networks). This lets
-/// discovery/broadcast restart on real interface changes instead of only on a
-/// fixed timer.
+import 'package:netpad/core/local_network.dart';
+
+/// Polls active LAN subnets and invokes a callback when they change (e.g.
+/// Wi‑Fi drop, VPN, switching networks). Discovery/broadcast restart when the
+/// set of private subnets changes — not on ephemeral IPv6 / AWDL churn.
 class NetworkMonitor {
   NetworkMonitor({this.interval = const Duration(seconds: 5)});
 
@@ -30,20 +30,16 @@ class NetworkMonitor {
     _lastSignature = await _signature();
   }
 
+  /// Stable signature of [LocalNetwork.activeSubnets] (IPv4/ULA segments that
+  /// discovery uses). Ignores temporary interface address noise.
   Future<String> _signature() async {
     try {
-      final interfaces = await NetworkInterface.list(
-        includeLoopback: false,
-        type: InternetAddressType.any,
-      );
-      final addresses = <String>[];
-      for (final interface in interfaces) {
-        for (final address in interface.addresses) {
-          addresses.add('${interface.name}|${address.address}');
-        }
-      }
-      addresses.sort();
-      return addresses.join(',');
+      await LocalNetwork.refreshActiveSubnets();
+      final parts = LocalNetwork.activeSubnets
+          .map((s) => '${s.base.address}/${s.prefixLength}')
+          .toList()
+        ..sort();
+      return parts.join(',');
     } catch (_) {
       return '';
     }

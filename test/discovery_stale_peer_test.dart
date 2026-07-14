@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:netpad/core/local_network.dart';
 import 'package:netpad/core/models/peer.dart';
 
 void main() {
@@ -19,4 +22,43 @@ void main() {
       expect(peer.isManual, isFalse);
     });
   });
+
+  group('NetworkMonitor signature stability', () {
+    tearDown(LocalNetwork.clearActiveSubnetsForTesting);
+
+    test('active subnet signature ignores address-order-only churn', () {
+      final a = Subnet.fromAddress(
+        InternetAddress('192.168.1.10'),
+        24,
+      );
+      final b = Subnet.fromAddress(
+        InternetAddress('10.0.0.5'),
+        16,
+      );
+      LocalNetwork.setActiveSubnetsForTesting([a, b]);
+      final first = _subnetSignature();
+      LocalNetwork.setActiveSubnetsForTesting([b, a]);
+      expect(_subnetSignature(), first);
+    });
+
+    test('active subnet signature changes when LAN segment changes', () {
+      LocalNetwork.setActiveSubnetsForTesting([
+        Subnet.fromAddress(InternetAddress('192.168.1.10'), 24),
+      ]);
+      final first = _subnetSignature();
+      LocalNetwork.setActiveSubnetsForTesting([
+        Subnet.fromAddress(InternetAddress('192.168.2.10'), 24),
+      ]);
+      expect(_subnetSignature(), isNot(first));
+    });
+  });
+}
+
+/// Mirrors DiscoveryRepository / NetworkMonitor subnet signature formatting.
+String _subnetSignature() {
+  final parts = LocalNetwork.activeSubnets
+      .map((s) => '${s.base.address}/${s.prefixLength}')
+      .toList()
+    ..sort();
+  return parts.join(',');
 }

@@ -253,10 +253,15 @@ class DiscoveryRepository extends ChangeNotifier {
     onLanSyncPaused?.call();
   }
 
-  /// Drops Nearby/manual ghosts and auxiliary discovery maps (keeps connected).
+  /// Drops Nearby ghosts and auxiliary discovery maps (keeps connected + manual).
   void _clearNonConnectedDiscovery() {
     final staleIds = _discovered.keys
-        .where((id) => !_connected.containsKey(id))
+        .where((id) {
+          if (_connected.containsKey(id)) return false;
+          final peer = _discovered[id];
+          if (peer != null && peer.isManual) return false;
+          return true;
+        })
         .toList();
     for (final id in staleIds) {
       _discovered.remove(id);
@@ -349,9 +354,12 @@ class DiscoveryRepository extends ChangeNotifier {
 
   Future<void> _onNetworkChanged() async {
     if (kDebugMode) {
-      debugPrint('Network change detected — restarting discovery/broadcast');
+      debugPrint('Network change detected — evaluating discovery/broadcast');
     }
-    _clearNonConnectedDiscovery();
+    // Do not wipe Nearby peers here. Ephemeral address churn used to clear the
+    // list while Bonsoir kept running (no browse restart), so peers never
+    // reappeared until a full restart. Subnet changes restart discovery via
+    // _applyNetworkPolicy; peers refresh from mDNS again.
     if (Platform.isAndroid) {
       scheduleRetryNetworking();
       notifyListeners();
@@ -505,15 +513,16 @@ class DiscoveryRepository extends ChangeNotifier {
       unawaited(_linuxMdns?.scan().then((_) => _pruneStaleDiscoveredPeers()));
       return;
     }
-    // Periodic re-resolve must not extend discovery TTL — only ServiceFound does.
+    // Re-resolve keeps endpoints fresh; Successful Resolved stamps lastSeen.
     for (final service in _servicesByKey.values) {
       _requestResolve(service);
     }
     _pruneStaleDiscoveredPeers();
   }
 
-  /// Removes Bonsoir Nearby entries that have not been rediscovered recently.
-  /// Manual peers and currently connected peers are kept.
+  /// Removes Bonsoir Nearby entries that are no longer tracked and have not
+  /// been rediscovered recently. Manual peers, connected peers, and peers still
+  /// present in the Bonsoir service map are kept (Windows ghosts = untracked).
   void _pruneStaleDiscoveredPeers() {
     final now = DateTime.now();
     final staleIds = <String>[];
@@ -521,6 +530,9 @@ class DiscoveryRepository extends ChangeNotifier {
       final peer = entry.value;
       if (peer.isManual) continue;
       if (_connected.containsKey(peer.id)) continue;
+      // Still advertised according to Bonsoir — do not TTL-evict; ServiceLost
+      // (or losing the tracked service) is the authoritative removal signal.
+      if (_isServiceStillTracked(peer.id)) continue;
       final lastSeen = _lastSeenByPeerId[peer.id];
       final age = lastSeen == null ? null : now.difference(lastSeen);
       // Allow a short grace window while a connect attempt is in flight.
@@ -685,8 +697,7 @@ class DiscoveryRepository extends ChangeNotifier {
       return;
     }
 
-    // TTL is driven by Found/Updated; first Resolved after Found also stamps
-    // lastSeen when Found lacked a TXT id.
+    // TTL is driven by Found/Updated/Resolved (periodic re-resolve renews it).
     if (touchSeen || !_lastSeenByPeerId.containsKey(peer.id)) {
       _touchLastSeen(peer.id);
     }
@@ -728,7 +739,8 @@ class DiscoveryRepository extends ChangeNotifier {
         final service = event.service;
         _trackService(service);
         _resolveAttempts.remove(_serviceKey(service));
-        _upsertPeer(service);
+        // Successful re-resolve keeps Nearby fresh when Found/Updated are rare.
+        _upsertPeer(service, touchSeen: true);
         if (!_hasEndpoint(service)) {
           _scheduleResolveRetry(service);
         }
