@@ -187,6 +187,9 @@
   "peersNoDiscoveredPeers": "Keine Peers gefunden — Linux muss sich im gleichen Wi‑Fi-Subnetz wie Dieses Gerät befinden (Adresse oben prüfen), oder Per IP verbinden verwenden",
   "peersDiscoveryPaused": "Peer-Erkennung ist pausiert, bis Sie einem lokalen Netzwerk beitreten",
   "peersDisconnect": "Trennen",
+  "peersTrustTooltip": "Für Auto-Sync vertrauen",
+  "peersTrustWaiting": "Warten…",
+  "peersTrustOfferFailed": "Vertrauensangebot konnte nicht gesendet werden",
   "peersConnectNow": "Jetzt verbinden",
   "peersConnect": "Verbinden",
   "peersResolving": "Wird aufgelöst…",
@@ -386,6 +389,25 @@
   "pairingOtherDevicePins": "Das andere Gerät heftet dies bei der ersten Verbindung an.",
   "pairingTrustForAutoSyncHint": "Accept bei späteren Verbindungen überspringen. Optional — deaktiviert lassen, um jedes Mal Accept zu verlangen.",
   "pairingTrustForAutoSync": "Für Auto-Sync vertrauen",
+  "pairingTrustOfferTitle": "Vertrauensanfrage",
+  "pairingTrustOfferBody": "{peer} möchte diesem Gerät für Auto-Sync vertrauen. Spätere Verbindungen überspringen Accept.",
+  "@pairingTrustOfferBody": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustAcceptedSnack": "{peer} für Auto-Sync vertraut",
+  "@pairingTrustAcceptedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustDeclinedSnack": "{peer} hat Vertrauen abgelehnt",
+  "@pairingTrustDeclinedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
 
   "manualConnectTitle": "Per Adresse verbinden",
   "manualConnectBody": "Verwenden Sie dies, wenn die Erkennung keine Peers im gleichen Subnetz findet. Nur Adressen in Ihrem aktiven lokalen Netzwerksegment sind zulässig.",

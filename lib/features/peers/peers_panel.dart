@@ -87,6 +87,20 @@ class PeersPanel extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 PeerSecurityIcon(peerId: peer.id),
+                if (!trust.canAutoSync(peer.id))
+                  pairing.isTrustOfferPending(peer.id)
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            l10n.peersTrustWaiting,
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.verified_user_outlined, size: 20),
+                          tooltip: l10n.peersTrustTooltip,
+                          onPressed: () => _offerTrust(context, peer),
+                        ),
                 IconButton(
                   icon: const Icon(Icons.link_off, size: 20),
                   tooltip: l10n.peersDisconnect,
@@ -216,6 +230,18 @@ class PeersPanel extends StatelessWidget {
           SnackBar(content: Text(context.l10n.peersCouldNotConnect(message))),
         );
       }
+    }
+  }
+
+  Future<void> _offerTrust(BuildContext context, Peer peer) async {
+    final allowed = await StandardGate.trustedAutoSyncAllowed(context);
+    if (!allowed || !context.mounted) return;
+    final pairing = context.read<PairingRepository>();
+    final ok = pairing.offerTrust(peer.id);
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.peersTrustOfferFailed)),
+      );
     }
   }
 }

@@ -416,6 +416,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get peersDisconnect => 'Disconnetti';
 
   @override
+  String get peersTrustTooltip => 'Affida per auto-sync';
+
+  @override
+  String get peersTrustWaiting => 'In attesa…';
+
+  @override
+  String get peersTrustOfferFailed =>
+      'Impossibile inviare l’offerta di fiducia';
+
+  @override
   String get peersConnectNow => 'Connetti ora';
 
   @override
@@ -656,6 +666,24 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get pairingTrustForAutoSyncHint =>
       'Salta Accetta alle riconnessioni successive. Facoltativo: lascia deselezionato per richiedere Accetta ogni volta.';
+
+  @override
+  String get pairingTrustOfferTitle => 'Richiesta di fiducia';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer vuole fidarsi di questo dispositivo per l’auto-sync. Le riconnessioni future salteranno Accetta.';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return 'Affidato $peer per auto-sync';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer ha rifiutato la fiducia';
+  }
 
   @override
   String get manualConnectTitle => 'Connetti tramite indirizzo';

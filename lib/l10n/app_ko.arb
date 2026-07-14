@@ -187,6 +187,9 @@
   "peersNoDiscoveredPeers": "발견된 피어 없음 — Linux는 이 기기와 같은 Wi‑Fi 서브넷에 있어야 합니다（위 주소 확인）, 또는 IP로 연결 사용",
   "peersDiscoveryPaused": "로컬 네트워크에 연결할 때까지 피어 검색이 일시 중지됩니다",
   "peersDisconnect": "연결 끊기",
+  "peersTrustTooltip": "자동 동기화 신뢰",
+  "peersTrustWaiting": "대기 중…",
+  "peersTrustOfferFailed": "신뢰 요청을 보낼 수 없습니다",
   "peersConnectNow": "지금 연결",
   "peersConnect": "연결",
   "peersResolving": "확인 중…",
@@ -386,6 +389,25 @@
   "pairingOtherDevicePins": "다른 기기는 첫 번째 연결 시 이것을 고정합니다.",
   "pairingTrustForAutoSyncHint": "이후 재연결 시 수락을 건너뜁니다. 선택 사항 — 선택하지 않으면 매번 수락이 필요합니다.",
   "pairingTrustForAutoSync": "자동 동기화 신뢰",
+  "pairingTrustOfferTitle": "신뢰 요청",
+  "pairingTrustOfferBody": "{peer}님이 이 기기를 자동 동기화용으로 신뢰하려 합니다. 이후 재연결 시 수락을 건너뜁니다.",
+  "@pairingTrustOfferBody": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustAcceptedSnack": "{peer}을(를) 자동 동기화용으로 신뢰함",
+  "@pairingTrustAcceptedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustDeclinedSnack": "{peer}님이 신뢰를 거절함",
+  "@pairingTrustDeclinedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
 
   "manualConnectTitle": "주소로 연결",
   "manualConnectBody": "검색이 같은 서브넷의 피어를 찾지 못할 때 사용합니다. 활성 로컬 네트워크 세그먼트의 주소만 허용됩니다.",

@@ -415,6 +415,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peersDisconnect => 'Trennen';
 
   @override
+  String get peersTrustTooltip => 'Für Auto-Sync vertrauen';
+
+  @override
+  String get peersTrustWaiting => 'Warten…';
+
+  @override
+  String get peersTrustOfferFailed =>
+      'Vertrauensangebot konnte nicht gesendet werden';
+
+  @override
   String get peersConnectNow => 'Jetzt verbinden';
 
   @override
@@ -654,6 +664,24 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get pairingTrustForAutoSyncHint =>
       'Accept bei späteren Verbindungen überspringen. Optional — deaktiviert lassen, um jedes Mal Accept zu verlangen.';
+
+  @override
+  String get pairingTrustOfferTitle => 'Vertrauensanfrage';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer möchte diesem Gerät für Auto-Sync vertrauen. Spätere Verbindungen überspringen Accept.';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return '$peer für Auto-Sync vertraut';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer hat Vertrauen abgelehnt';
+  }
 
   @override
   String get manualConnectTitle => 'Per Adresse verbinden';

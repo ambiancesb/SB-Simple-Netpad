@@ -408,6 +408,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get peersDisconnect => '断开连接';
 
   @override
+  String get peersTrustTooltip => '信任以自动同步';
+
+  @override
+  String get peersTrustWaiting => '等待中…';
+
+  @override
+  String get peersTrustOfferFailed => '无法发送信任请求';
+
+  @override
   String get peersConnectNow => '立即连接';
 
   @override
@@ -640,6 +649,24 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pairingTrustForAutoSyncHint => '之后重新连接时可跳过接受。可选 — 不勾选则每次都需接受。';
+
+  @override
+  String get pairingTrustOfferTitle => '信任请求';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer 想要信任此设备以进行自动同步。以后重新连接时将跳过接受。';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return '已信任 $peer 以进行自动同步';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer 拒绝了信任';
+  }
 
   @override
   String get manualConnectTitle => '通过地址连接';

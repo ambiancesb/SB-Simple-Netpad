@@ -2,7 +2,7 @@
 const String kServiceType = '_sbnetpad._tcp';
 
 /// Protocol version sent in messages (bump when wire format changes).
-const int kProtocolVersion = 3;
+const int kProtocolVersion = 4;
 
 /// Debounce delay before broadcasting local edits.
 const Duration kDocDebounce = Duration(milliseconds: 300);

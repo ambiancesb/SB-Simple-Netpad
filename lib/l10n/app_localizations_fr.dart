@@ -418,6 +418,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get peersDisconnect => 'Déconnecter';
 
   @override
+  String get peersTrustTooltip => 'Faire confiance pour la synchro auto';
+
+  @override
+  String get peersTrustWaiting => 'En attente…';
+
+  @override
+  String get peersTrustOfferFailed =>
+      'Impossible d’envoyer la demande de confiance';
+
+  @override
   String get peersConnectNow => 'Connecter maintenant';
 
   @override
@@ -657,6 +667,24 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get pairingTrustForAutoSyncHint =>
       'Ignorer Accepter aux reconnexions suivantes. Optionnel — laisser décoché pour exiger Accepter à chaque fois.';
+
+  @override
+  String get pairingTrustOfferTitle => 'Demande de confiance';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer souhaite faire confiance à cet appareil pour la synchro auto. Les reconnexions futures ignoreront Accepter.';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return 'Confiance accordée à $peer pour la synchro auto';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer a refusé la confiance';
+  }
 
   @override
   String get manualConnectTitle => 'Connecter par adresse';

@@ -187,6 +187,9 @@
   "peersNoDiscoveredPeers": "Geen peers ontdekt — Linux moet zich op hetzelfde Wi‑Fi-subnet bevinden als Dit apparaat (controleer het adres hierboven), of gebruik Verbinden via IP",
   "peersDiscoveryPaused": "Peer-detectie is gepauzeerd totdat u lid wordt van een lokaal netwerk",
   "peersDisconnect": "Verbinding verbreken",
+  "peersTrustTooltip": "Vertrouwen voor auto-sync",
+  "peersTrustWaiting": "Wachten…",
+  "peersTrustOfferFailed": "Vertrouwensaanbod kon niet worden verzonden",
   "peersConnectNow": "Nu verbinden",
   "peersConnect": "Verbinden",
   "peersResolving": "Oplossen…",
@@ -386,6 +389,25 @@
   "pairingOtherDevicePins": "Het andere apparaat maakt dit vast bij de eerste verbinding.",
   "pairingTrustForAutoSyncHint": "Accepteren overslaan bij latere herverbindingen. Optioneel — uitgeschakeld laten om elke keer Accepteren te vereisen.",
   "pairingTrustForAutoSync": "Vertrouwen voor auto-sync",
+  "pairingTrustOfferTitle": "Vertrouwensverzoek",
+  "pairingTrustOfferBody": "{peer} wil dit apparaat vertrouwen voor auto-sync. Latere herverbindingen slaan Accepteren over.",
+  "@pairingTrustOfferBody": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustAcceptedSnack": "{peer} vertrouwd voor auto-sync",
+  "@pairingTrustAcceptedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustDeclinedSnack": "{peer} heeft vertrouwen geweigerd",
+  "@pairingTrustDeclinedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
 
   "manualConnectTitle": "Verbinden via adres",
   "manualConnectBody": "Gebruik dit wanneer detectie geen peers op hetzelfde subnet kan vinden. Alleen adressen op uw actieve lokale netwerksegment zijn toegestaan.",

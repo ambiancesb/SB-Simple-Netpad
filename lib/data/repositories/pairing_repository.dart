@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/pair_request.dart';
 import 'package:netpad/core/models/peer.dart';
+import 'package:netpad/core/models/trust_offer.dart';
 import 'package:netpad/core/reconnect_backoff.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
@@ -27,6 +28,9 @@ class PairingRepository extends ChangeNotifier {
     _connectionLog = connectionLog;
     _sync.onIncomingPairRequest = _onIncomingPairRequest;
     _sync.onPairRequestResolved = _onPairRequestResolved;
+    _sync.onIncomingTrustOffer = _onIncomingTrustOffer;
+    _sync.onTrustOfferResolved = _onTrustOfferResolved;
+    _sync.onTrustOfferCancelled = _onTrustOfferCancelled;
   }
 
   final SyncRepository _sync;
@@ -36,6 +40,7 @@ class PairingRepository extends ChangeNotifier {
   late final ConnectionLogRepository _connectionLog;
 
   final List<PairRequest> _pendingIncoming = [];
+  final List<TrustOffer> _pendingTrustOffers = [];
   final Set<String> _reconnectInFlight = {};
   final Map<String, DateTime> _reconnectBackoffUntil = {};
   final Map<String, int> _reconnectFailureCount = {};
@@ -43,7 +48,16 @@ class PairingRepository extends ChangeNotifier {
   Timer? _backoffUiTimer;
   bool _watchingTrustedReconnect = false;
 
+  /// Last mid-session trust outcome for snackbar UI (peerId, accepted).
+  (String peerId, String peerName, bool accepted)? lastTrustOfferOutcome;
+
   List<PairRequest> get pendingIncoming => List.unmodifiable(_pendingIncoming);
+
+  List<TrustOffer> get pendingTrustOffers =>
+      List.unmodifiable(_pendingTrustOffers);
+
+  bool isTrustOfferPending(String peerId) =>
+      _sync.isTrustOfferPending(peerId);
 
   bool isReconnectInFlight(String peerId) => _reconnectInFlight.contains(peerId);
 
@@ -281,6 +295,48 @@ class PairingRepository extends ChangeNotifier {
     _sync.disconnectPeer(peerId);
   }
 
+  /// Offers mid-session mutual trust to a connected peer.
+  bool offerTrust(String peerId) {
+    final ok = _sync.offerTrust(peerId);
+    if (ok) notifyListeners();
+    return ok;
+  }
+
+  void acceptTrustOffer(TrustOffer offer) {
+    _pendingTrustOffers.removeWhere((o) => o.requestId == offer.requestId);
+    _connectionLog.add(
+      'Accepted trust offer from ${offer.fromName}',
+      peerId: offer.fromId,
+      peerName: offer.fromName,
+    );
+    _sync.respondToTrustOffer(
+      connectionId: offer.connectionId,
+      requestId: offer.requestId,
+      fromId: offer.fromId,
+      fromName: offer.fromName,
+      accepted: true,
+    );
+    lastTrustOfferOutcome = (offer.fromId, offer.fromName, true);
+    notifyListeners();
+  }
+
+  void declineTrustOffer(TrustOffer offer) {
+    _pendingTrustOffers.removeWhere((o) => o.requestId == offer.requestId);
+    _connectionLog.add(
+      'Declined trust offer from ${offer.fromName}',
+      peerId: offer.fromId,
+      peerName: offer.fromName,
+    );
+    _sync.respondToTrustOffer(
+      connectionId: offer.connectionId,
+      requestId: offer.requestId,
+      fromId: offer.fromId,
+      fromName: offer.fromName,
+      accepted: false,
+    );
+    notifyListeners();
+  }
+
   /// Forgets the auto-sync token; the cert pin is kept.
   Future<void> revokeTrustedPeer(String peerId) async {
     final name = _trustStore.trustedPeer(peerId)?.displayName ?? peerId;
@@ -361,6 +417,56 @@ class PairingRepository extends ChangeNotifier {
       _discovery.markPeerDisconnected(peerId);
     }
     notifyListeners();
+  }
+
+  void _onIncomingTrustOffer(
+    String fromId,
+    String fromName,
+    String requestId,
+    String connectionId,
+  ) {
+    final existing = _pendingTrustOffers.any((o) => o.requestId == requestId);
+    if (existing) return;
+
+    _pendingTrustOffers.removeWhere((o) => o.fromId == fromId);
+
+    final verificationCode = PairingVerificationCode.generate(
+      _sync.instanceId,
+      fromId,
+    );
+    _pendingTrustOffers.add(
+      TrustOffer(
+        requestId: requestId,
+        fromName: fromName,
+        fromId: fromId,
+        connectionId: connectionId,
+        verificationCode: verificationCode,
+      ),
+    );
+    _connectionLog.add(
+      'Trust offer from $fromName (code $verificationCode)',
+      peerId: fromId,
+      peerName: fromName,
+    );
+    notifyListeners();
+  }
+
+  void _onTrustOfferResolved(String peerId, bool accepted) {
+    _pendingTrustOffers.removeWhere((o) => o.fromId == peerId);
+    final name = _discovery.peerById(peerId)?.displayName ??
+        _trustStore.trustedPeer(peerId)?.displayName ??
+        peerId;
+    lastTrustOfferOutcome = (peerId, name, accepted);
+    notifyListeners();
+  }
+
+  void _onTrustOfferCancelled(String peerId) {
+    _pendingTrustOffers.removeWhere((o) => o.fromId == peerId);
+    notifyListeners();
+  }
+
+  void clearLastTrustOfferOutcome() {
+    lastTrustOfferOutcome = null;
   }
 
   @override

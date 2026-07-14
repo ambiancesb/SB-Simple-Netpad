@@ -847,6 +847,24 @@ abstract class AppLocalizations {
   /// **'Disconnect'**
   String get peersDisconnect;
 
+  /// No description provided for @peersTrustTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust for auto-sync'**
+  String get peersTrustTooltip;
+
+  /// No description provided for @peersTrustWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting…'**
+  String get peersTrustWaiting;
+
+  /// No description provided for @peersTrustOfferFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send trust offer'**
+  String get peersTrustOfferFailed;
+
   /// No description provided for @peersConnectNow.
   ///
   /// In en, this message translates to:
@@ -1212,6 +1230,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip Accept on later reconnects. Optional — leave unchecked to require Accept each time.'**
   String get pairingTrustForAutoSyncHint;
+
+  /// No description provided for @pairingTrustOfferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust request'**
+  String get pairingTrustOfferTitle;
+
+  /// No description provided for @pairingTrustOfferBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{peer} wants to trust this device for auto-sync. Future reconnects will skip Accept.'**
+  String pairingTrustOfferBody(String peer);
+
+  /// No description provided for @pairingTrustAcceptedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted {peer} for auto-sync'**
+  String pairingTrustAcceptedSnack(String peer);
+
+  /// No description provided for @pairingTrustDeclinedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'{peer} declined trust'**
+  String pairingTrustDeclinedSnack(String peer);
 
   /// No description provided for @manualConnectTitle.
   ///

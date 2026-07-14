@@ -187,6 +187,9 @@
   "peersNoDiscoveredPeers": "Nessun peer scoperto — Linux deve essere nella stessa sottorete Wi‑Fi di Questo dispositivo (controlla l'indirizzo sopra), o usa Connetti tramite IP",
   "peersDiscoveryPaused": "La ricerca dei peer è in pausa finché non ti unisci a una rete locale",
   "peersDisconnect": "Disconnetti",
+  "peersTrustTooltip": "Affida per auto-sync",
+  "peersTrustWaiting": "In attesa…",
+  "peersTrustOfferFailed": "Impossibile inviare l’offerta di fiducia",
   "peersConnectNow": "Connetti ora",
   "peersConnect": "Connetti",
   "peersResolving": "Risoluzione in corso…",
@@ -386,6 +389,25 @@
   "pairingOtherDevicePins": "L'altro dispositivo associa questo alla prima connessione.",
   "pairingTrustForAutoSyncHint": "Salta Accetta alle riconnessioni successive. Facoltativo: lascia deselezionato per richiedere Accetta ogni volta.",
   "pairingTrustForAutoSync": "Affida per auto-sync",
+  "pairingTrustOfferTitle": "Richiesta di fiducia",
+  "pairingTrustOfferBody": "{peer} vuole fidarsi di questo dispositivo per l’auto-sync. Le riconnessioni future salteranno Accetta.",
+  "@pairingTrustOfferBody": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustAcceptedSnack": "Affidato {peer} per auto-sync",
+  "@pairingTrustAcceptedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustDeclinedSnack": "{peer} ha rifiutato la fiducia",
+  "@pairingTrustDeclinedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
 
   "manualConnectTitle": "Connetti tramite indirizzo",
   "manualConnectBody": "Da usare quando la ricerca non riesce a trovare peer sulla stessa sottorete. Sono consentiti solo indirizzi nel segmento di rete locale attivo.",

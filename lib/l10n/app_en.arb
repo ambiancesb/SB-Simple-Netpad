@@ -213,6 +213,9 @@
   "peersNoDiscoveredPeers": "No discovered peers — Linux must be on the same Wi‑Fi subnet as This device (check the address above), or use Connect by IP",
   "peersDiscoveryPaused": "Peer discovery is paused until you join a local network",
   "peersDisconnect": "Disconnect",
+  "peersTrustTooltip": "Trust for auto-sync",
+  "peersTrustWaiting": "Waiting…",
+  "peersTrustOfferFailed": "Could not send trust offer",
   "peersConnectNow": "Connect now",
   "peersConnect": "Connect",
   "peersResolving": "Resolving…",
@@ -412,6 +415,25 @@
   "pairingOtherDevicePins": "The other device pins this on first connect.",
   "pairingTrustForAutoSync": "Trust for auto-sync",
   "pairingTrustForAutoSyncHint": "Skip Accept on later reconnects. Optional — leave unchecked to require Accept each time.",
+  "pairingTrustOfferTitle": "Trust request",
+  "pairingTrustOfferBody": "{peer} wants to trust this device for auto-sync. Future reconnects will skip Accept.",
+  "@pairingTrustOfferBody": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustAcceptedSnack": "Trusted {peer} for auto-sync",
+  "@pairingTrustAcceptedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustDeclinedSnack": "{peer} declined trust",
+  "@pairingTrustDeclinedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
 
   "manualConnectTitle": "Connect by address",
   "manualConnectBody": "Use when discovery cannot find peers on the same subnet. Only addresses on your active local network segment are allowed.",

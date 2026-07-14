@@ -409,6 +409,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get peersDisconnect => '切断';
 
   @override
+  String get peersTrustTooltip => '自動同期を信頼';
+
+  @override
+  String get peersTrustWaiting => '待機中…';
+
+  @override
+  String get peersTrustOfferFailed => '信頼の提案を送信できませんでした';
+
+  @override
   String get peersConnectNow => '今すぐ接続';
 
   @override
@@ -644,6 +653,24 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get pairingTrustForAutoSyncHint =>
       '以降の再接続で承認を省略します。任意 — オフのままにすると毎回承認が必要です。';
+
+  @override
+  String get pairingTrustOfferTitle => '信頼のリクエスト';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer がこの端末を自動同期用に信頼しようとしています。以降の再接続では承認を省略します。';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return '$peer を自動同期用に信頼しました';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer が信頼を拒否しました';
+  }
 
   @override
   String get manualConnectTitle => 'アドレスで接続';

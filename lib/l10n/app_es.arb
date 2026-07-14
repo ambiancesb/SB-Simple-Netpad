@@ -187,6 +187,9 @@
   "peersNoDiscoveredPeers": "Sin pares descubiertos — Linux debe estar en la misma subred Wi‑Fi que Este dispositivo (verifica la dirección arriba), o usa Conectar por IP",
   "peersDiscoveryPaused": "El descubrimiento de pares está pausado hasta que te unas a una red local",
   "peersDisconnect": "Desconectar",
+  "peersTrustTooltip": "Confiar para auto-sincronización",
+  "peersTrustWaiting": "Esperando…",
+  "peersTrustOfferFailed": "No se pudo enviar la solicitud de confianza",
   "peersConnectNow": "Conectar ahora",
   "peersConnect": "Conectar",
   "peersResolving": "Resolviendo…",
@@ -386,6 +389,25 @@
   "pairingOtherDevicePins": "El otro dispositivo fija esto en la primera conexión.",
   "pairingTrustForAutoSyncHint": "Omitir Aceptar en reconexiones posteriores. Opcional: déjalo desmarcado para exigir Aceptar cada vez.",
   "pairingTrustForAutoSync": "Confiar para auto-sincronización",
+  "pairingTrustOfferTitle": "Solicitud de confianza",
+  "pairingTrustOfferBody": "{peer} quiere confiar en este dispositivo para auto-sincronización. Las reconexiones futuras omitirán Aceptar.",
+  "@pairingTrustOfferBody": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustAcceptedSnack": "Se confió en {peer} para auto-sincronización",
+  "@pairingTrustAcceptedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustDeclinedSnack": "{peer} rechazó la confianza",
+  "@pairingTrustDeclinedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
 
   "manualConnectTitle": "Conectar por dirección",
   "manualConnectBody": "Úsalo cuando el descubrimiento no pueda encontrar pares en la misma subred. Solo se permiten direcciones en tu segmento de red local activo.",

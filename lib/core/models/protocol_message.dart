@@ -30,6 +30,8 @@ abstract final class MessageTypes {
   static const pairRequest = 'pair_request';
   static const pairResponse = 'pair_response';
   static const pairComplete = 'pair_complete';
+  static const trustOffer = 'trust_offer';
+  static const trustResponse = 'trust_response';
   static const docSnapshot = 'doc_snapshot';
   static const docUpdate = 'doc_update';
   static const docCreate = 'doc_create';

@@ -413,6 +413,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peersDisconnect => 'Disconnect';
 
   @override
+  String get peersTrustTooltip => 'Trust for auto-sync';
+
+  @override
+  String get peersTrustWaiting => 'Waiting…';
+
+  @override
+  String get peersTrustOfferFailed => 'Could not send trust offer';
+
+  @override
   String get peersConnectNow => 'Connect now';
 
   @override
@@ -651,6 +660,24 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pairingTrustForAutoSyncHint =>
       'Skip Accept on later reconnects. Optional — leave unchecked to require Accept each time.';
+
+  @override
+  String get pairingTrustOfferTitle => 'Trust request';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer wants to trust this device for auto-sync. Future reconnects will skip Accept.';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return 'Trusted $peer for auto-sync';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer declined trust';
+  }
 
   @override
   String get manualConnectTitle => 'Connect by address';

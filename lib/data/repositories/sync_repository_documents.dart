@@ -136,6 +136,7 @@ extension SyncRepositoryDocuments on SyncRepository {
     _linksByPeerId.remove(peerId);
     _presence.remove(peerId);
     _discovery.markPeerDisconnected(peerId);
+    _cancelTrustStateForPeer(peerId);
     _connectionLog.add(
       'Disconnected from ${link.displayName}',
       peerId: peerId,

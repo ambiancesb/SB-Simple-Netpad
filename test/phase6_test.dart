@@ -13,9 +13,9 @@ Future<NoteStorageService> _storage() async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Protocol v3', () {
-    test('kProtocolVersion is 3', () {
-      expect(kProtocolVersion, 3);
+  group('Protocol v4', () {
+    test('kProtocolVersion is 4', () {
+      expect(kProtocolVersion, 4);
     });
 
     test('messages encode wire version from constant', () {
@@ -32,6 +32,11 @@ void main() {
         2,
       );
       expect(ProtocolMessage.versionFromJson({'type': 'ping'}), 1);
+    });
+
+    test('trust message types are defined', () {
+      expect(MessageTypes.trustOffer, 'trust_offer');
+      expect(MessageTypes.trustResponse, 'trust_response');
     });
   });
 

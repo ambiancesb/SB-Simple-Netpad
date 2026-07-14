@@ -416,6 +416,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get peersDisconnect => 'Desconectar';
 
   @override
+  String get peersTrustTooltip => 'Confiar para sincronização automática';
+
+  @override
+  String get peersTrustWaiting => 'Aguardando…';
+
+  @override
+  String get peersTrustOfferFailed =>
+      'Não foi possível enviar a oferta de confiança';
+
+  @override
   String get peersConnectNow => 'Conectar agora';
 
   @override
@@ -656,6 +666,24 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get pairingTrustForAutoSyncHint =>
       'Ignorar Aceitar em reconexões posteriores. Opcional — deixe desmarcado para exigir Aceitar sempre.';
+
+  @override
+  String get pairingTrustOfferTitle => 'Pedido de confiança';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer quer confiar neste dispositivo para sincronização automática. Reconexões futuras ignorarão Aceitar.';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return 'Confiou em $peer para sincronização automática';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer recusou a confiança';
+  }
 
   @override
   String get manualConnectTitle => 'Conectar por endereÃ§o';
@@ -1663,6 +1691,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get peersDisconnect => 'Desconectar';
 
   @override
+  String get peersTrustTooltip => 'Confiar para sincronização automática';
+
+  @override
+  String get peersTrustWaiting => 'Aguardando…';
+
+  @override
+  String get peersTrustOfferFailed =>
+      'Não foi possível enviar a oferta de confiança';
+
+  @override
   String get peersConnectNow => 'Conectar agora';
 
   @override
@@ -1903,6 +1941,24 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get pairingTrustForAutoSyncHint =>
       'Ignorar Aceitar em reconexões posteriores. Opcional — deixe desmarcado para exigir Aceitar sempre.';
+
+  @override
+  String get pairingTrustOfferTitle => 'Pedido de confiança';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer quer confiar neste dispositivo para sincronização automática. Reconexões futuras ignorarão Aceitar.';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return 'Confiou em $peer para sincronização automática';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer recusou a confiança';
+  }
 
   @override
   String get manualConnectTitle => 'Conectar por endereço';

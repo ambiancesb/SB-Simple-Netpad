@@ -409,6 +409,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get peersDisconnect => '연결 끊기';
 
   @override
+  String get peersTrustTooltip => '자동 동기화 신뢰';
+
+  @override
+  String get peersTrustWaiting => '대기 중…';
+
+  @override
+  String get peersTrustOfferFailed => '신뢰 요청을 보낼 수 없습니다';
+
+  @override
   String get peersConnectNow => '지금 연결';
 
   @override
@@ -644,6 +653,24 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get pairingTrustForAutoSyncHint =>
       '이후 재연결 시 수락을 건너뜁니다. 선택 사항 — 선택하지 않으면 매번 수락이 필요합니다.';
+
+  @override
+  String get pairingTrustOfferTitle => '신뢰 요청';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer님이 이 기기를 자동 동기화용으로 신뢰하려 합니다. 이후 재연결 시 수락을 건너뜁니다.';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return '$peer을(를) 자동 동기화용으로 신뢰함';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer님이 신뢰를 거절함';
+  }
 
   @override
   String get manualConnectTitle => '주소로 연결';

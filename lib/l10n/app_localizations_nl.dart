@@ -417,6 +417,16 @@ class AppLocalizationsNl extends AppLocalizations {
   String get peersDisconnect => 'Verbinding verbreken';
 
   @override
+  String get peersTrustTooltip => 'Vertrouwen voor auto-sync';
+
+  @override
+  String get peersTrustWaiting => 'Wachten…';
+
+  @override
+  String get peersTrustOfferFailed =>
+      'Vertrouwensaanbod kon niet worden verzonden';
+
+  @override
   String get peersConnectNow => 'Nu verbinden';
 
   @override
@@ -657,6 +667,24 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get pairingTrustForAutoSyncHint =>
       'Accepteren overslaan bij latere herverbindingen. Optioneel — uitgeschakeld laten om elke keer Accepteren te vereisen.';
+
+  @override
+  String get pairingTrustOfferTitle => 'Vertrouwensverzoek';
+
+  @override
+  String pairingTrustOfferBody(String peer) {
+    return '$peer wil dit apparaat vertrouwen voor auto-sync. Latere herverbindingen slaan Accepteren over.';
+  }
+
+  @override
+  String pairingTrustAcceptedSnack(String peer) {
+    return '$peer vertrouwd voor auto-sync';
+  }
+
+  @override
+  String pairingTrustDeclinedSnack(String peer) {
+    return '$peer heeft vertrouwen geweigerd';
+  }
 
   @override
   String get manualConnectTitle => 'Verbinden via adres';

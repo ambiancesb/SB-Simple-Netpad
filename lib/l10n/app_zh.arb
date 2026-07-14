@@ -187,6 +187,9 @@
   "peersNoDiscoveredPeers": "未发现节点 — Linux 必须与此设备处于同一 Wi‑Fi 子网（检查上方地址），或使用通过 IP 连接",
   "peersDiscoveryPaused": "节点发现已暂停，直到加入本地网络",
   "peersDisconnect": "断开连接",
+  "peersTrustTooltip": "信任以自动同步",
+  "peersTrustWaiting": "等待中…",
+  "peersTrustOfferFailed": "无法发送信任请求",
   "peersConnectNow": "立即连接",
   "peersConnect": "连接",
   "peersResolving": "解析中…",
@@ -386,6 +389,25 @@
   "pairingOtherDevicePins": "另一台设备在首次连接时固定此代码。",
   "pairingTrustForAutoSyncHint": "之后重新连接时可跳过接受。可选 — 不勾选则每次都需接受。",
   "pairingTrustForAutoSync": "信任以自动同步",
+  "pairingTrustOfferTitle": "信任请求",
+  "pairingTrustOfferBody": "{peer} 想要信任此设备以进行自动同步。以后重新连接时将跳过接受。",
+  "@pairingTrustOfferBody": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustAcceptedSnack": "已信任 {peer} 以进行自动同步",
+  "@pairingTrustAcceptedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustDeclinedSnack": "{peer} 拒绝了信任",
+  "@pairingTrustDeclinedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
 
   "manualConnectTitle": "通过地址连接",
   "manualConnectBody": "当发现无法在同一子网上找到节点时使用。仅允许活跃本地网络段上的地址。",

@@ -11,7 +11,9 @@ import 'package:netpad/core/local_network.dart';
 import 'package:netpad/core/models/divergence_choice.dart';
 import 'package:netpad/core/pairing_negotiation.dart';
 import 'package:netpad/core/reconnect_divergence.dart';
+import 'package:netpad/core/session_token_gate.dart';
 import 'package:netpad/core/sync_relay.dart';
+import 'package:netpad/core/trust_offer_negotiation.dart';
 import 'package:netpad/core/models/peer.dart';
 import 'package:netpad/core/models/peer_presence.dart';
 import 'package:netpad/core/models/protocol_message.dart';
@@ -30,6 +32,7 @@ import 'package:uuid/uuid.dart';
 import 'package:netpad/data/repositories/peer_connection.dart';
 
 part 'sync_repository_pairing.dart';
+part 'sync_repository_trust.dart';
 part 'sync_repository_heartbeat.dart';
 part 'sync_repository_documents.dart';
 
@@ -80,6 +83,12 @@ class SyncRepository extends ChangeNotifier {
   final Map<String, Timer> _prePairTimeouts = {};
   final Map<String, PeerPresence> _presence = {};
 
+  /// Outbound mid-session trust offers: peerId → requestId.
+  final Map<String, String> _pendingOutboundTrustOffer = {};
+
+  /// Inbound trust offers awaiting UI response: peerId → requestId.
+  final Map<String, String> _pendingInboundTrustOffer = {};
+
   bool _disposed = false;
 
   static const _connectTimeout = Duration(seconds: 20);
@@ -96,6 +105,20 @@ class SyncRepository extends ChangeNotifier {
   )?
   onIncomingPairRequest;
   void Function(String peerId, bool accepted)? onPairRequestResolved;
+
+  void Function(
+    String fromId,
+    String fromName,
+    String requestId,
+    String connectionId,
+  )?
+  onIncomingTrustOffer;
+
+  /// Outbound mid-session trust offer settled (accepted or declined).
+  void Function(String peerId, bool accepted)? onTrustOfferResolved;
+
+  /// Pending trust offers cleared because the peer disconnected.
+  void Function(String peerId)? onTrustOfferCancelled;
 
   /// Asked when a live edit collides at the same revision as the local note.
   Future<DivergenceChoice> Function(
@@ -174,19 +197,12 @@ class SyncRepository extends ChangeNotifier {
   /// Notifies listeners; used by [SyncRepository] part modules.
   void notifyPeersChanged() => notifyListeners();
 
-  bool _requiresSessionToken(String type) {
-    return type == MessageTypes.docSnapshot ||
-        type == MessageTypes.docUpdate ||
-        type == MessageTypes.docCreate ||
-        type == MessageTypes.docRename ||
-        type == MessageTypes.docCatalog ||
-        type == MessageTypes.docReorder ||
-        type == MessageTypes.docDelete ||
-        type == MessageTypes.peerDisconnect ||
-        type == MessageTypes.presence ||
-        type == MessageTypes.ping ||
-        type == MessageTypes.pong;
-  }
+  bool _requiresSessionToken(String type) =>
+      messageTypeRequiresSessionToken(type);
+
+  /// True when an outbound mid-session trust offer to [peerId] is awaiting a response.
+  bool isTrustOfferPending(String peerId) =>
+      _pendingOutboundTrustOffer.containsKey(peerId);
 
   ProtocolMessage _messageForConnection(
     String connectionId,
@@ -282,6 +298,13 @@ class SyncRepository extends ChangeNotifier {
       case MessageTypes.pairResponse:
       case MessageTypes.pairComplete:
         _handlePairingMessage(connectionId, message, isOutbound: isOutbound);
+      case MessageTypes.trustOffer:
+      case MessageTypes.trustResponse:
+        if (!_hasValidSessionToken(connectionId, message)) {
+          _logTokenRejected(connectionId, message.type);
+          return;
+        }
+        _handleTrustMessage(connectionId, message);
       case MessageTypes.docSnapshot:
         if (!_hasValidSessionToken(connectionId, message)) {
           _logTokenRejected(connectionId, message.type);
@@ -428,6 +451,7 @@ class SyncRepository extends ChangeNotifier {
       _linksByPeerId.remove(peerId);
       _presence.remove(peerId);
       _discovery.markPeerDisconnected(peerId);
+      _cancelTrustStateForPeer(peerId);
       if (wasPending) {
         _connectionLog.add(
           'Pairing interrupted with ${link.displayName}',
@@ -525,6 +549,8 @@ class SyncRepository extends ChangeNotifier {
     _linksByPeerId.clear();
     _connectionToPeerId.clear();
     _pendingOutboundRequestId.clear();
+    _pendingOutboundTrustOffer.clear();
+    _pendingInboundTrustOffer.clear();
     _presence.clear();
 
     super.dispose();

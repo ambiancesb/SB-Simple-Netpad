@@ -187,6 +187,9 @@
   "peersNoDiscoveredPeers": "Aucun pair découvert — Linux doit être sur le même sous-réseau Wi‑Fi que Cet appareil (vérifiez l'adresse ci-dessus), ou utilisez Connecter par IP",
   "peersDiscoveryPaused": "La découverte de pairs est suspendue jusqu'à ce que vous rejoigniez un réseau local",
   "peersDisconnect": "Déconnecter",
+  "peersTrustTooltip": "Faire confiance pour la synchro auto",
+  "peersTrustWaiting": "En attente…",
+  "peersTrustOfferFailed": "Impossible d’envoyer la demande de confiance",
   "peersConnectNow": "Connecter maintenant",
   "peersConnect": "Connecter",
   "peersResolving": "Résolution en cours…",
@@ -386,6 +389,25 @@
   "pairingOtherDevicePins": "L'autre appareil épingle ceci à la première connexion.",
   "pairingTrustForAutoSyncHint": "Ignorer Accepter aux reconnexions suivantes. Optionnel — laisser décoché pour exiger Accepter à chaque fois.",
   "pairingTrustForAutoSync": "Faire confiance pour la synchro auto",
+  "pairingTrustOfferTitle": "Demande de confiance",
+  "pairingTrustOfferBody": "{peer} souhaite faire confiance à cet appareil pour la synchro auto. Les reconnexions futures ignoreront Accepter.",
+  "@pairingTrustOfferBody": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustAcceptedSnack": "Confiance accordée à {peer} pour la synchro auto",
+  "@pairingTrustAcceptedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustDeclinedSnack": "{peer} a refusé la confiance",
+  "@pairingTrustDeclinedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
 
   "manualConnectTitle": "Connecter par adresse",
   "manualConnectBody": "À utiliser lorsque la découverte ne trouve pas de pairs sur le même sous-réseau. Seules les adresses de votre segment de réseau local actif sont autorisées.",

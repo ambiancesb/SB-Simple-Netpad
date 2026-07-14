@@ -187,6 +187,9 @@
   "peersNoDiscoveredPeers": "Nenhum par descoberto — o Linux deve estar na mesma sub-rede Wi‑Fi que Este dispositivo (verifique o endereço acima), ou use Conectar por IP",
   "peersDiscoveryPaused": "A descoberta de pares está pausada até que você entre em uma rede local",
   "peersDisconnect": "Desconectar",
+  "peersTrustTooltip": "Confiar para sincronização automática",
+  "peersTrustWaiting": "Aguardando…",
+  "peersTrustOfferFailed": "Não foi possível enviar a oferta de confiança",
   "peersConnectNow": "Conectar agora",
   "peersConnect": "Conectar",
   "peersResolving": "Resolvendo…",
@@ -386,6 +389,25 @@
   "pairingOtherDevicePins": "O outro dispositivo fixa isso na primeira conexão.",
   "pairingTrustForAutoSyncHint": "Ignorar Aceitar em reconexões posteriores. Opcional — deixe desmarcado para exigir Aceitar sempre.",
   "pairingTrustForAutoSync": "Confiar para sincronização automática",
+  "pairingTrustOfferTitle": "Pedido de confiança",
+  "pairingTrustOfferBody": "{peer} quer confiar neste dispositivo para sincronização automática. Reconexões futuras ignorarão Aceitar.",
+  "@pairingTrustOfferBody": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustAcceptedSnack": "Confiou em {peer} para sincronização automática",
+  "@pairingTrustAcceptedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
+  "pairingTrustDeclinedSnack": "{peer} recusou a confiança",
+  "@pairingTrustDeclinedSnack": {
+    "placeholders": {
+      "peer": {"type": "String"}
+    }
+  },
 
   "manualConnectTitle": "Conectar por endereço",
   "manualConnectBody": "Use quando a descoberta não encontrar pares na mesma sub-rede. Somente endereços no seu segmento de rede local ativo são permitidos.",
