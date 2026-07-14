@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/core/app_info.dart';
+import 'package:netpad/core/shortcut_labels.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/features/entitlements/paywall_sheet.dart';
@@ -195,7 +196,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  l10n.settingsDeviceHint,
+                  l10n.settingsDeviceHint(ShortcutLabels.mod),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.outline,
                   ),

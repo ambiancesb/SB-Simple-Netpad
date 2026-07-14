@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
+import 'package:netpad/services/file_service.dart';
 
 enum MobileAppMenuAction {
   wordWrap,
@@ -18,12 +19,20 @@ class MobileOverflowMenuButton extends StatelessWidget {
     super.key,
     required this.wordWrap,
     required this.onSelected,
+    this.showFileImportExport = true,
   });
 
   final bool wordWrap;
   final ValueChanged<MobileAppMenuAction> onSelected;
 
+  /// When false (iOS), Save / Open are omitted; Share remains.
+  final bool showFileImportExport;
+
   static const _menuWidth = 280.0;
+
+  /// Default for the running platform; override in tests.
+  static bool get defaultShowFileImportExport =>
+      FileService.supportsImportExport;
 
   @override
   Widget build(BuildContext context) {
@@ -43,20 +52,22 @@ class MobileOverflowMenuButton extends StatelessWidget {
           ),
         ),
         const PopupMenuDivider(),
-        PopupMenuItem(
-          value: MobileAppMenuAction.save,
-          child: _MobileMenuLabel(
-            icon: Icons.save_alt,
-            label: l10n.shellMobileSaveToFile,
+        if (showFileImportExport) ...[
+          PopupMenuItem(
+            value: MobileAppMenuAction.save,
+            child: _MobileMenuLabel(
+              icon: Icons.save_alt,
+              label: l10n.shellMobileSaveToFile,
+            ),
           ),
-        ),
-        PopupMenuItem(
-          value: MobileAppMenuAction.open,
-          child: _MobileMenuLabel(
-            icon: Icons.folder_open,
-            label: l10n.shellMobileOpenFileAsNewNote,
+          PopupMenuItem(
+            value: MobileAppMenuAction.open,
+            child: _MobileMenuLabel(
+              icon: Icons.folder_open,
+              label: l10n.shellMobileOpenFileAsNewNote,
+            ),
           ),
-        ),
+        ],
         PopupMenuItem(
           value: MobileAppMenuAction.share,
           child: _MobileMenuLabel(

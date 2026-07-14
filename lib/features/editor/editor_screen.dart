@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/find_replace.dart';
 import 'package:netpad/core/ime_voice_gate.dart';
+import 'package:netpad/core/shortcut_labels.dart';
 import 'package:netpad/data/repositories/document_repository.dart';
 import 'package:netpad/data/repositories/workspace_repository.dart';
 import 'package:netpad/features/editor/netpad_code_field.dart';
@@ -444,8 +445,8 @@ class _FindReplaceBarState extends State<_FindReplaceBar> {
                         : Icons.find_replace_outlined,
                   ),
                   tooltip: widget.replaceMode
-                      ? l10n.editorHideReplace
-                      : l10n.editorShowReplace,
+                      ? l10n.editorHideReplace(ShortcutLabels.findReplace)
+                      : l10n.editorShowReplace(ShortcutLabels.findReplace),
                   onPressed: () =>
                       widget.onReplaceModeChanged(!widget.replaceMode),
                 ),

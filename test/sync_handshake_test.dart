@@ -4,6 +4,7 @@ import 'package:netpad/core/models/protocol_message.dart';
 import 'package:netpad/services/local_server.dart';
 import 'package:netpad/services/protocol_codec.dart';
 import 'package:netpad/services/tls_identity.dart';
+import 'package:netpad/services/tls_secret_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -11,8 +12,10 @@ void main() {
   group('pairing handshake integration', () {
     test('mock peer pairing flow over LocalServer message handler', () async {
       SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
       final tls = await TlsIdentity.loadOrCreate(
-        await SharedPreferences.getInstance(),
+        prefs,
+        secretStore: TlsSecretStore.prefsOnly(prefs),
       );
       final server = LocalServer(securityContext: tls.serverContext);
       await server.start();

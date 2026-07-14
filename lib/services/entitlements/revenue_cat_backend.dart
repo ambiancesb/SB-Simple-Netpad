@@ -8,11 +8,16 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 /// Apple App Store + Google Play billing via RevenueCat.
 class RevenueCatBackend implements EntitlementBackend {
   RevenueCatBackend({
-    required this.appleApiKey,
+    this.appleApiKey = '',
+    this.iosApiKey = '',
+    this.macosApiKey = '',
     required this.googleApiKey,
   });
 
+  /// Legacy single Apple key (fallback when platform-specific keys are empty).
   final String appleApiKey;
+  final String iosApiKey;
+  final String macosApiKey;
   final String googleApiKey;
 
   bool _configured = false;
@@ -23,15 +28,42 @@ class RevenueCatBackend implements EntitlementBackend {
     return Platform.isIOS || Platform.isAndroid || Platform.isMacOS;
   }
 
-  String? get _apiKey {
-    if (Platform.isIOS || Platform.isMacOS) {
-      return appleApiKey.isEmpty ? null : appleApiKey;
+  /// Resolves the public SDK key for [platform].
+  ///
+  /// Prefers `REVENUECAT_IOS_API_KEY` / `REVENUECAT_MACOS_API_KEY`, then falls
+  /// back to legacy `REVENUECAT_APPLE_API_KEY`.
+  static String? resolveApiKey({
+    required bool isIOS,
+    required bool isMacOS,
+    required bool isAndroid,
+    required String appleApiKey,
+    required String iosApiKey,
+    required String macosApiKey,
+    required String googleApiKey,
+  }) {
+    if (isIOS) {
+      final key = iosApiKey.isNotEmpty ? iosApiKey : appleApiKey;
+      return key.isEmpty ? null : key;
     }
-    if (Platform.isAndroid) {
+    if (isMacOS) {
+      final key = macosApiKey.isNotEmpty ? macosApiKey : appleApiKey;
+      return key.isEmpty ? null : key;
+    }
+    if (isAndroid) {
       return googleApiKey.isEmpty ? null : googleApiKey;
     }
     return null;
   }
+
+  String? get _apiKey => resolveApiKey(
+        isIOS: Platform.isIOS,
+        isMacOS: Platform.isMacOS,
+        isAndroid: Platform.isAndroid,
+        appleApiKey: appleApiKey,
+        iosApiKey: iosApiKey,
+        macosApiKey: macosApiKey,
+        googleApiKey: googleApiKey,
+      );
 
   @override
   bool get purchasesSupported => _apiKey != null;

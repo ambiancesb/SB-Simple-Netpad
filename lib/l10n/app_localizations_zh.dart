@@ -160,17 +160,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shellHideNotesPanel => '隐藏笔记面板';
 
   @override
-  String get shellShowNotesPanel => '显示笔记面板 (Ctrl+N)';
+  String shellShowNotesPanel(String mod) {
+    return '显示笔记面板 ($mod+N)';
+  }
 
   @override
   String get shellHidePeersPanel => '隐藏节点面板';
 
   @override
-  String get shellShowPeersPanel => '显示节点面板 (Ctrl+P)';
+  String shellShowPeersPanel(String mod) {
+    return '显示节点面板 ($mod+P)';
+  }
 
   @override
-  String shellPeersTooltipConnected(int count, String action) {
-    return '$count 个加密节点会话 · $action节点面板 (Ctrl+P)';
+  String shellPeersTooltipConnected(int count, String action, String mod) {
+    return '$count 个加密节点会话 · $action节点面板 ($mod+P)';
   }
 
   @override
@@ -180,7 +184,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shellPeersTooltipActionShow => '显示';
 
   @override
-  String get shellFindInNote => '在笔记中查找 (Ctrl+F)';
+  String shellFindInNote(String mod) {
+    return '在笔记中查找 ($mod+F)';
+  }
 
   @override
   String shellSecurityChipConnected(int count) {
@@ -334,10 +340,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get editorNext => '下一个';
 
   @override
-  String get editorShowReplace => '显示替换 (Ctrl+H)';
+  String editorShowReplace(String shortcut) {
+    return '显示替换 ($shortcut)';
+  }
 
   @override
-  String get editorHideReplace => '隐藏替换 (Ctrl+H)';
+  String editorHideReplace(String shortcut) {
+    return '隐藏替换 ($shortcut)';
+  }
 
   @override
   String get editorClose => '关闭';
@@ -665,7 +675,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsDeviceSection => '设备';
 
   @override
-  String get settingsDeviceHint => '设备名称和房间需要保存 (Ctrl+S)。外观和编辑器偏好立即保存。';
+  String settingsDeviceHint(String mod) {
+    return '设备名称和房间需要保存 ($mod+S)。外观和编辑器偏好立即保存。';
+  }
 
   @override
   String get settingsDeviceName => '设备名称';
@@ -978,14 +990,24 @@ class AppLocalizationsZh extends AppLocalizations {
       '文件菜单: 保存到文件、打开文件作为新笔记、分享笔记、版本历史、设置、退出。';
 
   @override
+  String get helpFileSharing1Macos =>
+      'File menu: Save to File, Open File as New Note, Share Note, Version History. Settings are under the app menu (Cmd+,); Quit ends the app.';
+
+  @override
   String get helpFileSharing1Mobile =>
       '菜单（⋮）: 保存到文件、打开文件作为新笔记、分享、版本历史、设置和此帮助指南。';
 
   @override
-  String get helpFileSharing2 => '保存到文件将活跃笔记导出为 .txt 或 .md。';
+  String get helpFileSharing1Ios =>
+      'Overflow menu (⋮): share note, version history, settings, and this help guide. Use Share to export text — Save/Open file are not available on iOS.';
 
   @override
-  String get helpFileSharing3 => '打开文件将文本导入仅本地的新笔记；若希望节点收到，请打开同步。';
+  String get helpFileSharing2 =>
+      'Save to file exports the active note as .txt or .md (desktop and Android).';
+
+  @override
+  String get helpFileSharing3 =>
+      'Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).';
 
   @override
   String get helpFileSharing4 => '分享使用系统分享表单；Linux 回退到剪贴板。';
@@ -1015,7 +1037,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get helpDesktopShortcuts3 => 'Ctrl/Cmd+F — 在笔记中查找';
 
   @override
-  String get helpDesktopShortcuts4 => 'Ctrl/Cmd+H — 查找和替换';
+  String get helpDesktopShortcuts4 =>
+      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — 切换笔记面板';
@@ -1024,7 +1047,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get helpDesktopShortcuts6 => 'Ctrl/Cmd+P — 切换节点面板';
 
   @override
-  String get helpDesktopShortcuts7 => 'Ctrl/Cmd+Q — 退出（Windows/Linux）';
+  String get helpDesktopShortcuts7 =>
+      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => '故障排除';
@@ -1043,6 +1067,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get helpTroubleshooting5 => 'Android: 提示时授予附近 Wi‑Fi 权限。';
+
+  @override
+  String get helpTroubleshooting6 =>
+      'iOS/macOS: allow Local Network access for SB Simple Netpad in System Settings if peers never appear.';
 
   @override
   String get aboutTitle => '关于';

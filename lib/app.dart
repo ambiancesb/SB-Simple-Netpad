@@ -4,6 +4,7 @@ import 'dart:ui' show AppExitType;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/core/models/divergence_choice.dart';
+import 'package:netpad/core/shortcut_labels.dart';
 import 'package:netpad/data/repositories/connection_log_repository.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
 import 'package:netpad/data/repositories/pairing_repository.dart';
@@ -363,10 +364,15 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
           const _FindIntent(),
       const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
           const _FindIntent(),
+      // Win/Linux: Ctrl+H. macOS: Option+Cmd+F (Cmd+H is system Hide).
       const SingleActivator(LogicalKeyboardKey.keyH, control: true):
           const _ReplaceIntent(),
-      const SingleActivator(LogicalKeyboardKey.keyH, meta: true):
-          const _ReplaceIntent(),
+      if (isMac)
+        const SingleActivator(
+          LogicalKeyboardKey.keyF,
+          meta: true,
+          alt: true,
+        ): const _ReplaceIntent(),
       if (isDesktopMenuPlatform()) ...{
         mod: const _SaveIntent(),
         modO: const _OpenIntent(),
@@ -402,7 +408,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
               ),
               tooltip: _notesPanelVisible
                   ? l10n.shellHideNotesPanel
-                  : l10n.shellShowNotesPanel,
+                  : l10n.shellShowNotesPanel(ShortcutLabels.mod),
               onPressed: _toggleNotes,
             ),
             IconButton(
@@ -425,17 +431,18 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
                       _peersPanelVisible
                           ? l10n.shellPeersTooltipActionHide
                           : l10n.shellPeersTooltipActionShow,
+                      ShortcutLabels.mod,
                     )
                   : _peersPanelVisible
                   ? l10n.shellHidePeersPanel
-                  : l10n.shellShowPeersPanel,
+                  : l10n.shellShowPeersPanel(ShortcutLabels.mod),
               onPressed: _togglePeers,
             ),
           ],
           if (!desktopMenus)
             IconButton(
               icon: Icon(_findVisible ? Icons.search_off : Icons.search),
-              tooltip: l10n.shellFindInNote,
+              tooltip: l10n.shellFindInNote(ShortcutLabels.mod),
               onPressed: () => _toggleFind(),
             ),
           if (!desktopMenus && speechInput != null)
@@ -468,6 +475,8 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
           if (!desktopMenus)
             MobileOverflowMenuButton(
               wordWrap: wordWrap,
+              showFileImportExport:
+                  MobileOverflowMenuButton.defaultShowFileImportExport,
               onSelected: (action) => _onAppMenuAction(context, action),
             ),
         ],
@@ -517,9 +526,9 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
       case MobileAppMenuAction.wordWrap:
         await prefs.setWordWrap(!prefs.wordWrap);
       case MobileAppMenuAction.save:
-        await _saveNote(context);
+        if (FileService.supportsImportExport) await _saveNote(context);
       case MobileAppMenuAction.open:
-        await _openNote(context);
+        if (FileService.supportsImportExport) await _openNote(context);
       case MobileAppMenuAction.share:
         await _shareNote(context);
       case MobileAppMenuAction.history:
@@ -630,6 +639,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   }
 
   Future<void> _saveNote(BuildContext context) async {
+    if (!FileService.supportsImportExport) return;
     final doc = context.read<WorkspaceRepository>().active;
     if (doc == null) return;
     final messenger = ScaffoldMessenger.of(context);
@@ -647,6 +657,7 @@ class _HomeShellState extends State<_HomeShell> with WidgetsBindingObserver {
   }
 
   Future<void> _openNote(BuildContext context) async {
+    if (!FileService.supportsImportExport) return;
     final workspace = context.read<WorkspaceRepository>();
     final messenger = ScaffoldMessenger.of(context);
     final l10n = context.l10n;

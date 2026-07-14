@@ -62,13 +62,30 @@ class DesktopMenuActions {
   final VoidCallback onExit;
 }
 
-MenuSerializableShortcut? _menuShortcut(LogicalKeyboardKey key) {
+MenuSerializableShortcut? _menuShortcut(
+  LogicalKeyboardKey key, {
+  bool alt = false,
+}) {
   final isMac = defaultTargetPlatform == TargetPlatform.macOS;
   return SingleActivator(
     key,
     control: !isMac,
     meta: isMac,
+    alt: alt,
   );
+}
+
+/// Find & Replace: Ctrl+H on Win/Linux; Option+Cmd+F on macOS (Cmd+H is Hide).
+MenuSerializableShortcut? _findReplaceShortcut() {
+  final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+  if (isMac) {
+    return const SingleActivator(
+      LogicalKeyboardKey.keyF,
+      meta: true,
+      alt: true,
+    );
+  }
+  return const SingleActivator(LogicalKeyboardKey.keyH, control: true);
 }
 
 /// Native macOS menu bar (File, Edit, View).
@@ -80,9 +97,6 @@ List<PlatformMenuItem> buildMacosMenus(
     PlatformMenu(
       label: l10n.commonAppName,
       menus: [
-        const PlatformProvidedMenuItem(
-          type: PlatformProvidedMenuItemType.about,
-        ),
         PlatformMenuItemGroup(
           members: [
             PlatformMenuItem(
@@ -172,7 +186,7 @@ List<PlatformMenuItem> buildMacosMenus(
             ),
             PlatformMenuItem(
               label: l10n.shellFindAndReplace,
-              shortcut: _menuShortcut(LogicalKeyboardKey.keyH),
+              shortcut: _findReplaceShortcut(),
               onSelected: actions.onFindReplace,
             ),
           ],
@@ -301,7 +315,7 @@ class DesktopMaterialMenuBar extends StatelessWidget {
               ),
               MenuItemButton(
                 onPressed: actions.onFindReplace,
-                shortcut: _menuShortcut(LogicalKeyboardKey.keyH),
+                shortcut: _findReplaceShortcut(),
                 child: Text(l10n.shellFindAndReplace),
               ),
               MenuItemButton(

@@ -73,6 +73,12 @@ flutter pub get
 flutter run -d linux    # or windows, macos, android, ios
 ```
 
+### Apple (iOS / macOS)
+
+- **iOS:** Local Network permission is required for peer discovery. Notes persist in app storage; there is no Save/Open file UI — use **Share**. Build: `flutter build ipa` (see [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md)).
+- **macOS:** Save/Open/Share work via the native File menu. Find & Replace is **Option+Cmd+F** (Cmd+H is Hide). Set signing team in Xcode; Hardened Runtime is enabled for release builds.
+- Store / IAP keys: prefer `--dart-define=REVENUECAT_IOS_API_KEY=…` and `REVENUECAT_MACOS_API_KEY=…` (legacy `REVENUECAT_APPLE_API_KEY` still works as fallback).
+
 ## Windows beta installer
 
 To build a beta installer for testers (64-bit Windows 10+):

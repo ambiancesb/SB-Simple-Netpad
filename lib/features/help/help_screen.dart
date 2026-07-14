@@ -1,8 +1,11 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:netpad/core/app_info.dart';
 import 'package:netpad/features/help/about_screen.dart';
 import 'package:netpad/features/shell/desktop_menus.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
+import 'package:netpad/services/file_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Opens the in-app help guide.
@@ -118,9 +121,11 @@ class HelpScreen extends StatelessWidget {
             context,
             title: l10n.helpFileSharingTitle,
             bullets: [
-              if (desktop) l10n.helpFileSharing1Desktop else l10n.helpFileSharing1Mobile,
-              l10n.helpFileSharing2,
-              l10n.helpFileSharing3,
+              _fileSharingIntro(l10n),
+              if (FileService.supportsImportExport) ...[
+                l10n.helpFileSharing2,
+                l10n.helpFileSharing3,
+              ],
               l10n.helpFileSharing4,
             ],
           ),
@@ -156,6 +161,7 @@ class HelpScreen extends StatelessWidget {
               l10n.helpTroubleshooting3,
               l10n.helpTroubleshooting4,
               l10n.helpTroubleshooting5,
+              l10n.helpTroubleshooting6,
             ],
           ),
           const SizedBox(height: 24),
@@ -166,6 +172,13 @@ class HelpScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _fileSharingIntro(AppLocalizations l10n) {
+    if (Platform.isIOS) return l10n.helpFileSharing1Ios;
+    if (Platform.isMacOS) return l10n.helpFileSharing1Macos;
+    if (isDesktopMenuPlatform()) return l10n.helpFileSharing1Desktop;
+    return l10n.helpFileSharing1Mobile;
   }
 
   Widget _section(

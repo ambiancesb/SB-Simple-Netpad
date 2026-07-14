@@ -60,19 +60,35 @@
   "shellHelpItem": "SB Simple Netpad Help",
   "shellAboutItem": "About SB Simple Netpad",
   "shellHideNotesPanel": "Hide notes panel",
-  "shellShowNotesPanel": "Show notes panel (Ctrl+N)",
+  "shellShowNotesPanel": "Show notes panel ({mod}+N)",
+  "@shellShowNotesPanel": {
+    "placeholders": {
+      "mod": {"type": "String"}
+    }
+  },
   "shellHidePeersPanel": "Hide peers panel",
-  "shellShowPeersPanel": "Show peers panel (Ctrl+P)",
-  "shellPeersTooltipConnected": "{count} encrypted peer sessions · {action} peers panel (Ctrl+P)",
+  "shellShowPeersPanel": "Show peers panel ({mod}+P)",
+  "@shellShowPeersPanel": {
+    "placeholders": {
+      "mod": {"type": "String"}
+    }
+  },
+  "shellPeersTooltipConnected": "{count} encrypted peer sessions · {action} peers panel ({mod}+P)",
   "@shellPeersTooltipConnected": {
     "placeholders": {
       "count": {"type": "int"},
-      "action": {"type": "String"}
+      "action": {"type": "String"},
+      "mod": {"type": "String"}
     }
   },
   "shellPeersTooltipActionHide": "hide",
   "shellPeersTooltipActionShow": "show",
-  "shellFindInNote": "Find in note (Ctrl+F)",
+  "shellFindInNote": "Find in note ({mod}+F)",
+  "@shellFindInNote": {
+    "placeholders": {
+      "mod": {"type": "String"}
+    }
+  },
   "shellSecurityChipConnected": "{count} peer sessions encrypted with WSS/TLS · tap for peers",
   "@shellSecurityChipConnected": {
     "placeholders": {
@@ -165,8 +181,18 @@
   "editorMatchNone": "0/0",
   "editorPrevious": "Previous",
   "editorNext": "Next",
-  "editorShowReplace": "Show replace (Ctrl+H)",
-  "editorHideReplace": "Hide replace (Ctrl+H)",
+  "editorShowReplace": "Show replace ({shortcut})",
+  "@editorShowReplace": {
+    "placeholders": {
+      "shortcut": {"type": "String"}
+    }
+  },
+  "editorHideReplace": "Hide replace ({shortcut})",
+  "@editorHideReplace": {
+    "placeholders": {
+      "shortcut": {"type": "String"}
+    }
+  },
   "editorClose": "Close",
   "editorReplace": "Replace",
   "editorReplaceAll": "All",
@@ -399,7 +425,12 @@
 
   "settingsTitle": "Settings",
   "settingsDeviceSection": "Device",
-  "settingsDeviceHint": "Device name and room require Save (Ctrl+S). Appearance and editor preferences save immediately.",
+  "settingsDeviceHint": "Device name and room require Save ({mod}+S). Appearance and editor preferences save immediately.",
+  "@settingsDeviceHint": {
+    "placeholders": {
+      "mod": {"type": "String"}
+    }
+  },
   "settingsDeviceName": "Device name",
   "settingsDeviceNameHint": "Name shown to other devices",
   "settingsSessionRoom": "Session / room",
@@ -536,9 +567,11 @@
   "helpPeers7": "Connected shows active sessions with address and cursor presence.",
   "helpFileSharingTitle": "File & sharing",
   "helpFileSharing1Desktop": "File menu: Save to File, Open File as New Note, Share Note, Version History, Settings, Exit.",
+  "helpFileSharing1Macos": "File menu: Save to File, Open File as New Note, Share Note, Version History. Settings are under the app menu (Cmd+,); Quit ends the app.",
   "helpFileSharing1Mobile": "Overflow menu (⋮): save to file, open file as new note, share, version history, settings, and this help guide.",
-  "helpFileSharing2": "Save to file exports the active note as .txt or .md.",
-  "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it.",
+  "helpFileSharing1Ios": "Overflow menu (⋮): share note, version history, settings, and this help guide. Use Share to export text — Save/Open file are not available on iOS.",
+  "helpFileSharing2": "Save to file exports the active note as .txt or .md (desktop and Android).",
+  "helpFileSharing3": "Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).",
   "helpFileSharing4": "Share uses the OS share sheet; Linux falls back to clipboard.",
   "helpSettingsTitle": "Settings",
   "helpSettings1": "Device name and room require Save — other options apply immediately.",
@@ -548,16 +581,17 @@
   "helpDesktopShortcuts1": "Ctrl/Cmd+S — Save to file",
   "helpDesktopShortcuts2": "Ctrl/Cmd+O — Open file as new note",
   "helpDesktopShortcuts3": "Ctrl/Cmd+F — Find in note",
-  "helpDesktopShortcuts4": "Ctrl/Cmd+H — Find and replace",
+  "helpDesktopShortcuts4": "Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace",
   "helpDesktopShortcuts5": "Ctrl/Cmd+N — Toggle notes panel",
   "helpDesktopShortcuts6": "Ctrl/Cmd+P — Toggle peers panel",
-  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows/Linux)",
+  "helpDesktopShortcuts7": "Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu",
   "helpTroubleshootingTitle": "Troubleshooting",
   "helpTroubleshooting1": "No peers? Confirm same Wi‑Fi subnet and room ID; try Connect by IP.",
   "helpTroubleshooting2": "Local network required banner means sync is paused until Wi‑Fi is up.",
   "helpTroubleshooting3": "Allow the app through your firewall on first launch (desktop).",
   "helpTroubleshooting4": "Linux: install dbus and avahi-daemon if discovery never starts.",
   "helpTroubleshooting5": "Android: grant nearby Wi‑Fi permission when prompted.",
+  "helpTroubleshooting6": "iOS/macOS: allow Local Network access for SB Simple Netpad in System Settings if peers never appear.",
 
   "aboutTitle": "About",
   "aboutTagline": "LAN notepad with peer discovery and shared editing.",

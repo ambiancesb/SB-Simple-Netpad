@@ -161,17 +161,21 @@ class AppLocalizationsPt extends AppLocalizations {
   String get shellHideNotesPanel => 'Ocultar painel de notas';
 
   @override
-  String get shellShowNotesPanel => 'Mostrar painel de notas (Ctrl+N)';
+  String shellShowNotesPanel(String mod) {
+    return 'Mostrar painel de notas ($mod+N)';
+  }
 
   @override
   String get shellHidePeersPanel => 'Ocultar painel de pares';
 
   @override
-  String get shellShowPeersPanel => 'Mostrar painel de pares (Ctrl+P)';
+  String shellShowPeersPanel(String mod) {
+    return 'Mostrar painel de pares ($mod+P)';
+  }
 
   @override
-  String shellPeersTooltipConnected(int count, String action) {
-    return '$count sessÃµes de pares criptografadas Â· $action painel de pares (Ctrl+P)';
+  String shellPeersTooltipConnected(int count, String action, String mod) {
+    return '$count sessÃµes de pares criptografadas Â· $action painel de pares ($mod+P)';
   }
 
   @override
@@ -181,7 +185,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get shellPeersTooltipActionShow => 'mostrar';
 
   @override
-  String get shellFindInNote => 'Localizar na nota (Ctrl+F)';
+  String shellFindInNote(String mod) {
+    return 'Localizar na nota ($mod+F)';
+  }
 
   @override
   String shellSecurityChipConnected(int count) {
@@ -340,10 +346,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get editorNext => 'PrÃ³ximo';
 
   @override
-  String get editorShowReplace => 'Mostrar substituiÃ§Ã£o (Ctrl+H)';
+  String editorShowReplace(String shortcut) {
+    return 'Mostrar substituiÃ§Ã£o ($shortcut)';
+  }
 
   @override
-  String get editorHideReplace => 'Ocultar substituiÃ§Ã£o (Ctrl+H)';
+  String editorHideReplace(String shortcut) {
+    return 'Ocultar substituiÃ§Ã£o ($shortcut)';
+  }
 
   @override
   String get editorClose => 'Fechar';
@@ -683,8 +693,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsDeviceSection => 'Dispositivo';
 
   @override
-  String get settingsDeviceHint =>
-      'O nome do dispositivo e a sala requerem Salvar (Ctrl+S). As preferÃªncias de aparÃªncia e editor sÃ£o salvas imediatamente.';
+  String settingsDeviceHint(String mod) {
+    return 'O nome do dispositivo e a sala requerem Salvar ($mod+S). As preferÃªncias de aparÃªncia e editor sÃ£o salvas imediatamente.';
+  }
 
   @override
   String get settingsDeviceName => 'Nome do dispositivo';
@@ -1034,16 +1045,24 @@ class AppLocalizationsPt extends AppLocalizations {
       'Menu Arquivo: Salvar em arquivo, Abrir arquivo como nova nota, Compartilhar nota, HistÃ³rico de versÃµes, ConfiguraÃ§Ãµes, Sair.';
 
   @override
+  String get helpFileSharing1Macos =>
+      'File menu: Save to File, Open File as New Note, Share Note, Version History. Settings are under the app menu (Cmd+,); Quit ends the app.';
+
+  @override
   String get helpFileSharing1Mobile =>
       'Menu (â‹®): salvar em arquivo, abrir arquivo como nova nota, compartilhar, histÃ³rico de versÃµes, configuraÃ§Ãµes e este guia de ajuda.';
 
   @override
+  String get helpFileSharing1Ios =>
+      'Overflow menu (⋮): share note, version history, settings, and this help guide. Use Share to export text — Save/Open file are not available on iOS.';
+
+  @override
   String get helpFileSharing2 =>
-      'Salvar em arquivo exporta a nota ativa como .txt ou .md.';
+      'Save to file exports the active note as .txt or .md (desktop and Android).';
 
   @override
   String get helpFileSharing3 =>
-      'Abrir arquivo importa texto para uma nova nota só local; ative a sincronização se quiser que os pares a recebam.';
+      'Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).';
 
   @override
   String get helpFileSharing4 =>
@@ -1078,7 +1097,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get helpDesktopShortcuts3 => 'Ctrl/Cmd+F â€” Localizar na nota';
 
   @override
-  String get helpDesktopShortcuts4 => 'Ctrl/Cmd+H â€” Localizar e substituir';
+  String get helpDesktopShortcuts4 =>
+      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N â€” Alternar painel de notas';
@@ -1087,7 +1107,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get helpDesktopShortcuts6 => 'Ctrl/Cmd+P â€” Alternar painel de pares';
 
   @override
-  String get helpDesktopShortcuts7 => 'Ctrl/Cmd+Q â€” Sair (Windows/Linux)';
+  String get helpDesktopShortcuts7 =>
+      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => 'SoluÃ§Ã£o de problemas';
@@ -1111,6 +1132,10 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get helpTroubleshooting5 =>
       'Android: conceda permissÃ£o de Wiâ€‘Fi prÃ³ximo quando solicitado.';
+
+  @override
+  String get helpTroubleshooting6 =>
+      'iOS/macOS: allow Local Network access for SB Simple Netpad in System Settings if peers never appear.';
 
   @override
   String get aboutTitle => 'Sobre';
@@ -1383,17 +1408,21 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get shellHideNotesPanel => 'Ocultar painel de notas';
 
   @override
-  String get shellShowNotesPanel => 'Mostrar painel de notas (Ctrl+N)';
+  String shellShowNotesPanel(String mod) {
+    return 'Mostrar painel de notas ($mod+N)';
+  }
 
   @override
   String get shellHidePeersPanel => 'Ocultar painel de pares';
 
   @override
-  String get shellShowPeersPanel => 'Mostrar painel de pares (Ctrl+P)';
+  String shellShowPeersPanel(String mod) {
+    return 'Mostrar painel de pares ($mod+P)';
+  }
 
   @override
-  String shellPeersTooltipConnected(int count, String action) {
-    return '$count sessões de pares criptografadas · $action painel de pares (Ctrl+P)';
+  String shellPeersTooltipConnected(int count, String action, String mod) {
+    return '$count sessões de pares criptografadas · $action painel de pares ($mod+P)';
   }
 
   @override
@@ -1403,7 +1432,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get shellPeersTooltipActionShow => 'mostrar';
 
   @override
-  String get shellFindInNote => 'Localizar na nota (Ctrl+F)';
+  String shellFindInNote(String mod) {
+    return 'Localizar na nota ($mod+F)';
+  }
 
   @override
   String shellSecurityChipConnected(int count) {
@@ -1562,10 +1593,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get editorNext => 'Próximo';
 
   @override
-  String get editorShowReplace => 'Mostrar substituição (Ctrl+H)';
+  String editorShowReplace(String shortcut) {
+    return 'Mostrar substituição ($shortcut)';
+  }
 
   @override
-  String get editorHideReplace => 'Ocultar substituição (Ctrl+H)';
+  String editorHideReplace(String shortcut) {
+    return 'Ocultar substituição ($shortcut)';
+  }
 
   @override
   String get editorClose => 'Fechar';
@@ -1905,8 +1940,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get settingsDeviceSection => 'Dispositivo';
 
   @override
-  String get settingsDeviceHint =>
-      'O nome do dispositivo e a sala requerem Salvar (Ctrl+S). As preferências de aparência e editor são salvas imediatamente.';
+  String settingsDeviceHint(String mod) {
+    return 'O nome do dispositivo e a sala requerem Salvar ($mod+S). As preferências de aparência e editor são salvas imediatamente.';
+  }
 
   @override
   String get settingsDeviceName => 'Nome do dispositivo';
@@ -2261,11 +2297,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpFileSharing2 =>
-      'Salvar em arquivo exporta a nota ativa como .txt ou .md.';
+      'Save to file exports the active note as .txt or .md (desktop and Android).';
 
   @override
   String get helpFileSharing3 =>
-      'Abrir arquivo importa texto para uma nova nota só local; ative a sincronização se quiser que os pares a recebam.';
+      'Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).';
 
   @override
   String get helpFileSharing4 =>
@@ -2300,7 +2336,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get helpDesktopShortcuts3 => 'Ctrl/Cmd+F — Localizar na nota';
 
   @override
-  String get helpDesktopShortcuts4 => 'Ctrl/Cmd+H — Localizar e substituir';
+  String get helpDesktopShortcuts4 =>
+      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — Alternar painel de notas';
@@ -2309,7 +2346,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get helpDesktopShortcuts6 => 'Ctrl/Cmd+P — Alternar painel de pares';
 
   @override
-  String get helpDesktopShortcuts7 => 'Ctrl/Cmd+Q — Sair (Windows/Linux)';
+  String get helpDesktopShortcuts7 =>
+      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => 'Solução de problemas';

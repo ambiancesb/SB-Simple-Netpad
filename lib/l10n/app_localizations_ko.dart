@@ -160,17 +160,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shellHideNotesPanel => '메모 패널 숨기기';
 
   @override
-  String get shellShowNotesPanel => '메모 패널 표시 (Ctrl+N)';
+  String shellShowNotesPanel(String mod) {
+    return '메모 패널 표시 ($mod+N)';
+  }
 
   @override
   String get shellHidePeersPanel => '피어 패널 숨기기';
 
   @override
-  String get shellShowPeersPanel => '피어 패널 표시 (Ctrl+P)';
+  String shellShowPeersPanel(String mod) {
+    return '피어 패널 표시 ($mod+P)';
+  }
 
   @override
-  String shellPeersTooltipConnected(int count, String action) {
-    return '$count개의 암호화된 피어 세션 · 피어 패널 $action (Ctrl+P)';
+  String shellPeersTooltipConnected(int count, String action, String mod) {
+    return '$count개의 암호화된 피어 세션 · 피어 패널 $action ($mod+P)';
   }
 
   @override
@@ -180,7 +184,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shellPeersTooltipActionShow => '표시';
 
   @override
-  String get shellFindInNote => '메모에서 찾기 (Ctrl+F)';
+  String shellFindInNote(String mod) {
+    return '메모에서 찾기 ($mod+F)';
+  }
 
   @override
   String shellSecurityChipConnected(int count) {
@@ -335,10 +341,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get editorNext => '다음';
 
   @override
-  String get editorShowReplace => '바꾸기 표시 (Ctrl+H)';
+  String editorShowReplace(String shortcut) {
+    return '바꾸기 표시 ($shortcut)';
+  }
 
   @override
-  String get editorHideReplace => '바꾸기 숨기기 (Ctrl+H)';
+  String editorHideReplace(String shortcut) {
+    return '바꾸기 숨기기 ($shortcut)';
+  }
 
   @override
   String get editorClose => '닫기';
@@ -670,8 +680,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsDeviceSection => '기기';
 
   @override
-  String get settingsDeviceHint =>
-      '기기 이름과 방은 저장 (Ctrl+S)이 필요합니다. 외관 및 편집기 설정은 즉시 저장됩니다.';
+  String settingsDeviceHint(String mod) {
+    return '기기 이름과 방은 저장 ($mod+S)이 필요합니다. 외관 및 편집기 설정은 즉시 저장됩니다.';
+  }
 
   @override
   String get settingsDeviceName => '기기 이름';
@@ -991,15 +1002,24 @@ class AppLocalizationsKo extends AppLocalizations {
       '파일 메뉴: 파일로 저장, 파일을 새 메모로 열기, 메모 공유, 버전 기록, 설정, 종료.';
 
   @override
+  String get helpFileSharing1Macos =>
+      'File menu: Save to File, Open File as New Note, Share Note, Version History. Settings are under the app menu (Cmd+,); Quit ends the app.';
+
+  @override
   String get helpFileSharing1Mobile =>
       '메뉴(⋮): 파일로 저장, 파일을 새 메모로 열기, 공유, 버전 기록, 설정, 이 도움말 가이드.';
 
   @override
-  String get helpFileSharing2 => '파일로 저장은 활성 메모를 .txt 또는 .md로 내보냅니다.';
+  String get helpFileSharing1Ios =>
+      'Overflow menu (⋮): share note, version history, settings, and this help guide. Use Share to export text — Save/Open file are not available on iOS.';
+
+  @override
+  String get helpFileSharing2 =>
+      'Save to file exports the active note as .txt or .md (desktop and Android).';
 
   @override
   String get helpFileSharing3 =>
-      '파일 열기는 텍스트를 로컬 전용 새 메모로 가져옵니다. 피어가 받도록 하려면 동기화를 켜세요.';
+      'Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).';
 
   @override
   String get helpFileSharing4 => '공유는 OS 공유 시트를 사용합니다. Linux는 클립보드로 대체됩니다.';
@@ -1029,7 +1049,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get helpDesktopShortcuts3 => 'Ctrl/Cmd+F — 메모에서 찾기';
 
   @override
-  String get helpDesktopShortcuts4 => 'Ctrl/Cmd+H — 찾기 및 바꾸기';
+  String get helpDesktopShortcuts4 =>
+      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — 메모 패널 전환';
@@ -1038,7 +1059,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get helpDesktopShortcuts6 => 'Ctrl/Cmd+P — 피어 패널 전환';
 
   @override
-  String get helpDesktopShortcuts7 => 'Ctrl/Cmd+Q — 종료 (Windows/Linux)';
+  String get helpDesktopShortcuts7 =>
+      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => '문제 해결';
@@ -1060,6 +1082,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get helpTroubleshooting5 => 'Android: 메시지가 표시되면 근처 Wi‑Fi 권한을 부여하세요.';
+
+  @override
+  String get helpTroubleshooting6 =>
+      'iOS/macOS: allow Local Network access for SB Simple Netpad in System Settings if peers never appear.';
 
   @override
   String get aboutTitle => '정보';

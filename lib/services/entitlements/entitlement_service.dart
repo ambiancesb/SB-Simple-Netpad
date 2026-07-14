@@ -43,6 +43,12 @@ class EntitlementService extends ChangeNotifier {
     String appleApiKey = const String.fromEnvironment(
       'REVENUECAT_APPLE_API_KEY',
     ),
+    String iosApiKey = const String.fromEnvironment(
+      'REVENUECAT_IOS_API_KEY',
+    ),
+    String macosApiKey = const String.fromEnvironment(
+      'REVENUECAT_MACOS_API_KEY',
+    ),
     String googleApiKey = const String.fromEnvironment(
       'REVENUECAT_GOOGLE_API_KEY',
     ),
@@ -62,6 +68,8 @@ class EntitlementService extends ChangeNotifier {
     if (RevenueCatBackend.isSupportedPlatform) {
       return RevenueCatBackend(
         appleApiKey: appleApiKey,
+        iosApiKey: iosApiKey,
+        macosApiKey: macosApiKey,
         googleApiKey: googleApiKey,
       );
     }

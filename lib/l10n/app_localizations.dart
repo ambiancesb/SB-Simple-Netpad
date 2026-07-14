@@ -412,8 +412,8 @@ abstract class AppLocalizations {
   /// No description provided for @shellShowNotesPanel.
   ///
   /// In en, this message translates to:
-  /// **'Show notes panel (Ctrl+N)'**
-  String get shellShowNotesPanel;
+  /// **'Show notes panel ({mod}+N)'**
+  String shellShowNotesPanel(String mod);
 
   /// No description provided for @shellHidePeersPanel.
   ///
@@ -424,14 +424,14 @@ abstract class AppLocalizations {
   /// No description provided for @shellShowPeersPanel.
   ///
   /// In en, this message translates to:
-  /// **'Show peers panel (Ctrl+P)'**
-  String get shellShowPeersPanel;
+  /// **'Show peers panel ({mod}+P)'**
+  String shellShowPeersPanel(String mod);
 
   /// No description provided for @shellPeersTooltipConnected.
   ///
   /// In en, this message translates to:
-  /// **'{count} encrypted peer sessions · {action} peers panel (Ctrl+P)'**
-  String shellPeersTooltipConnected(int count, String action);
+  /// **'{count} encrypted peer sessions · {action} peers panel ({mod}+P)'**
+  String shellPeersTooltipConnected(int count, String action, String mod);
 
   /// No description provided for @shellPeersTooltipActionHide.
   ///
@@ -448,8 +448,8 @@ abstract class AppLocalizations {
   /// No description provided for @shellFindInNote.
   ///
   /// In en, this message translates to:
-  /// **'Find in note (Ctrl+F)'**
-  String get shellFindInNote;
+  /// **'Find in note ({mod}+F)'**
+  String shellFindInNote(String mod);
 
   /// No description provided for @shellSecurityChipConnected.
   ///
@@ -724,14 +724,14 @@ abstract class AppLocalizations {
   /// No description provided for @editorShowReplace.
   ///
   /// In en, this message translates to:
-  /// **'Show replace (Ctrl+H)'**
-  String get editorShowReplace;
+  /// **'Show replace ({shortcut})'**
+  String editorShowReplace(String shortcut);
 
   /// No description provided for @editorHideReplace.
   ///
   /// In en, this message translates to:
-  /// **'Hide replace (Ctrl+H)'**
-  String get editorHideReplace;
+  /// **'Hide replace ({shortcut})'**
+  String editorHideReplace(String shortcut);
 
   /// No description provided for @editorClose.
   ///
@@ -1282,8 +1282,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDeviceHint.
   ///
   /// In en, this message translates to:
-  /// **'Device name and room require Save (Ctrl+S). Appearance and editor preferences save immediately.'**
-  String get settingsDeviceHint;
+  /// **'Device name and room require Save ({mod}+S). Appearance and editor preferences save immediately.'**
+  String settingsDeviceHint(String mod);
 
   /// No description provided for @settingsDeviceName.
   ///
@@ -1867,22 +1867,34 @@ abstract class AppLocalizations {
   /// **'File menu: Save to File, Open File as New Note, Share Note, Version History, Settings, Exit.'**
   String get helpFileSharing1Desktop;
 
+  /// No description provided for @helpFileSharing1Macos.
+  ///
+  /// In en, this message translates to:
+  /// **'File menu: Save to File, Open File as New Note, Share Note, Version History. Settings are under the app menu (Cmd+,); Quit ends the app.'**
+  String get helpFileSharing1Macos;
+
   /// No description provided for @helpFileSharing1Mobile.
   ///
   /// In en, this message translates to:
   /// **'Overflow menu (⋮): save to file, open file as new note, share, version history, settings, and this help guide.'**
   String get helpFileSharing1Mobile;
 
+  /// No description provided for @helpFileSharing1Ios.
+  ///
+  /// In en, this message translates to:
+  /// **'Overflow menu (⋮): share note, version history, settings, and this help guide. Use Share to export text — Save/Open file are not available on iOS.'**
+  String get helpFileSharing1Ios;
+
   /// No description provided for @helpFileSharing2.
   ///
   /// In en, this message translates to:
-  /// **'Save to file exports the active note as .txt or .md.'**
+  /// **'Save to file exports the active note as .txt or .md (desktop and Android).'**
   String get helpFileSharing2;
 
   /// No description provided for @helpFileSharing3.
   ///
   /// In en, this message translates to:
-  /// **'Open file imports text into a new local-only note; turn on sync if you want peers to receive it.'**
+  /// **'Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).'**
   String get helpFileSharing3;
 
   /// No description provided for @helpFileSharing4.
@@ -1942,7 +1954,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpDesktopShortcuts4.
   ///
   /// In en, this message translates to:
-  /// **'Ctrl/Cmd+H — Find and replace'**
+  /// **'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace'**
   String get helpDesktopShortcuts4;
 
   /// No description provided for @helpDesktopShortcuts5.
@@ -1960,7 +1972,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpDesktopShortcuts7.
   ///
   /// In en, this message translates to:
-  /// **'Ctrl/Cmd+Q — Exit (Windows/Linux)'**
+  /// **'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu'**
   String get helpDesktopShortcuts7;
 
   /// No description provided for @helpTroubleshootingTitle.
@@ -1998,6 +2010,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Android: grant nearby Wi‑Fi permission when prompted.'**
   String get helpTroubleshooting5;
+
+  /// No description provided for @helpTroubleshooting6.
+  ///
+  /// In en, this message translates to:
+  /// **'iOS/macOS: allow Local Network access for SB Simple Netpad in System Settings if peers never appear.'**
+  String get helpTroubleshooting6;
 
   /// No description provided for @aboutTitle.
   ///

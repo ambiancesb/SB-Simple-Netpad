@@ -160,17 +160,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get shellHideNotesPanel => 'メモパネルを非表示';
 
   @override
-  String get shellShowNotesPanel => 'メモパネルを表示 (Ctrl+N)';
+  String shellShowNotesPanel(String mod) {
+    return 'メモパネルを表示 ($mod+N)';
+  }
 
   @override
   String get shellHidePeersPanel => 'ピアパネルを非表示';
 
   @override
-  String get shellShowPeersPanel => 'ピアパネルを表示 (Ctrl+P)';
+  String shellShowPeersPanel(String mod) {
+    return 'ピアパネルを表示 ($mod+P)';
+  }
 
   @override
-  String shellPeersTooltipConnected(int count, String action) {
-    return '$count 件の暗号化されたピアセッション · ピアパネルを$action (Ctrl+P)';
+  String shellPeersTooltipConnected(int count, String action, String mod) {
+    return '$count 件の暗号化されたピアセッション · ピアパネルを$action ($mod+P)';
   }
 
   @override
@@ -180,7 +184,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get shellPeersTooltipActionShow => '表示';
 
   @override
-  String get shellFindInNote => 'メモ内を検索 (Ctrl+F)';
+  String shellFindInNote(String mod) {
+    return 'メモ内を検索 ($mod+F)';
+  }
 
   @override
   String shellSecurityChipConnected(int count) {
@@ -335,10 +341,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get editorNext => '次へ';
 
   @override
-  String get editorShowReplace => '置換を表示 (Ctrl+H)';
+  String editorShowReplace(String shortcut) {
+    return '置換を表示 ($shortcut)';
+  }
 
   @override
-  String get editorHideReplace => '置換を非表示 (Ctrl+H)';
+  String editorHideReplace(String shortcut) {
+    return '置換を非表示 ($shortcut)';
+  }
 
   @override
   String get editorClose => '閉じる';
@@ -670,8 +680,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsDeviceSection => 'デバイス';
 
   @override
-  String get settingsDeviceHint =>
-      'デバイス名とルームには保存 (Ctrl+S) が必要です。外観とエディタの設定はすぐに保存されます。';
+  String settingsDeviceHint(String mod) {
+    return 'デバイス名とルームには保存 ($mod+S) が必要です。外観とエディタの設定はすぐに保存されます。';
+  }
 
   @override
   String get settingsDeviceName => 'デバイス名';
@@ -990,16 +1001,24 @@ class AppLocalizationsJa extends AppLocalizations {
       'ファイルメニュー: ファイルに保存、ファイルを新しいメモとして開く、メモを共有、バージョン履歴、設定、終了。';
 
   @override
+  String get helpFileSharing1Macos =>
+      'File menu: Save to File, Open File as New Note, Share Note, Version History. Settings are under the app menu (Cmd+,); Quit ends the app.';
+
+  @override
   String get helpFileSharing1Mobile =>
       'メニュー（⋮）: ファイルに保存、ファイルを新しいメモとして開く、共有、バージョン履歴、設定、このヘルプガイド。';
 
   @override
+  String get helpFileSharing1Ios =>
+      'Overflow menu (⋮): share note, version history, settings, and this help guide. Use Share to export text — Save/Open file are not available on iOS.';
+
+  @override
   String get helpFileSharing2 =>
-      'ファイルに保存すると、アクティブなメモが .txt または .md としてエクスポートされます。';
+      'Save to file exports the active note as .txt or .md (desktop and Android).';
 
   @override
   String get helpFileSharing3 =>
-      'ファイルを開くとローカルのみの新しいメモにテキストがインポートされます。ピアに届ける場合は同期をオンにしてください。';
+      'Open file imports text into a new local-only note; turn on sync if you want peers to receive it (desktop and Android).';
 
   @override
   String get helpFileSharing4 => '共有はOSの共有シートを使用します。Linuxではクリップボードにフォールバックします。';
@@ -1029,7 +1048,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get helpDesktopShortcuts3 => 'Ctrl/Cmd+F — メモ内を検索';
 
   @override
-  String get helpDesktopShortcuts4 => 'Ctrl/Cmd+H — 検索と置換';
+  String get helpDesktopShortcuts4 =>
+      'Ctrl+H (Windows/Linux) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
   String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — メモパネルを切り替え';
@@ -1038,7 +1058,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get helpDesktopShortcuts6 => 'Ctrl/Cmd+P — ピアパネルを切り替え';
 
   @override
-  String get helpDesktopShortcuts7 => 'Ctrl/Cmd+Q — 終了（Windows/Linux）';
+  String get helpDesktopShortcuts7 =>
+      'Ctrl/Cmd+Q — Exit (Windows/Linux); macOS uses Quit from the app menu';
 
   @override
   String get helpTroubleshootingTitle => 'トラブルシューティング';
@@ -1061,6 +1082,10 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get helpTroubleshooting5 =>
       'Android: プロンプトが表示されたら、近くのWi‑Fi権限を付与してください。';
+
+  @override
+  String get helpTroubleshooting6 =>
+      'iOS/macOS: allow Local Network access for SB Simple Netpad in System Settings if peers never appear.';
 
   @override
   String get aboutTitle => 'について';

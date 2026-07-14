@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:netpad/services/entitlements/entitlement_constants.dart';
 import 'package:netpad/services/entitlements/entitlement_service.dart';
 import 'package:netpad/services/entitlements/free_backend.dart';
+import 'package:netpad/services/entitlements/revenue_cat_backend.dart';
 import 'package:netpad/services/entitlements/standard_features.dart';
 import 'package:netpad/theme/app_skin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -101,6 +102,77 @@ void main() {
       expect(backend.purchasesSupported, isFalse);
       expect(await backend.refreshIsStandard(), isTrue);
       expect(await backend.restorePurchases(), isTrue);
+    });
+  });
+
+  group('RevenueCat key resolution', () {
+    test('prefers platform Apple keys over legacy', () {
+      expect(
+        RevenueCatBackend.resolveApiKey(
+          isIOS: true,
+          isMacOS: false,
+          isAndroid: false,
+          appleApiKey: 'appl_legacy',
+          iosApiKey: 'appl_ios',
+          macosApiKey: 'appl_mac',
+          googleApiKey: '',
+        ),
+        'appl_ios',
+      );
+      expect(
+        RevenueCatBackend.resolveApiKey(
+          isIOS: false,
+          isMacOS: true,
+          isAndroid: false,
+          appleApiKey: 'appl_legacy',
+          iosApiKey: 'appl_ios',
+          macosApiKey: 'appl_mac',
+          googleApiKey: '',
+        ),
+        'appl_mac',
+      );
+    });
+
+    test('falls back to legacy Apple key', () {
+      expect(
+        RevenueCatBackend.resolveApiKey(
+          isIOS: true,
+          isMacOS: false,
+          isAndroid: false,
+          appleApiKey: 'appl_legacy',
+          iosApiKey: '',
+          macosApiKey: '',
+          googleApiKey: '',
+        ),
+        'appl_legacy',
+      );
+      expect(
+        RevenueCatBackend.resolveApiKey(
+          isIOS: false,
+          isMacOS: true,
+          isAndroid: false,
+          appleApiKey: 'appl_legacy',
+          iosApiKey: '',
+          macosApiKey: '',
+          googleApiKey: '',
+        ),
+        'appl_legacy',
+      );
+    });
+
+    test('uses Google key on Android', () {
+      expect(
+        RevenueCatBackend.resolveApiKey(
+          isIOS: false,
+          isMacOS: false,
+          isAndroid: true,
+          appleApiKey: 'appl_x',
+          iosApiKey: '',
+          macosApiKey: '',
+          googleApiKey: 'goog_x',
+        ),
+        'goog_x',
+      );
     });
   });
 

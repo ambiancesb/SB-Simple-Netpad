@@ -41,12 +41,18 @@ Use the **same** product id on every store so RevenueCat / in-app copy stay alig
 1. Create a RevenueCat project and apps for iOS, Android, and macOS.
 2. Create entitlement **`pro`** (legacy id for the Standard unlock) and attach each store product to it.
 3. Create offering **`default`** containing the Standard package (this is what the SDK looks up).
-4. Pass public SDK keys at build time (never commit them):
+4. Pass public SDK keys at build time (never commit them). Prefer
+   platform-specific Apple keys; `REVENUECAT_APPLE_API_KEY` remains a legacy
+   fallback when the iOS/macOS key is empty:
 
 ```bash
 flutter run \
-  --dart-define=REVENUECAT_APPLE_API_KEY=appl_xxx \
+  --dart-define=REVENUECAT_IOS_API_KEY=appl_ios_xxx \
+  --dart-define=REVENUECAT_MACOS_API_KEY=appl_macos_xxx \
   --dart-define=REVENUECAT_GOOGLE_API_KEY=goog_xxx
+
+# Legacy (still supported):
+# --dart-define=REVENUECAT_APPLE_API_KEY=appl_xxx
 ```
 
 CI / release builds should inject the same `--dart-define` values (or equivalent Flutter flavor / env wiring).
@@ -62,14 +68,49 @@ Output: `build/app/outputs/bundle/release/app-release.aab`
 
 Release signing uses `android/key.properties` + `android/upload-keystore.jks` (both gitignored). Back those up securely — losing the upload key blocks Play updates unless you use Play App Signing recovery.
 
+### iOS IPA
+
+```bash
+flutter build ipa --release \
+  --dart-define=REVENUECAT_IOS_API_KEY=appl_ios_xxx
+```
+
+Output: `build/ios/ipa/*.ipa` (after Xcode archive + export). Set your Apple Development Team in Xcode (**Signing & Capabilities**) — do not commit `DEVELOPMENT_TEAM` secrets to the repo.
+
+### macOS app
+
+```bash
+flutter build macos --release \
+  --dart-define=REVENUECAT_MACOS_API_KEY=appl_macos_xxx
+```
+
+Output: `build/macos/Build/Products/Release/SB Simple Netpad.app`. Enable Hardened Runtime (already on in the Xcode project) before notarization / Mac App Store upload. Set signing team locally in Xcode.
+
 ### Store Console ↔ RevenueCat checklist
 
 **Apple (App Store Connect)**
 
 1. Create Non-Consumable IAP `netpad_pro` for the iOS app (and macOS if sold separately).
 2. Attach pricing, localization, and review screenshots for the IAP.
-3. In RevenueCat: link App Store Connect API key / shared secret as required by RC docs.
-4. Map product `netpad_pro` → entitlement `pro` → offering `default`.
+3. In RevenueCat: create **separate** iOS and macOS apps; link App Store Connect API key / shared secret as required by RC docs.
+4. Map product `netpad_pro` → entitlement `pro` → offering `default` on each Apple app.
+5. Enable **In-App Purchase** capability on the App ID; grant **Local Network** for peer sync.
+
+### Apple packaging checklist
+
+| Item | Status / notes |
+|------|----------------|
+| Bundle id | `com.spencerbeaumier.sbnetpad` (shared iOS + macOS) |
+| `PrivacyInfo.xcprivacy` | Present under `ios/Runner` and `macos/Runner` (UserDefaults CA92.1) |
+| Export compliance | `ITSAppUsesNonExemptEncryption` = false in both Info.plists (standard HTTPS/TLS only; confirm before submit) |
+| Hardened Runtime | Enabled on macOS Release/Profile |
+| iOS entitlements | `Runner/Runner.entitlements` wired; enable IAP in the Apple Developer portal |
+| Local Network / Bonjour | `NSLocalNetworkUsageDescription` + `NSBonjourServices` = `_sbnetpad._tcp` |
+| Deployment | iOS 14.0+, macOS 10.15+ |
+| TLS identity | Device cert/key stored in Keychain on Apple (migrated from prefs once) |
+| iOS file export | No Save/Open — Share only; notes still persist in prefs |
+| Nutrition labels | Disclose local network; microphone + speech recognition on iOS (voice dictation / Standard) |
+| Signing | Set Development Team in Xcode locally — do not commit team IDs or API keys |
 
 **Google Play Console**
 

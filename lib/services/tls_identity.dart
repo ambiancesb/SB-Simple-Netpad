@@ -3,12 +3,15 @@ import 'dart:io';
 
 import 'package:basic_utils/basic_utils.dart';
 import 'package:crypto/crypto.dart';
+import 'package:netpad/services/tls_secret_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Per-device self-signed TLS identity used to serve `wss://`.
 ///
 /// The certificate and key are generated once and persisted, so the device's
 /// certificate fingerprint is stable and can be pinned by peers (TOFU).
+/// On iOS/macOS the PEM material lives in the Keychain; elsewhere it uses
+/// [SharedPreferences].
 class TlsIdentity {
   TlsIdentity._(this.certPem, this.keyPem);
 
@@ -23,15 +26,24 @@ class TlsIdentity {
   /// SHA-256 fingerprint of this device's certificate (colon-separated hex).
   late final String fingerprint = certFingerprintFromPem(certPem);
 
-  static Future<TlsIdentity> loadOrCreate(SharedPreferences prefs) async {
-    final cert = prefs.getString(_keyCert);
-    final key = prefs.getString(_keyKey);
-    if (cert != null && cert.isNotEmpty && key != null && key.isNotEmpty) {
+  static Future<TlsIdentity> loadOrCreate(
+    SharedPreferences prefs, {
+    TlsSecretStore? secretStore,
+  }) async {
+    final store = secretStore ?? TlsSecretStore.platform(prefs);
+    await store.migrateFromPrefsIfNeeded(const [_keyCert, _keyKey]);
+
+    final cert = await store.read(_keyCert);
+    final key = await store.read(_keyKey);
+    if (cert != null &&
+        cert.isNotEmpty &&
+        key != null &&
+        key.isNotEmpty) {
       return TlsIdentity._(cert, key);
     }
     final generated = _generate();
-    await prefs.setString(_keyCert, generated.certPem);
-    await prefs.setString(_keyKey, generated.keyPem);
+    await store.write(_keyCert, generated.certPem);
+    await store.write(_keyKey, generated.keyPem);
     return generated;
   }
 
@@ -78,6 +90,5 @@ List<int> _derFromPem(String pem) {
 }
 
 String _formatFingerprint(List<int> bytes) => bytes
-    .map((b) => b.toRadixString(16).padLeft(2, '0'))
-    .join(':')
-    .toUpperCase();
+    .map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase())
+    .join(':');

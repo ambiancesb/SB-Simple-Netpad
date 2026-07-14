@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 
 class LoadedFile {
   const LoadedFile({required this.name, required this.text});
@@ -12,17 +12,27 @@ class LoadedFile {
 }
 
 /// Native save / open dialogs for exporting and importing the note.
+///
+/// Unsupported on iOS (use Share instead). Available on Android and desktop.
 class FileService {
   const FileService();
+
+  /// True when Save / Open file dialogs are offered in the UI.
+  static bool get supportsImportExport {
+    if (kIsWeb) return false;
+    return !Platform.isIOS;
+  }
 
   bool get _isMobile => Platform.isAndroid || Platform.isIOS;
 
   /// Saves [text] to a user-chosen path. Returns the saved path, or null if
-  /// the dialog was cancelled.
+  /// the dialog was cancelled / unsupported.
   Future<String?> saveText(
     String text, {
     String suggestedName = 'netpad-note.txt',
   }) async {
+    if (!supportsImportExport) return null;
+
     final bytes = Uint8List.fromList(utf8.encode(text));
     final path = await FilePicker.platform.saveFile(
       dialogTitle: 'Save note',
@@ -41,8 +51,10 @@ class FileService {
   }
 
   /// Prompts the user to pick a text file. Returns its contents, or null if
-  /// the dialog was cancelled.
+  /// the dialog was cancelled / unsupported.
   Future<LoadedFile?> openText() async {
+    if (!supportsImportExport) return null;
+
     final result = await FilePicker.platform.pickFiles(
       dialogTitle: 'Open note',
       type: FileType.any,

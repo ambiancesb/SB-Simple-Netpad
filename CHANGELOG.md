@@ -9,8 +9,13 @@ and this project currently tracks versions informally.
 
 ### Changed
 - Project status is now **beta** — all roadmap phases through Phase 9 are complete.
+- **iOS:** Save to file / Open file are removed from the overflow menu; use Share. Notes still auto-save via prefs.
+- **macOS:** Find & Replace is Option+Cmd+F (Cmd+H is system Hide); display name is SB Simple Netpad; TLS identity uses Keychain.
+- **RevenueCat:** prefer `REVENUECAT_IOS_API_KEY` / `REVENUECAT_MACOS_API_KEY` (legacy `REVENUECAT_APPLE_API_KEY` fallback).
 
 ### Added
+- Apple packaging: Privacy manifests, export-compliance plist keys, iOS entitlements file, macOS Hardened Runtime, productivity category.
+- Apple store build notes and checklist in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md).
 - **Windows beta installer** — `scripts/build-windows-installer.ps1` builds a release bundle and packages `dist/SB-Simple-Netpad-<version>-beta-windows-x64.zip` (extract and run `Setup.cmd`). Optional single-file `.exe` when [Inno Setup 6+](https://jrsoftware.org/isinfo.php) is installed on the build machine.
 - **Trusted peers and auto-sync (Phase 9)** — After the first manual **Accept**, both devices store a persistent auto-sync token alongside the cert pin. Reconnects skip the pairing dialog when token and fingerprint match; trusted peers auto-reconnect when discovered on the LAN. **Trusted devices** section in the peers drawer: per-peer auto-sync toggle and **Revoke** (distinct from **Block**). Protocol bumped to **v3**.
 - **Phase 9 test suite** — [test/phase9_test.dart](test/phase9_test.dart) covers trusted-peer persistence, auto-accept validation, `peer_disconnect` sender checks, and pair-request payload rules.
