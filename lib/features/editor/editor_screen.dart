@@ -134,6 +134,10 @@ class _EditorBodyState extends State<_EditorBody> {
       return;
     }
 
+    // While a gate is in flight, ignore further IME chunks — the revert uses the
+    // baseline captured when gating started.
+    if (_checkingImeVoice) return;
+
     final speech = widget.speechInput;
     if (speech != null && speech.isListening) {
       _textBeforeChange = after;
@@ -152,12 +156,10 @@ class _EditorBodyState extends State<_EditorBody> {
       return;
     }
 
-    if (_checkingImeVoice) return;
     _checkingImeVoice = true;
     unawaited(_blockUnauthorizedImeVoice(
       document: document,
       before: before,
-      after: after,
       inserted: inserted,
     ));
   }
@@ -165,22 +167,19 @@ class _EditorBodyState extends State<_EditorBody> {
   Future<void> _blockUnauthorizedImeVoice({
     required DocumentRepository document,
     required String before,
-    required String after,
     required String inserted,
   }) async {
     try {
       if (await ImeVoiceGate.looksLikePaste(inserted)) {
-        if (document.controller.text == after) {
-          _textBeforeChange = after;
+        if (mounted) {
+          _textBeforeChange = document.controller.text;
         }
         return;
       }
       if (!mounted) return;
-      if (document.controller.text != after) {
-        _textBeforeChange = document.controller.text;
-        return;
-      }
 
+      // Revert to the pre-dictation baseline even if more IME chunks arrived
+      // during the clipboard check — those are still unauthorized voice input.
       final caret = document.controller.selection.baseOffset
           .clamp(0, before.length);
       document.revertUnauthorizedEdit(before, caret: caret);
@@ -190,6 +189,9 @@ class _EditorBodyState extends State<_EditorBody> {
       await StandardGate.voiceInputAllowed(context);
     } finally {
       _checkingImeVoice = false;
+      if (mounted) {
+        _textBeforeChange = document.controller.text;
+      }
     }
   }
 

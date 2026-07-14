@@ -3,6 +3,10 @@ import 'package:flutter/services.dart';
 /// Detects system-keyboard voice typing (Gboard / iOS dictation) so freemium
 /// can gate it the same way as the in-app mic.
 abstract final class ImeVoiceGate {
+  static final _cjk = RegExp(
+    r'[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]',
+  );
+
   /// Returns the inserted span when [after] is [before] with one contiguous
   /// insertion (or replacement). Returns null for pure deletions or complex
   /// multi-region edits.
@@ -31,12 +35,38 @@ abstract final class ImeVoiceGate {
     return inserted;
   }
 
-  /// Multi-word bulk inserts are typical of IME voice typing (and paste).
-  /// Single-token inserts (typing, swipe-to-type, autocorrect) are allowed.
+  /// Bulk inserts typical of IME voice typing (and paste).
+  ///
+  /// Allows single-token typing / swipe-to-type / single-key input. Catches:
+  /// - multi-word phrases
+  /// - word commits with surrounding whitespace (Gboard / iOS often send `word `)
+  /// - CJK dictation phrases (no spaces between words)
+  /// - very large atomic inserts
   static bool looksLikeVoiceDictation(String inserted) {
+    if (inserted.isEmpty) return false;
+
+    final nonWhitespace = inserted.replaceAll(RegExp(r'\s'), '');
+    if (nonWhitespace.isEmpty) return false;
+
+    // Any insert that mixes content with whitespace in one update — including
+    // trailing-space word commits from keyboard mic — looks like dictation.
+    if (inserted.contains(RegExp(r'\s')) && nonWhitespace.length >= 2) {
+      return true;
+    }
+
     final trimmed = inserted.trim();
-    if (trimmed.length < 2) return false;
-    return trimmed.contains(RegExp(r'\s'));
+    if (trimmed.isEmpty) return false;
+
+    // CJK scripts rarely insert multiple glyphs in one keypress; 4+ is typical
+    // of voice (or paste, which is filtered separately via clipboard).
+    if (_cjk.hasMatch(trimmed) && trimmed.runes.length >= 4) {
+      return true;
+    }
+
+    // Extremely large single-token inserts are not typing / swipe.
+    if (trimmed.length >= 32) return true;
+
+    return false;
   }
 
   /// True when [inserted] matches the current clipboard (user paste).

@@ -27,10 +27,29 @@ void main() {
       expect(ImeVoiceGate.looksLikeVoiceDictation(' one two '), isTrue);
     });
 
+    test('keyboard mic word commits with trailing space look like voice', () {
+      expect(ImeVoiceGate.looksLikeVoiceDictation('hello '), isTrue);
+      expect(ImeVoiceGate.looksLikeVoiceDictation(' Hello'), isTrue);
+    });
+
+    test('CJK phrases look like voice', () {
+      expect(ImeVoiceGate.looksLikeVoiceDictation('こんにちは'), isTrue);
+      expect(ImeVoiceGate.looksLikeVoiceDictation('你好世界'), isTrue);
+    });
+
     test('single tokens are allowed (typing / swipe)', () {
       expect(ImeVoiceGate.looksLikeVoiceDictation('hello'), isFalse);
       expect(ImeVoiceGate.looksLikeVoiceDictation('a'), isFalse);
       expect(ImeVoiceGate.looksLikeVoiceDictation(''), isFalse);
+      expect(ImeVoiceGate.looksLikeVoiceDictation(' '), isFalse);
+      expect(ImeVoiceGate.looksLikeVoiceDictation('\n'), isFalse);
+    });
+
+    test('short CJK / single glyph inserts are allowed', () {
+      expect(ImeVoiceGate.looksLikeVoiceDictation('你'), isFalse);
+      expect(ImeVoiceGate.looksLikeVoiceDictation('あ'), isFalse);
+      expect(ImeVoiceGate.looksLikeVoiceDictation('你好'), isFalse);
+      expect(ImeVoiceGate.looksLikeVoiceDictation('こんにちは'.substring(0, 2)), isFalse);
     });
   });
 
