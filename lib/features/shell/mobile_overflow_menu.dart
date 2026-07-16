@@ -37,18 +37,26 @@ class MobileOverflowMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // AppBar sets a light-on-primary IconTheme; keep the trigger matching that
+    // chrome, but color menu icons explicitly so they stay visible on the
+    // light popup surface (otherwise they inherit white → white-on-white).
+    final triggerColor =
+        Theme.of(context).appBarTheme.foregroundColor ??
+        IconTheme.of(context).color;
+
     return PopupMenuButton<MobileAppMenuAction>(
       icon: const Icon(Icons.more_vert),
+      iconColor: triggerColor,
       tooltip: l10n.commonMore,
       constraints: const BoxConstraints(minWidth: _menuWidth),
       onSelected: onSelected,
       itemBuilder: (context) => [
-        CheckedPopupMenuItem(
+        PopupMenuItem(
           value: MobileAppMenuAction.wordWrap,
-          checked: wordWrap,
           child: _MobileMenuLabel(
             icon: Icons.wrap_text,
             label: l10n.shellMobileWordWrap,
+            checked: wordWrap,
           ),
         ),
         const PopupMenuDivider(),
@@ -110,18 +118,41 @@ class MobileOverflowMenuButton extends StatelessWidget {
 }
 
 class _MobileMenuLabel extends StatelessWidget {
-  const _MobileMenuLabel({required this.icon, required this.label});
+  const _MobileMenuLabel({
+    required this.icon,
+    required this.label,
+    this.checked = false,
+  });
 
   final IconData icon;
   final String label;
+  final bool checked;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    // Explicit colors — AppBar IconTheme is white in light mode and would
+    // otherwise paint these invisible on the popup surface.
+    final iconColor = colors.onSurfaceVariant;
+
     return Row(
       children: [
-        Icon(icon, size: 20),
+        SizedBox(
+          width: 24,
+          child: checked
+              ? Icon(Icons.check, size: 20, color: iconColor)
+              : null,
+        ),
+        Icon(icon, size: 20, color: iconColor),
         const SizedBox(width: 12),
-        Text(label),
+        Expanded(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: colors.onSurface,
+            ),
+          ),
+        ),
       ],
     );
   }

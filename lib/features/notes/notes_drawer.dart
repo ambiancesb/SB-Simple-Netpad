@@ -134,6 +134,16 @@ class _NotesPanelState extends State<NotesPanel> {
             decoration: InputDecoration(
               isDense: true,
               prefixIcon: const Icon(Icons.search, size: 20),
+              // Keep hint/value vertically centered with the prefix icon; the
+              // skin's form contentPadding otherwise sits the text too low.
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 40,
+                minHeight: 40,
+              ),
               hintText: l10n.notesSearchHint,
               suffixIcon: searching
                   ? IconButton(

@@ -671,7 +671,17 @@ class _ShellScaffold extends StatelessWidget {
         onOpenPeers: onOpenPeers,
         onAppMenuAction: onAppMenuAction,
       ),
-      body: body,
+      // Freeze keyboard viewInsets for the body so dismissing the IME when a
+      // drawer or overflow menu takes focus cannot reflow editor text.
+      body: Builder(
+        builder: (context) {
+          final media = MediaQuery.of(context);
+          return MediaQuery(
+            data: media.copyWith(viewInsets: EdgeInsets.zero),
+            child: body,
+          );
+        },
+      ),
     );
   }
 }

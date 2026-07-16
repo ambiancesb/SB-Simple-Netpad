@@ -229,6 +229,16 @@ extension AppSkinX on AppSkin {
           color: isLight ? Colors.white : scheme.onSurface,
         ),
       ),
+      // Do not set iconColor here — PopupMenuButton uses it for the trigger
+      // (must stay AppBar-foreground white). Menu item icons set colors
+      // explicitly in MobileOverflowMenuButton.
+      popupMenuTheme: PopupMenuThemeData(
+        color: scheme.surfaceContainer,
+        surfaceTintColor: Colors.transparent,
+        labelTextStyle: WidgetStatePropertyAll(
+          textTheme.bodyLarge?.copyWith(color: scheme.onSurface),
+        ),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: fill,
