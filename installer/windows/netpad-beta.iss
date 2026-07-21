@@ -1,9 +1,9 @@
-; SB Simple Netpad — Windows Beta Installer (Inno Setup 6)
+; SB Simple Netpad — Windows Installer (Inno Setup 6)
 ; Build with: scripts/build-windows-installer.ps1
 
 #define MyAppName "SB Simple Netpad"
 #define MyAppPublisher "Spencer Beaumier"
-#define MyAppURL "https://github.com/SpencerBeaumier/SB-Simple-Netpad"
+#define MyAppURL "https://github.com/ambiancesb/SB-Simple-Netpad"
 #define MyAppExeName "netpad.exe"
 #define MyAppId "{{A4E8C2F1-9B3D-4E6A-8F7C-1D2E3A4B5C6D}"
 
@@ -11,7 +11,7 @@
 AppId={#MyAppId}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-AppVerName={#MyAppName} {#MyAppVersion} Beta
+AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -21,7 +21,7 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=..\..\LICENSE
 OutputDir=..\..\dist
-OutputBaseFilename=SB-Simple-Netpad-{#MyAppVersion}-beta-windows-x64-setup
+OutputBaseFilename=SB-Simple-Netpad-{#MyAppVersion}-windows-x64-setup
 SetupIconFile=..\..\windows\runner\resources\app_icon.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2/ultra64
@@ -53,9 +53,9 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent; Tasks: launchapp
 
 [Messages]
-SetupAppTitle=Install {#MyAppName} (Beta)
-SetupWindowTitle=Install {#MyAppName} (Beta) — {#MyAppVersion}
-WelcomeLabel2=This will install [name/ver] on your computer.%n%nBeta software for LAN peer-to-peer note sharing. Allow Windows Firewall access when prompted so peers on your network can connect.
+SetupAppTitle=Install {#MyAppName}
+SetupWindowTitle=Install {#MyAppName} — {#MyAppVersion}
+WelcomeLabel2=This will install [name/ver] on your computer.%n%nLAN peer-to-peer note sharing. Allow Windows Firewall access when prompted so peers on your network can connect.
 
 [Code]
 function InitializeSetup(): Boolean;

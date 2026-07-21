@@ -1,4 +1,4 @@
-# SB Simple Netpad — Windows Beta setup (no Inno Setup required).
+# SB Simple Netpad — Windows setup (no Inno Setup required).
 # Installs to the current user's Programs folder and registers an uninstall entry.
 
 #Requires -Version 5.1
@@ -31,7 +31,7 @@ else {
         $Version = Get-ProjectVersion (Resolve-Path $PubspecPath)
     }
     else {
-        $Version = '1.2.0'
+        $Version = '1.1.0'
     }
 }
 
@@ -44,7 +44,7 @@ $StartMenuDir = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs' $
 $UninstallKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\$AppName"
 
 Write-Host ""
-Write-Host "  $AppName $Version Beta - Windows Setup" -ForegroundColor Cyan
+Write-Host "  $AppName $Version - Windows Setup" -ForegroundColor Cyan
 Write-Host "  Install location: $InstallRoot"
 Write-Host ""
 
@@ -68,7 +68,7 @@ $WshShell = New-Object -ComObject WScript.Shell
 $startShortcut = $WshShell.CreateShortcut((Join-Path $StartMenuDir "$AppName.lnk"))
 $startShortcut.TargetPath = Join-Path $InstallRoot $ExeName
 $startShortcut.WorkingDirectory = $InstallRoot
-$startShortcut.Description = "$AppName $Version Beta"
+$startShortcut.Description = "$AppName $Version"
 $startShortcut.Save()
 
 if ($desktopShortcut -eq '' -or $desktopShortcut -match '^[Yy]') {
@@ -76,7 +76,7 @@ if ($desktopShortcut -eq '' -or $desktopShortcut -match '^[Yy]') {
     $desktopShortcutObj = $WshShell.CreateShortcut((Join-Path $desktopPath "$AppName.lnk"))
     $desktopShortcutObj.TargetPath = Join-Path $InstallRoot $ExeName
     $desktopShortcutObj.WorkingDirectory = $InstallRoot
-    $desktopShortcutObj.Description = "$AppName $Version Beta"
+    $desktopShortcutObj.Description = "$AppName $Version"
     $desktopShortcutObj.Save()
 }
 
@@ -102,7 +102,7 @@ $uninstallCmd = "@echo off`r`npowershell.exe -NoProfile -ExecutionPolicy Bypass 
 Set-Content -Path (Join-Path $InstallRoot 'Uninstall.cmd') -Value $uninstallCmd -Encoding ASCII
 
 New-Item -Path $UninstallKey -Force | Out-Null
-Set-ItemProperty -Path $UninstallKey -Name DisplayName -Value "$AppName $Version Beta"
+Set-ItemProperty -Path $UninstallKey -Name DisplayName -Value "$AppName $Version"
 Set-ItemProperty -Path $UninstallKey -Name DisplayVersion -Value $Version
 Set-ItemProperty -Path $UninstallKey -Name Publisher -Value $Publisher
 Set-ItemProperty -Path $UninstallKey -Name InstallLocation -Value $InstallRoot

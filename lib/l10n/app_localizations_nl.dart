@@ -1221,7 +1221,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
-  String get aboutStatus => 'Beta — geschikt voor dagelijks LAN-gebruik.';
+  String get aboutStatus => 'Geschikt voor dagelijks LAN-gebruik.';
 
   @override
   String get aboutEulaHeading => 'Eindgebruikerslicentieovereenkomst';

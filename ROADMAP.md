@@ -2,7 +2,7 @@
 
 Pragmatic phases from MVP toward a daily-use LAN notepad.
 
-**Status:** Beta — phases 1–9 below are complete. Further work targets polish, hardening, and a 1.0 release.
+**Status:** 1.1.0 store release — phases 1–9 below are complete. Further work is polish and optional roadmap items (CRDT, invite codes, Linux store, etc.).
 
 | Phase | Status | Focus |
 |-------|--------|--------|
@@ -85,9 +85,9 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 **Goal:** Avoid silent data loss and brittle wire compatibility.
 
 - [x] **Conflict resolution UI** — Live same-revision edit collisions prompt "Keep mine / Use theirs" with text previews (deterministic prompt side); reconnect divergence dialog unchanged from Phase 4.
-- [x] **Protocol version negotiation** — `protocolVersion` in pair handshake; strict match required (`kProtocolVersion` = 2); incompatible peers refused with a connection-log entry.
+- [x] **Protocol version negotiation** — `protocolVersion` in pair handshake; strict match required (`kProtocolVersion` = 4); incompatible peers refused with a connection-log entry.
 - [x] **Heartbeat / dead-peer detection** — `ping`/`pong` every 15s on authenticated links; disconnect after 45s without reply.
-- [x] **Automated verification** — [test/phase6_test.dart](test/phase6_test.dart) covers protocol v2 encoding, live-conflict detection, and heartbeat constants.
+- [x] **Automated verification** — [test/phase6_test.dart](test/phase6_test.dart) covers protocol v4 encoding, live-conflict detection, and heartbeat constants.
 
 ---
 
@@ -110,7 +110,7 @@ Pragmatic phases from MVP toward a daily-use LAN notepad.
 - [x] **Remove debug logging cruft** — Removed the `#region agent log` blocks and hardcoded debug path from [lib/features/editor/editor_screen.dart](lib/features/editor/editor_screen.dart).
 - [x] **Sync/relay tests** — [lib/core/sync_relay.dart](lib/core/sync_relay.dart) and [test/phase8_test.dart](test/phase8_test.dart) cover multi-peer relay targets and reconnect divergence helpers; [test/phase8_pairing_test.dart](test/phase8_pairing_test.dart) covers pairing tie-break.
 - [x] **Per-note sync toggle** — A switch on each item in the [Notes drawer](lib/features/notes/notes_drawer.dart) (`NotesPanel` / `_NoteTile`) to mark a note as synced or local-only.
-  - Persist `syncEnabled` (default `true`) per `docId` in the workspace index via [lib/data/repositories/workspace_repository.dart](lib/data/repositories/workspace_repository.dart) / [lib/services/note_storage_service.dart](lib/services/note_storage_service.dart).
+  - Persist `syncEnabled` (default `false` / local-only for new notes) per `docId` in the workspace index via [lib/data/repositories/workspace_repository.dart](lib/data/repositories/workspace_repository.dart) / [lib/services/note_storage_service.dart](lib/services/note_storage_service.dart).
   - **When off:** do not broadcast `doc_update`, `doc_create`, `doc_rename`, or `doc_delete` for that note; omit from `doc_catalog` on pair/reconnect; ignore inbound sync for that `docId` (or store locally without relaying).
   - **When on:** unchanged behavior.
   - Visual hint on local-only notes (e.g. muted icon or “Local only” subtitle) so sync state is obvious at a glance.
@@ -140,7 +140,7 @@ Today, each new TCP link requires manual pairing even when the peer’s certific
 **Fallback:** wrong or missing token, cert mismatch, or blocked peer → normal Accept dialog or refusal (no weaker path).
 
 - [x] **TrustStore: trusted peers** — Persist `peerId → { displayName, autoSyncToken, pairedAt }` in [lib/data/repositories/trust_store.dart](lib/data/repositories/trust_store.dart). Blocklist still wins over auto-sync.
-- [x] **Issue token on Accept** — Generate a random token (32+ bytes) in [lib/data/repositories/sync_repository.dart](lib/data/repositories/sync_repository.dart) when pairing completes; store on both sides via `pair_complete` (protocol v3 bump).
+- [x] **Issue token on Accept** — Generate a random token (32+ bytes) in [lib/data/repositories/sync_repository.dart](lib/data/repositories/sync_repository.dart) when pairing completes; store on both sides via `pair_complete` (wire protocol now **v4**).
 - [x] **Auto-accept reconnect** — Inbound and outbound paths: if stored token + pin validate, skip the pairing dialog and complete pairing automatically. Optional: rotate token on each successful pair.
 - [x] **Background reconnect** — When a trusted peer appears in discovery (or after network change), initiate connect without user action; show a lightweight “Reconnected to …” notice in the peers drawer / connection log.
 - [x] **Trusted devices UI** — Settings or peers drawer: list trusted peers, per-peer auto-sync toggle, **Revoke** (forget token; require Accept again without necessarily unpinning), distinct from **Block**.

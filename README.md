@@ -2,7 +2,7 @@
 
 A cross-platform LAN notepad built with Flutter. Instances on the same subnet discover each other, require mutual approval before connecting, and share note text with multi-peer relay sync.
 
-**Status:** Beta — phases 1–9 of the roadmap are complete and the app is suitable for daily LAN use. Protocol and storage formats may still change before 1.0.
+**Status:** 1.1.0 store release — phases 1–9 of the roadmap are complete; suitable for daily LAN use on Android, iOS, Windows, and macOS.
 
 **Platforms:** Android, iOS, Windows, macOS (not web).
 
@@ -42,9 +42,9 @@ flutter run -d windows    # or macos, android, ios
 - **macOS:** Save/Open/Share work via the native File menu. Find & Replace is **Option+Cmd+F** (Cmd+H is Hide). Set signing team in Xcode; Hardened Runtime is enabled for release builds.
 - Store / IAP keys: prefer `--dart-define=REVENUECAT_IOS_API_KEY=…` and `REVENUECAT_MACOS_API_KEY=…` (legacy `REVENUECAT_APPLE_API_KEY` still works as fallback).
 
-## Windows beta installer
+## Windows installer
 
-To build a beta installer for testers (64-bit Windows 10+):
+To build a Windows installer for testers or sideload (64-bit Windows 10+):
 
 ```powershell
 .\scripts\build-windows-installer.ps1
@@ -54,10 +54,10 @@ This runs `flutter build windows --release` and writes artifacts to `dist/`:
 
 | Output | Description |
 |--------|-------------|
-| `SB-Simple-Netpad-<version>-beta-windows-x64.zip` | Portable package — extract and run `Setup.cmd` |
-| `SB-Simple-Netpad-<version>-beta-windows-x64-setup.exe` | Single-file installer (requires [Inno Setup 6+](https://jrsoftware.org/isinfo.php) on the build machine) |
+| `SB-Simple-Netpad-<version>-windows-x64.zip` | Portable package — extract and run `Setup.cmd` |
+| `SB-Simple-Netpad-<version>-windows-x64-setup.exe` | Single-file installer (requires [Inno Setup 6+](https://jrsoftware.org/isinfo.php) on the build machine) |
 
-The installer places the app under `%LOCALAPPDATA%\Programs\SB Simple Netpad`, adds a Start Menu shortcut, and registers an uninstall entry. Testers should allow Windows Firewall access on first launch so LAN peers can connect.
+The installer places the app under `%LOCALAPPDATA%\Programs\SB Simple Netpad`, adds a Start Menu shortcut, and registers an uninstall entry. Allow Windows Firewall access on first launch so LAN peers can connect. Microsoft Store purchases require a Store-signed MSIX (see [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md)), not this sideload package.
 
 Use two or more devices on the same LAN (physical devices recommended for Android).
 
@@ -153,11 +153,11 @@ flutter test                       # full suite
 ## Phase 6 features (sync robustness) — complete
 
 - **Live conflict resolution** — If you and a peer edit the same note at the same revision simultaneously, one device (chosen deterministically) shows a dialog with previews of both versions. Choose **Keep mine** or **Use theirs**; both devices converge.
-- **Protocol v2** — Pairing requires matching protocol version (`protocolVersion` in the pair handshake). Running mismatched builds refuses the connection; check the connection log for details.
+- **Protocol v4** — Pairing requires matching protocol version (`protocolVersion` in the pair handshake). Running mismatched builds refuses the connection; check the connection log for details.
 - **Heartbeat** — Connected peers exchange `ping`/`pong` every 15 seconds. A peer that stops responding for 45 seconds is disconnected automatically.
 
 ```bash
-flutter test test/phase6_test.dart   # protocol v2, live-conflict detection, heartbeat constants
+flutter test test/phase6_test.dart   # protocol v4, live-conflict detection, heartbeat constants
 ```
 
 ## Threat model
@@ -229,4 +229,4 @@ SB Simple Netpad is proprietary software distributed under an
 Hosted copy for store listings:
 [https://ambiancesb.github.io/SB-Simple-Netpad/eula.html](https://ambiancesb.github.io/SB-Simple-Netpad/eula.html)
 
-The shipped app is freemium: core editing and LAN sync are free (unlimited local notes, up to **3 synced notes** and **3 connected peers**); **Netpad Standard** is a one-time in-app purchase via the Apple App Store, Google Play, or Microsoft Store (RevenueCat on Apple/Google; Microsoft Store durable add-on on Windows). Store console setup notes are in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md).
+The shipped app is freemium: core editing and LAN sync are free (unlimited local notes, up to **3 synced notes**, **3 connected peers**, and **500 characters** per note); **Netpad Standard** is a one-time in-app purchase via the Apple App Store, Google Play, or Microsoft Store (RevenueCat on Apple/Google; Microsoft Store durable add-on on Windows). Store console setup notes are in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md); release-notes template in [`docs/STORE_RELEASE_NOTES.md`](docs/STORE_RELEASE_NOTES.md).

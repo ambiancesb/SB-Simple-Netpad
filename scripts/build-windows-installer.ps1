@@ -1,4 +1,4 @@
-# Build SB Simple Netpad Windows beta installer.
+# Build SB Simple Netpad Windows installer.
 # Usage: .\scripts\build-windows-installer.ps1 [-SkipFlutterBuild]
 
 #Requires -Version 5.1
@@ -15,7 +15,7 @@ $BuildOutput = Join-Path $ProjectRoot 'build\windows\x64\runner\Release'
 $DistDir = Join-Path $ProjectRoot 'dist'
 $InstallerDir = Join-Path $ProjectRoot 'installer\windows'
 $IssFile = Join-Path $InstallerDir 'netpad-beta.iss'
-$StageName = 'SB-Simple-Netpad-beta-windows-x64'
+$StageName = 'SB-Simple-Netpad-windows-x64'
 $StageDir = Join-Path $DistDir $StageName
 
 function Get-ProjectVersion {
@@ -40,7 +40,7 @@ function Find-InnoSetupCompiler {
 }
 
 $Version = Get-ProjectVersion
-Write-Host "SB Simple Netpad $Version Beta - Windows installer build" -ForegroundColor Cyan
+Write-Host "SB Simple Netpad $Version - Windows installer build" -ForegroundColor Cyan
 Write-Host "Project: $ProjectRoot"
 Write-Host ""
 
@@ -76,11 +76,11 @@ try {
     Set-Content -Path (Join-Path $StageDir 'VERSION.txt') -Value $Version -Encoding ASCII -NoNewline
 
     $readme = @"
-SB Simple Netpad $Version Beta - Windows x64
-============================================
+SB Simple Netpad $Version - Windows x64
+=======================================
 
-Quick install (recommended for beta testers)
-------------------------------------------
+Quick install
+-------------
 1. Extract this folder anywhere.
 2. Double-click Setup.cmd (or run Setup.ps1 in PowerShell).
 3. Allow Windows Firewall when the app first runs so LAN peers can connect.
@@ -94,16 +94,18 @@ Uninstall
 ---------
 Settings -> Apps -> SB Simple Netpad
 or run Uninstall.cmd from the install folder after setup.
+
+Note: Microsoft Store purchases require a Store-signed MSIX, not this sideload package.
 "@
-    Set-Content -Path (Join-Path $StageDir 'README-BETA-INSTALL.txt') -Value $readme -Encoding UTF8
+    Set-Content -Path (Join-Path $StageDir 'README-INSTALL.txt') -Value $readme -Encoding UTF8
 
     New-Item -ItemType Directory -Path $DistDir -Force | Out-Null
-    $zipPath = Join-Path $DistDir "SB-Simple-Netpad-$Version-beta-windows-x64.zip"
+    $zipPath = Join-Path $DistDir "SB-Simple-Netpad-$Version-windows-x64.zip"
     if (Test-Path $zipPath) { Remove-Item -LiteralPath $zipPath -Force }
     Compress-Archive -Path (Join-Path $StageDir '*') -DestinationPath $zipPath -CompressionLevel Optimal
 
     $iscc = Find-InnoSetupCompiler
-    $setupExe = Join-Path $DistDir "SB-Simple-Netpad-$Version-beta-windows-x64-setup.exe"
+    $setupExe = Join-Path $DistDir "SB-Simple-Netpad-$Version-windows-x64-setup.exe"
     if ($iscc) {
         Write-Host "Compiling Inno Setup installer..."
         & $iscc "/DMyAppVersion=$Version" "/DBuildDir=$BuildOutput" $IssFile

@@ -1223,7 +1223,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
-  String get aboutStatus => 'Beta — adatto all\'uso LAN quotidiano.';
+  String get aboutStatus => 'Adatto all\'uso LAN quotidiano.';
 
   @override
   String get aboutEulaHeading => 'Contratto di Licenza con l\'Utente Finale';

@@ -1170,7 +1170,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
-  String get aboutStatus => 'ベータ版 — 日常的なLAN使用に適しています。';
+  String get aboutStatus => '日常的なLAN使用に適しています。';
 
   @override
   String get aboutEulaHeading => 'エンドユーザーライセンス契約';

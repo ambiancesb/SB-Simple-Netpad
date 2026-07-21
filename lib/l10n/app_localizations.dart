@@ -2153,7 +2153,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutStatus.
   ///
   /// In en, this message translates to:
-  /// **'Beta — suitable for daily LAN use.'**
+  /// **'Suitable for daily LAN use.'**
   String get aboutStatus;
 
   /// No description provided for @aboutEulaHeading.

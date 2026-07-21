@@ -3,114 +3,109 @@
 All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project currently tracks versions informally.
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+for store releases.
 
 ## [Unreleased]
 
-### Changed
-- Project status is now **beta** — all roadmap phases through Phase 9 are complete.
-- **iOS:** Save to file / Open file are removed from the overflow menu; use Share. Notes still auto-save via prefs.
-- **macOS:** Find & Replace is Option+Cmd+F (Cmd+H is system Hide); display name is SB Simple Netpad; TLS identity uses Keychain.
-- **RevenueCat:** prefer `REVENUECAT_IOS_API_KEY` / `REVENUECAT_MACOS_API_KEY` (legacy `REVENUECAT_APPLE_API_KEY` fallback).
+## [1.1.0] - 2026-07-21
+
+App store launch release (`1.1.0+4`). Stability and release hygiene on top of the
+1.0.0 freemium cut — not a new feature phase.
 
 ### Added
-- Apple packaging: Privacy manifests, export-compliance plist keys, iOS entitlements file, macOS Hardened Runtime, productivity category.
-- Apple store build notes and checklist in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md).
-- **Windows beta installer** — `scripts/build-windows-installer.ps1` builds a release bundle and packages `dist/SB-Simple-Netpad-<version>-beta-windows-x64.zip` (extract and run `Setup.cmd`). Optional single-file `.exe` when [Inno Setup 6+](https://jrsoftware.org/isinfo.php) is installed on the build machine.
-- **Trusted peers and auto-sync (Phase 9)** — After the first manual **Accept**, both devices store a persistent auto-sync token alongside the cert pin. Reconnects skip the pairing dialog when token and fingerprint match; trusted peers auto-reconnect when discovered on the LAN. **Trusted devices** section in the peers drawer: per-peer auto-sync toggle and **Revoke** (distinct from **Block**). Protocol bumped to **v3**.
-- **Phase 9 test suite** — [test/phase9_test.dart](test/phase9_test.dart) covers trusted-peer persistence, auto-accept validation, `peer_disconnect` sender checks, and pair-request payload rules.
-- **Local-network enforcement** — Inbound and outbound peer connections must fall on this device's active subnet(s), derived from live interface addresses and netmasks; peers on other private subnets or public IPs are refused. Discovered peers outside the active subnet are hidden.
-- **Wi‑Fi-first sync policy** — On cellular-only devices, peer sync is fully paused (no mDNS, no listen port, no scans). A banner explains that Wi‑Fi or a personal hotspot is required.
-- **Netpad-only inbound guard** — Inbound WebSockets that never send a valid `pair_request` are closed after 8 seconds.
-- **Per-note sync toggle** — Each note in the Notes drawer has a switch to mark it synced or local-only. Local-only notes stay on device: excluded from peer catalog/snapshots, edits are not broadcast, and inbound peer updates for that note are ignored. Visual “Local only” hint with a muted cloud-off icon.
-- **Phase 8 test suite** — [test/phase8_test.dart](test/phase8_test.dart) covers sync flags, outbound/inbound guards, multi-peer relay targets, and reconnect divergence convergence.
-- **Live edit conflict dialog** — When two peers edit the same note at the same revision, one device prompts with text previews to keep yours or use theirs (replaces silent tie-break snackbar).
-- **Protocol version negotiation** — Pair handshake carries `protocolVersion`; peers must match exactly (`v3`). Older builds are refused with a connection-log entry.
-- **Heartbeat** — `ping`/`pong` on authenticated links every 15s; peers that stop responding for 45s are disconnected automatically.
+- Store “What’s New” template in [`docs/STORE_RELEASE_NOTES.md`](docs/STORE_RELEASE_NOTES.md).
 
 ### Changed
-- **Threat model** — README documents enforced local-network, Wi‑Fi-first, Netpad-only, and trusted-peer auto-sync policies.
-- Wire protocol bumped to **v3** (`kProtocolVersion`); all messages encode `v: 3`. `pair_complete` includes `autoSyncToken`.
-- **Android LAN discovery** — Wi‑Fi is no longer mistaken for cellular-only when mobile data is also active; `ConnectivityManager` confirms Wi‑Fi/Ethernet before pausing sync; subnet checks fall back when interface enumeration lags; Android 13+ requests `NEARBY_WIFI_DEVICES`; multicast lock and connectivity callbacks restart discovery promptly after cold start.
-- **10.x LAN segment matching** — Devices on the same `10.x.x.x/16` (common on large Wi‑Fi with mDNS reflectors) can connect even when assigned different `/24` subnets; home `192.168.x.x` networks still require the same `/24`.
-- **Trusted auto-reconnect** — Failed outbound reconnect no longer tears down an active inbound session; `already_connected` is treated as success; reconnect backoff after connection refused (111) or duplicate attempts.
+- Product version aligned to **1.1.0** (`pubspec.yaml`, About / `AppInfo`); retired
+  in-app and docs **Beta / before 1.0** wording for store users.
+- Windows sideload installer packaging no longer labels builds as Beta.
+- Docs synced for wire **protocol v4**, freemium caps (including **500** characters
+  per free note), and store build notes.
 
-### Removed
-- Silent "revision conflict resolved" snackbar — live conflicts now always prompt on the deterministic device.
+### Fixed
+- Portuguese (`pt`) localization encoding mojibake in `app_pt.arb` / generated locals.
+- Phase 5 tests updated for freemium default (new notes are local-only until sync is enabled).
+- Mobile overflow menu and Notes drawer layout issues.
+- Apple Keychain / TLS identity handling on iOS; macOS prefs path for local signing.
+- Peer discovery, stale peers, and trusted reconnect / auto-token edge cases.
+- iOS and macOS black-window startup; macOS CocoaPods install friction.
+- Sync remediation after reconnect; speech-to-text / IME voice freemium gating.
+- Paywall and store-listing fallback links when IAP is unavailable.
 
-## [1.2.0] - 2026-06-30
+## [1.0.0] - 2026-07-11
+
+First store-ready freemium cut: Phase 1–9 LAN notepad plus in-app purchase unlock.
+
+### Added
+- **Netpad Standard** one-time unlock (`netpad_pro` / RevenueCat entitlement `pro`)
+  on Apple App Store, Google Play, and Microsoft Store (WinRT durable add-on).
+- Free-tier caps: unlimited local notes; **3** synced notes; **3** connected peers;
+  **500** characters per note. Standard unlocks unlimited sync/peers/length plus
+  skins, version history, trusted auto-sync, and voice dictation.
+- Store packaging notes and checklists in [`docs/STORE_FREEMIUM.md`](docs/STORE_FREEMIUM.md).
+- Apple packaging: Privacy manifests, export-compliance keys, iOS entitlements,
+  macOS Hardened Runtime, productivity category.
+- Public site, privacy policy, and EULA on GitHub Pages (`docs/`).
+- Multi-language UI localization (ARB / `flutter gen-l10n`).
+- **Trusted peers and auto-sync (Phase 9)** — persistent auto-sync token with cert
+  pin; Trusted devices UI; protocol **v3** then **v4** wire messages.
+- **Per-note sync toggle**, local-subnet enforcement, Wi‑Fi-first sync policy,
+  Netpad-only inbound guard, live conflict prompts, heartbeat.
+- Windows installer script for sideload / tester packages
+  (`scripts/build-windows-installer.ps1`).
+
+### Changed
+- Package / bundle id **`com.spencerbeaumier.sbnetpad`** across store platforms.
+- Product naming: in-app **Netpad Standard** (legacy store SKU id `netpad_pro`).
+- RevenueCat: prefer `REVENUECAT_IOS_API_KEY` / `REVENUECAT_MACOS_API_KEY`
+  (legacy `REVENUECAT_APPLE_API_KEY` fallback).
+
+## Pre-store development history
+
+The following milestones used informal `1.x` labels during beta development.
+They are retained for context and are **not** store version numbers.
+
+### 2026-06-30 — Multi-document / Phase 5 (was labeled 1.2.0)
 
 Phase 5 complete: multiple documents, per-note history, and search.
 
-### Added
-- **Multiple named notes** — Manage many notes from a left Notes drawer (create / rename / delete). Each note has its own id, title, revision, and editor; notes sync per-document and creating/renaming/deleting propagates to peers via `doc_create`, `doc_rename`, `doc_delete`, and a `doc_catalog` exchange on pair.
-- **Note history / versioning** — Each note keeps a bounded local snapshot ring, captured before remote edits clobber local text and before file imports/restores. Restore any version from the per-note Version history sheet.
-- **Search** — In-note find bar (match count with next/previous navigation) and cross-note search in the Notes drawer (matches titles and bodies, with snippets).
-- **Note order sync** — Drag-to-reorder in the Notes drawer; order propagates via `doc_reorder` and is included in the `doc_catalog` exchange on pair.
-- **Per-note presence** — A peer's cursor now reports which note they are editing, shown in the peers drawer.
-- **Phase 5 test suite** — [test/phase5_test.dart](test/phase5_test.dart) (14 tests) covers history, workspace CRUD, catalog/order merge, and cross-note search.
+#### Added
+- **Multiple named notes** — Notes drawer CRUD; sync via `doc_create` / `doc_rename` /
+  `doc_delete` / `doc_catalog`.
+- **Note history / versioning** — Bounded local snapshot ring; restore from Version history.
+- **Search** — In-note find bar and cross-note search with snippets.
+- **Note order sync** — Drag-to-reorder via `doc_reorder`.
+- **Per-note presence** — Peers drawer shows which note a peer is editing.
+- **Phase 5 test suite** — [test/phase5_test.dart](test/phase5_test.dart).
 
-### Changed
-- Storage reworked from a single note to a multi-document layout (`docs_index` + per-note keys in `shared_preferences`); a legacy single note is migrated automatically on first launch.
-- "Open file" now imports into a **new** note instead of replacing the active one.
+#### Changed
+- Storage reworked to multi-document layout; legacy single note migrates on launch.
+- "Open file" imports into a **new** note.
 
-### Fixed
-- Avoided a `code_text_field` range crash when a remote update grew a note by exactly one character while the editor selection was uninitialised.
+#### Fixed
+- `code_text_field` range crash when a remote update grew a note by one character.
 
-## [1.1.1] - 2026-06-15
+### 2026-06-15 — TLS / Phase 4 (was labeled 1.1.1)
 
-Phase 4 complete: TLS transport, certificate pinning, peer blocking, and reconnect divergence.
+Phase 4 complete: TLS transport, certificate pinning, peer blocking, reconnect divergence.
 
-### Added
-- **TLS transport** — each device generates a persisted self-signed certificate; all peer traffic upgraded from `ws://` to `wss://` (`basic_utils`/`pointycastle` for cert generation, `crypto` for fingerprints).
-- **Certificate pinning (TOFU)** — peer certificate fingerprints are pinned on first connect and verified afterwards; a mismatch refuses the connection. The accepting device shows its security code in the pairing dialog.
-- **Block / unblock peers** — disconnects, forgets the pinned certificate, and refuses re-pair in both directions; persisted blocklist with a Blocked section in the peers drawer.
-- **Reconnect divergence prompt** — detects when a reconnecting peer's note diverged from the local one and prompts to keep mine / use theirs, converging both devices.
+#### Added
+- **TLS transport** — self-signed certs; `wss://` peer traffic.
+- **Certificate pinning (TOFU)** — fingerprint pin on first connect.
+- **Block / unblock peers** — persisted blocklist in the peers drawer.
+- **Reconnect divergence prompt** — Keep mine / Use theirs.
 
-### Changed
-- Bumped `path_provider_android` override to 2.2.23 (last pre-JNI release that still targets the modern Android v2 embedding) so Android builds keep working against the modern embedding; added a `path_provider_foundation` 2.4.1 override to avoid the `objective_c` build hook on non-Apple hosts.
+#### Changed
+- `path_provider_android` / `path_provider_foundation` overrides for desktop host builds.
 
-## [1.1.0] - 2026-06-04
+### 2026-06-04 — Early beta scaffold (was labeled 1.1.0)
 
-### Added
-- **Save to file** — Export the current note to a user-chosen path via the native save dialog (desktop).
-- **Open from file** — Load a text file into the editor, with confirmation before replacing a live synced note.
-- **Share note** — Send the current note through the OS share sheet / share dialog.
-- Initial Flutter app scaffold for Android, iOS, Windows, and macOS.
-- Line-numbered plain-text editor using `code_text_field`.
-- Local network discovery and broadcast using Bonsoir (`_sbnetpad._tcp`).
-- Pairing flow with explicit Accept/Reject confirmation on target device.
-- Multi-peer sync with revision-based conflict handling and update relay.
-- Peers drawer with discovered/connected peers and connection status indicators.
-- Manual "Connect by IP" fallback workflow.
-- "This device" address banner with copy-to-clipboard support.
-- Auto-save and restore for note text and revision state.
-- Device rename flow that rebroadcasts discovery metadata without restart.
-- Session token enforcement for post-pair sync and disconnect messages.
-- Session-only connection log in the peers drawer.
-- Display-only pairing verification codes.
-- Basic copy/paste support via native selection and editor keyboard shortcuts.
-- Discovery troubleshooting notes and dependency setup script.
-- Project roadmap in `ROADMAP.md`.
-- File menu with **Save to file**, **Open file**, and **Share note** actions (`file_picker` + `share_plus`).
-- Open-from-file prompts before replacing a non-empty note and propagates the change to connected peers.
-- **Session / room ID** advertised in TXT records; only peers in the same room are discovered (editable in Settings).
-- **Network change listener** (`NetworkMonitor`) that restarts discovery/broadcast when interface addresses change.
-- **Cursor presence** — connected peers report their cursor line/column, shown in the peers drawer.
-- Combined Settings dialog for device name and room.
+#### Added
+- Flutter scaffold for Android, iOS, Windows, and macOS.
+- Line-numbered editor, Bonsoir discovery (`_sbnetpad._tcp`), Accept/Reject pairing.
+- Multi-peer sync, peers drawer, Connect by IP, auto-save, rooms, cursor presence.
+- Save / Open / Share file workflows; Settings for device name and room.
 
-### Changed
-- Pinned `path_provider_android` to 2.2.23 (pre-JNI) via `dependency_overrides`, since `share_plus` transitively pulls `path_provider` and newer `path_provider_android` uses JNI, which can break desktop host builds.
-- Lowered Dart SDK constraint to `^3.10.0` and `bonsoir` to 6.x for Flutter 3.38 / Dart 3.10 toolchains.
-- Removed leftover editor debug logging instrumentation and its hardcoded path.
-- Committed Android Gradle wrapper scripts and tuned IDE Gradle memory defaults.
-- Moved Flutter project contents to repository root.
-- Switched note persistence implementation to `shared_preferences` for broader desktop build compatibility.
-- Hardened desktop CMake compiler selection and fallback behavior.
-
-### Fixed
-- Android Studio project load: restore `gradlew`, stop gitignoring wrapper scripts, and remove committed `android/build` artifacts.
-- Discovery reliability improvements (re-resolve retries, endpoint handling, connect-time refresh).
-- Desktop build breakages caused by JNI transitive dependencies.
-- Android Gradle compatibility issue with `bonsoir_android` Kotlin plugin application.
-- Desktop host build break from `share_plus`'s transitive `path_provider` implementations: pinned `path_provider_android` to 2.2.x (avoids `jni`) and `path_provider_foundation` to 2.4.x (avoids `objective_c` build hooks).
+#### Fixed
+- Discovery reliability, Android Gradle / Bonsoir compatibility, desktop JNI transitive breaks.

@@ -611,7 +611,7 @@
   "aboutTagline": "LAN-kladblok met peer-detectie en gedeeld bewerken.",
   "aboutDescription": "Schrijf notities in platte tekst op uw telefoon of computer en houd ze gesynchroniseerd met andere apparaten op hetzelfde Wi‑Fi. Peers ontdekken elkaar op het lokale netwerk, koppelen eenmalig met wederzijdse goedkeuring en delen vervolgens meerdere benoemde notities met versleutelde peer-sessies.",
   "aboutPlatforms": "Android · iOS · Windows · macOS",
-  "aboutStatus": "Beta — geschikt voor dagelijks LAN-gebruik.",
+  "aboutStatus": "Geschikt voor dagelijks LAN-gebruik.",
   "aboutEulaHeading": "Eindgebruikerslicentieovereenkomst",
   "aboutEulaBody": "SB Simple Netpad is gelicentieerd onder een EULA, geen open-source licentie. Kernbewerking en LAN-synchronisatie zijn gratis (onbeperkt lokale notities, tot {noteLimit} gesynchroniseerde notities en {peerLimit} verbonden peers). Netpad Standard is een eenmalig ontgrendelen via de App Store, Google Play of Microsoft Store.",
   "@aboutEulaBody": {

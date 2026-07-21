@@ -611,7 +611,7 @@
   "aboutTagline": "피어 검색 및 공유 편집 기능이 있는 LAN 메모장.",
   "aboutDescription": "전화기나 컴퓨터에서 일반 텍스트 메모를 작성하고 같은 Wi‑Fi의 다른 기기와 동기화합니다. 피어는 로컬 네트워크에서 서로를 발견하고, 상호 승인으로 한 번 페어링한 후, 암호화된 피어 세션으로 여러 명명된 메모를 공유합니다.",
   "aboutPlatforms": "Android · iOS · Windows · macOS",
-  "aboutStatus": "베타 — 일상적인 LAN 사용에 적합합니다.",
+  "aboutStatus": "일상적인 LAN 사용에 적합합니다.",
   "aboutEulaHeading": "최종 사용자 라이선스 계약",
   "aboutEulaBody": "SB Simple Netpad는 오픈 소스 라이선스가 아닌 EULA 하에 라이선스됩니다. 핵심 편집 및 LAN 동기화는 무료입니다(로컬 메모 무제한, 동기화 메모 최대 {noteLimit}개, 연결 피어 {peerLimit}개). Netpad Standard는 App Store, Google Play 또는 Microsoft Store를 통한 일회성 잠금 해제입니다.",
   "@aboutEulaBody": {

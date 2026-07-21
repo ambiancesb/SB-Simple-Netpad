@@ -645,7 +645,7 @@
   "aboutTagline": "LAN notepad with peer discovery and shared editing.",
   "aboutDescription": "Write plain-text notes on your phone or computer and keep them in sync with other devices on the same Wi‑Fi. Peers discover each other on the local network, pair once with mutual approval, then share multiple named notes with encrypted peer sessions.",
   "aboutPlatforms": "Android · iOS · Windows · macOS",
-  "aboutStatus": "Beta — suitable for daily LAN use.",
+  "aboutStatus": "Suitable for daily LAN use.",
   "aboutEulaHeading": "End User License Agreement",
   "aboutEulaBody": "SB Simple Netpad is licensed under an EULA, not an open-source license. Core editing and LAN sync are free (unlimited local notes, up to {noteLimit} synced notes and {peerLimit} connected peers). Netpad Standard is a one-time unlock via the App Store, Google Play, or Microsoft Store.",
   "@aboutEulaBody": {

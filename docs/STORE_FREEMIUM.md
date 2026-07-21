@@ -151,7 +151,7 @@ Disclose freemium clearly in each store listing so review does not treat caps as
 
 Suggested short description snippet:
 
-> Free: unlimited local notes, up to 3 synced notes and 3 connected LAN peers. Unlock Netpad Standard once for unlimited synced notes and peers, skins, version history, trusted auto-sync, and voice dictation.
+> Free: unlimited local notes, up to 3 synced notes and 3 connected LAN peers, 500 characters per note. Unlock Netpad Standard once for unlimited synced notes, peers, and note length, plus skins, version history, trusted auto-sync, and voice dictation.
 
 Suggested “What’s New” / privacy / monetization notes:
 
@@ -160,6 +160,8 @@ Suggested “What’s New” / privacy / monetization notes:
 - Restore purchases is available in Settings and on the paywall.
 
 For Apple review, have a demo account / LAN pair of devices ready if they ask how sync works; freemium gates are local and do not require a login.
+
+Release “What’s New” copy and an upload checklist live in [`STORE_RELEASE_NOTES.md`](STORE_RELEASE_NOTES.md).
 
 ## EULA (custom license for stores)
 

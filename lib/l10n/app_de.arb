@@ -611,7 +611,7 @@
   "aboutTagline": "LAN-Notizblock mit Peer-Erkennung und gemeinsamem Bearbeiten.",
   "aboutDescription": "Schreiben Sie reine Textnotizen auf Ihrem Telefon oder Computer und halten Sie sie mit anderen Geräten im gleichen Wi‑Fi synchronisiert. Peers entdecken einander im lokalen Netzwerk, koppeln einmalig mit gegenseitiger Genehmigung und teilen dann mehrere benannte Notizen mit verschlüsselten Peer-Sitzungen.",
   "aboutPlatforms": "Android · iOS · Windows · macOS",
-  "aboutStatus": "Beta — geeignet für den täglichen LAN-Einsatz.",
+  "aboutStatus": "Geeignet für den täglichen LAN-Einsatz.",
   "aboutEulaHeading": "Endbenutzer-Lizenzvertrag",
   "aboutEulaBody": "SB Simple Netpad ist unter einem EULA lizenziert, nicht unter einer Open-Source-Lizenz. Grundlegende Bearbeitung und LAN-Synchronisierung sind kostenlos (unbegrenzte lokale Notizen, bis zu {noteLimit} synchronisierte Notizen und {peerLimit} verbundene Peers). Netpad Standard ist eine einmalige Freischaltung über App Store, Google Play oder Microsoft Store.",
   "@aboutEulaBody": {

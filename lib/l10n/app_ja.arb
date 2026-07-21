@@ -611,7 +611,7 @@
   "aboutTagline": "ピア探索と共有編集機能を持つLANメモ帳。",
   "aboutDescription": "スマートフォンやパソコンでプレーンテキストのメモを書き、同じWi‑Fi上の他のデバイスと同期します。ピアはローカルネットワークで互いを検出し、相互承認で一度ペアリングし、暗号化されたピアセッションで複数の名前付きメモを共有します。",
   "aboutPlatforms": "Android · iOS · Windows · macOS",
-  "aboutStatus": "ベータ版 — 日常的なLAN使用に適しています。",
+  "aboutStatus": "日常的なLAN使用に適しています。",
   "aboutEulaHeading": "エンドユーザーライセンス契約",
   "aboutEulaBody": "SB Simple Netpad はオープンソースライセンスではなく EULA の下でライセンスされています。基本的な編集とLAN同期は無料です（ローカルメモは無制限、同期メモは最大 {noteLimit} 件、接続ピアは {peerLimit} 件）。Netpad Standard は App Store、Google Play、または Microsoft Store を通じた一度きりの解除です。",
   "@aboutEulaBody": {

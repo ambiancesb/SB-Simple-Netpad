@@ -322,6 +322,7 @@ void main() {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
       final created = ws.createNote(title: 'Second');
+      ws.setSyncEnabled(created.id, true);
       var updateCount = 0;
       var renameCount = 0;
       ws.onDocUpdate = (_, _, _, _, _) => updateCount++;
@@ -331,7 +332,8 @@ void main() {
 
       expect(renameCount, 1);
       expect(updateCount, 0);
-      expect(ws.documentById(created.id)!.revision, 2);
+      // createNote starts at rev 1; enabling sync bumps once; rename bumps again.
+      expect(ws.documentById(created.id)!.revision, 3);
     });
 
     test('mergeCatalog applies peer note order', () async {
@@ -349,7 +351,9 @@ void main() {
     test('reorderNote broadcasts a new order revision', () async {
       final ws = WorkspaceRepository(instanceId: 'aaa', storage: await _storage());
       await ws.load();
-      ws.createNote(title: 'Second');
+      final second = ws.createNote(title: 'Second');
+      ws.setSyncEnabled(ws.documents.first.id, true);
+      ws.setSyncEnabled(second.id, true);
       List<String>? broadcastOrder;
       var broadcastRevision = 0;
       ws.onOrderChanged = (order, revision, _) {

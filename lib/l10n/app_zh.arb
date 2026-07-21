@@ -611,7 +611,7 @@
   "aboutTagline": "具有节点发现和共享编辑功能的 LAN 记事本。",
   "aboutDescription": "在手机或电脑上写纯文本笔记，与同一 Wi‑Fi 上的其他设备保持同步。节点在本地网络上相互发现，通过相互批准配对一次，然后通过加密节点会话共享多个命名笔记。",
   "aboutPlatforms": "Android · iOS · Windows · macOS",
-  "aboutStatus": "测试版 — 适合日常 LAN 使用。",
+  "aboutStatus": "适合日常 LAN 使用。",
   "aboutEulaHeading": "最终用户许可协议",
   "aboutEulaBody": "SB Simple Netpad 根据 EULA 而非开源许可证进行授权。核心编辑和 LAN 同步免费（本地笔记不限量，最多 {noteLimit} 条同步笔记和 {peerLimit} 个连接节点）。Netpad Standard 通过 App Store、Google Play 或 Microsoft Store 一次性解锁。",
   "@aboutEulaBody": {

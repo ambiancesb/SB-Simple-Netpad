@@ -611,7 +611,7 @@
   "aboutTagline": "Bloc-notes LAN avec découverte de pairs et édition partagée.",
   "aboutDescription": "Rédigez des notes en texte brut sur votre téléphone ou ordinateur et maintenez-les synchronisées avec d'autres appareils sur le même Wi‑Fi. Les pairs se découvrent sur le réseau local, s'associent une fois avec approbation mutuelle, puis partagent plusieurs notes nommées avec des sessions de pairs chiffrées.",
   "aboutPlatforms": "Android · iOS · Windows · macOS",
-  "aboutStatus": "Bêta — adapté à un usage LAN quotidien.",
+  "aboutStatus": "Adapté à un usage LAN quotidien.",
   "aboutEulaHeading": "Contrat de licence utilisateur final",
   "aboutEulaBody": "SB Simple Netpad est sous licence EULA, pas une licence open source. L'édition principale et la synchronisation LAN sont gratuites (notes locales illimitées, jusqu'à {noteLimit} notes synchronisées et {peerLimit} pairs connectés). Netpad Standard est un déblocage unique via l'App Store, Google Play ou Microsoft Store.",
   "@aboutEulaBody": {

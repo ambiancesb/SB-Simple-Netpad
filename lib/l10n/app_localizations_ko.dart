@@ -1170,7 +1170,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
-  String get aboutStatus => '베타 — 일상적인 LAN 사용에 적합합니다.';
+  String get aboutStatus => '일상적인 LAN 사용에 적합합니다.';
 
   @override
   String get aboutEulaHeading => '최종 사용자 라이선스 계약';

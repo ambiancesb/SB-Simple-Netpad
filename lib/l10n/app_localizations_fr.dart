@@ -1227,7 +1227,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
-  String get aboutStatus => 'Bêta — adapté à un usage LAN quotidien.';
+  String get aboutStatus => 'Adapté à un usage LAN quotidien.';
 
   @override
   String get aboutEulaHeading => 'Contrat de licence utilisateur final';

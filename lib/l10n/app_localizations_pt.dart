@@ -33,7 +33,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get commonHelp => 'Ajuda';
 
   @override
-  String get commonSettings => 'ConfiguraÃ§Ãµes';
+  String get commonSettings => 'Configurações';
 
   @override
   String get commonMore => 'Mais';
@@ -67,25 +67,25 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String commonCouldNotOpenLabel(String label) {
-    return 'NÃ£o foi possÃ­vel abrir $label';
+    return 'Não foi possível abrir $label';
   }
 
   @override
   String get commonEulaLabel => 'EULA';
 
   @override
-  String get commonPrivacyPolicyLabel => 'polÃ­tica de privacidade';
+  String get commonPrivacyPolicyLabel => 'política de privacidade';
 
   @override
   String get commonEndUserLicenseAgreement =>
-      'Contrato de LicenÃ§a do UsuÃ¡rio Final';
+      'Contrato de Licença do Usuário Final';
 
   @override
-  String get commonPrivacyPolicy => 'PolÃ­tica de Privacidade';
+  String get commonPrivacyPolicy => 'Política de Privacidade';
 
   @override
   String commonVersionLabel(String version) {
-    return 'VersÃ£o $version';
+    return 'Versão $version';
   }
 
   @override
@@ -101,19 +101,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get shellMenuHelp => 'Ajuda';
 
   @override
-  String get shellSaveToFile => 'Salvar em arquivoâ€¦';
+  String get shellSaveToFile => 'Salvar em arquivo…';
 
   @override
-  String get shellOpenFileAsNewNote => 'Abrir arquivo como nova notaâ€¦';
+  String get shellOpenFileAsNewNote => 'Abrir arquivo como nova nota…';
 
   @override
   String get shellShareNote => 'Compartilhar nota';
 
   @override
-  String get shellVersionHistory => 'HistÃ³rico de versÃµesâ€¦';
+  String get shellVersionHistory => 'Histórico de versões…';
 
   @override
-  String get shellSettings => 'ConfiguraÃ§Ãµesâ€¦';
+  String get shellSettings => 'Configurações…';
 
   @override
   String get shellExit => 'Sair';
@@ -128,28 +128,28 @@ class AppLocalizationsPt extends AppLocalizations {
   String get shellPaste => 'Colar';
 
   @override
-  String get shellFind => 'Localizarâ€¦';
+  String get shellFind => 'Localizar…';
 
   @override
-  String get shellFindAndReplace => 'Localizar e substituirâ€¦';
+  String get shellFindAndReplace => 'Localizar e substituir…';
 
   @override
   String get shellWordWrap => 'Quebra de linha';
 
   @override
-  String get shellWordWrapChecked => 'Quebra de linha âœ“';
+  String get shellWordWrapChecked => 'Quebra de linha ✓';
 
   @override
   String get shellNotesPanel => 'Painel de notas';
 
   @override
-  String get shellNotesPanelChecked => 'Painel de notas âœ“';
+  String get shellNotesPanelChecked => 'Painel de notas ✓';
 
   @override
   String get shellPeersPanel => 'Painel de pares';
 
   @override
-  String get shellPeersPanelChecked => 'Painel de pares âœ“';
+  String get shellPeersPanelChecked => 'Painel de pares ✓';
 
   @override
   String get shellHelpItem => 'Ajuda do SB Simple Netpad';
@@ -175,7 +175,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String shellPeersTooltipConnected(int count, String action, String mod) {
-    return '$count sessÃµes de pares criptografadas Â· $action painel de pares ($mod+P)';
+    return '$count sessões de pares criptografadas · $action painel de pares ($mod+P)';
   }
 
   @override
@@ -191,30 +191,30 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String shellSecurityChipConnected(int count) {
-    return '$count sessÃµes de pares criptografadas com WSS/TLS Â· toque para ver pares';
+    return '$count sessões de pares criptografadas com WSS/TLS · toque para ver pares';
   }
 
   @override
   String get shellSecurityChipNone =>
-      'Sem sessÃµes de pares ativas Â· toque para ver pares';
+      'Sem sessões de pares ativas · toque para ver pares';
 
   @override
   String get shellMobileWordWrap => 'Quebra de linha';
 
   @override
-  String get shellMobileSaveToFile => 'Salvar em arquivoâ€¦';
+  String get shellMobileSaveToFile => 'Salvar em arquivo…';
 
   @override
-  String get shellMobileOpenFileAsNewNote => 'Abrir arquivo como nova notaâ€¦';
+  String get shellMobileOpenFileAsNewNote => 'Abrir arquivo como nova nota…';
 
   @override
   String get shellMobileShareNote => 'Compartilhar nota';
 
   @override
-  String get shellMobileVersionHistory => 'HistÃ³rico de versÃµesâ€¦';
+  String get shellMobileVersionHistory => 'Histórico de versões…';
 
   @override
-  String get shellMobileSettings => 'ConfiguraÃ§Ãµes';
+  String get shellMobileSettings => 'Configurações';
 
   @override
   String get shellMobileHelp => 'Ajuda';
@@ -224,7 +224,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get shellListeningSnack =>
-      'Ouvindoâ€¦ toque no microfone novamente para parar';
+      'Ouvindo… toque no microfone novamente para parar';
 
   @override
   String get notesTitle => 'Notas';
@@ -239,7 +239,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notesRenameTitle => 'Renomear nota';
 
   @override
-  String get notesTitleLabel => 'TÃ­tulo';
+  String get notesTitleLabel => 'Título';
 
   @override
   String notesDeleteTitle(String title) {
@@ -248,14 +248,14 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get notesDeleteSyncedBody =>
-      'Isso remove a nota para vocÃª e todos os pares conectados.';
+      'Isso remove a nota para você e todos os pares conectados.';
 
   @override
   String get notesDeleteLocalBody =>
       'Isso remove a nota somente deste dispositivo.';
 
   @override
-  String get notesNoMatches => 'Nenhuma correspondÃªncia';
+  String get notesNoMatches => 'Nenhuma correspondência';
 
   @override
   String get notesNoNotes => 'Nenhuma nota';
@@ -264,7 +264,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notesRename => 'Renomear';
 
   @override
-  String get notesVersionHistory => 'HistÃ³rico de versÃµes';
+  String get notesVersionHistory => 'Histórico de versões';
 
   @override
   String get notesDelete => 'Excluir';
@@ -280,17 +280,17 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String notesMatchCount(int count) {
-    return '$count correspondÃªncias';
+    return '$count correspondências';
   }
 
   @override
   String notesLocalOnlyWithMatches(String matchLine) {
-    return 'Somente local Â· $matchLine';
+    return 'Somente local · $matchLine';
   }
 
   @override
   String notesSearchSnippetMatches(String snippet, int count) {
-    return '$snippet  Â·  $count correspondÃªncias';
+    return '$snippet  ·  $count correspondências';
   }
 
   @override
@@ -298,29 +298,29 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String historyTitle(String title) {
-    return 'HistÃ³rico de versÃµes Â· \"$title\"';
+    return 'Histórico de versões · \"$title\"';
   }
 
   @override
   String get historyEmpty =>
-      'Nenhuma versÃ£o salva ainda. InstantÃ¢neos sÃ£o mantidos automaticamente antes que ediÃ§Ãµes remotas substituam seu texto.';
+      'Nenhuma versão salva ainda. Instantâneos são mantidos automaticamente antes que edições remotas substituam seu texto.';
 
   @override
   String historyEntrySubtitle(String label, String time, int chars) {
-    return '$label Â· $time Â· $chars caracteres';
+    return '$label · $time · $chars caracteres';
   }
 
   @override
   String get historyRestore => 'Restaurar';
 
   @override
-  String get historyRestoredSnack => 'VersÃ£o restaurada';
+  String get historyRestoredSnack => 'Versão restaurada';
 
   @override
-  String get historyBeforeRemoteUpdate => 'Antes da atualizaÃ§Ã£o remota';
+  String get historyBeforeRemoteUpdate => 'Antes da atualização remota';
 
   @override
-  String get historySnapshot => 'InstantÃ¢neo';
+  String get historySnapshot => 'Instantâneo';
 
   @override
   String get historyImportedFile => 'Arquivo importado';
@@ -343,16 +343,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get editorPrevious => 'Anterior';
 
   @override
-  String get editorNext => 'PrÃ³ximo';
+  String get editorNext => 'Próximo';
 
   @override
   String editorShowReplace(String shortcut) {
-    return 'Mostrar substituiÃ§Ã£o ($shortcut)';
+    return 'Mostrar substituição ($shortcut)';
   }
 
   @override
   String editorHideReplace(String shortcut) {
-    return 'Ocultar substituiÃ§Ã£o ($shortcut)';
+    return 'Ocultar substituição ($shortcut)';
   }
 
   @override
@@ -365,7 +365,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get editorReplaceAll => 'Todos';
 
   @override
-  String get editorListening => 'Ouvindoâ€¦';
+  String get editorListening => 'Ouvindo…';
 
   @override
   String get editorDictate => 'Ditar';
@@ -380,19 +380,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get peersConnected => 'Conectado';
 
   @override
-  String get peersNearby => 'PrÃ³ximos';
+  String get peersNearby => 'Próximos';
 
   @override
-  String get peersTrustedDevices => 'Dispositivos confiÃ¡veis';
+  String get peersTrustedDevices => 'Dispositivos confiáveis';
 
   @override
   String get peersBlocked => 'Bloqueados';
 
   @override
-  String get peersConnectionLog => 'Registro de conexÃµes';
+  String get peersConnectionLog => 'Registro de conexões';
 
   @override
-  String get peersNoActiveConnections => 'Nenhuma conexÃ£o ativa';
+  String get peersNoActiveConnections => 'Nenhuma conexão ativa';
 
   @override
   String get peersNoTrustedDevices =>
@@ -402,7 +402,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get peersNoBlockedDevices => 'Nenhum dispositivo bloqueado';
 
   @override
-  String get peersNoConnectionEvents => 'Nenhum evento de conexÃ£o ainda';
+  String get peersNoConnectionEvents => 'Nenhum evento de conexão ainda';
 
   @override
   String get peersNoDiscoveredPeers =>
@@ -410,7 +410,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get peersDiscoveryPaused =>
-      'A descoberta de pares estÃ¡ pausada atÃ© que vocÃª entre em uma rede local';
+      'A descoberta de pares está pausada até que você entre em uma rede local';
 
   @override
   String get peersDisconnect => 'Desconectar';
@@ -432,7 +432,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get peersConnect => 'Conectar';
 
   @override
-  String get peersResolving => 'Resolvendoâ€¦';
+  String get peersResolving => 'Resolvendo…';
 
   @override
   String get peersBlockTooltip => 'Bloquear';
@@ -444,7 +444,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get peersBlockBody =>
-      'Isso desconecta o dispositivo, esquece seu certificado fixado e recusa futuras solicitaÃ§Ãµes de conexÃ£o atÃ© que vocÃª o desbloqueie.';
+      'Isso desconecta o dispositivo, esquece seu certificado fixado e recusa futuras solicitações de conexão até que você o desbloqueie.';
 
   @override
   String peersRevokeTitle(String peer) {
@@ -453,10 +453,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get peersRevokeBody =>
-      'A prÃ³xima conexÃ£o exigirÃ¡ tocar em Aceitar novamente. O PIN de seguranÃ§a Ã© mantido para que as verificaÃ§Ãµes de certificado ainda se apliquem.';
+      'A próxima conexão exigirá tocar em Aceitar novamente. O PIN de segurança é mantido para que as verificações de certificado ainda se apliquem.';
 
   @override
-  String get peersAutoSync => 'SincronizaÃ§Ã£o automÃ¡tica';
+  String get peersAutoSync => 'Sincronização automática';
 
   @override
   String get peersCopiedOneLogEntry => '1 entrada de registro copiada';
@@ -468,12 +468,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String peersLogRevision(String time, String revision) {
-    return '$time â€¢ revisÃ£o $revision';
+    return '$time • revisão $revision';
   }
 
   @override
   String peersStillResolving(String peer) {
-    return 'Ainda resolvendo $peerâ€¦';
+    return 'Ainda resolvendo $peer…';
   }
 
   @override
@@ -483,12 +483,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String peersPairingRequestSent(String peer) {
-    return 'SolicitaÃ§Ã£o de emparelhamento enviada para $peer';
+    return 'Solicitação de emparelhamento enviada para $peer';
   }
 
   @override
   String peersCouldNotConnect(String message) {
-    return 'NÃ£o foi possÃ­vel conectar: $message';
+    return 'Não foi possível conectar: $message';
   }
 
   @override
@@ -501,10 +501,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get peersResolveFailedSubtitle =>
-      'ResoluÃ§Ã£o falhou â€” tente Conectar por IP';
+      'Resolução falhou — tente Conectar por IP';
 
   @override
-  String get peersResolvingAddress => 'Resolvendo endereÃ§oâ€¦';
+  String get peersResolvingAddress => 'Resolvendo endereço…';
 
   @override
   String peersHostPort(String host, int port) {
@@ -512,11 +512,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get peersNoAddressYet => 'Nenhum endereÃ§o ainda';
+  String get peersNoAddressYet => 'Nenhum endereço ainda';
 
   @override
   String peersEncryptedPinned(String code) {
-    return 'Criptografado Â· fixado $code';
+    return 'Criptografado · fixado $code';
   }
 
   @override
@@ -524,17 +524,17 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String peersSubtitleWithPresence(String subtitle, String presence) {
-    return '$subtitle â€¢ $presence';
+    return '$subtitle • $presence';
   }
 
   @override
   String peersSubtitleWithSecurity(String subtitle, String security) {
-    return '$subtitle â€¢ $security';
+    return '$subtitle • $security';
   }
 
   @override
   String peersPairedStatus(String date, String status) {
-    return 'Emparelhado em $date Â· $status';
+    return 'Emparelhado em $date · $status';
   }
 
   @override
@@ -544,7 +544,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get peersStatusManualOnly => 'Somente manual';
 
   @override
-  String get peersStatusReconnecting => 'Reconectandoâ€¦';
+  String get peersStatusReconnecting => 'Reconectando…';
 
   @override
   String peersStatusRetryIn(int seconds) {
@@ -555,10 +555,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get peersStatusNotOnNetwork => 'Fora da rede';
 
   @override
-  String get peersStatusConnecting => 'Conectandoâ€¦';
+  String get peersStatusConnecting => 'Conectando…';
 
   @override
-  String get peersStatusAutoReconnect => 'ReconexÃ£o automÃ¡tica';
+  String get peersStatusAutoReconnect => 'Reconexão automática';
 
   @override
   String peersPresenceLineCol(int line, int column) {
@@ -567,7 +567,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String peersPresenceInNote(String title, String position) {
-    return '\"$title\" Â· $position';
+    return '\"$title\" · $position';
   }
 
   @override
@@ -579,7 +579,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get discoveryThisDevice => 'Este dispositivo';
 
   @override
-  String get discoveryCopyAddress => 'Copiar endereÃ§o';
+  String get discoveryCopyAddress => 'Copiar endereço';
 
   @override
   String discoveryCopiedAddress(String address) {
@@ -587,58 +587,58 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get discoveryLocalNetworkRequired => 'Rede local necessÃ¡ria';
+  String get discoveryLocalNetworkRequired => 'Rede local necessária';
 
   @override
-  String get discoveryNotListeningTitle => 'NÃ£o estÃ¡ ouvindo';
+  String get discoveryNotListeningTitle => 'Não está ouvindo';
 
   @override
   String get discoveryNotListeningBody =>
-      'Este dispositivo ainda nÃ£o estÃ¡ ouvindo por pares. Aguarde alguns segundos apÃ³s entrar no Wiâ€‘Fi, ou toque em Tentar novamente em um banner de erro de rede.';
+      'Este dispositivo ainda não está ouvindo por pares. Aguarde alguns segundos após entrar no Wi‑Fi, ou toque em Tentar novamente em um banner de erro de rede.';
 
   @override
   String get discoveryModeTitle => 'Modo de descoberta';
 
   @override
-  String get discoveryUnavailableTitle => 'Descoberta de pares indisponÃ­vel';
+  String get discoveryUnavailableTitle => 'Descoberta de pares indisponível';
 
   @override
   String get discoveryRetryTooltip => 'Tentar descoberta novamente';
 
   @override
-  String get peersSecuredSessions => 'SessÃµes seguras';
+  String get peersSecuredSessions => 'Sessões seguras';
 
   @override
   String peersSecurityBannerIdle(String code) {
-    return 'Este dispositivo anuncia via WSS/TLS Â· cÃ³digo $code';
+    return 'Este dispositivo anuncia via WSS/TLS · código $code';
   }
 
   @override
   String peersSecurityBannerActive(int connectedCount, int pinnedCount) {
-    return '$connectedCount sessÃµes criptografadas Â· $pinnedCount certificados fixados';
+    return '$connectedCount sessões criptografadas · $pinnedCount certificados fixados';
   }
 
   @override
   String peersSecurityCompactIdle(String code) {
-    return 'WSS/TLS Â· cÃ³digo $code';
+    return 'WSS/TLS · código $code';
   }
 
   @override
   String peersSecurityCompactActive(int connectedCount, int pinnedCount) {
-    return '$connectedCount criptografadas Â· $pinnedCount fixados';
+    return '$connectedCount criptografadas · $pinnedCount fixados';
   }
 
   @override
   String peersSecurityTooltipPinned(String code) {
-    return 'Criptografado (WSS/TLS) Â· fixado $code';
+    return 'Criptografado (WSS/TLS) · fixado $code';
   }
 
   @override
   String get peersSecurityTooltipActive =>
-      'Criptografado (WSS/TLS) Â· sessÃ£o ativa';
+      'Criptografado (WSS/TLS) · sessão ativa';
 
   @override
-  String get pairingConnectionRequest => 'SolicitaÃ§Ã£o de conexÃ£o';
+  String get pairingConnectionRequest => 'Solicitação de conexão';
 
   @override
   String pairingAllowPeer(String peer) {
@@ -646,19 +646,19 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get pairingVerificationCode => 'CÃ³digo de verificaÃ§Ã£o';
+  String get pairingVerificationCode => 'Código de verificação';
 
   @override
   String get pairingConfirmCode =>
-      'Confirme que este cÃ³digo corresponde em ambos os dispositivos antes de aceitar.';
+      'Confirme que este código corresponde em ambos os dispositivos antes de aceitar.';
 
   @override
   String get pairingThisDeviceSecurityCode =>
-      'CÃ³digo de seguranÃ§a deste dispositivo';
+      'Código de segurança deste dispositivo';
 
   @override
   String get pairingOtherDevicePins =>
-      'O outro dispositivo fixa isso na primeira conexÃ£o.';
+      'O outro dispositivo fixa isso na primeira conexão.';
 
   @override
   String get pairingTrustForAutoSync => 'Confiar para sincronização automática';
@@ -686,11 +686,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get manualConnectTitle => 'Conectar por endereÃ§o';
+  String get manualConnectTitle => 'Conectar por endereço';
 
   @override
   String get manualConnectBody =>
-      'Use quando a descoberta nÃ£o encontrar pares na mesma sub-rede. Somente endereÃ§os no seu segmento de rede local ativo sÃ£o permitidos.';
+      'Use quando a descoberta não encontrar pares na mesma sub-rede. Somente endereços no seu segmento de rede local ativo são permitidos.';
 
   @override
   String get manualConnectHostLabel => 'Host ou IP';
@@ -705,24 +705,24 @@ class AppLocalizationsPt extends AppLocalizations {
   String get manualConnectPortHint => '54321';
 
   @override
-  String get manualConnectLabelOptional => 'RÃ³tulo (opcional)';
+  String get manualConnectLabelOptional => 'Rótulo (opcional)';
 
   @override
   String get manualConnectLabelHint => 'PC da sala';
 
   @override
   String get manualConnectInvalidHostPort =>
-      'Digite um host e porta vÃ¡lidos (1â€“65535)';
+      'Digite um host e porta válidos (1–65535)';
 
   @override
-  String get settingsTitle => 'ConfiguraÃ§Ãµes';
+  String get settingsTitle => 'Configurações';
 
   @override
   String get settingsDeviceSection => 'Dispositivo';
 
   @override
   String settingsDeviceHint(String mod) {
-    return 'O nome do dispositivo e a sala requerem Salvar ($mod+S). As preferÃªncias de aparÃªncia e editor sÃ£o salvas imediatamente.';
+    return 'O nome do dispositivo e a sala requerem Salvar ($mod+S). As preferências de aparência e editor são salvas imediatamente.';
   }
 
   @override
@@ -732,37 +732,37 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsDeviceNameHint => 'Nome exibido para outros dispositivos';
 
   @override
-  String get settingsSessionRoom => 'SessÃ£o / sala';
+  String get settingsSessionRoom => 'Sessão / sala';
 
   @override
   String get settingsSessionRoomHint =>
-      'Somente pares na mesma sala sÃ£o descobertos';
+      'Somente pares na mesma sala são descobertos';
 
   @override
   String get settingsListeningPort => 'Porta de escuta';
 
   @override
-  String get settingsStartingServer => 'Iniciando servidorâ€¦';
+  String get settingsStartingServer => 'Iniciando servidor…';
 
   @override
   String settingsAddressShare(String address) {
-    return '$address (compartilhe para conexÃ£o manual)';
+    return '$address (compartilhe para conexão manual)';
   }
 
   @override
-  String get settingsCopyAddress => 'Copiar endereÃ§o';
+  String get settingsCopyAddress => 'Copiar endereço';
 
   @override
   String get settingsAddressCopied =>
-      'EndereÃ§o copiado para a Ã¡rea de transferÃªncia';
+      'Endereço copiado para a área de transferência';
 
   @override
   String settingsSavedSnack(String name, String room) {
-    return 'ConfiguraÃ§Ãµes salvas Â· \"$name\" Â· sala \"$room\"';
+    return 'Configurações salvas · \"$name\" · sala \"$room\"';
   }
 
   @override
-  String get settingsAppearanceSection => 'AparÃªncia';
+  String get settingsAppearanceSection => 'Aparência';
 
   @override
   String get settingsMode => 'Modo';
@@ -780,7 +780,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsSkin => 'Visual';
 
   @override
-  String get settingsSkinDefault => 'PadrÃ£o';
+  String get settingsSkinDefault => 'Padrão';
 
   @override
   String get settingsSkinOcean => 'Oceano';
@@ -789,14 +789,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsSkinForest => 'Floresta';
 
   @override
-  String get settingsSkinSunset => 'PÃ´r do sol';
+  String get settingsSkinSunset => 'Pôr do sol';
 
   @override
-  String get settingsSkinSlate => 'ArdÃ³sia';
+  String get settingsSkinSlate => 'Ardósia';
 
   @override
   String settingsSkinStandardLabel(String skin) {
-    return '$skin Â· Standard';
+    return '$skin · Standard';
   }
 
   @override
@@ -806,7 +806,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsStandardUnlocked => 'Standard desbloqueado';
 
   @override
-  String get settingsFree => 'GrÃ¡tis';
+  String get settingsFree => 'Grátis';
 
   @override
   String get settingsStandardUnlockedSubtitle =>
@@ -814,11 +814,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsStandardBuySubtitle =>
-      'Desbloqueio Ãºnico pela sua loja de aplicativos';
+      'Desbloqueio único pela sua loja de aplicativos';
 
   @override
   String get settingsPurchasesUnavailable =>
-      'Compras indisponÃ­veis nesta plataforma';
+      'Compras indisponíveis nesta plataforma';
 
   @override
   String get settingsStandardStoreSubtitle =>
@@ -854,57 +854,57 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsEulaSubtitleStandard =>
-      'Standard Â· Abre EULA no GitHub Pages';
+      'Standard · Abre EULA no GitHub Pages';
 
   @override
-  String get settingsEulaSubtitleFree => 'GrÃ¡tis Â· Abre EULA no GitHub Pages';
+  String get settingsEulaSubtitleFree => 'Grátis · Abre EULA no GitHub Pages';
 
   @override
   String get settingsPrivacySubtitle =>
-      'Abre pÃ¡gina de privacidade no GitHub Pages';
+      'Abre página de privacidade no GitHub Pages';
 
   @override
   String get settingsDisclaimerTitle =>
-      'IsenÃ§Ã£o de responsabilidade e responsabilidade civil';
+      'Isenção de responsabilidade e responsabilidade civil';
 
   @override
-  String get settingsDisclaimerSubtitle => 'Use por sua prÃ³pria conta e risco';
+  String get settingsDisclaimerSubtitle => 'Use por sua própria conta e risco';
 
   @override
   String get settingsDisclaimerP1 =>
-      'Este software Ã© fornecido \"como estÃ¡\", sem garantias de qualquer tipo, expressas ou implÃ­citas, incluindo comercializaÃ§Ã£o, adequaÃ§Ã£o a uma finalidade especÃ­fica e nÃ£o violaÃ§Ã£o.';
+      'Este software é fornecido \"como está\", sem garantias de qualquer tipo, expressas ou implícitas, incluindo comercialização, adequação a uma finalidade específica e não violação.';
 
   @override
   String get settingsDisclaimerP2 =>
-      'VocÃª Ã© o Ãºnico responsÃ¡vel pela forma como usa este aplicativo e pelo cumprimento de todas as leis, regulamentos, polÃ­ticas e acordos aplicÃ¡veis.';
+      'Você é o único responsável pela forma como usa este aplicativo e pelo cumprimento de todas as leis, regulamentos, políticas e acordos aplicáveis.';
 
   @override
   String get settingsDisclaimerP3 =>
-      'O titular do direito autoral nÃ£o Ã© responsÃ¡vel por quaisquer reclamaÃ§Ãµes, danos, perdas, perda de dados, interrupÃ§Ã£o de negÃ³cios ou outra responsabilidade decorrente do uso ou mau uso deste software.';
+      'O titular do direito autoral não é responsável por quaisquer reclamações, danos, perdas, perda de dados, interrupção de negócios ou outra responsabilidade decorrente do uso ou mau uso deste software.';
 
   @override
-  String get settingsNoLegalAdviceTitle => 'Sem aconselhamento jurÃ­dico';
+  String get settingsNoLegalAdviceTitle => 'Sem aconselhamento jurídico';
 
   @override
   String get settingsNoLegalAdviceSubtitle => 'Apenas software informativo';
 
   @override
   String get settingsNoLegalAdviceP1 =>
-      'Este aplicativo e sua documentaÃ§Ã£o nÃ£o fornecem aconselhamento jurÃ­dico, regulatÃ³rio ou profissional.';
+      'Este aplicativo e sua documentação não fornecem aconselhamento jurídico, regulatório ou profissional.';
 
   @override
   String get settingsNoLegalAdviceP2 =>
-      'Se vocÃª precisar de orientaÃ§Ã£o jurÃ­dica para seu caso de uso, consulte um profissional qualificado.';
+      'Se você precisar de orientação jurídica para seu caso de uso, consulte um profissional qualificado.';
 
   @override
-  String get settingsCopyright => 'Â© 2026 Spencer Beaumier';
+  String get settingsCopyright => '© 2026 Spencer Beaumier';
 
   @override
   String get paywallTitle => 'Desbloquear Netpad Standard';
 
   @override
   String get paywallSubtitle =>
-      'Compra Ãºnica. EdiÃ§Ã£o bÃ¡sica e sincronizaÃ§Ã£o LAN permanecem gratuitas.';
+      'Compra única. Edição básica e sincronização LAN permanecem gratuitas.';
 
   @override
   String get paywallBenefitUnlimitedNotes => 'Notas sincronizadas ilimitadas';
@@ -919,11 +919,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get paywallBenefitSkins => 'Visuais de cores extras';
 
   @override
-  String get paywallBenefitHistory => 'HistÃ³rico de versÃµes';
+  String get paywallBenefitHistory => 'Histórico de versões';
 
   @override
   String get paywallBenefitAutoSync =>
-      'SincronizaÃ§Ã£o automÃ¡tica com pares confiÃ¡veis';
+      'Sincronização automática com pares confiáveis';
 
   @override
   String get paywallBenefitVoice => 'Ditado por voz';
@@ -937,7 +937,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String paywallBuyStandardPrice(String price) {
-    return 'Comprar Standard Â· $price';
+    return 'Comprar Standard · $price';
   }
 
   @override
@@ -960,7 +960,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get paywallRestorePurchases => 'Restaurar compras';
 
   @override
-  String get paywallPurchaseNotCompleted => 'A compra nÃ£o foi concluÃ­da.';
+  String get paywallPurchaseNotCompleted => 'A compra não foi concluída.';
 
   @override
   String get paywallPurchaseFailed => 'A compra falhou.';
@@ -994,7 +994,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String standardHighlightPeerLimit(int limit) {
-    return 'A versÃ£o gratuita inclui atÃ© $limit pares conectados. Desbloqueie o Standard para pares ilimitados.';
+    return 'A versão gratuita inclui até $limit pares conectados. Desbloqueie o Standard para pares ilimitados.';
   }
 
   @override
@@ -1004,26 +1004,26 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get standardHighlightVersionHistory =>
-      'O histÃ³rico de versÃµes Ã© um recurso Standard.';
+      'O histórico de versões é um recurso Standard.';
 
   @override
   String get standardHighlightVoice =>
-      'O ditado por voz Ã© um recurso Standard.';
+      'O ditado por voz é um recurso Standard.';
 
   @override
   String get standardHighlightAutoSync =>
-      'A sincronizaÃ§Ã£o automÃ¡tica com pares confiÃ¡veis Ã© um recurso Standard.';
+      'A sincronização automática com pares confiáveis é um recurso Standard.';
 
   @override
   String get standardHighlightSkins =>
-      'Visuais extras estÃ£o incluÃ­dos no Standard.';
+      'Visuais extras estão incluídos no Standard.';
 
   @override
   String get helpTitle => 'Ajuda';
 
   @override
   String get helpIntro =>
-      'Um bloco de notas LAN para notas em texto simples. Dispositivos na mesma rede Wiâ€‘Fi se descobrem, emparelham uma vez e sincronizam notas em tempo real.';
+      'Um bloco de notas LAN para notas em texto simples. Dispositivos na mesma rede Wi‑Fi se descobrem, emparelham uma vez e sincronizam notas em tempo real.';
 
   @override
   String get helpAboutTile => 'Sobre o SB Simple Netpad';
@@ -1033,33 +1033,33 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpPrivacySubtitle =>
-      'Abre pÃ¡gina de privacidade no GitHub Pages';
+      'Abre página de privacidade no GitHub Pages';
 
   @override
   String get helpGettingStartedTitle => 'Primeiros passos';
 
   @override
   String get helpGettingStarted1 =>
-      'Entre na mesma rede Wiâ€‘Fi que os dispositivos com os quais deseja sincronizar.';
+      'Entre na mesma rede Wi‑Fi que os dispositivos com os quais deseja sincronizar.';
 
   @override
   String get helpGettingStarted2 =>
-      'Abra o painel de pares (Ã­cone de cadeado ou gaveta de Pares) e aguarde os dispositivos prÃ³ximos aparecerem.';
+      'Abra o painel de pares (ícone de cadeado ou gaveta de Pares) e aguarde os dispositivos próximos aparecerem.';
 
   @override
   String get helpGettingStarted3 =>
-      'Copie seu endereÃ§o de Este dispositivo e compartilhe se a descoberta estiver lenta.';
+      'Copie seu endereço de Este dispositivo e compartilhe se a descoberta estiver lenta.';
 
   @override
   String get helpGettingStarted4 =>
-      'Use Conectar por IP quando a descoberta mDNS nÃ£o encontrar pares.';
+      'Use Conectar por IP quando a descoberta mDNS não encontrar pares.';
 
   @override
   String get helpNotesTitle => 'Notas';
 
   @override
   String get helpNotes1 =>
-      'Toque no Ã­cone de menu (â˜°) ou no painel de notas para alternar entre notas.';
+      'Toque no ícone de menu (☰) ou no painel de notas para alternar entre notas.';
 
   @override
   String get helpNotes2 =>
@@ -1067,7 +1067,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpNotes3 =>
-      'Cada nota sincroniza de forma independente — notas novas começam só locais; ative a sincronização para partilhar com pares.';
+      'Cada nota sincroniza de forma independente — notas novas começam só locais; ative a sincronização para compartilhar com pares.';
 
   @override
   String get helpNotes4 =>
@@ -1075,22 +1075,22 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpNotes5 =>
-      'O histÃ³rico de versÃµes salva instantÃ¢neos locais que vocÃª pode restaurar posteriormente.';
+      'O histórico de versões salva instantâneos locais que você pode restaurar posteriormente.';
 
   @override
   String get helpPeersTitle => 'Pares e emparelhamento';
 
   @override
   String get helpPeers1 =>
-      'PrÃ³ximos lista os dispositivos descobertos na mesma sala (veja ConfiguraÃ§Ãµes).';
+      'Próximos lista os dispositivos descobertos na mesma sala (veja Configurações).';
 
   @override
   String get helpPeers2 =>
-      'Toque em Conectar em um par â€” o outro dispositivo deve tocar em Aceitar.';
+      'Toque em Conectar em um par — o outro dispositivo deve tocar em Aceitar.';
 
   @override
   String get helpPeers3 =>
-      'Compare o cÃ³digo de verificaÃ§Ã£o de emparelhamento antes de aceitar.';
+      'Compare o código de verificação de emparelhamento antes de aceitar.';
 
   @override
   String get helpPeers4 =>
@@ -1098,22 +1098,22 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpPeers5 =>
-      'Dispositivos confiÃ¡veis: alterne sincronizaÃ§Ã£o automÃ¡tica ou Revogar para exigir Aceitar novamente.';
+      'Dispositivos confiáveis: alterne sincronização automática ou Revogar para exigir Aceitar novamente.';
 
   @override
   String get helpPeers6 =>
-      'Bloquear desconecta um dispositivo e recusa emparelhamentos futuros atÃ© ser desbloqueado.';
+      'Bloquear desconecta um dispositivo e recusa emparelhamentos futuros até ser desbloqueado.';
 
   @override
   String get helpPeers7 =>
-      'Conectado mostra sessÃµes ativas com endereÃ§o e presenÃ§a do cursor.';
+      'Conectado mostra sessões ativas com endereço e presença do cursor.';
 
   @override
   String get helpFileSharingTitle => 'Arquivos e compartilhamento';
 
   @override
   String get helpFileSharing1Desktop =>
-      'Menu Arquivo: Salvar em arquivo, Abrir arquivo como nova nota, Compartilhar nota, HistÃ³rico de versÃµes, ConfiguraÃ§Ãµes, Sair.';
+      'Menu Arquivo: Salvar em arquivo, Abrir arquivo como nova nota, Compartilhar nota, Histórico de versões, Configurações, Sair.';
 
   @override
   String get helpFileSharing1Macos =>
@@ -1121,7 +1121,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpFileSharing1Mobile =>
-      'Menu (â‹®): salvar em arquivo, abrir arquivo como nova nota, compartilhar, histÃ³rico de versÃµes, configuraÃ§Ãµes e este guia de ajuda.';
+      'Menu (⋮): salvar em arquivo, abrir arquivo como nova nota, compartilhar, histórico de versões, configurações e este guia de ajuda.';
 
   @override
   String get helpFileSharing1Ios =>
@@ -1140,61 +1140,61 @@ class AppLocalizationsPt extends AppLocalizations {
       'Compartilhar usa a planilha de compartilhamento do SO quando disponível; caso contrário, a nota é copiada para a área de transferência.';
 
   @override
-  String get helpSettingsTitle => 'ConfiguraÃ§Ãµes';
+  String get helpSettingsTitle => 'Configurações';
 
   @override
   String get helpSettings1 =>
-      'O nome do dispositivo e a sala requerem Salvar â€” outras opÃ§Ãµes se aplicam imediatamente.';
+      'O nome do dispositivo e a sala requerem Salvar — outras opções se aplicam imediatamente.';
 
   @override
   String get helpSettings2 =>
-      'O ID da sala agrupa pares: somente dispositivos na mesma sala sÃ£o descobertos.';
+      'O ID da sala agrupa pares: somente dispositivos na mesma sala são descobertos.';
 
   @override
   String get helpSettings3 =>
-      'As preferÃªncias de aparÃªncia e editor (tema, visual, quebra, fonte) sÃ£o salvas ao alterÃ¡-las.';
+      'As preferências de aparência e editor (tema, visual, quebra, fonte) são salvas ao alterá-las.';
 
   @override
   String get helpDesktopShortcutsTitle => 'Atalhos de teclado';
 
   @override
-  String get helpDesktopShortcuts1 => 'Ctrl/Cmd+S â€” Salvar em arquivo';
+  String get helpDesktopShortcuts1 => 'Ctrl/Cmd+S — Salvar em arquivo';
 
   @override
   String get helpDesktopShortcuts2 =>
-      'Ctrl/Cmd+O â€” Abrir arquivo como nova nota';
+      'Ctrl/Cmd+O — Abrir arquivo como nova nota';
 
   @override
-  String get helpDesktopShortcuts3 => 'Ctrl/Cmd+F â€” Localizar na nota';
+  String get helpDesktopShortcuts3 => 'Ctrl/Cmd+F — Localizar na nota';
 
   @override
   String get helpDesktopShortcuts4 =>
       'Ctrl+H (Windows) or Option+Cmd+F (macOS) — Find and replace';
 
   @override
-  String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N â€” Alternar painel de notas';
+  String get helpDesktopShortcuts5 => 'Ctrl/Cmd+N — Alternar painel de notas';
 
   @override
-  String get helpDesktopShortcuts6 => 'Ctrl/Cmd+P â€” Alternar painel de pares';
+  String get helpDesktopShortcuts6 => 'Ctrl/Cmd+P — Alternar painel de pares';
 
   @override
   String get helpDesktopShortcuts7 =>
       'Ctrl/Cmd+Q — Exit (Windows); macOS uses Quit from the app menu';
 
   @override
-  String get helpTroubleshootingTitle => 'SoluÃ§Ã£o de problemas';
+  String get helpTroubleshootingTitle => 'Solução de problemas';
 
   @override
   String get helpTroubleshooting1 =>
-      'Sem pares? Confirme a mesma sub-rede Wiâ€‘Fi e ID de sala; tente Conectar por IP.';
+      'Sem pares? Confirme a mesma sub-rede Wi‑Fi e ID de sala; tente Conectar por IP.';
 
   @override
   String get helpTroubleshooting2 =>
-      'O banner rede local necessÃ¡ria significa que a sincronizaÃ§Ã£o estÃ¡ pausada atÃ© o Wiâ€‘Fi estar ativo.';
+      'O banner rede local necessária significa que a sincronização está pausada até o Wi‑Fi estar ativo.';
 
   @override
   String get helpTroubleshooting3 =>
-      'Permita o aplicativo pelo seu firewall no primeiro lanÃ§amento (desktop).';
+      'Permita o aplicativo pelo seu firewall no primeiro lançamento (desktop).';
 
   @override
   String get helpTroubleshooting4 =>
@@ -1202,7 +1202,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpTroubleshooting5 =>
-      'Android: conceda permissÃ£o de Wiâ€‘Fi prÃ³ximo quando solicitado.';
+      'Android: conceda permissão de Wi‑Fi próximo quando solicitado.';
 
   @override
   String get helpTroubleshooting6 =>
@@ -1213,20 +1213,20 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get aboutTagline =>
-      'Bloco de notas LAN com descoberta de pares e ediÃ§Ã£o compartilhada.';
+      'Bloco de notas LAN com descoberta de pares e edição compartilhada.';
 
   @override
   String get aboutDescription =>
-      'Escreva notas em texto simples no seu celular ou computador e mantenha-as sincronizadas com outros dispositivos na mesma rede Wiâ€‘Fi. Os pares se descobrem na rede local, emparelham uma vez com aprovaÃ§Ã£o mÃºtua e compartilham vÃ¡rias notas nomeadas com sessÃµes de pares criptografadas.';
+      'Escreva notas em texto simples no seu celular ou computador e mantenha-as sincronizadas com outros dispositivos na mesma rede Wi‑Fi. Os pares se descobrem na rede local, emparelham uma vez com aprovação mútua e compartilham várias notas nomeadas com sessões de pares criptografadas.';
 
   @override
   String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
-  String get aboutStatus => 'Beta â€” adequado para uso LAN diÃ¡rio.';
+  String get aboutStatus => 'Adequado para uso LAN diário.';
 
   @override
-  String get aboutEulaHeading => 'Contrato de LicenÃ§a do UsuÃ¡rio Final';
+  String get aboutEulaHeading => 'Contrato de Licença do Usuário Final';
 
   @override
   String aboutEulaBody(int noteLimit, int peerLimit) {
@@ -1237,24 +1237,24 @@ class AppLocalizationsPt extends AppLocalizations {
   String get aboutViewEula => 'Ver EULA';
 
   @override
-  String get aboutPrivacyPolicy => 'PolÃ­tica de Privacidade';
+  String get aboutPrivacyPolicy => 'Política de Privacidade';
 
   @override
   String get aboutHowToUse => 'Como usar o SB Simple Netpad';
 
   @override
   String get aboutCouldNotOpenPrivacy =>
-      'NÃ£o foi possÃ­vel abrir a polÃ­tica de privacidade';
+      'Não foi possível abrir a política de privacidade';
 
   @override
-  String get aboutCouldNotOpenEula => 'NÃ£o foi possÃ­vel abrir o EULA';
+  String get aboutCouldNotOpenEula => 'Não foi possível abrir o EULA';
 
   @override
-  String get aboutCopyright => 'Â© 2026 Spencer Beaumier';
+  String get aboutCopyright => '© 2026 Spencer Beaumier';
 
   @override
   String conflictLiveTitle(String title) {
-    return 'Conflito de ediÃ§Ã£o em \"$title\"';
+    return 'Conflito de edição em \"$title\"';
   }
 
   @override
@@ -1264,7 +1264,7 @@ class AppLocalizationsPt extends AppLocalizations {
     String localPreview,
     String remotePreview,
   ) {
-    return '$peer editou a mesma nota ao mesmo tempo (revisÃ£o $revision).\n\nA sua:\n$localPreview\n\n$peer:\n$remotePreview\n\nQual versÃ£o ambos os dispositivos devem manter?';
+    return '$peer editou a mesma nota ao mesmo tempo (revisão $revision).\n\nA sua:\n$localPreview\n\n$peer:\n$remotePreview\n\nQual versão ambos os dispositivos devem manter?';
   }
 
   @override
@@ -1279,7 +1279,7 @@ class AppLocalizationsPt extends AppLocalizations {
     int localChars,
     int remoteChars,
   ) {
-    return 'Sua cÃ³pia e a cÃ³pia de $peer de \"$title\" foram alteradas de forma diferente enquanto desconectadas.\n\nA sua: $localChars caracteres\n$peer: $remoteChars caracteres\n\nQual versÃ£o ambos os dispositivos devem manter?';
+    return 'Sua cópia e a cópia de $peer de \"$title\" foram alteradas de forma diferente enquanto desconectadas.\n\nA sua: $localChars caracteres\n$peer: $remoteChars caracteres\n\nQual versão ambos os dispositivos devem manter?';
   }
 
   @override
@@ -1297,7 +1297,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String fileCouldNotSave(String error) {
-    return 'NÃ£o foi possÃ­vel salvar: $error';
+    return 'Não foi possível salvar: $error';
   }
 
   @override
@@ -1307,16 +1307,15 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String fileCouldNotOpen(String error) {
-    return 'NÃ£o foi possÃ­vel abrir: $error';
+    return 'Não foi possível abrir: $error';
   }
 
   @override
-  String get fileNothingToShare =>
-      'Nada para compartilhar â€” a nota estÃ¡ vazia';
+  String get fileNothingToShare => 'Nada para compartilhar — a nota está vazia';
 
   @override
   String get fileShareFallbackClipboard =>
-      'Compartilhamento nÃ£o disponÃ­vel aqui â€” copiado para a Ã¡rea de transferÃªncia';
+      'Compartilhamento não disponível aqui — copiado para a área de transferência';
 
   @override
   String get fileDefaultNoteName => 'netpad-note';
@@ -2529,7 +2528,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
-  String get aboutStatus => 'Beta — adequado para uso LAN diário.';
+  String get aboutStatus => 'Adequado para uso LAN diário.';
 
   @override
   String get aboutEulaHeading => 'Contrato de Licença do Usuário Final';

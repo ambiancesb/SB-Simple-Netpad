@@ -1155,7 +1155,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get aboutPlatforms => 'Android · iOS · Windows · macOS';
 
   @override
-  String get aboutStatus => '测试版 — 适合日常 LAN 使用。';
+  String get aboutStatus => '适合日常 LAN 使用。';
 
   @override
   String get aboutEulaHeading => '最终用户许可协议';

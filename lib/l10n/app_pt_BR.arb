@@ -611,7 +611,7 @@
   "aboutTagline": "Bloco de notas LAN com descoberta de pares e edição compartilhada.",
   "aboutDescription": "Escreva notas em texto simples no seu celular ou computador e mantenha-as sincronizadas com outros dispositivos na mesma rede Wi‑Fi. Os pares se descobrem na rede local, emparelham uma vez com aprovação mútua e compartilham várias notas nomeadas com sessões de pares criptografadas.",
   "aboutPlatforms": "Android · iOS · Windows · macOS",
-  "aboutStatus": "Beta — adequado para uso LAN diário.",
+  "aboutStatus": "Adequado para uso LAN diário.",
   "aboutEulaHeading": "Contrato de Licença do Usuário Final",
   "aboutEulaBody": "SB Simple Netpad é licenciado sob um EULA, não uma licença de código aberto. A edição básica e a sincronização LAN são gratuitas (notas locais ilimitadas, até {noteLimit} notas sincronizadas e {peerLimit} pares conectados). Netpad Standard é um desbloqueio único via App Store, Google Play ou Microsoft Store.",
   "@aboutEulaBody": {

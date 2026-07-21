@@ -1,8 +1,8 @@
 /// Application metadata shown in About and help screens.
 abstract final class AppInfo {
   static const name = 'SB Simple Netpad';
-  static const version = '1.2.0';
-  static const buildNumber = '3';
+  static const version = '1.1.0';
+  static const buildNumber = '4';
 
   static String get versionLabel => '$version ($buildNumber)';
 
@@ -17,7 +17,7 @@ abstract final class AppInfo {
 
   static const platforms = 'Android · iOS · Windows · macOS';
 
-  static const status = 'Beta — suitable for daily LAN use.';
+  static const status = 'Suitable for daily LAN use.';
 
   static const copyright = '© 2026 Spencer Beaumier';
 
