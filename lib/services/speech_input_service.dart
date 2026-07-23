@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
+import 'package:netpad/core/agent_debug_log.dart';
+import 'package:netpad/core/dictation_hypothesis.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -102,6 +104,17 @@ class SpeechInputService extends ChangeNotifier {
     _liveText = '';
     _segmentAnchor = getDictationAnchor?.call();
     _segmentSpan = '';
+    // #region agent log
+    agentDebugLog(
+      location: 'speech_input_service.dart:startListening',
+      message: 'dictation session start',
+      hypothesisId: 'H2',
+      data: {
+        'anchor': _segmentAnchor,
+        'spanLen': _segmentSpan.length,
+      },
+    );
+    // #endregion
 
     final started = await speech.listen(
       onResult: _onSpeechResult,
@@ -120,25 +133,76 @@ class SpeechInputService extends ChangeNotifier {
 
   void _onSpeechResult(SpeechRecognitionResult result) {
     final words = result.recognizedWords.trim();
+    final prevSpan = _segmentSpan;
+    final prevRecognized = prevSpan.trim();
+    var anchor = _segmentAnchor;
+    final decision = resolveDictationHypothesis(
+      previousRecognized: prevRecognized,
+      nextRecognized: words,
+    );
+    // #region agent log
+    agentDebugLog(
+      location: 'speech_input_service.dart:_onSpeechResult',
+      message: 'speech result',
+      hypothesisId: 'H1',
+      data: {
+        'anchor': anchor,
+        'isFinal': result.finalResult,
+        'wordsLen': words.length,
+        'wordsTail': words.length > 80 ? words.substring(words.length - 80) : words,
+        'prevSpanLen': prevSpan.length,
+        'prevRecognizedLen': prevRecognized.length,
+        'prevRecognizedTail': prevRecognized.length > 80
+            ? prevRecognized.substring(prevRecognized.length - 80)
+            : prevRecognized,
+        'mergeKind': decision.kind.name,
+        'mergedLen': decision.recognizedWords.length,
+        'mergedTail': decision.recognizedWords.length > 80
+            ? decision.recognizedWords
+                .substring(decision.recognizedWords.length - 80)
+            : decision.recognizedWords,
+      },
+    );
+    // #endregion
     _liveText = words;
 
-    final anchor = _segmentAnchor;
     if (anchor != null && words.isNotEmpty) {
+      if (decision.kind == DictationMergeKind.newSegment) {
+        // Commit the prior span; continue after it instead of overwriting.
+        final advanced = getDictationAnchor?.call();
+        _segmentAnchor = advanced ?? (anchor + _segmentSpan.length);
+        _segmentSpan = '';
+        anchor = _segmentAnchor;
+      }
+      final recognized = decision.kind == DictationMergeKind.replace
+          ? decision.recognizedWords
+          : words;
       final inserted = onDictationUpdate?.call(
         DictationUpdate(
-          anchorOffset: anchor,
+          anchorOffset: anchor!,
           previousSpan: _segmentSpan,
-          recognizedWords: words,
+          recognizedWords: recognized,
           isFinal: result.finalResult,
         ),
       );
-      _segmentSpan = inserted ?? words;
+      _segmentSpan = inserted ?? recognized;
     }
 
     if (result.finalResult) {
       _segmentSpan = '';
       _liveText = '';
       _segmentAnchor = getDictationAnchor?.call();
+      // #region agent log
+      agentDebugLog(
+        location: 'speech_input_service.dart:_onSpeechResult:final',
+        message: 're-anchored after final',
+        hypothesisId: 'H4',
+        data: {
+          'newAnchor': _segmentAnchor,
+          'listening': _listening,
+        },
+      );
+      // #endregion
     }
 
     notifyListeners();

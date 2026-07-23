@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show TextSelection;
+import 'package:netpad/core/agent_debug_log.dart';
 import 'package:netpad/core/constants.dart';
 import 'package:netpad/core/models/history_entry.dart';
 import 'package:netpad/services/note_storage_service.dart';
@@ -115,6 +116,8 @@ class DocumentRepository extends ChangeNotifier {
     final body = controller.text;
     final start = anchorOffset.clamp(0, body.length);
     final end = (start + previousSpan.length).clamp(start, body.length);
+    final existing = body.substring(start, end);
+    final spanMatches = existing == previousSpan;
     final prefix = previousSpan.isNotEmpty
         ? (previousSpan.startsWith(' ') ? ' ' : '')
         : (start > 0 && body[start - 1] != ' ' && body[start - 1] != '\n'
@@ -123,10 +126,62 @@ class DocumentRepository extends ChangeNotifier {
     final insertion = '$prefix$recognizedWords';
     var updated = body.replaceRange(start, end, insertion);
     final limit = maxCharacters?.call();
+    var truncated = false;
     if (limit != null && updated.length > limit) {
       updated = updated.substring(0, limit);
+      truncated = true;
     }
-    final caret = (start + insertion.length).clamp(0, updated.length);
+    final writtenEnd = truncated
+        ? updated.length.clamp(start, updated.length)
+        : (start + insertion.length).clamp(0, updated.length);
+    final writtenSpan = start < updated.length
+        ? updated.substring(start, writtenEnd)
+        : '';
+    final caret = writtenEnd;
+    final lostBefore =
+        start > 0 && !spanMatches && existing.isNotEmpty;
+    final bodyShrunk = updated.length < body.length && !truncated;
+    // #region agent log
+    agentDebugLog(
+      location: 'document_repository.dart:applyDictation',
+      message: 'apply dictation span replace',
+      hypothesisId: truncated
+          ? 'H5'
+          : (!spanMatches
+              ? 'H3'
+              : (anchorOffset <= 0 && body.isNotEmpty ? 'H2' : 'H1')),
+      data: {
+        'anchorOffset': anchorOffset,
+        'start': start,
+        'end': end,
+        'bodyLen': body.length,
+        'updatedLen': updated.length,
+        'prevSpanLen': previousSpan.length,
+        'insertionLen': insertion.length,
+        'writtenSpanLen': writtenSpan.length,
+        'recognizedLen': recognizedWords.length,
+        'isFinal': isFinal,
+        'spanMatches': spanMatches,
+        'truncated': truncated,
+        'limit': limit,
+        'caret': caret,
+        'selectionValid': controller.selection.isValid,
+        'selectionStart': controller.selection.start,
+        'lostBefore': lostBefore,
+        'bodyShrunk': bodyShrunk,
+        'existingTail': existing.length > 60
+            ? existing.substring(existing.length - 60)
+            : existing,
+        'insertionTail': insertion.length > 60
+            ? insertion.substring(insertion.length - 60)
+            : insertion,
+        'prefixBeforeStart': body.substring(
+          start > 40 ? start - 40 : 0,
+          start,
+        ),
+      },
+    );
+    // #endregion
     _applyingDictation = true;
     _setControllerText(updated, caret);
     _applyingDictation = false;
@@ -135,7 +190,9 @@ class DocumentRepository extends ChangeNotifier {
     } else {
       notifyListeners();
     }
-    return insertion;
+    // Track what is actually in the buffer so the next replace cannot extend
+    // past EOF via an inflated span after character-limit truncation.
+    return writtenSpan;
   }
 
   /// Restores [text] after a blocked IME voice insert (no sync / history bump).
@@ -149,8 +206,30 @@ class DocumentRepository extends ChangeNotifier {
 
   int dictationAnchorOffset() {
     final sel = controller.selection;
-    final start = sel.start.clamp(0, controller.text.length);
-    final end = sel.end.clamp(0, controller.text.length);
+    final textLen = controller.text.length;
+    // Invalid / unfocused selection used to clamp to 0 and overwrite the note
+    // from the start. Prefer appending at the end for dictation.
+    final start = (!sel.isValid || sel.start < 0)
+        ? textLen
+        : sel.start.clamp(0, textLen);
+    final end = (!sel.isValid || sel.end < 0)
+        ? textLen
+        : sel.end.clamp(0, textLen);
+    // #region agent log
+    agentDebugLog(
+      location: 'document_repository.dart:dictationAnchorOffset',
+      message: 'read dictation anchor',
+      hypothesisId: 'H2',
+      data: {
+        'selValid': sel.isValid,
+        'selStart': sel.start,
+        'selEnd': sel.end,
+        'clamped': start,
+        'textLen': textLen,
+        'usedEndFallback': !sel.isValid || sel.start < 0,
+      },
+    );
+    // #endregion
     if (start != end) return start;
     return start;
   }
