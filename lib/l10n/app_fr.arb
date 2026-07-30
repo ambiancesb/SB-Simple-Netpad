@@ -175,6 +175,8 @@
   "editorStopDictation": "Arrêter la dictée",
 
   "peersConnectByIp": "Connecter par IP",
+  "peersScanQr": "Scanner le code QR",
+  "peersShowQrTooltip": "Afficher le code QR",
   "peersConnected": "Connecté",
   "peersNearby": "À proximité",
   "peersTrustedDevices": "Appareils de confiance",
@@ -418,6 +420,15 @@
   "manualConnectLabelOptional": "Étiquette (optionnel)",
   "manualConnectLabelHint": "PC du salon",
   "manualConnectInvalidHostPort": "Entrez un hôte et un port valides (1–65535)",
+
+  "qrShowTitle": "Connexion par QR",
+  "qrShowBody": "Demandez à un autre appareil sur le même Wi‑Fi de scanner ce code pour se connecter.",
+  "qrShowNotReady": "En attente d’une adresse locale…",
+  "qrScanTitle": "Scanner le code QR",
+  "qrScanBody": "Pointez la caméra vers un code QR Netpad, ou choisissez une photo.",
+  "qrScanCameraUnavailable": "Caméra indisponible — choisissez une photo du code QR.",
+  "qrScanPickImage": "Choisir une photo",
+  "qrScanInvalid": "Code de connexion Netpad non valide",
 
   "settingsTitle": "Paramètres",
   "settingsDeviceSection": "Appareil",

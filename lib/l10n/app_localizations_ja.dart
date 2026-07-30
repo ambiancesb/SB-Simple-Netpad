@@ -372,6 +372,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get peersConnectByIp => 'IPで接続';
 
   @override
+  String get peersScanQr => 'QRコードを読み取る';
+
+  @override
+  String get peersShowQrTooltip => 'QRコードを表示';
+
+  @override
   String get peersConnected => '接続済み';
 
   @override
@@ -699,6 +705,30 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get manualConnectInvalidHostPort => '有効なホストとポート（1〜65535）を入力してください';
+
+  @override
+  String get qrShowTitle => 'QRで接続';
+
+  @override
+  String get qrShowBody => '同じWi‑Fi上の別の端末でこのコードを読み取って接続します。';
+
+  @override
+  String get qrShowNotReady => 'ローカルアドレスを待機中…';
+
+  @override
+  String get qrScanTitle => 'QRコードを読み取る';
+
+  @override
+  String get qrScanBody => 'カメラをNetpadのQRコードに向けるか、写真を選択してください。';
+
+  @override
+  String get qrScanCameraUnavailable => 'カメラを使えません — QRコードの写真を選択してください。';
+
+  @override
+  String get qrScanPickImage => '写真を選択';
+
+  @override
+  String get qrScanInvalid => '有効なNetpad接続コードではありません';
 
   @override
   String get settingsTitle => '設定';

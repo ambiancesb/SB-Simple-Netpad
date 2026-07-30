@@ -175,6 +175,8 @@
   "editorStopDictation": "받아쓰기 중지",
 
   "peersConnectByIp": "IP로 연결",
+  "peersScanQr": "QR 코드 스캔",
+  "peersShowQrTooltip": "QR 코드 표시",
   "peersConnected": "연결됨",
   "peersNearby": "근처 기기",
   "peersTrustedDevices": "신뢰할 수 있는 기기",
@@ -418,6 +420,15 @@
   "manualConnectLabelOptional": "레이블 (선택 사항)",
   "manualConnectLabelHint": "거실 PC",
   "manualConnectInvalidHostPort": "유효한 호스트와 포트를 입력하세요 (1–65535)",
+
+  "qrShowTitle": "QR로 연결",
+  "qrShowBody": "같은 Wi‑Fi의 다른 기기가 이 코드를 스캔하여 연결하도록 하세요.",
+  "qrShowNotReady": "로컬 주소를 기다리는 중…",
+  "qrScanTitle": "QR 코드 스캔",
+  "qrScanBody": "카메라를 Netpad QR 코드에 맞추거나 사진을 선택하세요.",
+  "qrScanCameraUnavailable": "카메라를 사용할 수 없습니다 — QR 코드 사진을 선택하세요.",
+  "qrScanPickImage": "사진 선택",
+  "qrScanInvalid": "유효한 Netpad 연결 코드가 아닙니다",
 
   "settingsTitle": "설정",
   "settingsDeviceSection": "기기",

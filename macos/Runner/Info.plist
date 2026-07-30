@@ -32,6 +32,8 @@
 	<false/>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>SB Simple Netpad discovers and connects to other notepad instances on your local network.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>SB Simple Netpad uses the camera to scan QR codes for connecting to peers on your local network.</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_sbnetpad._tcp</string>

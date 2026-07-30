@@ -201,6 +201,8 @@
   "editorStopDictation": "Stop dictation",
 
   "peersConnectByIp": "Connect by IP",
+  "peersScanQr": "Scan QR code",
+  "peersShowQrTooltip": "Show QR code",
   "peersConnected": "Connected",
   "peersNearby": "Nearby",
   "peersTrustedDevices": "Trusted devices",
@@ -444,6 +446,15 @@
   "manualConnectLabelOptional": "Label (optional)",
   "manualConnectLabelHint": "Living room PC",
   "manualConnectInvalidHostPort": "Enter a valid host and port (1–65535)",
+
+  "qrShowTitle": "Connect with QR",
+  "qrShowBody": "Have another device on the same Wi‑Fi scan this code to connect.",
+  "qrShowNotReady": "Waiting for a local address…",
+  "qrScanTitle": "Scan QR code",
+  "qrScanBody": "Point the camera at a Netpad QR code, or choose a photo.",
+  "qrScanCameraUnavailable": "Camera unavailable — choose a photo of the QR code instead.",
+  "qrScanPickImage": "Choose photo",
+  "qrScanInvalid": "Not a valid Netpad connection code",
 
   "settingsTitle": "Settings",
   "settingsDeviceSection": "Device",

@@ -775,6 +775,18 @@ abstract class AppLocalizations {
   /// **'Connect by IP'**
   String get peersConnectByIp;
 
+  /// No description provided for @peersScanQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR code'**
+  String get peersScanQr;
+
+  /// No description provided for @peersShowQrTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show QR code'**
+  String get peersShowQrTooltip;
+
   /// No description provided for @peersConnected.
   ///
   /// In en, this message translates to:
@@ -1308,6 +1320,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a valid host and port (1–65535)'**
   String get manualConnectInvalidHostPort;
+
+  /// No description provided for @qrShowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with QR'**
+  String get qrShowTitle;
+
+  /// No description provided for @qrShowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Have another device on the same Wi‑Fi scan this code to connect.'**
+  String get qrShowBody;
+
+  /// No description provided for @qrShowNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for a local address…'**
+  String get qrShowNotReady;
+
+  /// No description provided for @qrScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR code'**
+  String get qrScanTitle;
+
+  /// No description provided for @qrScanBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at a Netpad QR code, or choose a photo.'**
+  String get qrScanBody;
+
+  /// No description provided for @qrScanCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera unavailable — choose a photo of the QR code instead.'**
+  String get qrScanCameraUnavailable;
+
+  /// No description provided for @qrScanPickImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose photo'**
+  String get qrScanPickImage;
+
+  /// No description provided for @qrScanInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a valid Netpad connection code'**
+  String get qrScanInvalid;
 
   /// No description provided for @settingsTitle.
   ///

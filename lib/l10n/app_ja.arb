@@ -175,6 +175,8 @@
   "editorStopDictation": "ディクテーションを停止",
 
   "peersConnectByIp": "IPで接続",
+  "peersScanQr": "QRコードを読み取る",
+  "peersShowQrTooltip": "QRコードを表示",
   "peersConnected": "接続済み",
   "peersNearby": "近くのデバイス",
   "peersTrustedDevices": "信頼済みデバイス",
@@ -418,6 +420,15 @@
   "manualConnectLabelOptional": "ラベル（任意）",
   "manualConnectLabelHint": "リビングのPC",
   "manualConnectInvalidHostPort": "有効なホストとポート（1〜65535）を入力してください",
+
+  "qrShowTitle": "QRで接続",
+  "qrShowBody": "同じWi‑Fi上の別の端末でこのコードを読み取って接続します。",
+  "qrShowNotReady": "ローカルアドレスを待機中…",
+  "qrScanTitle": "QRコードを読み取る",
+  "qrScanBody": "カメラをNetpadのQRコードに向けるか、写真を選択してください。",
+  "qrScanCameraUnavailable": "カメラを使えません — QRコードの写真を選択してください。",
+  "qrScanPickImage": "写真を選択",
+  "qrScanInvalid": "有効なNetpad接続コードではありません",
 
   "settingsTitle": "設定",
   "settingsDeviceSection": "デバイス",

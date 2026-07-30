@@ -377,6 +377,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get peersConnectByIp => 'Conectar por IP';
 
   @override
+  String get peersScanQr => 'Ler código QR';
+
+  @override
+  String get peersShowQrTooltip => 'Mostrar código QR';
+
+  @override
   String get peersConnected => 'Conectado';
 
   @override
@@ -713,6 +719,33 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get manualConnectInvalidHostPort =>
       'Digite um host e porta válidos (1–65535)';
+
+  @override
+  String get qrShowTitle => 'Ligar com QR';
+
+  @override
+  String get qrShowBody =>
+      'Peça a outro dispositivo na mesma Wi‑Fi para ler este código e ligar.';
+
+  @override
+  String get qrShowNotReady => 'À espera de um endereço local…';
+
+  @override
+  String get qrScanTitle => 'Ler código QR';
+
+  @override
+  String get qrScanBody =>
+      'Aponte a câmara para um código QR do Netpad, ou escolha uma foto.';
+
+  @override
+  String get qrScanCameraUnavailable =>
+      'Câmara indisponível — escolha uma foto do código QR.';
+
+  @override
+  String get qrScanPickImage => 'Escolher foto';
+
+  @override
+  String get qrScanInvalid => 'Código de ligação Netpad inválido';
 
   @override
   String get settingsTitle => 'Configurações';
@@ -1694,6 +1727,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get peersConnectByIp => 'Conectar por IP';
 
   @override
+  String get peersScanQr => 'Escanear código QR';
+
+  @override
+  String get peersShowQrTooltip => 'Mostrar código QR';
+
+  @override
   String get peersConnected => 'Conectado';
 
   @override
@@ -2030,6 +2069,33 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get manualConnectInvalidHostPort =>
       'Digite um host e porta válidos (1–65535)';
+
+  @override
+  String get qrShowTitle => 'Conectar com QR';
+
+  @override
+  String get qrShowBody =>
+      'Peça a outro dispositivo no mesmo Wi‑Fi para escanear este código e conectar.';
+
+  @override
+  String get qrShowNotReady => 'Aguardando um endereço local…';
+
+  @override
+  String get qrScanTitle => 'Escanear código QR';
+
+  @override
+  String get qrScanBody =>
+      'Aponte a câmera para um código QR do Netpad, ou escolha uma foto.';
+
+  @override
+  String get qrScanCameraUnavailable =>
+      'Câmera indisponível — escolha uma foto do código QR.';
+
+  @override
+  String get qrScanPickImage => 'Escolher foto';
+
+  @override
+  String get qrScanInvalid => 'Código de conexão Netpad inválido';
 
   @override
   String get settingsTitle => 'Configurações';

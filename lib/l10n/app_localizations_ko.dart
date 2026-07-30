@@ -372,6 +372,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get peersConnectByIp => 'IP로 연결';
 
   @override
+  String get peersScanQr => 'QR 코드 스캔';
+
+  @override
+  String get peersShowQrTooltip => 'QR 코드 표시';
+
+  @override
   String get peersConnected => '연결됨';
 
   @override
@@ -699,6 +705,30 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get manualConnectInvalidHostPort => '유효한 호스트와 포트를 입력하세요 (1–65535)';
+
+  @override
+  String get qrShowTitle => 'QR로 연결';
+
+  @override
+  String get qrShowBody => '같은 Wi‑Fi의 다른 기기가 이 코드를 스캔하여 연결하도록 하세요.';
+
+  @override
+  String get qrShowNotReady => '로컬 주소를 기다리는 중…';
+
+  @override
+  String get qrScanTitle => 'QR 코드 스캔';
+
+  @override
+  String get qrScanBody => '카메라를 Netpad QR 코드에 맞추거나 사진을 선택하세요.';
+
+  @override
+  String get qrScanCameraUnavailable => '카메라를 사용할 수 없습니다 — QR 코드 사진을 선택하세요.';
+
+  @override
+  String get qrScanPickImage => '사진 선택';
+
+  @override
+  String get qrScanInvalid => '유효한 Netpad 연결 코드가 아닙니다';
 
   @override
   String get settingsTitle => '설정';

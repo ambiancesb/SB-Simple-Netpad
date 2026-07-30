@@ -175,6 +175,8 @@
   "editorStopDictation": "Dictaat stoppen",
 
   "peersConnectByIp": "Verbinden via IP",
+  "peersScanQr": "QR-code scannen",
+  "peersShowQrTooltip": "QR-code tonen",
   "peersConnected": "Verbonden",
   "peersNearby": "In de buurt",
   "peersTrustedDevices": "Vertrouwde apparaten",
@@ -418,6 +420,15 @@
   "manualConnectLabelOptional": "Label (optioneel)",
   "manualConnectLabelHint": "Woonkamer-pc",
   "manualConnectInvalidHostPort": "Voer een geldige host en poort in (1–65535)",
+
+  "qrShowTitle": "Verbinden met QR",
+  "qrShowBody": "Laat een ander apparaat op hetzelfde wifi-netwerk deze code scannen om te verbinden.",
+  "qrShowNotReady": "Wachten op een lokaal adres…",
+  "qrScanTitle": "QR-code scannen",
+  "qrScanBody": "Richt de camera op een Netpad-QR-code, of kies een foto.",
+  "qrScanCameraUnavailable": "Camera niet beschikbaar — kies een foto van de QR-code.",
+  "qrScanPickImage": "Foto kiezen",
+  "qrScanInvalid": "Geen geldige Netpad-verbindingscode",
 
   "settingsTitle": "Instellingen",
   "settingsDeviceSection": "Apparaat",

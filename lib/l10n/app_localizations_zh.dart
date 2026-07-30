@@ -371,6 +371,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get peersConnectByIp => '通过 IP 连接';
 
   @override
+  String get peersScanQr => '扫描二维码';
+
+  @override
+  String get peersShowQrTooltip => '显示二维码';
+
+  @override
   String get peersConnected => '已连接';
 
   @override
@@ -694,6 +700,30 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get manualConnectInvalidHostPort => '请输入有效的主机和端口（1–65535）';
+
+  @override
+  String get qrShowTitle => '通过二维码连接';
+
+  @override
+  String get qrShowBody => '让同一 Wi‑Fi 上的另一台设备扫描此码以连接。';
+
+  @override
+  String get qrShowNotReady => '正在等待本地地址…';
+
+  @override
+  String get qrScanTitle => '扫描二维码';
+
+  @override
+  String get qrScanBody => '将相机对准 Netpad 二维码，或选择一张照片。';
+
+  @override
+  String get qrScanCameraUnavailable => '相机不可用 — 请选择二维码照片。';
+
+  @override
+  String get qrScanPickImage => '选择照片';
+
+  @override
+  String get qrScanInvalid => '不是有效的 Netpad 连接码';
 
   @override
   String get settingsTitle => '设置';

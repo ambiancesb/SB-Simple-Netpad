@@ -377,6 +377,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get peersConnectByIp => 'Conectar por IP';
 
   @override
+  String get peersScanQr => 'Escanear código QR';
+
+  @override
+  String get peersShowQrTooltip => 'Mostrar código QR';
+
+  @override
   String get peersConnected => 'Conectado';
 
   @override
@@ -713,6 +719,33 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get manualConnectInvalidHostPort =>
       'Ingresa un host y puerto válidos (1–65535)';
+
+  @override
+  String get qrShowTitle => 'Conectar con QR';
+
+  @override
+  String get qrShowBody =>
+      'Haz que otro dispositivo en la misma Wi‑Fi escanee este código para conectar.';
+
+  @override
+  String get qrShowNotReady => 'Esperando una dirección local…';
+
+  @override
+  String get qrScanTitle => 'Escanear código QR';
+
+  @override
+  String get qrScanBody =>
+      'Apunta la cámara a un código QR de Netpad, o elige una foto.';
+
+  @override
+  String get qrScanCameraUnavailable =>
+      'Cámara no disponible — elige una foto del código QR.';
+
+  @override
+  String get qrScanPickImage => 'Elegir foto';
+
+  @override
+  String get qrScanInvalid => 'No es un código de conexión de Netpad válido';
 
   @override
   String get settingsTitle => 'Configuración';

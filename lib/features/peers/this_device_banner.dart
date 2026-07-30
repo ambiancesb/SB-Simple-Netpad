@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netpad/data/repositories/discovery_repository.dart';
+import 'package:netpad/features/peers/qr_show_dialog.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
 import 'package:netpad/services/local_address_service.dart';
 import 'package:netpad/theme/app_spacing.dart';
@@ -52,6 +53,24 @@ class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
     }
   }
 
+  Future<void> _showQr(BuildContext context) async {
+    final port = widget.port;
+    final host = _lanIp;
+    if (host == null || port == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.qrShowNotReady)),
+      );
+      return;
+    }
+    final discovery = context.read<DiscoveryRepository>();
+    await showQrConnectDialog(
+      context,
+      host: host,
+      port: port,
+      displayName: discovery.displayName,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -68,7 +87,8 @@ class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
     }
 
     final port = widget.port;
-    final address = _lanIp != null && port != null ? '$_lanIp:$port' : '…';
+    final ready = _lanIp != null && port != null;
+    final address = ready ? '$_lanIp:$port' : '…';
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -85,10 +105,20 @@ class _ThisDeviceBannerState extends State<ThisDeviceBanner> {
           leading: const Icon(Icons.computer, size: 20),
           title: Text(l10n.discoveryThisDevice),
           subtitle: Text(address),
-          trailing: IconButton(
-            icon: const Icon(Icons.copy, size: 20),
-            tooltip: l10n.discoveryCopyAddress,
-            onPressed: port == null ? null : () => _copy(context),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.qr_code_2, size: 20),
+                tooltip: l10n.peersShowQrTooltip,
+                onPressed: ready ? () => _showQr(context) : null,
+              ),
+              IconButton(
+                icon: const Icon(Icons.copy, size: 20),
+                tooltip: l10n.discoveryCopyAddress,
+                onPressed: ready ? () => _copy(context) : null,
+              ),
+            ],
           ),
         ),
       ),

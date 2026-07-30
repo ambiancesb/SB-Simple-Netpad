@@ -10,6 +10,7 @@ import 'package:netpad/data/repositories/sync_repository.dart';
 import 'package:netpad/data/repositories/trust_store.dart';
 import 'package:netpad/features/entitlements/standard_gate.dart';
 import 'package:netpad/features/peers/manual_connect_dialog.dart';
+import 'package:netpad/features/peers/qr_scan_dialog.dart';
 import 'package:netpad/features/peers/session_security_banner.dart';
 import 'package:netpad/features/peers/this_device_banner.dart';
 import 'package:netpad/l10n/l10n_ext.dart';
@@ -70,12 +71,25 @@ class PeersPanel extends StatelessWidget {
         const SessionSecurityBanner(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: OutlinedButton.icon(
-            onPressed: discovery.canDiscoverPeers
-                ? () => _manualConnect(context)
-                : null,
-            icon: const Icon(Icons.add_link),
-            label: Text(l10n.peersConnectByIp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              OutlinedButton.icon(
+                onPressed: discovery.canDiscoverPeers
+                    ? () => _manualConnect(context)
+                    : null,
+                icon: const Icon(Icons.add_link),
+                label: Text(l10n.peersConnectByIp),
+              ),
+              const SizedBox(height: 4),
+              OutlinedButton.icon(
+                onPressed: discovery.canDiscoverPeers
+                    ? () => _scanQrConnect(context)
+                    : null,
+                icon: const Icon(Icons.qr_code_scanner),
+                label: Text(l10n.peersScanQr),
+              ),
+            ],
           ),
         ),
         _sectionHeader(context, l10n.peersConnected),
@@ -178,7 +192,19 @@ class PeersPanel extends StatelessWidget {
   Future<void> _manualConnect(BuildContext context) async {
     final result = await showManualConnectDialog(context);
     if (result == null || !context.mounted) return;
+    await _connectFromManual(context, result);
+  }
 
+  Future<void> _scanQrConnect(BuildContext context) async {
+    final result = await showQrScanDialog(context);
+    if (result == null || !context.mounted) return;
+    await _connectFromManual(context, result);
+  }
+
+  Future<void> _connectFromManual(
+    BuildContext context,
+    ManualConnectResult result,
+  ) async {
     final discovery = context.read<DiscoveryRepository>();
     final peer = discovery.registerManualPeer(
       host: result.host,
