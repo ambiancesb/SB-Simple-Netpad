@@ -18,6 +18,7 @@ import 'package:netpad/features/notes/notes_drawer.dart';
 import 'package:netpad/features/notes/version_history_sheet.dart';
 import 'package:netpad/features/pairing/pairing_listener.dart';
 import 'package:netpad/features/peers/peers_drawer.dart';
+import 'package:netpad/features/peers/qr_connect_actions.dart';
 import 'package:netpad/features/shell/desktop_side_panel.dart';
 import 'package:netpad/features/help/about_screen.dart';
 import 'package:netpad/features/help/help_screen.dart';
@@ -783,6 +784,11 @@ class _ShellAppBar extends StatelessWidget implements PreferredSizeWidget {
             service: speechInput!,
             onToggle: onToggleVoiceInput,
           ),
+        IconButton(
+          icon: const Icon(Icons.qr_code_2),
+          tooltip: l10n.peersShowQrTooltip,
+          onPressed: () => showThisDeviceQrCode(context),
+        ),
         Padding(
           padding: EdgeInsets.only(right: desktopMenus ? 8 : 4),
           child: Tooltip(
