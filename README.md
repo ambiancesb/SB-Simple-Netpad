@@ -28,12 +28,27 @@ A cross-platform LAN notepad built with Flutter. Instances on the same subnet di
 - **Android Studio:** open this repository root (not `android/` alone), install the Flutter and Dart plugins, then run `flutter pub get` before the first Gradle sync.
 - **Desktop / mobile LAN:** allow incoming connections on the app’s TCP port when the OS firewall prompts you. Devices must share the same Wi‑Fi subnet (guest networks often block mDNS). Manual **Connect by IP** still works when discovery is unavailable. Allow UDP port **5353** (mDNS) and the app TCP port in the firewall if peers never appear.
 - **Windows desktop build:** requires Visual Studio with the **Desktop development with C++** workload (CMake + MSVC). Mobile dictation uses [`speech_to_text`](https://pub.dev/packages/speech_to_text), which builds on Windows without extra tools. Do **not** add [`flutter_tts`](https://pub.dev/packages/flutter_tts) unless you also install [NuGet CLI](https://www.nuget.org/downloads) (`winget install Microsoft.NuGet`) — that package’s Windows plugin requires `nuget.exe` even if you only use text-to-speech on Android/iOS.
+- **Linux desktop build:** install Flutter’s Linux toolchain deps plus `libsecret` headers used by [`flutter_secure_storage`](https://pub.dev/packages/flutter_secure_storage) (TLS identity storage):
+
+```bash
+sudo apt install libsecret-1-dev
+```
+
+  Without `libsecret-1-dev`, CMake fails looking for `/usr/include/libsecret-1`.
 
 ## Build and run
 
 ```bash
 flutter pub get
-flutter run -d windows    # or macos, android, ios
+flutter run -d windows    # or linux, macos, android, ios
+```
+
+### Linux
+
+```bash
+sudo apt install libsecret-1-dev   # required by flutter_secure_storage
+flutter run -d linux
+# or: flutter build linux --release
 ```
 
 ### Apple (iOS / macOS)
